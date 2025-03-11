@@ -68,9 +68,9 @@ npm install
 Esto instalará todas las dependencias necesarias para el proyecto.
 Luego ejecutamos el siguiente comando:
 ```
-npm run dev o npm start
-```
-
+npm run dev
+o
+npm start
 ```
 Esto iniciará el servidor de React.js, y si todo esta bien, deberiamos poder acceder a la pagina de inicio de React.js, que es la que aparecera en la consola, el cual se obtiene del proyecto del backend.
 
