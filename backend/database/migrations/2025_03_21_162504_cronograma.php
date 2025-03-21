@@ -9,7 +9,7 @@ class Cronograma extends Migration{
         Schema::create('cronograma', function (Blueprint $table) {
             $table->id('cronograma_id');
             $table->unsignedBigInteger('competencia_id');
-            $table->unsignedBigInteger('area_id');
+            $table->unsignedBigInteger('area_id')->nullable()->constrained('area');;
             $table->string('nombre_evento', 100);
             $table->text('descripcion');
             $table->date('fecha_inicio');

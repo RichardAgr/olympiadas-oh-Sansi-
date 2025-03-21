@@ -4,15 +4,23 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
-{
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        // \App\Models\User::factory(10)->create();
+class DatabaseSeeder extends Seeder{
+    public function run(){
+        $this->call([
+            ResponsableGestion::class,   
+            NivelEducativo::class,      
+            Ubicacion::class,            
+            Competencia::class,           
+            Area::class,                  
+            Tutor::class,                
+            Grado::class,                
+            Colegio::class,           
+            Curso::class,                
+            NivelCategoria::class,        
+            Competidor::class,              
+            TutorCompetidor::class,      
+            CompetidorCompetencia::class, 
+            Cronograma::class,
+        ]);
     }
 }
