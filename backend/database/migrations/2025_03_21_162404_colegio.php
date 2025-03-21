@@ -4,25 +4,27 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Colegio extends Migration
-{
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        //
+class Colegio extends Migration{
+    public function up(){
+        Schema::create('colegio', function (Blueprint $table) {
+            $table->id('colegio_id');
+            $table->unsignedBigInteger('ubicacion_id');
+            $table->string('nombre', 100);
+            $table->string('telefono', 10);
+            $table->timestamps();
+            
+            $table->foreign('ubicacion_id')
+                  ->references('ubicacion_id')
+                  ->on('ubicacion')
+                  ->onDelete('cascade');
+            
+            $table->charset = 'utf8mb4';
+            $table->collation = 'utf8mb4_general_ci';
+            $table->engine = 'InnoDB';
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
+    public function down(){
+        Schema::dropIfExists('colegio');
     }
 }

@@ -6,23 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 class Ubicacion extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        //
+    public function up(){
+        Schema::create('ubicacion', function (Blueprint $table) {
+            $table->id('ubicacion_id');
+            $table->string('departamento', 50);
+            $table->string('provincia', 50);
+            $table->timestamps();
+            
+            $table->charset = 'utf8mb4';
+            $table->collation = 'utf8mb4_general_ci';
+            $table->engine = 'InnoDB';
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
+    public function down(){
+        Schema::dropIfExists('ubicacion');
     }
 }
