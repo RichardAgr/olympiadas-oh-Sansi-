@@ -20,7 +20,7 @@ class Area extends Model
         'foto'
     ];
     public function categories()
-    {
+        {
     return $this->hasMany(Category::class, 'area_id');
     }
 
