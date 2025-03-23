@@ -90,12 +90,23 @@ class AreaController extends Controller
      * DELETE /api/areas/{id}
      */
     public function destroy($id)
-    {
-        $area = Area::findOrFail($id);
-        $area->delete();
+{
+    $area = Area::find($id);
 
-        return response()->json([
-            'message' => 'Área eliminada exitosamente'
-        ]);
+    if (!$area) {
+        return response()->json(['message' => 'Área no encontrada'], 404);
     }
+
+    // Check if the area has associated categories
+    if ($area->categories()->count() > 0) {
+        return response()->json(['message' => 'No se puede eliminar el área porque tiene categorías asociadas'], 400);
+    }
+
+    $area->delete();
+
+    return response()->json([
+        'message' => 'Área eliminada exitosamente'
+    ]);
+}
+
 }

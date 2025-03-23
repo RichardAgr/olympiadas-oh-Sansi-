@@ -19,4 +19,9 @@ class Area extends Model
         'estado',
         'foto'
     ];
+    public function categories()
+    {
+    return $this->hasMany(Category::class, 'area_id');
+    }
+
 }
