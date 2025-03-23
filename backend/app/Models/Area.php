@@ -19,9 +19,13 @@ class Area extends Model
         'estado',
         'foto'
     ];
+<<<<<<< HEAD
     public function categories()
         {
     return $this->hasMany(Category::class, 'area_id');
     }
 
 }
+=======
+}
+>>>>>>> origin/valeN

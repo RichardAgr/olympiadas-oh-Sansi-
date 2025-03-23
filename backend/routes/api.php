@@ -11,4 +11,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Rutas RESTful para las áreas de competencia
 Route::apiResource('areas', AreaController::class);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/valeN
