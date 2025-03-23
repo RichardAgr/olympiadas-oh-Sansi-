@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import './App.css'
+import { HU2nivelesCategoria } from './components/nivelsCategoria/HU2nivelesCategoria'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <h1>No inicio el desarroyo</h1>
+      <HU2nivelesCategoria/>
     </>
   )
 }

@@ -1,0 +1,76 @@
+.category-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .header-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+  
+  .spacer {
+    flex-grow: 1;
+  }
+  
+  .add-button {
+    border-radius: 20px !important;
+    background-color: #4355b9 !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+  
+  .add-button:hover {
+    background-color: #3a489e !important;
+  }
+  
+  .table-container {
+    border-radius: 8px !important;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1) !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .header-cell {
+    font-weight: bold !important;
+    background-color: #f9f9f9 !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .icon-button {
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 4px !important;
+    padding: 4px !important;
+  }
+  
+  .footer-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  
+  .cancel-button {
+    border-radius: 4px !important;
+    padding: 8px 24px !important;
+    color: #666 !important;
+    border-color: #ccc !important;
+  }
+  
+  .save-button {
+    border-radius: 4px !important;
+    padding: 8px 24px !important;
+    background-color: #4355b9 !important;
+  }
+  
+  .save-button:hover {
+    background-color: #3a489e !important;
+  }
+  
+  
