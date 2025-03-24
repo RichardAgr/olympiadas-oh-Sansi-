@@ -35,4 +35,9 @@ class Grado extends Model
     {
         return $this->hasMany(NivelCategoria::class, 'grado_id_final', 'grado_id');
     }
+
+    public function nivelesCategoria()
+    {
+        return $this->belongsToMany(NivelCategoria::class, 'categoria_grado', 'grado_id', 'nivel_categoria_id');
+    }
 }

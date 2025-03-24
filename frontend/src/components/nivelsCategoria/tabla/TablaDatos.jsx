@@ -73,7 +73,7 @@ import {
           area.niveles_categoria.forEach((nivel) => {
             if (nivel.nivel_categoria_id === idNivel) {
               selectedGrd = {
-                id: nivel.grado_id_inicial, // Asumiendo que tienes este campo
+                id: nivel.nivel_categoria_id, // Asumiendo que tienes este campo
                 nombre: nivel.rango_grados,
                 area_nombre: area.nombre_area,
                 nivel_educativo: nivel.nivel_educativo || "No especificado",
@@ -132,12 +132,56 @@ import {
 
 
 
-  const handleConfirmDeleteCategory = ()=>{
-    setDeleteCategoryLoading(false);
+  const handleConfirmDeleteCategory = async (id)=>{
+    try {
+      setDeleteCategoryLoading(true);
+      await axiosInstance.delete(ENDPOINTS.eliminarCategoria(id))
+
+      getCategories()
+      
+      setNotification({
+        open: true,
+        message: "Categoría eliminada correctamente",
+        severity: "success",
+      });
+      
+      handleCloseDeleteCategoryDialog();
+    } catch (error) {
+      console.error("Error al eliminar la categoría:", error);
+      setNotification({
+        open: true,
+        message: "Error al eliminar la categoría",
+        severity: "error",
+      });
+    } finally {
+      setDeleteCategoryLoading(false);
+    }
   }
 
-  const handleConfirmDeleteGrado = ()=>{
-    setDeleteCategoryLoading(false);
+  const handleConfirmDeleteGrado = async (id)=>{
+    try {
+      setDeleteGradoLoading(true);
+      await axiosInstance.put(ENDPOINTS.eliminarGrado(id))
+
+      getCategories()
+      
+      setNotification({
+        open: true,
+        message: "Grado eliminado correctamente",
+        severity: "success",
+      });
+      
+      handleCloseDeleteGradoDialog();
+    } catch (error) {
+      console.error("Error al eliminar el grado:", error);
+      setNotification({
+        open: true,
+        message: "Error al eliminar el grado",
+        severity: "error",
+      });
+    } finally {
+      setDeleteGradoLoading(false);
+    }
   }
 
   const renderizarDetallesCategoria = (categoria) => {

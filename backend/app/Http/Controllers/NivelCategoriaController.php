@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Schema;
 use App\Models\NivelCategoria;
 use App\Http\Resources\NivelCategoriaResource;
 use App\Http\Resources\NivelCategoriaCollection;
@@ -56,5 +57,140 @@ class NivelCategoriaController extends Controller{
                 'error' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-   }
+    }
+
+
+    public function eliminarCategoria($id)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $categoria = DB::table('nivel_categoria')
+                ->where('nivel_categoria_id', $id)
+                ->first();
+                
+            if (!$categoria) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Categoría no encontrada'
+                ], Response::HTTP_NOT_FOUND);
+            }
+            
+
+            DB::table('nivel_categoria')
+                ->where('nivel_categoria_id', $id)
+                ->update([
+                    'nombre' => '------',
+                    'estado' => 0 
+
+                ]);
+            
+            DB::commit();
+            
+            Log::info('Categoría marcada como eliminada', [
+                'nivel_categoria_id' => $id,
+                'usuario_id' => auth()->check() ? auth()->id() : 'sistema',
+                'timestamp' => now()
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Categoría marcada como eliminada correctamente'
+            ], Response::HTTP_OK);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            Log::error('Error al marcar categoría como eliminada: ' . $e->getMessage(), [
+                'nivel_categoria_id' => $id,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al marcar la categoría como eliminada',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    public function eliminarGradoDeCategoria($categoriaId, $gradoId)
+    {
+        try {
+            $categoria = DB::table('nivel_categoria')
+                ->where('nivel_categoria_id', $categoriaId)
+                ->first();
+                
+            if (!$categoria) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Categoría no encontrada'
+                ], Response::HTTP_NOT_FOUND);
+            }
+            
+            $grado = DB::table('grado')
+                ->where('grado_id', $gradoId)
+                ->first();
+                
+            if (!$grado) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Grado no encontrado'
+                ], Response::HTTP_NOT_FOUND);
+            }
+            
+            if ($categoria->grado_id_inicial == $gradoId || $categoria->grado_id_final == $gradoId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede eliminar un grado que es límite del rango de la categoría. Debe modificar la categoría primero.'
+                ], Response::HTTP_BAD_REQUEST);
+            }
+            
+            if (Schema::hasTable('categoria_grado')) {
+                $eliminado = DB::table('categoria_grado')
+                    ->where('nivel_categoria_id', $categoriaId)
+                    ->where('grado_id', $gradoId)
+                    ->delete();
+                    
+                if ($eliminado == 0) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'El grado no está asociado a esta categoría'
+                    ], Response::HTTP_NOT_FOUND);
+                }
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'La estructura de la base de datos no permite eliminar grados individuales de una categoría'
+                ], Response::HTTP_BAD_REQUEST);
+            }
+            
+            Log::info('Grado eliminado de categoría', [
+                'nivel_categoria_id' => $categoriaId,
+                'grado_id' => $gradoId,
+                'usuario_id' => auth()->check() ? auth()->id() : 'sistema',
+                'timestamp' => now()
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Grado eliminado de la categoría correctamente'
+            ], Response::HTTP_OK);
+            
+        } catch (\Exception $e) {
+            // Registrar el error
+            Log::error('Error al eliminar grado de categoría: ' . $e->getMessage(), [
+                'nivel_categoria_id' => $categoriaId,
+                'grado_id' => $gradoId,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el grado de la categoría',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
