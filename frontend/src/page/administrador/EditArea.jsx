@@ -1,38 +1,85 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import "../../App.css";
 
 const EditArea = () => {
   const { id } = useParams();
+  const [nombre, setNombre] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [costo, setCosto] = useState("");
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ nombre: "", descripcion: "", costo: "", estado: true, foto: "" });
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/areas/${id}`).then((res) => setFormData(res.data));
+    axios.get(`http://localhost:8000/api/areas/${id}`)
+      .then((response) => {
+        setNombre(response.data.nombre);
+        setDescripcion(response.data.descripcion);
+        setCosto(response.data.costo);
+      })
+      .catch((error) => console.error("Error al cargar el área:", error));
   }, [id]);
-
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.put(`http://localhost:8000/api/areas/${id}`, formData);
-    alert("Área actualizada 😎");
-    navigate("/admin/areas");
+    try {
+      await axios.put(`http://localhost:8000/api/areas/${id}`, {
+        nombre,
+        descripcion,
+        costo: costo,
+        estado: true,
+      });
+      alert("Área actualizada con éxito");
+      navigate("/admin/areas");
+    } catch (error) {
+      console.error("Error al actualizar el área:", error);
+      alert("Hubo un error al actualizar el área ❌");
+    }
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Editar Área</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input name="nombre" value={formData.nombre} onChange={handleChange} className="w-full border p-2 rounded-xl" required />
-        <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} className="w-full border p-2 rounded-xl" required />
-        <input name="costo" type="number" value={formData.costo} onChange={handleChange} className="w-full border p-2 rounded-xl" required />
-        <select name="estado" value={formData.estado} onChange={handleChange} className="w-full border p-2 rounded-xl">
-          <option value={true}>Activa</option>
-          <option value={false}>Inactiva</option>
-        </select>
-        <input name="foto" value={formData.foto} onChange={handleChange} className="w-full border p-2 rounded-xl" />
-        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded-xl hover:bg-green-700">Guardar Cambios</button>
+    <div className="form-container">
+      <h1>Editar Área</h1>
+      <form onSubmit={handleSubmit}>
+        <label>Nombre del Área</label>
+        <input
+          type="text"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+        />
+
+        <label>Descripción del Área</label>
+        <textarea
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
+          required
+        />
+
+        <label>Costo (Bs)</label>
+        <input
+          type="number"
+          value={costo}
+          onChange={(e) => setCosto(e.target.value)}
+          required
+        />
+
+        <button type="button" className="btn-secondary">
+          Registrar Categorías
+        </button>
+
+        <div className="button-group">
+          <button
+            type="button"
+            onClick={() => navigate("/admin/areas")}
+            className="btn-cancelar"
+          >
+            Cancelar
+          </button>
+          <button type="submit" className="btn-guardar">
+            Guardar
+          </button>
+        </div>
       </form>
     </div>
   );

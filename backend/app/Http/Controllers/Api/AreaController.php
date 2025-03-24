@@ -44,11 +44,7 @@ class AreaController extends Controller
 
         // Devolvemos respuesta de éxito
         return response()->json([
-<<<<<<< HEAD
-            'message' => 'Área registrada con éxito',
-=======
             'message' => 'Área registrada con éxito ',
->>>>>>> origin/valeN
             'area' => $area
         ], 201);
     }
@@ -84,11 +80,7 @@ class AreaController extends Controller
         $area->update($request->all());
 
         return response()->json([
-<<<<<<< HEAD
-            'message' => 'Área actualizada correctamente',
-=======
             'message' => 'Área actualizada correctamente ',
->>>>>>> origin/valeN
             'area' => $area
         ]);
     }
@@ -98,28 +90,6 @@ class AreaController extends Controller
      * DELETE /api/areas/{id}
      */
     public function destroy($id)
-<<<<<<< HEAD
-{
-    $area = Area::find($id);
-
-    if (!$area) {
-        return response()->json(['message' => 'Área no encontrada'], 404);
-    }
-
-    // Check if the area has associated categories
-    if ($area->categories()->count() > 0) {
-        return response()->json(['message' => 'No se puede eliminar el área porque tiene categorías asociadas'], 400);
-    }
-
-    $area->delete();
-
-    return response()->json([
-        'message' => 'Área eliminada exitosamente'
-    ]);
-}
-
-}
-=======
     {
         $area = Area::findOrFail($id);
         $area->delete();
@@ -130,4 +100,3 @@ class AreaController extends Controller
     }
 }
 
->>>>>>> origin/valeN
