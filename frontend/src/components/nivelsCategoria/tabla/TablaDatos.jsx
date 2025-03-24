@@ -3,9 +3,8 @@ import AddIcon from "@mui/icons-material/Add"
 import "./tablaDatos.css"
 import axiosInstance from "../../../interception/interception"
 import { ENDPOINTS } from "../../../api/constans/endpoints"
-import {CustomEliminarCategoria} from "./customsTablaDatos/flowCategoria/eliminarCategoria/CustomEliminarCategoria"
+import {DialogEliminar}  from "./DialogEliminar"
 import CustomTablaDatos from './customsTablaDatos/CustomTablaDatos'
-import { CustomEliminarGrado} from "./customsTablaDatos/flowGrado/eliminarGrado/CustomEliminarGrado"
 
 import {
     Table,
@@ -17,22 +16,28 @@ import {
     Button,
     Snackbar,
     Alert,
+    Typography,
   } from "@mui/material"
 
   
   export default function TablaDatos() {
     
     const [categories, setCategories] = useState([])
-    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [deleteLoading, setDeleteLoading] = useState(false);
+    
+  const [openDeleteCategoryDialog, setOpenDeleteCategoryDialog] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [deleteCategoryLoading, setDeleteCategoryLoading] = useState(false);
+  
+  const [openDeleteGradoDialog, setOpenDeleteGradoDialog] = useState(false);
+  const [selectedGrado, setSelectedGrado] = useState(null);
+  const [deleteGradoLoading, setDeleteGradoLoading] = useState(false);
 
     useEffect(()=>{
       getCategories()
     },[])
 
-    const handleOpenDeleteDialog =  (idNivel) => {
-      let selectedCat = null
+    const handleOpenDeleteCategoryDialog = (idNivel) => {
+      let selectedCat = null;
       try {
         categories.forEach((area) => {
           area.niveles_categoria.forEach((nivel) => {
@@ -40,6 +45,7 @@ import {
               selectedCat = {
                 id: nivel.nivel_categoria_id,
                 nombre: nivel.nombre_categoria,
+                categoria_nombre: nivel.nombre_categoria,
                 descripcion: nivel.descripcion || "",
                 area_id: area.area_id,
                 area_nombre: area.nombre_area,
@@ -48,25 +54,52 @@ import {
             }
           });
         });
-      }catch (error) {
-        console.error("Error al preparar el diálogo de eliminación:", error)
+      } catch (error) {
+        console.error("Error al preparar el diálogo de eliminación:", error);
         setNotification({
-            open: true,
-            message: "Error al preparar la eliminación",
-            severity: "error",
-          });
-        }
-        setSelectedCategory(selectedCat);
-        setOpenDeleteDialog(true);
-    }
+          open: true,
+          message: "Error al preparar la eliminación",
+          severity: "error",
+        });
+      }
+      setSelectedCategory(selectedCat);
+      setOpenDeleteCategoryDialog(true);
+    };
 
+    const handleOpenDeleteGradoDialog = (idNivel) => {
+      let selectedGrd = null;
+      try {
+        categories.forEach((area) => {
+          area.niveles_categoria.forEach((nivel) => {
+            if (nivel.nivel_categoria_id === idNivel) {
+              selectedGrd = {
+                id: nivel.grado_id_inicial, // Asumiendo que tienes este campo
+                nombre: nivel.rango_grados,
+                area_nombre: area.nombre_area,
+                nivel_educativo: nivel.nivel_educativo || "No especificado",
+                abreviatura: nivel.abreviatura_grado || "",
+                orden: nivel.orden_grado || 0,
+              };
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Error al preparar el diálogo de eliminación de grado:", error);
+        setNotification({
+          open: true,
+          message: "Error al preparar la eliminación del grado",
+          severity: "error",
+        });
+      }
+      setSelectedGrado(selectedGrd);
+      setOpenDeleteGradoDialog(true);
+    };
     
     const [notification, setNotification] = useState({
       open: false,
       message: "",
       severity: "success",
     });
-
 
 
   const getCategories=async ()=>{
@@ -83,25 +116,72 @@ import {
     }
   } 
 
- 
-
-  const handleCloseDeleteDialog = () => {
-    setOpenDeleteDialog(false);
+  const handleCloseDeleteCategoryDialog = () => {
+    setOpenDeleteCategoryDialog(false);
     setTimeout(() => {
       setSelectedCategory(null);
     }, 300);
   };
 
-  const rows = CustomTablaDatos(categories,{
-    onEditCategory: (id) => console.log(`Editar categoría con ID: ${id}`),
-    onDeleteCategory: handleOpenDeleteDialog,
-    onEditGrado: () => console.log("Editar grado"),
-    onDeleteGrado: handleOpenDeleteDialog,
-    })
+  const handleCloseDeleteGradoDialog = () => {
+    setOpenDeleteGradoDialog(false);
+    setTimeout(() => {
+      setSelectedGrado(null);
+    }, 300);
+  };
 
-  const handleConfirmDelete = ()=>{
-    setDeleteLoading(false);
+
+
+  const handleConfirmDeleteCategory = ()=>{
+    setDeleteCategoryLoading(false);
   }
+
+  const handleConfirmDeleteGrado = ()=>{
+    setDeleteCategoryLoading(false);
+  }
+
+  const renderizarDetallesCategoria = (categoria) => {
+    if ( !categoria ) return null
+    return (
+    <>
+    <div  className="container-data">
+
+    </div>
+      <div className="detail-row">
+        <Typography className="detail-label">Área:</Typography>
+        <Typography>{categoria.area_nombre}</Typography>
+      </div>
+      <div className="detail-row">
+        <Typography className="detail-label">Nivel/Categoría:</Typography>
+        <Typography>{categoria.categoria_nombre}</Typography>
+      </div>
+    </>
+    )
+  };
+
+  const renderizarDetallesGrado = (grado) => {
+    if ( !grado ) return null
+    return(
+    <>
+      <div className="detail-row">
+        <Typography className="detail-label">Área:</Typography>
+        <Typography>{grado.area_nombre}</Typography>
+      </div>
+      <div className="detail-row">
+        <Typography className="detail-label">Grado:</Typography>
+        <Typography>{grado.nombre}</Typography>
+      </div>
+    </>)
+  }
+
+  const handlers = {
+    onEditCategory: (id) => console.log(`Editar categoría con ID: ${id}`),
+    onDeleteCategory: handleOpenDeleteCategoryDialog,
+    onEditGrado: () => console.log("Editar grado"),
+    onDeleteGrado: handleOpenDeleteGradoDialog,
+  };
+
+  const rows = CustomTablaDatos(categories,handlers)
 
   const handleCloseNotification = () => {
     setNotification({
@@ -169,22 +249,34 @@ import {
           Guardar
         </Button>
       </div>
-      <CustomEliminarCategoria
-        open={openDeleteDialog}
-        onClose={handleCloseDeleteDialog}
-        categoria={selectedCategory}
-        onConfirm={handleConfirmDelete}
-        loading={deleteLoading}
+      <DialogEliminar
+        open={openDeleteCategoryDialog}
+        onClose={handleCloseDeleteCategoryDialog}
+        item={selectedCategory}
+        onConfirm={handleConfirmDeleteCategory}
+        loading={deleteCategoryLoading}
+        tipo="categoría"
+        titulo="Confirmar eliminación de categoría"
+        mensaje="¿Está seguro que desea eliminar esta categoría?"
+        advertencia="Esta acción no se puede deshacer. La categoría será eliminada."
+        detallesTitulo="Detalles de la categoría:"
+        mensajeError="No se puede eliminar esta categoría porque tiene registros relacionados."
+        renderizarDetalles={renderizarDetallesCategoria}
       />
-
-    <CustomEliminarGrado
-        open={openDeleteDialog}
-        onClose={handleCloseDeleteDialog}
-        categoria={selectedCategory}
-        onConfirm={handleConfirmDelete}
-        loading={deleteLoading}
+      <DialogEliminar
+        open={openDeleteGradoDialog}
+        onClose={handleCloseDeleteGradoDialog}
+        item={selectedGrado}
+        onConfirm={handleConfirmDeleteGrado}
+        loading={deleteGradoLoading}
+        tipo="grado"
+        titulo="Confirmar eliminación de grado"
+        mensaje="¿Está seguro que desea eliminar este grado?"
+        advertencia="Esta acción no se puede deshacer. El grado será eliminado."
+        detallesTitulo="Detalles del grado:"
+        mensajeError="No se puede eliminar este grado porque tiene cursos o categorías asociadas."
+        renderizarDetalles={renderizarDetallesGrado}
       />
-
       <Snackbar
         open={notification.open}
         autoHideDuration={6000}
