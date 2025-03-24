@@ -13,6 +13,21 @@ const AreasList = () => {
       .catch((error) => console.error("Error fetching areas:", error));
   }, []);
 
+  const handleDelete = async (id) => {
+    const confirmDelete = confirm("¿Estás seguro de eliminar esta área? 🚨");
+    if (!confirmDelete) return;
+  
+    try {
+      await axios.delete(`http://localhost:8000/api/areas/${id}`);
+      alert("Área eliminada correctamente ✅");
+      // Recargar la lista sin volver a consultar la API (opcional)
+      setAreas(areas.filter(area => area.area_id !== id));
+    } catch (error) {
+      console.error("Error al eliminar el área:", error);
+      alert("Hubo un error al eliminar el área ❌");
+    }
+  };
+  
   return (
     <div className="areas-list-container">
       <h1 className="areas-title">Gestión de Áreas de Competencia</h1>
@@ -33,9 +48,7 @@ const AreasList = () => {
               <Link to={`/admin/areas/editar/${area.area_id}`} className="edit-btn">
                 <Pencil size={18} /> Editar
               </Link>
-              <button className="delete-btn">
-                <Trash2 size={18} /> Eliminar
-              </button>
+              <button className="delete-btn" onClick={() => handleDelete(area.area_id)}>🗑️ Eliminar</button>
             </div>
           </div>
         ))}
