@@ -44,7 +44,7 @@ const AgregarArea = () => {
           required
         />
 
-        <label>Costo de Inscripción</label>
+        <label>Costo (Bs)</label>
         <input
           type="number"
           value={costo}
