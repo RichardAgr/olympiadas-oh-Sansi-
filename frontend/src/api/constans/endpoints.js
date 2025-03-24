@@ -1,3 +1,4 @@
 export const ENDPOINTS = {
-    hello: '/hello',
+    /* obtiene el area relacionado a su categoria y grado */
+    areaCategoriaGrado:"areaCategoriaGrado",
 }

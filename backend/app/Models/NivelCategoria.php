@@ -10,7 +10,19 @@ class NivelCategoria extends Model
     use HasFactory;
     protected $table = 'nivel_categoria';
     protected $primaryKey = 'nivel_categoria_id';
-    protected $fillable = ['area_id', 'nombre', 'descripcion', 'grado_id_inicial', 'grado_id_final'];
+    protected $fillable = [
+        'area_id',
+        'nombre',
+        'descripcion',
+        'grado_id_inicial',
+        'grado_id_final'];
+
+        protected $casts = [
+            'estado' => 'boolean',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
+        ];
     
     public function area()
     {
@@ -25,10 +37,5 @@ class NivelCategoria extends Model
     public function gradoMaximo()
     {
         return $this->belongsTo(Grado::class, 'grado_id_final', 'grado_id');
-    }
-    
-    public function inscripciones()
-    {
-        return $this->hasMany(CompetidorCompetencia::class, 'nivel_categoria_id', 'nivel_categoria_id');
     }
 }

@@ -1,11 +1,13 @@
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import AddIcon from "@mui/icons-material/Add"
-import EditIcon from "@mui/icons-material/Edit"
-import DeleteIcon from "@mui/icons-material/Delete"
 import "./tablaDatos.css"
+import axiosInstance from "../../../interception/interception"
+import { ENDPOINTS } from "../../../api/constans/endpoints"
+import {CustomEliminarCategoria} from "./customsTablaDatos/flowCategoria/eliminarCategoria/CustomEliminarCategoria"
+import CustomTablaDatos from './customsTablaDatos/CustomTablaDatos'
+import { CustomEliminarGrado} from "./customsTablaDatos/flowGrado/eliminarGrado/CustomEliminarGrado"
 
 import {
-    Paper,
     Table,
     TableBody,
     TableCell,
@@ -13,21 +15,100 @@ import {
     TableHead,
     TableRow,
     Button,
-    IconButton,
+    Snackbar,
+    Alert,
   } from "@mui/material"
 
-export default function TablaDatos() {
+  
+  export default function TablaDatos() {
     
-  const [categories, setCategories] = useState([
-    { id: 1, area: "Astronomía y Astrofísica", nivel: "3P", grado: "3ro Primaria" },
-    { id: 2, area: "Astronomía y Astrofísica", nivel: "4P", grado: "4to Primaria" },
-    { id: 3, area: "Astronomía y Astrofísica", nivel: "5P", grado: "5to Primaria" },
-    { id: 4, area: "Astronomía y Astrofísica", nivel: "6P", grado: "6to Primaria" },
-    { id: 5, area: "Astronomía y Astrofísica", nivel: "1S", grado: "1ro Secundaria" },
-    { id: 6, area: "Astronomía y Astrofísica", nivel: "2S", grado: "2do Secundaria" },
-    { id: 7, area: "Astronomía y Astrofísica", nivel: "3S", grado: "3ro Secundario" },
-    { id: 8, area: "Astronomía y Astrofísica", nivel: "4S", grado: "4to Secundario" },
-  ])
+    const [categories, setCategories] = useState([])
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
+
+    useEffect(()=>{
+      getCategories()
+    },[])
+
+    const handleOpenDeleteDialog =  (idNivel) => {
+      let selectedCat = null
+      try {
+        categories.forEach((area) => {
+          area.niveles_categoria.forEach((nivel) => {
+            if (nivel.nivel_categoria_id === idNivel) {
+              selectedCat = {
+                id: nivel.nivel_categoria_id,
+                nombre: nivel.nombre_categoria,
+                descripcion: nivel.descripcion || "",
+                area_id: area.area_id,
+                area_nombre: area.nombre_area,
+                rango_grados: nivel.rango_grados,
+              };
+            }
+          });
+        });
+      }catch (error) {
+        console.error("Error al preparar el diálogo de eliminación:", error)
+        setNotification({
+            open: true,
+            message: "Error al preparar la eliminación",
+            severity: "error",
+          });
+        }
+        setSelectedCategory(selectedCat);
+        setOpenDeleteDialog(true);
+    }
+
+    
+    const [notification, setNotification] = useState({
+      open: false,
+      message: "",
+      severity: "success",
+    });
+
+
+
+  const getCategories=async ()=>{
+    try {
+      const res = await axiosInstance.get(ENDPOINTS.areaCategoriaGrado);
+      setCategories(res.data.data);
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+      setNotification({
+        open: true,
+        message: "Error al cargar los datos",
+        severity: "error",
+      });
+    }
+  } 
+
+ 
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+    setTimeout(() => {
+      setSelectedCategory(null);
+    }, 300);
+  };
+
+  const rows = CustomTablaDatos(categories,{
+    onEditCategory: (id) => console.log(`Editar categoría con ID: ${id}`),
+    onDeleteCategory: handleOpenDeleteDialog,
+    onEditGrado: () => console.log("Editar grado"),
+    onDeleteGrado: handleOpenDeleteDialog,
+    })
+
+  const handleConfirmDelete = ()=>{
+    setDeleteLoading(false);
+  }
+
+  const handleCloseNotification = () => {
+    setNotification({
+      ...notification,
+      open: false,
+    });
+  };
 
   // Función para manejar la adición de una nueva categoría
   const handleAddCategory = () => {
@@ -35,17 +116,6 @@ export default function TablaDatos() {
     // Aquí iría la lógica para abrir un modal o formulario de adición
   }
 
-  // Función para manejar la edición de una categoría
-  const handleEditCategory = (id) => {
-    console.log(`Editar categoría con ID: ${id}`)
-    // Aquí iría la lógica para editar una categoría
-  }
-
-  // Función para manejar la eliminación de una categoría
-  const handleDeleteCategory = (id) => {
-    console.log(`Eliminar categoría con ID: ${id}`)
-    // Aquí iría la lógica para eliminar una categoría
-  }
 
   // Función para guardar los cambios
   const handleSave = () => {
@@ -68,36 +138,25 @@ export default function TablaDatos() {
         </Button>
       </div>
 
-      <TableContainer component={Paper} className="table-container">
+      <TableContainer  className="table-container">
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell className="header-cell">Área</TableCell>
-              <TableCell className="header-cell">
-                Nivel / Categoría
-              </TableCell>
-              <TableCell className="header-cell">Grados</TableCell>
-              <TableCell className="header-cell">Seleccionar</TableCell>
+              <TableCell className="header-cell"><h2>Área</h2></TableCell>
+              <TableCell className="header-cell"><h2>Nivel / Categoría</h2></TableCell>
+              <TableCell className="header-cell"><h2>Grado</h2></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {categories.map((category) => (
-              <TableRow key={category.id}>
-                <TableCell>{category.area}</TableCell>
-                <TableCell>{category.nivel}</TableCell>
-                <TableCell>{category.grado}</TableCell>
-                <TableCell>
-                  <div className="action-buttons">
-                    <IconButton color="primary" onClick={() => handleEditCategory(category.id)} className="icon-button">
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton color="primary" onClick={() => handleDeleteCategory(category.id)} className="icon-button">
-                      <DeleteIcon />
-                    </IconButton>
-                  </div>
+          {categories.length > 0 ? (
+              rows
+            ) : (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  Cargando datos...
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -110,6 +169,35 @@ export default function TablaDatos() {
           Guardar
         </Button>
       </div>
+      <CustomEliminarCategoria
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        categoria={selectedCategory}
+        onConfirm={handleConfirmDelete}
+        loading={deleteLoading}
+      />
+
+    <CustomEliminarGrado
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        categoria={selectedCategory}
+        onConfirm={handleConfirmDelete}
+        loading={deleteLoading}
+      />
+
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+      >
+        <Alert
+          onClose={handleCloseNotification}
+          severity={notification.severity}
+          sx={{ width: "100%" }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>      
     </div>
   )
 }

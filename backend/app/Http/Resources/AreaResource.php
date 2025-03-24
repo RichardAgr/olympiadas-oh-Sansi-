@@ -10,6 +10,7 @@ class AreaResource extends JsonResource{
             'area_id' => $this->area_id,
             'nombre_area' => $this->nombre,
             'descripcion' => $this->descripcion,
+            'costo'=>$this->costo,
             'niveles_categoria' => NivelCategoriaResource::collection($this->nivelesCategoria)
         ];
     }

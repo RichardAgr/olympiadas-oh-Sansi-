@@ -10,7 +10,12 @@ class Area extends Model
     use HasFactory;
     protected $table = 'area';
     protected $primaryKey = 'area_id';
-    protected $fillable = ['nombre', 'descripcion', 'estado'];
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+        'costo',
+        'estado'
+    ];
     
     public function nivelesCategoria()
     {
