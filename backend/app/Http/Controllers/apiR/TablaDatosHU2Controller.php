@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\apiR;
 
-use App\Models\Area;
-use App\Http\Resources\AreaResource;
+use App\Models\modelR\Area;
+use App\Http\Resources\resourcesR\AreaResource;
 use Illuminate\Http\Request;
 
 class TablaDatosHU2Controller extends Controller{

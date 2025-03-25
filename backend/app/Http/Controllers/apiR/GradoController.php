@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\apiR;
 
-use App\Models\Grado;
-use App\Models\NivelCategoria;
+use App\Models\modelR\Grado;
+use App\Models\modelR\NivelCategoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;

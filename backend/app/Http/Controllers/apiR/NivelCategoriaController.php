@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\apiR;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Schema;
-use App\Models\NivelCategoria;
-use App\Http\Resources\NivelCategoriaResource;
+use App\Models\modelR\NivelCategoria;
+use App\Models\modelR\Area;
+use App\Http\Resources\resourcesR\NivelCategoriaResource;
 use App\Http\Resources\NivelCategoriaCollection;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -192,5 +193,34 @@ class NivelCategoriaController extends Controller{
                 'error' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function store(Request $request){
+
+        // Verificar que el área existe
+        $area = Area::find($request->area_id);
+        if (!$area) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El área seleccionada no existe'
+            ], 404);
+        }
+
+        // Crear la nueva categoría
+        $categoria = new NivelCategoria();
+        $categoria->area_id= $request->area_id;
+        $categoria->nombre= $request->nombre;
+        $categoria->descripcion = $request->descripcion;
+        $categoria->grado_id_inicial = null;
+        $categoria->grado_id_final = null;
+        $categoria->estado = 1; 
+        $categoria->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Categoría creada exitosamente',
+            'data' => $categoria
+        ], 201);
+       
     }
 }
