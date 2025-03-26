@@ -90,6 +90,7 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
       setNombreCategoria('');
       setDescripcionCategoria('');
       setAreaSeleccionada('');
+      navigate(-1)
       
       // Notificar al componente padre
       if (onSuccess) {
@@ -201,7 +202,7 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
             color="primary"
             onClick={handleCrearGrado}
           >
-            Editar Grado
+            Grados
           </Button>
         </div>
         

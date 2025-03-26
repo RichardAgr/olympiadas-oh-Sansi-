@@ -47,7 +47,7 @@ export default function CustomTablaDatos (categories, handlers) {
                 <div className="action-buttons">
                   <IconButton
                     color="primary"
-                    onClick={() => onEditGrado()}
+                    onClick={() => onEditGrado(nivel.nivel_categoria_id)}
                     className="icon-button"
                   >
                     <EditIcon />

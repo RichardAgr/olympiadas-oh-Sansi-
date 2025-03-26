@@ -5,6 +5,7 @@ import axiosInstance from "../../../interception/interception"
 import { ENDPOINTS } from "../../../api/constans/endpoints"
 import {DialogEliminar}  from "./DialogEliminar"
 import CustomTablaDatos from './customsTablaDatos/CustomTablaDatos'
+import { useNavigate } from 'react-router-dom'; 
 
 import {
     Table,
@@ -22,7 +23,8 @@ import {
   
   export default function TablaDatos() {
     
-    const [categories, setCategories] = useState([])
+  const [categories, setCategories] = useState([])
+  const navigate = useNavigate();
     
   const [openDeleteCategoryDialog, setOpenDeleteCategoryDialog] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -219,9 +221,9 @@ import {
   }
 
   const handlers = {
-    onEditCategory: (id) => console.log(`Editar categoría con ID: ${id}`),
+    onEditCategory: (id) => navigate(`editCategoria/${id}`),
     onDeleteCategory: handleOpenDeleteCategoryDialog,
-    onEditGrado: () => console.log("Editar grado"),
+    onEditGrado: (id) => navigate(`editGrado/${id}`),
     onDeleteGrado: handleOpenDeleteGradoDialog,
   };
 
@@ -236,8 +238,7 @@ import {
 
   // Función para manejar la adición de una nueva categoría
   const handleAddCategory = () => {
-    console.log("Agregar nueva categoría")
-    // Aquí iría la lógica para abrir un modal o formulario de adición
+    navigate("/crearCategoria")
   }
 
 
