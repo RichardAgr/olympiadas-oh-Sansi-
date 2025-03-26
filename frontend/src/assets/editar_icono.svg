@@ -1,0 +1,44 @@
+<svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="23" height="23" fill="#F5F5F5"/>
+<g id="005 -Establecer fechas de la competencia">
+<rect width="6215" height="5747" transform="translate(-4119 -3394)" fill="white"/>
+<g id="2. Home Admin- Ver Areas Registradas" clip-path="url(#clip0_141_411)">
+<rect width="1458" height="1241" transform="translate(-972 -443)" fill="white"/>
+<g id="Lista Grados y Niveles">
+<g id="Frame 5" clip-path="url(#clip1_141_411)">
+<rect width="1019" height="605" transform="translate(-912 -165)" fill="#F7F7F7"/>
+<g id="Frame 8" clip-path="url(#clip2_141_411)">
+<rect width="1008" height="41" transform="translate(-903 -7)" fill="white"/>
+<g id="Excel Button" filter="url(#filter0_d_141_411)">
+<rect x="-7" y="-7" width="37" height="37" rx="15" fill="#384FD6"/>
+<g id="edit-contained">
+<path id="Icon" d="M10.5605 2.96185H4.63707C2.67421 2.96185 1.08301 4.55301 1.08301 6.5158V18.3624C1.08301 20.3252 2.67421 21.9163 4.63707 21.9163H16.4839C18.4468 21.9163 20.038 20.3252 20.038 18.3624L20.038 12.4391M7.00644 15.993L11.3167 15.1245C11.5455 15.0784 11.7556 14.9657 11.9206 14.8007L21.5696 5.14672C22.0322 4.68386 22.0319 3.9336 21.5689 3.47113L19.5249 1.42951C19.0621 0.967233 18.3122 0.967548 17.8497 1.43021L8.19978 11.0852C8.03509 11.2499 7.92264 11.4596 7.87649 11.6879L7.00644 15.993Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_141_411" x="-11" y="-7" width="45" height="45" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_141_411"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_141_411" result="shape"/>
+</filter>
+<clipPath id="clip0_141_411">
+<rect width="1458" height="1241" fill="white" transform="translate(-972 -443)"/>
+</clipPath>
+<clipPath id="clip1_141_411">
+<rect width="1019" height="605" fill="white" transform="translate(-912 -165)"/>
+</clipPath>
+<clipPath id="clip2_141_411">
+<rect width="1008" height="41" fill="white" transform="translate(-903 -7)"/>
+</clipPath>
+</defs>
+</svg>
