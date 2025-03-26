@@ -8,8 +8,8 @@ class NivelCategoria extends Migration{
     public function up(){
         Schema::create('nivel_categoria', function (Blueprint $table) {
             $table->id('nivel_categoria_id');
-            $table->unsignedBigInteger('grado_id_inicial')->nullable();
-            $table->unsignedBigInteger('grado_id_final')->nullable();
+            $table->unsignedBigInteger('grado_id_inicial');
+            $table->unsignedBigInteger('grado_id_final');
             $table->unsignedBigInteger('area_id');
             $table->string('nombre', 50);
             $table->text('descripcion');

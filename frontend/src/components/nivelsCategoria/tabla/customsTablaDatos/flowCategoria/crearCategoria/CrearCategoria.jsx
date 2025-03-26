@@ -1,5 +1,5 @@
 // RegistrarCategoria.jsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Typography,
   TextField,
@@ -21,11 +21,16 @@ import axiosInstance from '../../../../../../interception/interception';
 import { ENDPOINTS } from '../../../../../../api/constans/endpoints';
 import "./crearCategoria.css"
 
+
+
 const CrearCategoria = ({ onClose, onSuccess }) => {
   //  formulario de categoría
+  const navigate = useNavigate();
   const [nombreCategoria, setNombreCategoria] = useState('');
   const [descripcionCategoria, setDescripcionCategoria] = useState('');
   const [areaSeleccionada, setAreaSeleccionada] = useState('');
+
+  const [categoriaCreada, setCategoriaCreada] = useState(null);
   
   const [areas, setAreas] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -67,11 +72,13 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
     
     try {
       setLoading(true);
-      const response = await axiosInstance.post(ENDPOINTS.nivelesCategorias, {
-        nombre_categoria: nombreCategoria,
+      const response = await axiosInstance.post(ENDPOINTS.crearCategoria, {
+        nombre: nombreCategoria,
         descripcion: descripcionCategoria,
         area_id: areaSeleccionada
       });
+
+      setCategoriaCreada(response.data.data);
       
       setNotification({
         open: true,
@@ -101,8 +108,21 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
   };
   // Ruta a la página de creación de grado
   const handleCrearGrado = () => {
-      navigate('/crear-grado'); 
-  };
+    if(!areaSeleccionada){
+      setNotification({
+      open: true,
+      message: 'Información de área no disponible. Por favor, seleccione un área primero.',
+      severity: 'warning'
+    });
+  }else{
+      navigate("/crearGrado",{
+          state: { 
+            areaId: areaSeleccionada,
+            nombre: nombreCategoria,
+          } 
+      })
+    } 
+  }
 
 
   const handleCloseNotification = () => {
@@ -174,18 +194,14 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
         </Typography>
         
         <div className="grado-display-section">
-          <div className="grado-info">
-            <div className="grado-name">Sin Grado</div>
-            <div className="grado-detail">Ninguno</div>
-          </div>
-          
+         
           <Button
             className="crear-grado-btn"
             variant="contained"
             color="primary"
             onClick={handleCrearGrado}
           >
-            Crear Grado
+            Editar Grado
           </Button>
         </div>
         

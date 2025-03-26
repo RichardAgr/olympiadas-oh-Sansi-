@@ -211,8 +211,8 @@ class NivelCategoriaController extends Controller{
         $categoria->area_id= $request->area_id;
         $categoria->nombre= $request->nombre;
         $categoria->descripcion = $request->descripcion;
-        $categoria->grado_id_inicial = null;
-        $categoria->grado_id_final = null;
+        $categoria->grado_id_inicial = 7;
+        $categoria->grado_id_final = 7;
         $categoria->estado = 1; 
         $categoria->save();
 
