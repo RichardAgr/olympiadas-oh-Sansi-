@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\apiR\TablaDatosHU2Controller;
 use App\Http\Controllers\apiR\NivelCategoriaController;
+use App\Http\Controllers\apiR\AreaCategoria;
 use App\Http\Controllers\apiR\GradoController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -12,7 +13,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //obtener areas por relacion categoria y grados
 Route::get('/areaCategoriaGrado', [TablaDatosHU2Controller::class, 'obtenerAreasCategoriaGrados']);
-Route::get('/categoriaDatos', [NivelCategoriaController::class, 'DatosCategoria']);
+Route::get('/categoriaDatos/{id}', [NivelCategoriaController::class, 'DatosCategoria']);
+Route::put('/editCategoria/{id}', [NivelCategoriaController::class, 'updateCategoria']);
 
 // Eliminar una categoría y sus grados asociados
 Route::delete('/categorias/{id}', [NivelCategoriaController::class, 'eliminarCategoria']);

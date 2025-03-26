@@ -5,8 +5,9 @@ namespace App\Http\Controllers\apiR;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Schema;
 use App\Models\modelR\NivelCategoria;
-use App\Models\modelR\Area;
 use App\Http\Resources\resourcesR\NivelCategoriaResource;
+use App\Models\modelR\Area;
+use App\Models\modelR\Grado;
 use App\Http\Resources\NivelCategoriaCollection;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -15,6 +16,44 @@ use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class NivelCategoriaController extends Controller{
+
+    public function updateCategoria(Request $request, $id){
+        try {
+            DB::beginTransaction();
+            
+            $category = NivelCategoria::findOrFail($id);
+            $gradoInicial = Grado::findOrFail($request->grado_id_inicial);
+            $gradoFinal = Grado::findOrFail($request->grado_id_final);
+            
+            // Update the category
+            $category->update([
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'grado_id_inicial' => $request->grado_id_inicial,
+                'grado_id_final' => $request->grado_id_final,
+                'area_id' => $request->area_id,
+            ]);
+            
+            DB::commit();
+            
+            $category->load(['gradoMinimo', 'gradoMaximo', 'area']);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                return response()->json([
+                    'message' => 'Categoria no encontrada'
+                ], 404);
+            }
+            
+            return response()->json([
+                'message' => 'Error interno del servidor',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function DatosCategoria($id){
         try {
             $categoria = DB::table('nivel_categoria as nc')
