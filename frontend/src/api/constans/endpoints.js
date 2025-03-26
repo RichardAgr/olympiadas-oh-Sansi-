@@ -5,5 +5,7 @@ export const ENDPOINTS = {
     areaCategoriaGrado:"areaCategoriaGrado",
     eliminarCategoria:(id)=>`/categorias/${id}`,
     eliminarGrado:(id)=>`/categorias/${id}/eliminarGrados`,
-    crearCategoria:"crearCategoria"
+    crearCategoria:"crearCategoria",
+    categoriaDatos:(id)=>`/categoriaDatos/${id}`,
+    editarCategoria:(id)=>`/editCategoria/${id}`
 }
