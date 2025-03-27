@@ -18,19 +18,18 @@ const AreasList = () => {
 
   const handleConfirmDelete = async () => {
     if (!areaToDelete) return;
-
+  
     try {
-      await axios.delete(
-        `http://localhost:8000/api/areas/${areaToDelete.area_id}`
-      );
+      await axios.delete(`http://localhost:8000/api/areas/${areaToDelete.area_id}`);
       setAreas(areas.filter((area) => area.area_id !== areaToDelete.area_id));
-      setAreaToDelete(null); // Cierra el modal
-      alert("Área eliminada correctamente ✅"); // Puedes cambiarlo por un modal de éxito si quieres
+      setAreaToDelete(null);
+      alert("Área eliminada correctamente ✅");
     } catch (error) {
-      console.error("Error al eliminar el área:", error);
-      alert("Hubo un error al eliminar el área ❌");
+      const msg = error.response?.data?.message || "Error al eliminar el área ❌";
+      alert(msg);
     }
   };
+  
 
   return (
     <div className="areas-list-container">
