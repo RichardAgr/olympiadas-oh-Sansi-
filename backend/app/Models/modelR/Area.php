@@ -16,6 +16,13 @@ class Area extends Model
         'costo',
         'estado'
     ];
+    protected $casts = [
+        'estado' => 'boolean',
+        'costo' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
     
     public function nivelesCategoria()
     {

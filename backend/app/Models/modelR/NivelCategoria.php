@@ -15,7 +15,7 @@ class NivelCategoria extends Model
         'nombre',
         'descripcion',
         'grado_id_inicial',
-        'grado_id_final'];
+        'grado_id_final',];
 
         protected $casts = [
             'estado' => 'boolean',

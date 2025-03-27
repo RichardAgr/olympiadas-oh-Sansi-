@@ -22,3 +22,6 @@ Route::post('/crearCategoria', [NivelCategoriaController::class, 'store']);
 
 // Eliminar un grado específico de una categoría
 Route::put('/categorias/{categoriaId}/eliminarGrados', [GradoController::class, 'eliminarGradosdeCategoria']);
+
+//Editar grados de una categoria:
+Route::put('/editarGrado/{id}', [NivelCategoriaController::class, 'editarGrado']);

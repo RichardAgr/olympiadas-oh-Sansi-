@@ -16,9 +16,21 @@ class Grado extends Model
         'abreviatura',
     ];
 
+    protected $casts = [
+        'estado' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+
     public function nivelEducativo()
     {
         return $this->belongsTo(NivelEducativo::class, 'nivel_educativo_id', 'nivel_educativo_id');
+    }
+
+    public function cursos()
+    {
+        return $this->hasMany(Curso::class, 'grado_id', 'grado_id');
     }
     
     public function competidores()

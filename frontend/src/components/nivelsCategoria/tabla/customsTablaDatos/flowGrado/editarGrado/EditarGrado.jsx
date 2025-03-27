@@ -121,7 +121,7 @@ const EditarGrado = () => {
     return ""
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
@@ -157,10 +157,8 @@ const EditarGrado = () => {
 
       // Preparar datos para enviar
       const datosActualizados = {
-        nivel_categoria_id: id,
         grado_inicial_id: gradoInicial || null,
         grado_final_id: gradoFinal || null,
-        area_id: gradoData?.area_id,
         rango_grados: rangoGrados,
         grado_inicial_nombre: gradoInicial
           ? `${grados.find((g) => g.id === gradoInicial)?.nombre} ${nivelInicial}`
@@ -170,8 +168,7 @@ const EditarGrado = () => {
 
       console.log("Datos a enviar:", datosActualizados)
 
-      // Aquí iría la llamada a la API para actualizar los datos
-      // await axiosInstance.put(ENDPOINTS.editarGrado(id), datosActualizados);
+      await axiosInstance.put(ENDPOINTS.editarGrado(id), datosActualizados);
 
       setNotification({
         open: true,
