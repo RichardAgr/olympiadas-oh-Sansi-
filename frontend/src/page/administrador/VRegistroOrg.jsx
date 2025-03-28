@@ -7,6 +7,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import editarIcon from "../../assets/editar_icono.svg";
 import eliminarIcon from "../../assets/eliminar_icono.svg";
 import "../../App.css";
+import * as XLSX from "xlsx";
 
 const datosEjemplo = [
   { id: 1, nombre: "Juan Pérez", ci: "12345678", correo: "juan@example.com", telefono: "76543210", estado: "Activo" },
@@ -14,6 +15,7 @@ const datosEjemplo = [
 ];
 
 const filasPorPagina = 4;
+
 
 function RegistrarOrganizador() {
   const navigate = useNavigate(); 
@@ -23,20 +25,35 @@ function RegistrarOrganizador() {
   const [search, setSearch] = useState(""); // Estado del buscador
   const location = useLocation();
   /*Para la tabla */
-  const [paginaActual, setPaginaActual] = React.useState(1);
-    const totalPaginas = Math.ceil(datosEjemplo.length / filasPorPagina);
-  
-    const indiceInicio = (paginaActual - 1) * filasPorPagina;
-    const indiceFin = indiceInicio + filasPorPagina;
-    const datosPagina = datosEjemplo.slice(indiceInicio, indiceFin);
-  
-    const paginaAnterior = () => {
-      if (paginaActual > 1) setPaginaActual(paginaActual - 1);
-    };
-  
-    const paginaSiguiente = () => {
-      if (paginaActual < totalPaginas) setPaginaActual(paginaActual + 1);
-    };
+const [paginaActual, setPaginaActual] = React.useState(1);
+
+// Filtrar datos según la búsqueda
+const datosFiltrados = datosEjemplo.filter((dato) =>
+  dato.nombre.toLowerCase().includes(search.toLowerCase())
+);
+
+// Aplicar paginación sobre los datos filtrados
+const totalPaginas = Math.ceil(datosFiltrados.length / filasPorPagina);
+const indiceInicio = (paginaActual - 1) * filasPorPagina;
+const indiceFin = indiceInicio + filasPorPagina;
+const datosPagina = datosFiltrados.slice(indiceInicio, indiceFin);
+
+const paginaAnterior = () => {
+  if (paginaActual > 1) setPaginaActual(paginaActual - 1);
+};
+
+const paginaSiguiente = () => {
+  if (paginaActual < totalPaginas) setPaginaActual(paginaActual + 1);
+};
+const exportarExcel = () => {
+  const hojaDatos = datosFiltrados.map(({ id, ...resto }) => resto); // Eliminar ID si no lo quieres en el Excel
+
+  const ws = XLSX.utils.json_to_sheet(hojaDatos);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Registros");
+
+  XLSX.writeFile(wb, "Registros.xlsx");
+};
   return (
     
     <div className="home-container">
@@ -53,10 +70,11 @@ function RegistrarOrganizador() {
         </div>
 
         <div className="botones_excel_agregar">
-          <button className="boton-excel">
-            <img src={excel} alt="Excel" className="icono-boton" />
-            Descargar Excel
-          </button>
+        <button className="boton-excel" onClick={exportarExcel}>
+          <img src={excel} alt="Excel" className="icono-boton" />
+           Descargar Excel
+            </button>
+
           <Link to="/admin/visualizarRegistro/agregarRegistro">
           <button className="boton-addUser">
           
