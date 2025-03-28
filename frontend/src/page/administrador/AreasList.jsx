@@ -17,7 +17,7 @@ const AreasList = () => {
   }, []);
 
   const handleConfirmDelete = async () => {
-    if (!areaToDelete) return;
+    if (!areaToDelete) return; 
   
     try {
       await axios.delete(`http://localhost:8000/api/areas/${areaToDelete.area_id}`);
