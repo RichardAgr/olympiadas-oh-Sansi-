@@ -258,32 +258,32 @@ class NivelCategoriaController extends Controller{
        
     }
 
-    private function construirRangoGrados($nivelCategoria)
-    {
+    private function construirRangoGrados($nivelCategoria){
         if (!$nivelCategoria->grado_id_inicial || !$nivelCategoria->grado_id_final) {
-            return "-------";
+            return "------";
         }
         
+        // Cargar los grados directamente para asegurarnos de tener los datos más recientes
         $gradoInicial = Grado::with('nivelEducativo')->find($nivelCategoria->grado_id_inicial);
         $gradoFinal = Grado::with('nivelEducativo')->find($nivelCategoria->grado_id_final);
         
         if (!$gradoInicial || !$gradoFinal) {
-            return "-------";
+            return "------";
         }
         
         $nombreCompletoInicial = $gradoInicial->nombre_completo;
         $nombreCompletoFinal = $gradoFinal->nombre_completo;
-
+        
         if ($gradoInicial->grado_id == $gradoFinal->grado_id) {
             return $nombreCompletoInicial;
         }
         
+        // construir el rango
         return $nombreCompletoInicial . ' a ' . $nombreCompletoFinal;
     }
-
+    
     public function editarGrado(Request $request, $id){
         try {
-            // Validar que la categoría exista
             $nivelCategoria = NivelCategoria::find($id);
             
             if (!$nivelCategoria) {
@@ -292,12 +292,9 @@ class NivelCategoriaController extends Controller{
                     'message' => 'Nivel/Categoría no encontrada'
                 ], 404);
             }
-            
-            // Iniciar transacción
             DB::beginTransaction();
-            
             $datosActualizacion = [];
-            
+
             if ($request->has('grado_inicial_id')) {
                 $datosActualizacion['grado_id_inicial'] = $request->grado_inicial_id;
             }
@@ -308,8 +305,22 @@ class NivelCategoriaController extends Controller{
             
             $nivelCategoria->update($datosActualizacion);
             
-            DB::commit();
+            if ($request->has('grado_final_id') && $request->grado_final_id) {
+                $gradoFinal = Grado::find($request->grado_final_id);
+                
+                if ($gradoFinal) {
+                    if ($gradoFinal->nombre == "------" || empty($gradoFinal->nombre)) {
+                        if ($request->has('grado_final_nombre') && !empty($request->grado_final_nombre)) {
+                            $gradoFinal->nombre = $request->grado_final_nombre;
+                            $gradoFinal->save();
+                            Log::info('Actualización de grado: ID=' . $request->grado_final_id . ', Nombre=' . $request->grado_final_nombre);
+                        }
+                    }
+                }
+            }
             
+            DB::commit();
+
             $gradoInicial = Grado::with('nivelEducativo')->find($nivelCategoria->grado_id_inicial);
             $gradoFinal = Grado::with('nivelEducativo')->find($nivelCategoria->grado_id_final);
             
@@ -340,7 +351,6 @@ class NivelCategoriaController extends Controller{
             } else if ($gradoFinal) {
                 $response['grado_final_nombre'] = $gradoFinal->nombre_completo;
             }
-            
             if ($gradoInicial && $gradoInicial->nivelEducativo) {
                 $response['nivel_inicial'] = $gradoInicial->nivelEducativo->nombre;
             }
