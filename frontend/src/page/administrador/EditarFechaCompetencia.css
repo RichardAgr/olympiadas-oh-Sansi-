@@ -1,0 +1,115 @@
+.editar-fecha-competencia {
+     padding: 20px;
+     border-radius: 0px;
+     max-width: 600px;
+     margin: 0 auto;
+}
+
+.editar-fecha-competencia h2 {
+     font-size: 38px;
+     color: #333;
+     border-radius: 25px;
+     margin-bottom: 10px;
+}
+
+.editar-fecha-competencia label {
+     display: block;
+     margin-bottom: 5px;
+     font-size: 17px;
+     color: #555;
+}
+
+.fecha-container {
+     display: flex;
+     gap: 100px; /* Espacio entre los campos */
+     margin-bottom: 20px;
+}
+
+.fecha-item {
+     display: flex;
+     align-items: center; /* Alinea verticalmente el texto con el campo de fecha */
+     margin-bottom: 15px; /* Espacio entre los campos */
+}
+
+.fecha-item label {
+     margin-right: 10px; /* Espacio entre el texto y el campo de fecha */
+     font-size: 17px;
+     color: #555;
+}
+
+/* Estilo para el campo donde se muestra la fecha */
+.react-datepicker__input-container input {
+     font-size: 18px;  /* Tamaño de la fuente */
+     height: 45px;     /* Altura del campo */
+     padding: 10px;    /* Espaciado interno */
+     border-radius: 25px; /* Bordes redondeados */
+     width: 100%;      /* Asegura que el campo ocupe todo el ancho disponible */
+}
+
+/* Contenedor de la fecha, no el calendario */
+.date-container-custom {
+     width: 250px; /* Aumentamos el tamaño del contenedor */
+     height: 55px; /* Altura para que se vea más grande */
+     border: 1px solid #ddd;
+     border-radius: 15px;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     padding: 5px;
+     background-color: white;
+}
+
+/* Estilos para el calendario */
+.react-datepicker__current-month {
+     font-size: 10px;  /* Ajusta el tamaño de la fuente */
+     font-weight: normal;  /* Asegúrate de que no esté en negrita si no lo deseas */
+}
+
+.datepicker {
+     width: 100%;
+     padding: 12px;
+     font-size: 17px;
+     height: 45px;
+     border-radius: 15px;
+     border: 1px solid #ddd;
+     background-color: white;
+}
+
+/* Estilos para los botones */
+.botones {
+     display: flex;
+     justify-content: flex-end;  /* Alinea los botones a la derecha */
+     gap: 10px;  /* Espacio entre los botones */
+     margin-top: 20px;  /* Separación superior */
+}
+
+.boton-atras {
+     padding: 12px 55px;
+     background-color: #dee1e6;
+     color: BLACK;
+     border: none;
+     border-radius: 15px;
+     font-size: 14px;
+}
+
+.boton-atras:hover {
+     background-color: none;
+}
+
+.boton-guardar {
+     padding: 12px 55px;
+     background-color: #384FD6;
+     color: white;
+     border: none;
+     border-radius: 15px;
+     font-size: 14px;
+}
+
+.boton-guardar:hover {
+     background-color: none;
+}
+
+.editar-fecha-competencia p {
+     color: #999;
+     text-align: center;
+}
