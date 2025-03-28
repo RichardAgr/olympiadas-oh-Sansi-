@@ -10,7 +10,7 @@ const TopBar = () => {
       </div>
       <ul className="topbar-menu">
         <li><Link to="/admin">Inicio</Link></li>
-        <li><Link to="/admin/visualizarRegistro">Ir a Registro</Link>
+        <li><Link to="/admin/visualizarRegistro">Roles</Link>
         </li>
         <li><a href="#">Competidores</a></li>
         <li><a href="#">Evento</a></li>
