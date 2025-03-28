@@ -1,120 +1,4 @@
-/* 🔹 Asegurar que HTML y BODY ocupen toda la pantalla */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* Evita el scroll innecesario */
-}
 
-/* 🔹 Asegurar que el contenedor ocupe toda la pantalla y mantenga la estructura */
-.contenedor {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column; /*  Mantiene el menú arriba y el contenido abajo */
-  
-}
-
-/*  Menú superior fijo arriba */
-.menu_superior {
-  width: 100%;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  color: black;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-  position: fixed;
-  top: 0;
-  left: 0;
-  overflow: visible; /* 🔹 Asegura que nada se corte */
-}
-.imagen_titulo {
-  border: none;
-  display: flex;
-  align-items: center; /* 🔹 Alinea verticalmente la imagen y el texto */
-  gap: 10px; /* 🔹 Espacio entre la imagen y el texto */
-}
-
-.imagen_titulo h2 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-/* 🔹 Ajuste para que el contenido no quede oculto debajo del menú */
-.contenido {
-  flex: 1;
-  padding-top: 40px; /* Ajusta este valor según el tamaño del menú */
-  display: flex;
-  flex-direction: column;
-  align-items: Top;
-  justify-content: flex-start; /* Asegura que el contenido inicie desde arriba */
-  width: 100%;
-  margin-left: 30px;
-  margin-right: 100px;
-}
-
-
-/* 🔹 Contenedor de los botones del menú */
-.botones_menu {
-  display: flex;
-  gap: 10px; /* Espacio entre botones */
-  flex-wrap: wrap; /* 🔹 Evita que los botones desaparezcan si el espacio es insuficiente */
-}
-
-
-.boton_inicio, .boton_roles, .boton_competidores, .boton_evento {
-  display: inline-block; /* 🔹 Asegura que sean visibles */
-  background: none;
-  border: none;
-  color: black;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 8px 12px;
-  transition: color 0.3s ease;
-  white-space: nowrap; /* 🔹 Evita que el texto se corte */
-}
-.boton_roles.activo {
-  text-decoration: underline; /* Subraya el texto */
-  font-weight: bold; /* Hace que resalte más */
-  color: blue; /* Cambia el color si lo deseas */
-}
-
-.boton_roles:hover {
-  background-color: lightgray;
-  transition: 0.3s;
-}
-
-
-.boton_inicio:hover,
-.boton_roles:hover, 
-.boton_competidores:hover, 
-.boton_evento:hover {
-  color: #061A8B;
-}
-
-/* 🔹 Botón de registrar */
-.boton_usuario {
-  background-color: #061A8B;
-  color: white;
-  align-items: center;
-  gap: 8px;
-  display: flex; 
-  border-radius: 25px;
-  border-color: #061A8B;
-}
-
-.boton_usuario:hover {
-  background-color: #0528ef;
-  border-color: #0a21a3;
-}
-.usuario_boton{
-  
-  border-radius: 2%;
-}
-/*buscador
 /* 🔹 Contenedor del buscador */
 .buscador {
   width: 100%;
@@ -122,6 +6,7 @@ html, body {
   justify-content: Top;
   border:#f0f2f3;
   background-color: #f0f2f3;
+  margin: 10px;
 }
 
 /* 🔹 Estilo del input */
@@ -147,7 +32,7 @@ html, body {
   margin-top: 10px;
   display: flex;
   gap: 40px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 .boton-excel{
   background-color: #384FD6;
@@ -169,19 +54,102 @@ html, body {
   border-color: #384FD6;
  
 }
-/*Configuracion de la tabla*/
-.contenedor-tabla {
-  flex-grow: 1;
-  width: 100%;
-  height: 100%;
+.columna-responsable {
   display: flex;
-  flex-direction: column;
-  overflow: auto; /* Agrega scroll si es necesario */
+  align-items: center;
+  gap: 8px; /* Espacio entre el icono y el texto */
+}
+
+.icono-responsable {
+  width: 20px;
+  height: 20px;
+}
+
+h1 {
+  padding: 0;
+  margin: 0;
+}
+.paginacion {
+  text-align: center;
+  padding: 10px;
+  background-color: #f8f8f8; /* Opcional, para visualizar mejor */
+}
+.tabla {
+  width: 100%;
+  margin-bottom:20px;
+  border-collapse: collapse; /* Une los bordes para que se vea mejor */
+  
+}
+
+.tabla th, .tabla td {
+  border: 1px solid #ddd; /* Borde gris claro */
+  padding: 8px;
+  min-height: 50px; /* Ajusta la altura según necesites */
+  height: 50px;
+  text-align: center;
+  
+  
+}
+
+.tabla th {
+  background-color: #f2f2f2; /* Color de fondo para los encabezados */
+}
+
+.boton-editar{
+  background-color:#384FD6;
+  margin-left: 10px;
+  padding: 0; /* Elimina el padding para que la imagen ocupe todo */
+  align-items: center; /* Centra verticalmente */
+justify-content: center; /* Centra horizontalmente */
+}
+.boton-eliminar{
+  background-color:#384FD6 ;
+  margin-left: 30px;
+  padding: 0; /* Elimina el padding para que la imagen ocupe todo */
+  align-items: center; /* Centra verticalmente */
+justify-content: center; /* Centra horizontalmente */
 
 }
-.tablita {
-  width: 100%; /* Usa todo el ancho */
-  max-height: 70vh; /* Ajusta según necesites */
-  overflow-y: auto; /* Desplazamiento si hay demasiados datos */
-  margin-top: 10px; /* Espacio entre el buscador y la tabla */
+.icono_editar{
+  height: 20px;
+  width: 20px;
+}
+.icono_eliminar{
+  height: 20px;
+  width: 20px;
+}
+
+/*Ventana Emergente*/
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: F7F7F7; /* Fondo oscuro transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-color:565E6C ;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+.boton-cerrar {
+  width: 76px;
+  height: 37;
+  margin-right: 50px;
+}
+.boton-si{
+  background-color: #384FD6;
+  border-color: #384FD6;
+  color: white;
+  width: 76px;
+  height: 37;
 }

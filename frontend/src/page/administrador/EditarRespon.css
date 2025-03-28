@@ -9,7 +9,7 @@
  
 .frame2-roles-responsablede-gestin-agregar-responsable-frame2-roles-responsablede-gestin-agregar-responsable {
   width: 1458px;
-  height: 1241px;
+  height: 750px;
   display: flex;
   overflow: hidden;
   position: relative;
@@ -340,7 +340,7 @@
   align-items: flex-start;
   flex-shrink: 0;
   border-radius: 15px;
-  background-color: rgba(55, 79, 214, 1);
+  background-color:#071d8f;
 }
  
 .frame2-roles-responsablede-gestin-agregar-responsable-text22 {
@@ -780,4 +780,3 @@
   border-color: rgba(0, 0, 0, 0);
   border-radius: 2px;
 }
-  

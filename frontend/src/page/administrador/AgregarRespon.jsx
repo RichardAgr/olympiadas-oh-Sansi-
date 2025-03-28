@@ -1,9 +1,7 @@
-import { useState } from "react"; // Importar estado
+import React, { useState } from 'react';
 import "./AgregarRespon.css";
 import { Helmet } from "react-helmet";
-import logo from "../../assets/icono_oh_sansi.svg";
-import notificacion from "../../assets/notificacion.svg";
-import user from "../../assets/icon_user.svg";
+
 import VentanaEmergente from './VentanaEmergente';
 
 function RegistrarOrganizador() {
@@ -32,11 +30,6 @@ function RegistrarOrganizador() {
         <title>exported project</title>
       </Helmet>
       <div className="frame2-roles-responsablede-gestin-agregar-responsable-frame2-roles-responsablede-gestin-agregar-responsable">
-        <img
-          src="/external/rectangle31984-fnid-200h.png"
-          alt="Rectangle31984"
-          className="frame2-roles-responsablede-gestin-agregar-responsable-rectangle3"
-        />
         <span className="frame2-roles-responsablede-gestin-agregar-responsable-text10">
           Contáctate con
         </span>
@@ -46,18 +39,7 @@ function RegistrarOrganizador() {
         <span className="frame2-roles-responsablede-gestin-agregar-responsable-text12">
           Responsables del evento
         </span>
-        <div className="frame2-roles-responsablede-gestin-agregar-responsable-frameiconfacebookicon">
-          <img
-            src="/external/vector1984-vv3.svg"
-            alt="Vector1984"
-            className="frame2-roles-responsablede-gestin-agregar-responsable-vector10"
-          />
-          <img
-            src="/external/vector1984-a65q.svg"
-            alt="Vector1984"
-            className="frame2-roles-responsablede-gestin-agregar-responsable-vector11"
-          />
-        </div>
+        
         <div className="frame2-roles-responsablede-gestin-agregar-responsable-frame21">
           <span className="frame2-roles-responsablede-gestin-agregar-responsable-text13">
             Registrar Nuevo Responsable de Gestión
@@ -132,56 +114,9 @@ function RegistrarOrganizador() {
           />
         )}
 
-        <div className="frame2-roles-responsablede-gestin-agregar-responsable-container2">
-          <div className="frame2-roles-responsablede-gestin-agregar-responsable-image">
-            <div className="frame2-roles-responsablede-gestin-agregar-responsable-group10">
-              <div className="frame2-roles-responsablede-gestin-agregar-responsable-group11">
-                <div className="frame2-roles-responsablede-gestin-agregar-responsable-group12">
-                  <div className="frame2-roles-responsablede-gestin-agregar-responsable-group13">
-                    <img src={logo} alt="Logo svg" width="36" height="36" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <span className="frame2-roles-responsablede-gestin-agregar-responsable-text23">
-            O! SanSi
-          </span>
-          <button className="frame2-roles-responsablede-gestin-agregar-responsable-text24">
-            Roles
-          </button>
-          <div className="frame2-roles-responsablede-gestin-agregar-responsable-frame">
-            <button className="frame2-roles-responsablede-gestin-agregar-responsable-text25">
-              Inicio
-            </button>
-          </div>
-          <button className="frame2-roles-responsablede-gestin-agregar-responsable-button21">
-            <span className="frame2-roles-responsablede-gestin-agregar-responsable-text26">
-              Admin
-            </span>
-            <img src={user} alt="User svg" width="25" height="25" />
-          </button>
-          <div className="frame2-roles-responsablede-gestin-agregar-responsable-notificationalarm2androidphonemobiledevicesmartpho1">
-            <div className="frame2-roles-responsablede-gestin-agregar-responsable-notificationalarm2androidphonemobiledevicesmartpho2">
-              <img src={notificacion} alt="Notificacion svg" width="20" height="20" />
-              <img
-                src="/external/vector32127-xe5.svg"
-                alt="Vector32127"
-                className="frame2-roles-responsablede-gestin-agregar-responsable-vector3"
-              />
-            </div>
-          </div>
-          <button className="frame2-roles-responsablede-gestin-agregar-responsable-text27">
-            Evento
-          </button>
-          <button className="frame2-roles-responsablede-gestin-agregar-responsable-text28">
-            Competidores
-          </button>
-        </div>
       </div>
     </div>
   );
 }
 
 export default RegistrarOrganizador;
-

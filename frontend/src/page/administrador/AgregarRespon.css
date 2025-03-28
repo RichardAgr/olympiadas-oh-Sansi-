@@ -1,9 +1,3 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* Evita el scroll innecesario */
-}
 .frame2-roles-responsablede-gestin-agregar-responsable-container1 {
   width: 100%;
   display: flex;
@@ -14,8 +8,7 @@ html, body {
 }
  
 .frame2-roles-responsablede-gestin-agregar-responsable-frame2-roles-responsablede-gestin-agregar-responsable {
-  width: 1458px;
-  height: 1241px;
+ 
   display: flex;
   overflow: hidden;
   position: relative;
@@ -346,7 +339,7 @@ html, body {
   align-items: flex-start;
   flex-shrink: 0;
   border-radius: 15px;
-  background-color: rgba(55, 79, 214, 1);
+  background-color:#071d8f;
 }
  
 .frame2-roles-responsablede-gestin-agregar-responsable-text22 {
@@ -617,6 +610,8 @@ html, body {
   line-height: 22px;
   font-stretch: normal;
   text-decoration: none;
+  border: none;
+  background-color: transparent;
 }
  
 .frame2-roles-responsablede-gestin-agregar-responsable-frame {
@@ -646,6 +641,8 @@ html, body {
   line-height: 22px;
   font-stretch: normal;
   text-decoration: none;
+  border: none;
+  background-color: transparent;
 }
  
 .frame2-roles-responsablede-gestin-agregar-responsable-button21 {
@@ -751,6 +748,8 @@ html, body {
   line-height: 22px;
   font-stretch: normal;
   text-decoration: none;
+  border: none;
+  background-color: transparent;
 }
  
 .frame2-roles-responsablede-gestin-agregar-responsable-text28 {
@@ -767,6 +766,8 @@ html, body {
   line-height: 22px;
   font-stretch: normal;
   text-decoration: none;
+  border: none;
+  background-color: transparent;
 }
  
 .frame2-roles-responsablede-gestin-agregar-responsable-rectangle {
@@ -778,4 +779,3 @@ html, body {
   border-color: rgba(0, 0, 0, 0);
   border-radius: 2px;
 }
-  
