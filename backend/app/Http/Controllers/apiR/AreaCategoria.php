@@ -11,10 +11,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class AreaCategoria extends Controller{
-    public function getAreaConCategoria($id)
-    {
+    public function getAreaConCategoria($id){
         try {
-            // Find the area
             $area = Area::findOrFail($id);
             
             $categories = NivelCategoria::where('area_id', $id)
