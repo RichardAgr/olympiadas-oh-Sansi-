@@ -24,8 +24,8 @@ const AreasList = () => {
       setAreas(areas.filter((area) => area.area_id !== areaToDelete.area_id));
       setAreaToDelete(null);
       alert("Área eliminada correctamente ✅");
-    } catch (error) {
-      const msg = error.response?.data?.message || "Error al eliminar el área ❌";
+    } catch (error) { 
+      const msg = error.response?.data?.message || "Error al eliminar esta área ❌";
       alert(msg);
     }
   };
