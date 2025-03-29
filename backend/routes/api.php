@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AreaController;
+use App\Http\Controllers\Api\ResponsableGestionController;
 
 // Ruta para obtener el usuario autenticado (si usas auth)
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -11,3 +12,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Rutas RESTful para las áreas de competencia
 Route::apiResource('areas', AreaController::class);
+
+//Rutas RESTful para responsables de gestión
+Route::apiResource('responsables', ResponsableGestionController::class);
