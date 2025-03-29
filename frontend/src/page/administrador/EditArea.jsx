@@ -29,7 +29,7 @@ const EditArea = () => {
         costo: costo,
         estado: true,
       });
-      alert("Área actualizada con éxito");
+      alert("Área actualizada con éxito ✅");
       navigate("/admin/areas");
     } catch (error) {
       console.error("Error al actualizar el área:", error);
@@ -72,11 +72,11 @@ const EditArea = () => {
           <button
             type="button"
             onClick={() => navigate("/admin/areas")}
-            className="btn-cancelar"
+            className="btn-cancelarReg"
           >
             Cancelar
           </button>
-          <button type="submit" className="btn-guardar">
+          <button type="submit" className="btn-guardarReg">
             Guardar
           </button>
         </div>

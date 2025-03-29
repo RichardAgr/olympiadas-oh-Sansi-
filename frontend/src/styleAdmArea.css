@@ -175,6 +175,90 @@ body {
   cursor: default;
 }
 
+.roles-dropdown {
+  position: relative;
+}
+
+.dropdown-label {
+  cursor: pointer;
+  font-weight: 500;
+  color: #565E6C;
+  padding-bottom: 4px;
+  border-bottom: 3px solid transparent;
+  transition: border-bottom 0.3s, color 0.3s;
+}
+
+.roles-dropdown:hover .dropdown-label {
+  color: #061A8B;
+  border-bottom: 3px solid #061A8B;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  background-color: white;
+  border-radius: 8px;
+  list-style: none;
+  padding: 0; /* 🔧 corregido: quitamos el padding para que <a> lo maneje */
+  min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  animation: fadeIn 0.2s ease-in-out;
+  overflow: hidden; /* 🔧 evita desbordes */
+}
+
+.dropdown-menu li {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0; /* 🔧 aseguramos que no haya separación extra */
+  padding: 0; /* 🔧 quitamos padding del li */
+}
+
+/* Estilos para los enlaces */
+.dropdown-menu li a {
+  text-decoration: none;
+  color: #000000; /* negro siempre */
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  box-sizing: border-box;
+}
+
+/* Hover y seleccionado */
+.dropdown-menu li a:hover,
+.dropdown-menu li.active-option a {
+  background-color: #D9D9D9;
+  color: #000000 !important;
+}
+
+/* Quita subrayado heredado si lo hubiera */
+.dropdown-menu li a::after {
+  content: none !important;
+}
+
+/* Bordes redondeados suaves para el primer y último ítem */
+.dropdown-menu li:first-child a {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.dropdown-menu li:last-child a {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 .banner {
   position: relative;
@@ -350,7 +434,7 @@ body {
   border: none;
   background-color: #f0f0f0;
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: 20px;
   cursor: pointer;
   transition: background-color 0.3s;
   font-family: 'Comfortaa', sans-serif;
@@ -411,7 +495,7 @@ footer p {
   border: none;
   padding: 12px;
   border-radius: 8px;
-  width: 100%;
+  width: 95%;
 }
 
 .form-container textarea {
@@ -438,30 +522,21 @@ footer p {
   margin-top: 30px;
 }
 
-.btn-cancelar {
-  background-color: #dfe3e8;
-  padding: 10px 20px;
-  border-radius: 12px;
-  cursor: pointer;
-  border: none;
-  box-shadow: 1px 3px 5px rgba(0,0,0,0.1);
-}
 
-.btn-guardar {
-  background-color: #3e5dff;
+.btn-guardarReg {
+  background-color: #384FD6;
   color: #fff;
-  padding: 10px 30px;
-  border-radius: 12px;
+  padding: 10px 50px;
+  border-radius: 20px;
   border: none;
   cursor: pointer;
   box-shadow: 1px 3px 5px rgba(0,0,0,0.2);
 }
-
-.btn-cancelar {
+.btn-cancelarReg {
   background-color: #DEE1E6;
   color: #565E6C;
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: 10px 50px;
+  border-radius: 20px;
   border: none;
   font-weight: 500;
   cursor: pointer;
@@ -469,25 +544,14 @@ footer p {
   transition: all 0.3s;
 }
 
-.btn-cancelar:hover {
+.btn-cancelarReg:hover {
   background-color: #cfd4db;
   transform: scale(1.05);
 }
 
-.btn-guardar {
-  background-color: #2D42C8;
-  color: white;
-  padding: 10px 22px;
-  border-radius: 10px;
-  border: none;
-  font-weight: 500;
-  cursor: pointer;
-  margin-left: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: all 0.3s;
-}
 
-.btn-guardar:hover {
+
+.btn-guardarReg:hover {
   background-color: #1f2e8f;
   transform: scale(1.05);
 }

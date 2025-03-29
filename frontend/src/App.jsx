@@ -1,14 +1,11 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import VRegistroOrg from "./page/administrador/AgregarRespon";
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  return <VRegistroOrg />;
 
-  return (
-    <>
-      <h1>No inicio el desarroyo</h1>
-    </>
-  )
 }
 
-export default App
+export default App;

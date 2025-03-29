@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../App.css";
 
+
 const AgregarArea = () => {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -44,7 +45,7 @@ const AgregarArea = () => {
           required
         />
 
-        <label>Costo de Inscripción</label>
+        <label>Costo (Bs)</label>
         <input
           type="number"
           value={costo}
@@ -60,11 +61,11 @@ const AgregarArea = () => {
           <button
             type="button"
             onClick={() => navigate("/admin/areas")}
-            className="btn-cancelar"
+            className="btn-cancelarReg"
           >
             Cancelar
           </button>
-          <button type="submit" className="btn-guardar">
+          <button type="submit" className="btn-guardarReg">
             Guardar
           </button>
         </div>

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Pencil, Trash2 } from "lucide-react";
-import ModalConfirmDelete from "../../components/ModalConfirmDelete"; // Importa el modal
+import ModalConfirmDelete from "../../components/ModalConfirmDelete";
 import "../../App.css";
 
 const AreasList = () => {
   const [areas, setAreas] = useState([]);
-  const [areaToDelete, setAreaToDelete] = useState(null); // Estado para el área a eliminar
+  const [areaToDelete, setAreaToDelete] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const areasPerPage = 3;
 
   useEffect(() => {
     axios
@@ -16,20 +18,31 @@ const AreasList = () => {
       .catch((error) => console.error("Error fetching areas:", error));
   }, []);
 
+  const indexOfLastArea = currentPage * areasPerPage;
+  const indexOfFirstArea = indexOfLastArea - areasPerPage;
+  const currentAreas = areas.slice(indexOfFirstArea, indexOfLastArea);
+  const totalPages = Math.ceil(areas.length / areasPerPage);
+
+  const goToPage = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
   const handleConfirmDelete = async () => {
-    if (!areaToDelete) return; 
-  
-    try { 
-      await axios.delete(`http://localhost:8000/api/areas/${areaToDelete.area_id}`);
+    if (!areaToDelete) return;
+
+    try {
+      await axios.delete(
+        `http://localhost:8000/api/areas/${areaToDelete.area_id}`
+      );
       setAreas(areas.filter((area) => area.area_id !== areaToDelete.area_id));
       setAreaToDelete(null);
       alert("Área eliminada correctamente ✅");
-    } catch (error) { 
-      const msg = error.response?.data?.message || "Error al eliminar esta área ❌";
-      alert(msg);
+    } catch (error) {
+      console.error("Error al eliminar el área:", error);
+      alert("Hubo un error al eliminar el área ❌");
     }
   };
-  
 
   return (
     <div className="areas-list-container">
@@ -47,7 +60,7 @@ const AreasList = () => {
       </div>
 
       <div className="area-cards-container">
-        {areas.map((area) => (
+        {currentAreas.map((area) => (
           <div key={area.area_id} className="area-card">
             <div className="area-info">
               <h3>{area.nombre}</h3>
@@ -72,11 +85,17 @@ const AreasList = () => {
       </div>
 
       <div className="pagination">
-        <button>{"<"}</button>
-        <button className="active">1</button>
-        <button>2</button>
-        <button>3</button>
-        <button>{">"}</button>
+        <button onClick={() => goToPage(currentPage - 1)}>{"<"}</button>
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => goToPage(i + 1)}
+            className={currentPage === i + 1 ? "active" : ""}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button onClick={() => goToPage(currentPage + 1)}>{">"}</button>
       </div>
 
       {areaToDelete && (

@@ -1,0 +1,103 @@
+/* Formulario */
+.form-container {
+  width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Título del Formulario */
+h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+/* Sección de los títulos */
+.section-title {
+  font-size: 18px;
+  margin-top: 30px;
+  margin-bottom: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Contenedor para cada par de campos */
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  flex: 1;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  border-color: #384FD6;
+  box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
+}
+
+/* Grupo de botones (Guardar y Cancelar) */
+.button-groupResp {
+  display: flex;
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+  gap: 20px; /* Agrega espacio entre los botones */
+  margin-top: 30px;
+}
+
+/* Estilo para el botón "Guardar" */
+.btn-guardarResp {
+  background-color: #384FD6;
+  color: #fff;
+  padding: 10px 50px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 1px 3px 5px rgba(0,0,0,0.2);
+}
+
+/* Estilo para el botón "Cancelar" */
+.btn-cancelarResp {
+  background-color: #DEE1E6;
+  color: #565E6C;
+  padding: 10px 50px;
+  border-radius: 20px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+}
+
+/* Hover para el botón "Cancelar" */
+.btn-cancelarResp:hover {
+  background-color: #cfd4db;
+  transform: scale(1.05);
+}
+
+/* Hover para el botón "Guardar" */
+.btn-guardarResp:hover {
+  background-color: #1f2e8f;
+  transform: scale(1.05);
+}

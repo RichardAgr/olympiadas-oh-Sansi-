@@ -29,8 +29,10 @@ const HomeAdmin = () => {
           <span>Costos de inscripción</span>
         </div>
         <div className="card inactive">
+          <Link to= "/admin/verAreasRegistradas" className="card">
           <img src="https://via.placeholder.com/100" alt="Áreas registradas" />
           <span>Ver Áreas Registradas</span>
+          </Link>
         </div>
       </div>
 
