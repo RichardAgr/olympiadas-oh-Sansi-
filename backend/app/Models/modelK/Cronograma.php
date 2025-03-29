@@ -13,14 +13,14 @@ class Cronograma extends Model{
     protected $primaryKey = 'cronograma_id';
     
     protected $fillable = [
+        'competencia_id',
         'area_id',
-        'nivel_categoria_id',
-        'nombre',
+        'nombre_evento',
         'descripcion',
         'fecha_inicio',
         'fecha_fin',
-        'costo',
         'tipo_evento',
+        'anio_olimpiada'
     ];
     
     protected $casts = [
@@ -33,32 +33,11 @@ class Cronograma extends Model{
         'deleted_at' => 'datetime',
     ];
     
-    public function area(){
-        return $this->belongsTo(Area::class, 'area_id', 'area_id');
-    }
-    
-    public function nivelCategoria(){
-        return $this->belongsTo(NivelCategoria::class, 'nivel_categoria_id', 'nivel_categoria_id');
-    }
-    
-    public function scopeActivos($query){
-        return $query->where('estado', true);
-    }
-    
-    public function scopeProximos($query){
-        return $query->where('fecha_inicio', '>', now());
-    }
-    
-    public function scopeEnCurso($query){
-        return $query->where('fecha_inicio', '<=', now())
-                     ->where('fecha_fin', '>=', now());
+    public function competencia(){
+        return $this->belongsTo(Competencia::class, 'competencia_id', 'competencia_id');
     }
 
-    public function scopeFinalizados($query){
-        return $query->where('fecha_fin', '<', now());
-    }
-    
-    public function scopePorTipoEvento($query, $tipo){
-        return $query->where('tipo_evento', $tipo);
+    public function area(){
+        return $this->belongsTo(Area::class, 'area_id', 'area_id');
     }
 }
