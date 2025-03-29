@@ -7,6 +7,7 @@ import EditArea from "../page/administrador/EditArea";
 import VisualizarRegistro from "../page/administrador/VRegistroOrg";
 import AgregarRespon from "../page/administrador/AgregarRespon";
 import EditarRespon from "../page/administrador/EditarRespon";
+import AreasRegistradas from "../page/administrador/VerAreasRegistradas";
 const AppRouter = () => {
   return (
     <BrowserRouter>
@@ -16,6 +17,7 @@ const AppRouter = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<HomeAdmin />} />
           <Route path="areas" element={<AreasList />} />
+          <Route path="verAreasRegistradas" element={<AreasRegistradas />} />
           <Route path="areas/nueva" element={<AgregarArea />} />
           <Route path="areas/editar/:id" element={<EditArea />} />
           <Route path="visualizarRegistro" element={<VisualizarRegistro/>}/>

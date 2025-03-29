@@ -139,15 +139,19 @@ const exportarExcel = () => {
         </tbody>
       </table>
 
-      <div className="paginacion">
-        <button onClick={paginaAnterior} disabled={paginaActual === 1}>
-          ←
+      <div className="pagination">
+        <button onClick={() => setPaginaActual(paginaActual - 1)} disabled={paginaActual === 1}>{"<"}</button>
+         {Array.from({ length: totalPaginas }, (_, i) => (
+        <button
+             key={i}
+             onClick={() => setPaginaActual(i + 1)}
+            className={paginaActual === i + 1 ? "active" : ""}
+            >
+            {i + 1}
         </button>
-        <span>Página {paginaActual} de {totalPaginas}</span>
-        <button onClick={paginaSiguiente} disabled={paginaActual === totalPaginas}>
-          →
-        </button>
-      </div>
+        ))}
+        <button onClick={() => setPaginaActual(paginaActual + 1)} disabled={paginaActual === totalPaginas}>{">"}</button>
+    </div>
     </div>
         
     </div>

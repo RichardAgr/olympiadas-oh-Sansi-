@@ -113,13 +113,13 @@ function RegistrarOrganizador() {
             <span className="frame2-roles-responsablede-gestin-agregar-responsable-text20">
               Datos del Responsable
             </span>
-            <Link
-            to="/admin/visualizarRegistro">
-            <button className="frame2-roles-responsablede-gestin-agregar-responsable-excel-button1">
+            <Link to="/admin/visualizarRegistro">
+              <button className="frame2-roles-responsablede-gestin-agregar-responsable-excel-button1">
               <span className="frame2-roles-responsablede-gestin-agregar-responsable-text21">
                 Cancelar
               </span>
-            </button></Link>
+              </button>
+              </Link>
           </div>
           <button className="frame2-roles-responsablede-gestin-agregar-responsable-excel-button2" onClick={abrirVentana}>
             <span className="frame2-roles-responsablede-gestin-agregar-responsable-text22">
