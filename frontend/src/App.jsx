@@ -1,14 +1,19 @@
-import { useState } from 'react'
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+import VRegistroFechas from './page/administrador/VRegistroFechas';
+import EditarFechaInscripcion from './page/administrador/EditarFechaInscripcion';
+import EditarFechaCompetencia from './page/administrador/EditarFechaCompetencia';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <h1>No inicio el desarroyo</h1>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<VRegistroFechas />} /> {/* Página de inicio */}
+      <Route path="/registro-fechas" element={<VRegistroFechas />} />
+      <Route path="/editar-fecha-inscripcion/:id" element={<EditarFechaInscripcion />} />
+      <Route path="/editar-fecha-competencia/:id" element={<EditarFechaCompetencia />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
+
+
