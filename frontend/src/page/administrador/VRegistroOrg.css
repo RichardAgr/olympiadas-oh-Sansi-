@@ -1,0 +1,155 @@
+
+/* 🔹 Contenedor del buscador */
+.buscador {
+  width: 100%;
+  display: flex;
+  justify-content: Top;
+  border:#f0f2f3;
+  background-color: #f0f2f3;
+  margin: 10px;
+}
+
+/* 🔹 Estilo del input */
+.buscador input {
+  width: 90%;
+  padding: 8px 12px;
+  background-color: #f0f2f3;
+  border: 1px solid #f0f2f3;
+  border-radius: 5px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.buscador input:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
+}
+.boton-buscar{
+  border: #f0f2f3;
+}
+
+.botones_excel_agregar{
+  margin-top: 10px;
+  display: flex;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+.boton-excel{
+  background-color: #384FD6;
+  color: white;
+  align-items: center;
+  gap: 8px;
+  display: flex; 
+  border-radius: 15px;
+  border-color: #384FD6;
+ 
+}
+.boton-addUser{
+  background-color: #384FD6;
+  color: white;
+  align-items: center;
+  gap: 8px;
+  display: flex; 
+  border-radius: 15px;
+  border-color: #384FD6;
+ 
+}
+.columna-responsable {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espacio entre el icono y el texto */
+}
+
+.icono-responsable {
+  width: 20px;
+  height: 20px;
+}
+
+h1 {
+  padding: 0;
+  margin: 0;
+}
+.paginacion {
+  text-align: center;
+  padding: 10px;
+  background-color: #f8f8f8; /* Opcional, para visualizar mejor */
+}
+.tabla {
+  width: 100%;
+  margin-bottom:20px;
+  border-collapse: collapse; /* Une los bordes para que se vea mejor */
+  
+}
+
+.tabla th, .tabla td {
+  border: 1px solid #ddd; /* Borde gris claro */
+  padding: 8px;
+  min-height: 50px; /* Ajusta la altura según necesites */
+  height: 50px;
+  text-align: center;
+  
+  
+}
+
+.tabla th {
+  background-color: #f2f2f2; /* Color de fondo para los encabezados */
+}
+
+.boton-editar{
+  background-color:#384FD6;
+  margin-left: 10px;
+  padding: 0; /* Elimina el padding para que la imagen ocupe todo */
+  align-items: center; /* Centra verticalmente */
+justify-content: center; /* Centra horizontalmente */
+}
+.boton-eliminar{
+  background-color:#384FD6 ;
+  margin-left: 30px;
+  padding: 0; /* Elimina el padding para que la imagen ocupe todo */
+  align-items: center; /* Centra verticalmente */
+justify-content: center; /* Centra horizontalmente */
+
+}
+.icono_editar{
+  height: 20px;
+  width: 20px;
+}
+.icono_eliminar{
+  height: 20px;
+  width: 20px;
+}
+
+/*Ventana Emergente*/
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: F7F7F7; /* Fondo oscuro transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-color:565E6C ;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+.boton-cerrar {
+  width: 76px;
+  height: 37;
+  margin-right: 50px;
+}
+.boton-si{
+  background-color: #384FD6;
+  border-color: #384FD6;
+  color: white;
+  width: 76px;
+  height: 37;
+}

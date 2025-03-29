@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import logo from '../assets/logo.png';
 import { UserCircle, Bell } from 'lucide-react'; 
-
+/**/ 
 const TopBar = () => {
   return (
     <nav className="topbar">
@@ -10,7 +10,8 @@ const TopBar = () => {
       </div>
       <ul className="topbar-menu">
         <li><Link to="/admin">Inicio</Link></li>
-        <li><a href="#">Roles</a></li>
+        <li><Link to="/admin/visualizarRegistro">Roles</Link>
+        </li>
         <li><a href="#">Competidores</a></li>
         <li><a href="#">Evento</a></li>
         <li>
