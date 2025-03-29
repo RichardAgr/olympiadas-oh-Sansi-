@@ -1,155 +1,173 @@
+.home-container {
+  padding: 40px 60px;
+  font-family: 'Comfortaa', sans-serif;
+}
 
-/* 🔹 Contenedor del buscador */
+/* Buscador */
 .buscador {
-  width: 100%;
   display: flex;
-  justify-content: Top;
-  border:#f0f2f3;
-  background-color: #f0f2f3;
-  margin: 10px;
+  align-items: center;
+  background-color: white;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.08);
+  margin: 20px 0;
 }
 
-/* 🔹 Estilo del input */
 .buscador input {
-  width: 90%;
-  padding: 8px 12px;
-  background-color: #f0f2f3;
-  border: 1px solid #f0f2f3;
-  border-radius: 5px;
+  width: 100%;
+  padding: 8px;
+  border: none;
   outline: none;
-  transition: all 0.3s ease-in-out;
+  background-color: transparent;
+  font-size: 15px;
 }
 
-.buscador input:focus {
-  border-color: #0056b3;
-  box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
-}
-.boton-buscar{
-  border: #f0f2f3;
+.boton-buscar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
 }
 
-.botones_excel_agregar{
-  margin-top: 10px;
+/* Botones principales */
+.botones_excel_agregar {
   display: flex;
-  gap: 40px;
-  margin-bottom: 20px;
+  gap: 20px;
+  margin-bottom: 25px;
 }
-.boton-excel{
+
+/* Botones principales */
+.boton-excel,
+.boton-addUser {
   background-color: #384FD6;
   color: white;
-  align-items: center;
-  gap: 8px;
-  display: flex; 
-  border-radius: 15px;
-  border-color: #384FD6;
- 
-}
-.boton-addUser{
-  background-color: #384FD6;
-  color: white;
-  align-items: center;
-  gap: 8px;
-  display: flex; 
-  border-radius: 15px;
-  border-color: #384FD6;
- 
-}
-.columna-responsable {
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
-  gap: 8px; /* Espacio entre el icono y el texto */
+  gap: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  text-decoration: none; 
 }
 
-.icono-responsable {
-  width: 20px;
-  height: 20px;
+.boton-excel:hover,
+.boton-addUser:hover {
+  transform: scale(1.03);
 }
 
-h1 {
-  padding: 0;
-  margin: 0;
+.icono-boton,
+.icono-boton2 {
+  width: 18px;
+  height: 18px;
 }
-.paginacion {
-  text-align: center;
-  padding: 10px;
-  background-color: #f8f8f8; /* Opcional, para visualizar mejor */
+
+
+/* Tabla */
+.contenedor-tabla {
+  overflow-x: auto;
 }
+
 .tabla {
   width: 100%;
-  margin-bottom:20px;
-  border-collapse: collapse; /* Une los bordes para que se vea mejor */
-  
-}
-
-.tabla th, .tabla td {
-  border: 1px solid #ddd; /* Borde gris claro */
-  padding: 8px;
-  min-height: 50px; /* Ajusta la altura según necesites */
-  height: 50px;
-  text-align: center;
-  
-  
+  border-collapse: collapse;
+  font-size: 15px;
+  margin-bottom: 20px;
 }
 
 .tabla th {
-  background-color: #f2f2f2; /* Color de fondo para los encabezados */
+  background-color: #f2f2f2;
+  padding: 14px;
+  text-align: center;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #ddd;
 }
 
-.boton-editar{
-  background-color:#384FD6;
-  margin-left: 10px;
-  padding: 0; /* Elimina el padding para que la imagen ocupe todo */
-  align-items: center; /* Centra verticalmente */
-justify-content: center; /* Centra horizontalmente */
-}
-.boton-eliminar{
-  background-color:#384FD6 ;
-  margin-left: 30px;
-  padding: 0; /* Elimina el padding para que la imagen ocupe todo */
-  align-items: center; /* Centra verticalmente */
-justify-content: center; /* Centra horizontalmente */
-
-}
-.icono_editar{
-  height: 20px;
-  width: 20px;
-}
-.icono_eliminar{
-  height: 20px;
-  width: 20px;
+.tabla td {
+  padding: 14px;
+  text-align: center;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
 }
 
-/*Ventana Emergente*/
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: F7F7F7; /* Fondo oscuro transparente */
+.tabla tbody tr {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Estado */
+.estado-activo {
+  color: #2ecc71;
+  font-weight: bold;
+}
+.estado-inactivo {
+  color: #888;
+  font-weight: bold;
+}
+
+/* Botones de íconos */
+.botones-tabla {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-color:565E6C ;
+  gap: 12px;
 }
 
-.modal {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
-  text-align: center;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-}
-.boton-cerrar {
-  width: 76px;
-  height: 37;
-  margin-right: 50px;
-}
-.boton-si{
+.boton-icono {
   background-color: #384FD6;
-  border-color: #384FD6;
-  color: white;
-  width: 76px;
-  height: 37;
+  border: none;
+  border-radius: 15px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
 }
+
+.boton-icono:hover {
+  transform: scale(1.05);
+}
+
+.icono-blanco {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+}
+
+/* Paginación */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  gap: 10px;
+}
+
+.pagination button {
+  background-color: #eee;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination button:hover {
+  background-color: #d9d9d9;
+}
+
+.pagination button.active {
+  background-color: #384FD6;
+  color: white;
+}
+

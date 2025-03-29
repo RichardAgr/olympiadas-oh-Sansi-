@@ -1,782 +1,103 @@
-.frame2-roles-responsablede-gestin-agregar-responsable-container1 {
-  width: 100%;
-  display: flex;
-  overflow: auto;
-  min-height: 100vh;
-  align-items: center;
-  flex-direction: column;
+/* Formulario */
+.form-container {
+  width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-frame2-roles-responsablede-gestin-agregar-responsable {
-  width: 1458px;
-  height: 750px;
-  display: flex;
-  overflow: hidden;
-  position: relative;
-  align-items: flex-start;
-  flex-shrink: 0;
-  background-color: rgba(255, 255, 255, 1);
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-rectangle3 {
-  top: 1079px;
-  left: 0px;
-  width: 1458px;
-  height: 162px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text10 {
-  top: 1110px;
-  left: 33px;
-  color: rgba(255, 255, 255, 1);
-  width: 264px;
-  height: auto;
-  position: absolute;
-  font-size: 20px;
-  font-style: Bold;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 700;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text11 {
-  top: 1142px;
-  left: 1084px;
-  color: rgba(255, 255, 255, 1);
-  width: 367px;
-  height: auto;
-  position: absolute;
-  font-size: 20px;
-  font-style: Light;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 300;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text12 {
-  top: 1110px;
-  left: 1084px;
-  color: rgba(255, 255, 255, 1);
-  width: 264px;
-  height: auto;
-  position: absolute;
-  font-size: 20px;
-  font-style: Bold;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 700;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-frameiconfacebookicon {
-  top: 1154px;
-  left: 33px;
-  width: 33px;
-  height: 33px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector10 {
-  top: 0px;
-  left: 0px;
-  width: 33px;
-  height: 33px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector11 {
-  top: 6.4453125px;
-  left: 9.732421875px;
-  width: 14px;
-  height: 27px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-frame21 {
-  top: 86px;
-  left: 316px;
-  width: 856px;
-  height: 900px;
-  display: flex;
-  overflow: hidden;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 0;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text13 {
-  top: 35px;
-  left: 22px;
-  color: rgba(0, 0, 0, 1);
-  width: 846px;
-  height: auto;
-  position: absolute;
-  font-size: 38px;
-  font-style: Bold;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 700;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-frame22 {
-  top: 89px;
-  left: 17px;
-  width: 839px;
-  height: 784px;
-  display: flex;
-  overflow: hidden;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 0;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text14 {
-  top: 39px;
-  left: 4px;
-  color: rgba(0, 0, 0, 1);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Medium;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 500;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-rectangle12 {
-  top: 67px;
-  left: 4px;
-  width: 364px;
-  height: 33px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-rectangle14 {
-  top: 132px;
-  left: 4px;
-  width: 364px;
-  height: 33px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-rectangle13 {
-  top: 67px;
-  left: 449px;
-  width: 364px;
-  height: 33px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text15 {
-  top: 39px;
-  left: 449px;
-  color: rgba(0, 0, 0, 1);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Medium;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 500;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text16 {
-  top: 106px;
-  left: 4px;
-  color: rgba(0, 0, 0, 1);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Medium;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 500;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text17 {
-  top: 244px;
-  left: 4px;
-  color: rgba(0, 0, 0, 1);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Medium;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 500;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-rectangle17 {
-  top: 284px;
-  left: 4px;
-  width: 364px;
-  height: 33px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-rectangle18 {
-  top: 284px;
-  left: 449px;
-  width: 364px;
-  height: 33px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text18 {
-  top: 244px;
-  left: 447px;
-  color: rgba(0, 0, 0, 1);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Medium;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 500;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text19 {
-  top: 204px;
-  left: 4px;
-  color: rgba(0, 0, 0, 1);
-  height: auto;
-  position: absolute;
-  font-size: 19px;
-  font-style: Bold;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 700;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text20 {
-  top: 7px;
-  left: 4px;
-  color: rgba(0, 0, 0, 1);
-  height: auto;
-  position: absolute;
-  font-size: 19px;
-  font-style: Bold;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 700;
-  line-height: 30px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-excel-button1 {
-  top: 425px;
-  left: 429px;
-  width: 176px;
-  height: 37px;
-  display: flex;
-  overflow: hidden;
-  position: absolute;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) ;
-  align-items: flex-start;
-  flex-shrink: 0;
-  border-radius: 15px;
-  background-color: rgba(222, 225, 230, 1);
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text21 {
-  top: 5px;
-  left: 59px;
-  color: rgba(0, 0, 0, 1);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Medium;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 500;
-  line-height: 28px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-excel-button2 {
-  top: 516px;
-  left: 654px;
-  width: 176px;
-  height: 37px;
-  display: flex;
-  overflow: hidden;
-  position: absolute;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) ;
-  align-items: flex-start;
-  flex-shrink: 0;
-  border-radius: 15px;
-  background-color:#071d8f;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text22 {
-  top: 5px;
-  left: 59px;
-  color: rgba(255, 255, 255, 1);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Medium;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 500;
-  line-height: 28px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-container2 {
-  top: 0px;
-  left: 0px;
-  width: 1440px;
-  height: 56px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 0;
-  border-color: rgba(0, 0, 0, 1);
-  background-color: rgba(255, 255, 255, 1);
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-image {
-  top: 10px;
-  left: 24px;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  overflow: hidden;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 0;
-  border-color: rgba(188, 193, 202, 1);
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group10 {
-  top: 1.6150016784667969px;
-  left: 2.308408737182617px;
-  width: 32.07630157470703px;
-  height: 32.77179718017578px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group11 {
-  top: 0px;
-  left: 0px;
-  width: 32.07630157470703px;
-  height: 32.77179718017578px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group12 {
-  top: 0px;
-  left: 0px;
-  width: 32.07630157470703px;
-  height: 32.77179718017578px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group13 {
-  top: 0px;
-  left: 0px;
-  width: 32.07630157470703px;
-  height: 32.77179718017578px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group14 {
-  top: 0.007701873779296875px;
-  left: 15.687823295593262px;
-  width: 16.388479232788086px;
-  height: 16.41840934753418px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector12 {
-  top: 0px;
-  left: 0px;
-  width: 16px;
-  height: 16px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group15 {
-  top: 16.358478546142578px;
-  left: 2.84902286529541px;
-  width: 12.842759132385254px;
-  height: 16.41152000427246px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector13 {
-  top: 0px;
-  left: 0px;
-  width: 13px;
-  height: 16px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group16 {
-  top: 0px;
-  left: 2.861806869506836px;
-  width: 12.863504409790039px;
-  height: 16.388477325439453px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector14 {
-  top: 0px;
-  left: 0px;
-  width: 13px;
-  height: 16px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group17 {
-  top: 0.6934261322021484px;
-  left: 12.151524543762207px;
-  width: 7.101528167724609px;
-  height: 6.4222002029418945px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector15 {
-  top: 0px;
-  left: 0px;
-  width: 7px;
-  height: 6px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group18 {
-  top: 12.814971923828125px;
-  left: 0px;
-  width: 6.422219276428223px;
-  height: 7.101528167724609px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector16 {
-  top: 0px;
-  left: 0px;
-  width: 6px;
-  height: 7px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group19 {
-  top: 16.381025314331055px;
-  left: 15.65429401397705px;
-  width: 16.41840934753418px;
-  height: 16.39077377319336px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector17 {
-  top: 0px;
-  left: 0px;
-  width: 16px;
-  height: 16px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group20 {
-  top: 12.844971656799316px;
-  left: 24.962438583374023px;
-  width: 6.422210693359375px;
-  height: 7.101528167724609px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector18 {
-  top: 0px;
-  left: 0px;
-  width: 6px;
-  height: 7px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-group21 {
-  top: 25.655885696411133px;
-  left: 12.121564865112305px;
-  width: 7.101528167724609px;
-  height: 6.422210693359375px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector19 {
-  top: 0px;
-  left: 0px;
-  width: 7px;
-  height: 6px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text23 {
-  top: 7px;
-  left: 70px;
-  color: rgba(0, 0, 0, 1);
-  height: auto;
-  position: absolute;
+
+/* Título del Formulario */
+h2 {
   font-size: 28px;
-  font-style: Bold;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 700;
-  line-height: 42px;
-  font-stretch: normal;
-  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 30px;
 }
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text24 {
-  top: 20px;
-  left: 1053px;
-  color: rgb(0, 0, 0);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Regular;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 400;
-  line-height: 22px;
-  font-stretch: normal;
-  text-decoration: none;
-  border: none;
-  background-color: transparent;
+
+/* Sección de los títulos */
+.section-title {
+  font-size: 18px;
+  margin-top: 30px;
+  margin-bottom: 12px;
+  font-weight: bold;
+  color: #333;
 }
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-frame {
-  top: 4px;
-  left: 972px;
-  width: 85px;
-  height: 52px;
+
+/* Contenedor para cada par de campos */
+.form-row {
   display: flex;
-  overflow: hidden;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 0;
-  border-radius: 6px;
-  background-color: rgba(0, 0, 0, 0);
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
 }
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text25 {
-  top: 15px;
-  color: rgb(0, 0, 0);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Regular;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 400;
-  line-height: 22px;
-  font-stretch: normal;
-  text-decoration: none;
-  border: none;
-  background-color: transparent;
+
+.form-group {
+  flex: 1;
+  margin-bottom: 15px;
 }
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-button21 {
-  top: 10px;
-  left: 1335px;
-  width: 105px;
-  height: 40px;
+
+.form-group label {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  border-color: #384FD6;
+  box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
+}
+
+/* Grupo de botones (Guardar y Cancelar) */
+.button-groupResp {
   display: flex;
-  overflow: hidden;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 0;
-  border-color: rgba(0, 0, 0, 0);
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 25px;
-  background-color: rgba(6, 26, 139, 1);
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+  gap: 20px; /* Agrega espacio entre los botones */
+  margin-top: 30px;
 }
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text26 {
-  top: 6px;
-  left: 47px;
-  color: rgba(255, 255, 255, 1);
-  width: 65px;
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Regular;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 400;
-  line-height: 28px;
-  font-stretch: normal;
-  text-decoration: none;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-icon {
-  top: 6px;
-  left: 11.785714149475098px;
-  width: 30px;
-  height: 28px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-notificationalarm2androidphonemobiledevicesmartpho1 {
-  top: 19px;
-  left: 1294px;
-  width: 21px;
-  height: 21px;
-  display: flex;
-  overflow: hidden;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 0;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-notificationalarm2androidphonemobiledevicesmartpho2 {
-  top: 0.75px;
-  left: 0.75px;
-  width: 19.125px;
-  height: 19.5px;
-  display: flex;
-  position: absolute;
-  align-items: flex-start;
-  flex-shrink: 1;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector20 {
-  top: 0px;
-  left: 11.625px;
-  width: 7px;
-  height: 7px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector2 {
-  top: 2.25px;
-  left: 0px;
-  width: 16px;
-  height: 14px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-vector3 {
-  top: 19.5px;
-  left: 6.75px;
-  width: 3px;
-  height: 1px;
-  position: absolute;
-}
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text27 {
-  top: 20px;
-  left: 1227px;
-  color: rgb(0, 0, 0);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Regular;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 400;
-  line-height: 22px;
-  font-stretch: normal;
-  text-decoration: none;
+
+/* Estilo para el botón "Guardar" */
+.btn-guardarResp {
+  background-color: #384FD6;
+  color: #fff;
+  padding: 10px 50px;
+  border-radius: 20px;
   border: none;
-  background-color: transparent;
+  cursor: pointer;
+  box-shadow: 1px 3px 5px rgba(0,0,0,0.2);
 }
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-text28 {
-  top: 20px;
-  left: 1112px;
-  color: rgb(0, 0, 0);
-  height: auto;
-  position: absolute;
-  font-size: 14px;
-  font-style: Regular;
-  text-align: left;
-  font-family: Comfortaa;
-  font-weight: 400;
-  line-height: 22px;
-  font-stretch: normal;
-  text-decoration: none;
+
+/* Estilo para el botón "Cancelar" */
+.btn-cancelarResp {
+  background-color: #DEE1E6;
+  color: #565E6C;
+  padding: 10px 50px;
+  border-radius: 20px;
   border: none;
-  background-color: transparent;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s;
 }
- 
-.frame2-roles-responsablede-gestin-agregar-responsable-rectangle {
-  top: 50px;
-  left: 1038px;
-  width: 69px;
-  height: 4px;
-  position: absolute;
-  border-color: rgba(0, 0, 0, 0);
-  border-radius: 2px;
+
+/* Hover para el botón "Cancelar" */
+.btn-cancelarResp:hover {
+  background-color: #cfd4db;
+  transform: scale(1.05);
+}
+
+/* Hover para el botón "Guardar" */
+.btn-guardarResp:hover {
+  background-color: #1f2e8f;
+  transform: scale(1.05);
 }

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import "./EditarRespon.css";
 import { Helmet } from "react-helmet";
 
-import VentanaEmergente from './VentanaEmergente';
 import { Link } from 'react-router-dom';
 
 function RegistrarOrganizador() {

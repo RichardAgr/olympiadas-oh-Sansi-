@@ -72,11 +72,11 @@ const EditArea = () => {
           <button
             type="button"
             onClick={() => navigate("/admin/areas")}
-            className="btn-cancelar"
+            className="btn-cancelarReg"
           >
             Cancelar
           </button>
-          <button type="submit" className="btn-guardar">
+          <button type="submit" className="btn-guardarReg">
             Guardar
           </button>
         </div>

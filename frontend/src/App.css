@@ -47,7 +47,7 @@ body {
     justify-content: space-around;
   }
   
-  .btn-eliminar {
+  .btn-eliminar2 {
     background-color: #0A2E8C;
     color: white;
     border: none;
@@ -57,11 +57,11 @@ body {
     font-weight: bold;
   }
   
-  .btn-eliminar:hover {
+  .btn-eliminar2:hover {
     background-color: #061f66;
   }
   
-  .btn-cancelar {
+  .btn-cancelar2 {
     background-color: #DEE1E6;
     border: none;
     padding: 8px 30px;
@@ -70,6 +70,8 @@ body {
     font-weight: bold;
   }
   
-  .btn-cancelar:hover {
+  .btn-cancelar2:hover {
     background-color: #cfd1d7;
   }
+
+  
