@@ -1,74 +1,73 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';  // Usamos useParams para obtener el id de la URL
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { es } from 'date-fns/locale';  // Importamos el idioma español de date-fns
+import { es } from 'date-fns/locale';
+import axiosInstance from "../../interceptor/interceptor";
+import { ENDPOINTS } from "../../api/constans/endpoints";
 import './EditarFechaCompetencia.css';
 
 const EditarFechaCompetencia = () => {
-  const { id } = useParams(); // Obtiene el id de la URL
-  const [competencia, setCompetencia] = useState(null);
   const [fechaCompetenciaInicio, setFechaCompetenciaInicio] = useState(null);
-  const [fechaCompetenciaFin, setFechaCompetenciaFin] = useState(null);
-  const navigate = useNavigate();  // Para navegación
-
-  // Aquí simulas la carga de datos, como si viniera de un API
-  const competencias = [
-    { id: 1, nombre: 'Fútbol', fechaCompetenciaInicio: new Date('2025-04-01'), fechaCompetenciaFin: new Date('2025-04-10') },
-    { id: 2, nombre: 'Baloncesto', fechaCompetenciaInicio: new Date('2025-04-05'), fechaCompetenciaFin: new Date('2025-04-15') },
-  ];
-
-  useEffect(() => {
-    const competenciaSeleccionada = competencias.find(competencia => competencia.id === parseInt(id)); // Busca la competencia con el id
-    if (competenciaSeleccionada) {
-      setCompetencia(competenciaSeleccionada);
-      setFechaCompetenciaInicio(competenciaSeleccionada.fechaCompetenciaInicio);
-      setFechaCompetenciaFin(competenciaSeleccionada.fechaCompetenciaFin);
-    }
-  }, [id]);
+  const navigate = useNavigate(); 
 
   // Función para retroceder a la página anterior
   const handleAtras = () => {
-    navigate('/registro-fechas');  // Aquí puedes colocar la ruta a la que quieres navegar
+    navigate('/registro-fechas');  
   };
 
   const handleGuardar = () => {
-    if (fechaCompetenciaInicio && fechaCompetenciaFin) {
-      // Redirigimos a la página de registro de fechas
-      navigate('/registro-fechas');
+    if (fechaCompetenciaInicio) {
+      // Convertimos la fecha a formato compatible con MySQL (YYYY-MM-DD HH:MM:SS)
+      const fechaFormatoMySQL = fechaCompetenciaInicio.toISOString().slice(0, 19).replace('T', ' ');
+  
+      const datosCompetencia = {
+        fecha_inicio: fechaFormatoMySQL,  // Fecha en formato compatible con MySQL
+        estado: 1,  // Usamos 1 para 'activo'
+      };
+  
+      // Realizamos la solicitud para guardar la fecha de competencia
+      axiosInstance.post(`${ENDPOINTS.COMPETENCIA}`, datosCompetencia)
+        .then(response => {
+          console.log("Fecha de competencia registrada correctamente:", response.data);
+          navigate('/registro-fechas');  // Redirigir a la página de registro de fechas
+        })
+        .catch(error => {
+          if (error.response) {
+            // Imprimir los errores específicos de validación
+            console.log("Errores de validación:", error.response.data.errors);
+            alert(`Ocurrió un error al guardar la fecha: ${error.response.data.message || JSON.stringify(error.response.data.errors)}`);
+          } else if (error.request) {
+            // Error cuando no se recibe respuesta del servidor
+            console.error("Error de red: No se recibió respuesta del servidor.");
+            alert("Error de red. No se recibió respuesta del servidor.");
+          } else {
+            // Error desconocido
+            console.error("Error desconocido:", error);
+            alert("Error de red o configuración del servidor.");
+          }
+        });
     } else {
-      alert('Selecciona ambas fechas');
+      alert('Selecciona la fecha');
     }
   };
 
-  if (!competencia) return <p>Cargando...</p>;
-
   return (
     <div className="editar-fecha-competencia">
-      <h2>Fecha de Competencia</h2>
-      <label>Competencia: {competencia.nombre}</label>
+      <h2>Registrar Fecha de Competencia</h2>
 
-      {/* Contenedor para las fechas alineadas lado a lado */}
       <div className="fecha-container">
         <div className="fecha-item">
-          <label>Inicia:</label>
+          <label>Fecha de inicio:</label>
           <DatePicker 
-            selected={fechaCompetenciaInicio || new Date()} 
+            selected={fechaCompetenciaInicio} 
             onChange={date => setFechaCompetenciaInicio(date)} 
-            locale={es}  // Establecer idioma español
-          />
-        </div>
-        <div className="fecha-item">
-          <label>Finaliza:</label>
-          <DatePicker 
-            selected={fechaCompetenciaFin || new Date()} 
-            onChange={date => setFechaCompetenciaFin(date)} 
-            locale={es}  // Establecer idioma español
+            locale={es}  
+            dateFormat="yyyy/MM/dd"  
           />
         </div>
       </div>
 
-      {/* Contenedor para los botones */}
       <div className="botones">
         <button className="boton-atras" onClick={handleAtras}>Atrás</button>
         <button className="boton-guardar" onClick={handleGuardar}>Guardar</button>

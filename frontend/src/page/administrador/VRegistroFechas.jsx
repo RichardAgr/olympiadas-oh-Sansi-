@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState, useEffect } from "react";
 import { Link } from "react-router-dom";  // Importamos Link
 import "react-datepicker/dist/react-datepicker.css";  // Estilos de date picker
 import "./VRegistroFechas.css";  // Importa los estilos específicos de la página
@@ -7,74 +7,74 @@ import notificacion from "../../assets/notificacion.svg";
 import user from "../../assets/icon_user.svg"; // Importa los iconos desde la carpeta assets
 import editarIcono from "../../assets/editar.svg";  // Cambiado el nombre aquí
 import eliminarIcono from "../../assets/eliminar.svg";  // Cambiado el nombre aquí
+import axiosInstance from "../../interceptor/interceptor";
+import { ENDPOINTS } from "../../api/constans/endpoints";
 
 const VRegistroFechas = () => {
-  // Estado para las áreas de competencia (predeterminadas)
-  const [areas, setAreas] = useState([
-    {
-     id: 1,
-     nombre: "Astronomia - Astrofisica",
-     fechaInscripcionInicio: new Date("2025-04-01"),
-     fechaInscripcionFin: new Date("2025-04-10"),
-     fechaCompetenciaInicio: new Date("2025-04-15"),
-     fechaCompetenciaFin: new Date("2025-04-20"),
-   },
-   {
-     id: 2,
-     nombre: "Biologia",
-     fechaInscripcionInicio: new Date("2025-04-05"),
-     fechaInscripcionFin: new Date("2025-04-15"),
-     fechaCompetenciaInicio: new Date("2025-04-18"),
-     fechaCompetenciaFin: new Date("2025-04-22"),
-   },
-   {
-     id: 3,
-     nombre: "Fisica",
-     fechaInscripcionInicio: null,
-     fechaInscripcionFin: null,
-     fechaCompetenciaInicio: null,
-     fechaCompetenciaFin: null,
-   },
-   {
-     id:4 ,
-     nombre: "Informatica",
-     fechaInscripcionInicio: new Date("2025-04-10"),
-     fechaInscripcionFin: new Date("2025-04-20"),
-     fechaCompetenciaInicio: new Date("2025-04-25"),
-     fechaCompetenciaFin: new Date("2025-04-30"),
-   },
-   {
-     id: 5,
-     nombre: "Matematicas",
-     fechaInscripcionInicio: null,
-     fechaInscripcionFin: null,
-     fechaCompetenciaInicio: null,
-     fechaCompetenciaFin: null,
-   },
-   {
-     id: 6,
-     nombre: "Quimica",
-     fechaInscripcionInicio: null,
-     fechaInscripcionFin: null,
-     fechaCompetenciaInicio: null,
-     fechaCompetenciaFin: null,
-   },
-   {
-     id: 7,
-     nombre: "Robotica",
-     fechaInscripcionInicio: null,
-     fechaInscripcionFin: null,
-     fechaCompetenciaInicio: null,
-     fechaCompetenciaFin: null,
-   },
-  ]);
-
+  // Estado para las áreas de competencia
+  const [areas, setAreas] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [fechaAEliminar, setFechaAEliminar] = useState(null);
   const [tipoFecha, setTipoFecha] = useState("");  // "inscripcion" o "competencia"
 
-  const areasFiltradas = areas.filter(area =>
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        // 🔹 Primero, obtener todas las áreas
+        const response = await axiosInstance.get(ENDPOINTS.GET_AREAS);
+        console.log("Respuesta completa de áreas:", response);
+  
+        if (Array.isArray(response.data)) {
+          setAreas(response.data); // ✅ Mantiene las áreas originales
+        } else {
+          console.error("La API no devolvió un array:", response.data);
+        }
+      } catch (error) {
+        console.error("Error al obtener áreas:", error);
+      }
+    };
+  
+    fetchAreas();
+  }, []);
+  
+  useEffect(() => {
+    const fetchFechas = async () => {
+      try {
+        // 🔹 Obtener todas las fechas registradas en la BD para cada área
+        const areasConFechas = await Promise.all(
+          areas.map(async (area) => {
+            try {
+              const cronogramaResponse = await axiosInstance.get(`${ENDPOINTS.GET_CRONOGRAMA}/${area.area_id}`);
+              const competenciaResponse = await axiosInstance.get(`${ENDPOINTS.GET_COMPETENCIA}/${area.area_id}`);
+  
+              return {
+                ...area,
+                fechaInscripcionInicio: cronogramaResponse.data?.fecha_inicio || new Date().toISOString(),
+                fechaInscripcionFin: cronogramaResponse.data?.fecha_fin || new Date().toISOString(),
+                fechaCompetenciaInicio: competenciaResponse.data?.fecha_inicio || new Date().toISOString(),
+              };
+            } catch (error) {
+              console.error(`Error al obtener fechas para el área ${area.area_id}:`, error);
+              return area; // ✅ Si hay error, devuelve el área sin modificarla
+            }
+          })
+        );
+  
+        setAreas(areasConFechas); // ✅ Mantiene las áreas y solo agrega las fechas
+      } catch (error) {
+        console.error("Error al obtener fechas:", error);
+      }
+    };
+  
+    if (areas.length > 0) {
+      fetchFechas();
+    }
+  }, [areas]); // ✅ Se ejecuta cuando `areas` ya ha sido cargado
+  
+  console.log("Estado actual de áreas:", areas);
+  
+  const areasFiltradas = areas.filter((area) =>
     area.nombre.toLowerCase().includes(busqueda.toLowerCase())
   );
 
@@ -83,27 +83,33 @@ const VRegistroFechas = () => {
     setFechaAEliminar(areaId);
     setShowModal(true);
   };
-
+  
   const confirmarEliminacion = () => {
     setAreas(areas.map(area => {
-      if (area.id === fechaAEliminar) {
+      if (area.area_id === fechaAEliminar) {
         if (tipoFecha === "inscripcion") {
           area.fechaInscripcionInicio = null;
           area.fechaInscripcionFin = null;
         } else if (tipoFecha === "competencia") {
           area.fechaCompetenciaInicio = null;
-          area.fechaCompetenciaFin = null;
+          
         }
       }
       return area;
     }));
     setShowModal(false);
   };
-
+  
   const cancelarEliminacion = () => {
     setShowModal(false);
   };
-
+  
+  const formatoFecha = (fecha) => {
+    // Si no hay fecha, mostramos la fecha actual en formato 0/00/0000
+    return fecha ? new Date(fecha).toLocaleDateString() : new Date().toLocaleDateString();
+  };
+  console.log(areasFiltradas);  // Agrega este log para revisar el contenido de areasFiltradas
+  
   return (
     <main className="contenedor">
       <header className="menu_superior">
@@ -125,9 +131,9 @@ const VRegistroFechas = () => {
           </div>
         </div>
       </header>
-
+  
       <h2>Registrar Fecha</h2>
-
+  
       <div className="barra_busqueda">
         <input
           type="text"
@@ -136,54 +142,50 @@ const VRegistroFechas = () => {
           placeholder="Buscar por área o categoría"
         />
       </div>
-
+  
       <div className="areas-table">
         <table>
           <thead>
             <tr>
               <th>Área</th>
               <th>Fecha Inscripción (Inicio - Fin)</th>
-              <th>Fecha Competencia (Inicio - Fin)</th>
+              <th>Fecha Competencia (Inicio)</th>
             </tr>
           </thead>
           <tbody>
             {areasFiltradas.map((area) => (
-              <tr key={area.id}>
+              <tr key={area.area_id}>
                 <td>{area.nombre}</td>
                 <td>
                   <div className="fechasInscripcion">
                     {area.fechaInscripcionInicio && area.fechaInscripcionFin ? (
-                      `${area.fechaInscripcionInicio.toLocaleDateString()} - ${area.fechaInscripcionFin.toLocaleDateString()}`
-                    ) : (
-                      "Sin Asignar"
-                    )}
+                      `${formatoFecha(area.fechaInscripcionInicio)} - ${formatoFecha(area.fechaInscripcionFin)}`
+                    ) : `${formatoFecha()} - ${formatoFecha()}`}
                   </div>
                   <div className="acciones">
-                    <Link to={`/editar-fecha-inscripcion/${area.id}`}>
-                      <button className="boton-editar">
-                        <img src={editarIcono} alt="Editar" className="icono_editar" />
-                      </button>
-                    </Link>
-                    <button className="boton-eliminar" onClick={() => handleEliminarFecha(area.id, "inscripcion")}>
+                      <Link to={`/editar-fecha-inscripcion/${area.area_id}`}>
+                        <button className="boton-editar">
+                          <img src={editarIcono} alt="Editar" className="icono_editar" />
+                        </button>
+                      </Link>
+                      <button className="boton-eliminar" onClick={() => handleEliminarFecha(area.area_id, "inscripcion")}>
                       <img src={eliminarIcono} alt="Eliminar" className="icono-eliminar" />
                     </button>
                   </div>
                 </td>
                 <td>
                   <div className="fechasCompetencias">
-                    {area.fechaCompetenciaInicio && area.fechaCompetenciaFin ? (
-                      `${area.fechaCompetenciaInicio.toLocaleDateString()} - ${area.fechaCompetenciaFin.toLocaleDateString()}`
-                    ) : (
-                      "Sin Asignar"
-                    )}
+                    {area.fechaCompetenciaInicio? (
+                      `${formatoFecha(area.fechaCompetenciaInicio)}`
+                    ) : `${formatoFecha()} `}
                   </div>
                   <div className="acciones">
-                    <Link to={`/editar-fecha-competencia/${area.id}`}>
+                    <Link to={`/editar-fecha-competencia/${area.area_id}`}>
                       <button className="boton-editar">
                         <img src={editarIcono} alt="Editar" className="icono_editar" />
                       </button>
                     </Link>
-                    <button className="boton-eliminar" onClick={() => handleEliminarFecha(area.id, "competencia")}>
+                    <button className="boton-eliminar" onClick={() => handleEliminarFecha(area.area_id, "competencia")}>
                       <img src={eliminarIcono} alt="Eliminar" className="icono-eliminar" />
                     </button>
                   </div>
@@ -193,7 +195,7 @@ const VRegistroFechas = () => {
           </tbody>
         </table>
       </div>
-
+  
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">

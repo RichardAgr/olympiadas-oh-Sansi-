@@ -1,74 +1,105 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';  // Usamos useParams para obtener el id de la URL
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { es } from 'date-fns/locale';  // Importamos el idioma español de date-fns
+import { es } from 'date-fns/locale';
+import axiosInstance from "../../interceptor/interceptor";
+import { ENDPOINTS } from "../../api/constans/endpoints";
 import './EditarFechaInscripcion.css';
 
 const EditarFechaInscripcion = () => {
-  const { id } = useParams(); // Obtiene el id de la URL
+  const { area_id } = useParams();
   const [area, setArea] = useState(null);
   const [fechaInscripcionInicio, setFechaInscripcionInicio] = useState(null);
   const [fechaInscripcionFin, setFechaInscripcionFin] = useState(null);
-  const navigate = useNavigate();  // Para navegación
-
-  // Aquí simulas la carga de datos, como si viniera de un API
-  const areas = [
-    { id: 1, nombre: 'Astronomía', fechaInscripcionInicio: new Date('2025-04-01'), fechaInscripcionFin: new Date('2025-04-10') },
-    { id: 2, nombre: 'Biología', fechaInscripcionInicio: new Date('2025-04-05'), fechaInscripcionFin: new Date('2025-04-15') },
-  ];
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const areaSeleccionada = areas.find(area => area.id === parseInt(id)); // Busca el área con el id
-    if (areaSeleccionada) {
-      setArea(areaSeleccionada);
-      setFechaInscripcionInicio(areaSeleccionada.fechaInscripcionInicio);
-      setFechaInscripcionFin(areaSeleccionada.fechaInscripcionFin);
+    if (area_id && !isNaN(area_id)) {
+      setLoading(true);
+      axiosInstance.get(`${ENDPOINTS.GET_AREAS}/${area_id}`)
+        .then(response => {
+          setArea(response.data);
+        })
+        .catch(error => {
+          console.error("Error al cargar el área:", error);
+          setError("Error al cargar el área.");
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setError("ID de área no válido.");
+      setLoading(false);
     }
-  }, [id]);
+  }, [area_id]);
 
-  // Función para retroceder a la página anterior
   const handleAtras = () => {
-    navigate('/registro-fechas');  // Aquí puedes colocar la ruta a la que quieres navegar
+    navigate('/registro-fechas');
   };
 
   const handleGuardar = () => {
     if (fechaInscripcionInicio && fechaInscripcionFin) {
-      // Redirigimos a la página de registro de fechas
-      navigate('/registro-fechas');
+      const fechaInscripcionInicioMySQL = fechaInscripcionInicio.toISOString().slice(0, 19).replace('T', ' ');
+      const fechaInscripcionFinMySQL = fechaInscripcionFin.toISOString().slice(0, 19).replace('T', ' ');
+
+      const datosCronograma = {
+        area_id: area_id,
+        competencia_id: area_id,  // Asignamos competencia_id = area_id automáticamente
+        fecha_inicio: fechaInscripcionInicioMySQL,
+        fecha_fin: fechaInscripcionFinMySQL,
+        tipo_evento: "Inscripción",
+        nombre_evento: "Inscripción General",
+        descripcion: "Descripción no proporcionada",
+        anio_olimpiada: new Date().getFullYear(),
+      };
+
+      console.log("Datos a enviar:", datosCronograma);
+
+      axiosInstance.post(ENDPOINTS.CRONOGRAMA, datosCronograma)
+        .then(response => {
+          console.log("Fecha guardada correctamente:", response.data);
+          navigate('/registro-fechas');
+        })
+        .catch(error => {
+          console.error("Error al guardar la fecha:", error.response?.data || error);
+          alert(`Ocurrió un error: ${JSON.stringify(error.response?.data)}`);
+        });
     } else {
       alert('Selecciona ambas fechas');
     }
   };
 
-  if (!area) return <p>Cargando...</p>;
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p>{error}</p>;
+  if (!area) return <p>Área no encontrada</p>;
 
   return (
     <div className="editar-fecha-inscripcion">
       <h2>Fecha de Inscripción</h2>
       <label>Área: {area.nombre}</label>
 
-      {/* Contenedor para las fechas alineadas lado a lado */}
       <div className="fecha-container">
         <div className="fecha-item">
           <label>Inicia:</label>
           <DatePicker 
-            selected={fechaInscripcionInicio || new Date()} 
+            selected={fechaInscripcionInicio} 
             onChange={date => setFechaInscripcionInicio(date)} 
-            locale={es}  // Establecer idioma español
+            locale={es}  
+            dateFormat="yyyy-MM-dd" 
           />
         </div>
         <div className="fecha-item">
           <label>Finaliza:</label>
           <DatePicker 
-            selected={fechaInscripcionFin || new Date()} 
+            selected={fechaInscripcionFin} 
             onChange={date => setFechaInscripcionFin(date)} 
-            locale={es}  // Establecer idioma español
+            locale={es}  
+            dateFormat="yyyy-MM-dd" 
           />
         </div>
       </div>
 
-      {/* Contenedor para los botones */}
       <div className="botones">
         <button className="boton-atras" onClick={handleAtras}>Atrás</button>
         <button className="boton-guardar" onClick={handleGuardar}>Guardar</button>

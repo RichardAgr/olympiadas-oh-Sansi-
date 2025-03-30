@@ -8,8 +8,8 @@ function App() {
     <Routes>
       <Route path="/" element={<VRegistroFechas />} /> {/* Página de inicio */}
       <Route path="/registro-fechas" element={<VRegistroFechas />} />
-      <Route path="/editar-fecha-inscripcion/:id" element={<EditarFechaInscripcion />} />
-      <Route path="/editar-fecha-competencia/:id" element={<EditarFechaCompetencia />} />
+      <Route path="/editar-fecha-inscripcion/:area_id" element={<EditarFechaInscripcion />} />
+      <Route path="/editar-fecha-competencia/:area_id" element={<EditarFechaCompetencia />} />
     </Routes>
   );
 }
