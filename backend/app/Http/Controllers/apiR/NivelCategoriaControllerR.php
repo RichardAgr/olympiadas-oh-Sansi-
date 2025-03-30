@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
-class NivelCategoriaController extends Controller{
+class NivelCategoriaControllerR extends Controller{
 
     public function updateCategoria(Request $request, $id){
         try {

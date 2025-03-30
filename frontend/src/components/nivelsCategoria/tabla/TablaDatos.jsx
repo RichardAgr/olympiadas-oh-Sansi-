@@ -241,16 +241,9 @@ import {
     navigate("/crearCategoria")
   }
 
-
-  // Función para guardar los cambios
-  const handleSave = () => {
-    console.log("Guardar cambios")
-    // Aquí iría la lógica para guardar los cambios
-  }
-
-  // Función para cancelar los cambios
+  // Función para retornar
   const handleCancel = () => {
-    console.log("Cancelar cambios")
+    console.log("Retornar Pagina")
     // Aquí iría la lógica para cancelar los cambios
   }
 
@@ -288,10 +281,7 @@ import {
 
       <div className="footer-buttons">
         <Button variant="outlined" onClick={handleCancel} className="cancel-button">
-          Cancelar
-        </Button>
-        <Button variant="contained" onClick={handleSave} className="save-button">
-          Guardar
+            Atras
         </Button>
       </div>
       <DialogEliminar

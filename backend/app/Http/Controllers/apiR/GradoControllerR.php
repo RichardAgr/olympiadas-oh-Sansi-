@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
-class GradoController extends Controller{
+class GradoControllerR extends Controller{
     public function eliminarGradosdeCategoria($id){
         try {
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\apiR;
 use Illuminate\Http\Request;
 use App\Models\modelR\Area;
 
-class AreaController extends Controller{
+class AreaControllerR extends Controller{
     public function show($id){
         $area = Area::find($id);
         

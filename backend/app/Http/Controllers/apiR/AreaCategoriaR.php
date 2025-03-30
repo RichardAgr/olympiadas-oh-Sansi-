@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
-class AreaCategoria extends Controller{
+class AreaCategoriarR extends Controller{
     public function getAreaConCategoria($id){
         try {
             $area = Area::findOrFail($id);
