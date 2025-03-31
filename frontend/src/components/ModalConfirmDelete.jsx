@@ -7,6 +7,7 @@ const ModalConfirmDelete = ({ areaName, responsable, onConfirm, onCancel }) => {
     ? `${responsable.nombres} ${responsable.apellidos}`
     : areaName;
 
+    
   return (
     <div className="modal-overlay">
       <div className="modal">
