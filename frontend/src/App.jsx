@@ -9,15 +9,7 @@ import EditarGrado from './components/nivelsCategoria/tabla/customsTablaDatos/fl
 
 function App() {
   return (
-    <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<HU2nivelesCategoria/>} /> 
-            <Route path='/crearGrado' element={<CrearGrado/>} /> 
-            <Route path='/editCategoria/:id' element={<EditarCategoria/>} /> 
-            <Route path='/editGrado/:id' element={<EditarGrado/>} /> 
-            <Route path='/crearCategoria' element={<CrearCategoria/>} /> 
-          </Routes>
-    </BrowserRouter>
+    
   )
 }
 
