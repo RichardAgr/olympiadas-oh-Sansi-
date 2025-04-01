@@ -21,7 +21,7 @@ const AppRouter = () => {
           <Route path="areas/nueva" element={<AgregarArea />} />
           <Route path="areas/editar/:id" element={<EditArea />} />
           <Route path="visualizarRegistro" element={<VisualizarRegistro/>}/>
-          <Route path="visualizarRegistro/editarRegistro" element={<EditarRespon/>}/>
+          <Route path="visualizarRegistro/editarRegistro/:id" element={<EditarRespon/>}/>
           <Route path="visualizarRegistro/agregarRegistro" element={<AgregarRespon/>}/>
         </Route>
       </Routes>
