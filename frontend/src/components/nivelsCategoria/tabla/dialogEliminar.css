@@ -1,0 +1,87 @@
+/* customEliminarGenerico.css */
+.dialog-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+  }
+  
+  .close-button {
+    position: absolute !important;
+    right: 8px;
+    top: 8px;
+  }
+  
+  .warning-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .container-data{
+    margin-left: 12%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  
+  .warning-icon {
+    color: #f44336;
+    margin-right: 8px;
+    font-size: 24px !important;
+  }
+  
+  .titleDialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    width: 100%;
+  }
+  
+  .details-paper {
+    padding: 16px;
+    background-color: #f5f5f5 !important;
+    margin-top: 16px;
+    border-radius: 4px;
+  }
+  
+  .container-data {
+    margin-top: 8px;
+  }
+  
+  .detail-row {
+    display: flex;
+    width: 80%;
+    justify-content: space-between;
+    margin: 3px;
+  }
+
+  .detail-row p{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .detail-label {
+    font-weight: bold !important;
+    min-width: 120px;
+  }
+  
+  .error-message {
+    display: flex;
+    align-items: center;
+    margin-top: 16px;
+    color: #f44336;
+  }
+  
+  .error-icon {
+    margin-right: 8px;
+  }
+  
+  .dialog-actions {
+    padding: 16px 24px !important;
+    display: flex;
+    justify-content: flex-end;
+  }
