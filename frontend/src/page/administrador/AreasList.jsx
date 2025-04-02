@@ -110,4 +110,3 @@ const AreasList = () => {
 };
 
 export default AreasList;
-

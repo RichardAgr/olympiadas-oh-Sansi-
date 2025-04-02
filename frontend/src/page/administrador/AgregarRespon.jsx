@@ -1,144 +1,118 @@
-import React, { useState } from 'react'; 
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Asegúrate de que useNavigate esté importado
 import "./AgregarRespon.css";
-import { Helmet } from "react-helmet";
-import VentanaEmergente from './VentanaEmergente';
-import { Link } from 'react-router-dom';
 
-function RegistrarOrganizador() {
-  const [mostrarVentana, setMostrarVentana] = useState(false);
+function AgregarRespon() {
+  // Estados para cada campo
   const [nombres, setNombres] = useState("");
   const [apellidos, setApellidos] = useState("");
-  const [carnet, setCarnet] = useState("");
+  const [ci, setCi] = useState("");
   const [correo, setCorreo] = useState("");
   const [telefono, setTelefono] = useState("");
-  
-  const abrirVentana = () => {
-    setMostrarVentana(true);
+
+  // Inicializa useNavigate para la navegación
+  const navigate = useNavigate();
+
+  // Función para manejar el envío del formulario
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Enviar los datos al backend
+      await axios.post("http://127.0.0.1:8000/api/responsables", {
+        nombres,
+        apellidos,
+        ci,
+        correo_electronico: correo,
+        telefono,
+      });
+
+      // Al éxito, mostrar mensaje y redirigir a la vista de registros
+      alert("Responsable de Gestión registrado con éxito ✅");
+      navigate("/admin/visualizarRegistro");
+    } catch (error) {
+      console.error("Error al registrar al responsable:", error);
+      alert("Hubo un error al registrar al responsable ❌");
+    }
   };
 
-  const confirmarAccion = () => {
-    console.log("Acción confirmada.");
-    setMostrarVentana(false);
-  };
-
-  const cancelarAccion = () => {
-    setMostrarVentana(false);
-  };
-
-  const cerrarVentana = () => {
-    setMostrarVentana(false);
+  // Función para redirigir al cancelar
+  const handleCancel = () => {
+    navigate("/admin/visualizarRegistro");
   };
 
   return (
-    <div className="frame2-roles-responsablede-gestin-agregar-responsable-container1">
-      <Helmet>
-        <title>exported project</title>
-      </Helmet>
-      <div className="frame2-roles-responsablede-gestin-agregar-responsable-frame2-roles-responsablede-gestin-agregar-responsable">
-        <span className="frame2-roles-responsablede-gestin-agregar-responsable-text10">
-          Contáctate con
-        </span>
-        <span className="frame2-roles-responsablede-gestin-agregar-responsable-text11">
-          Facultad de Ciencias y Tecnología (UMSS)
-        </span>
-        <span className="frame2-roles-responsablede-gestin-agregar-responsable-text12">
-          Responsables del evento
-        </span>
+    <div className="form-container">
+      <h2>Registrar Nuevo Responsable de Gestión</h2>
+      
+      <form onSubmit={handleSubmit}>
+        <div className="section-title">Datos del Responsable</div>
         
-        <div className="frame2-roles-responsablede-gestin-agregar-responsable-frame21">
-          <span className="frame2-roles-responsablede-gestin-agregar-responsable-text13">
-            Registrar Nuevo Responsable de Gestión
-          </span>
-          <div className="frame2-roles-responsablede-gestin-agregar-responsable-frame22">
-            <span className="frame2-roles-responsablede-gestin-agregar-responsable-text14">
-              Nombres
-            </span>
-            <input
-              type="text"
-              className="frame2-roles-responsablede-gestin-agregar-responsable-rectangle12"
-              placeholder="Ingresa texto aquí"
-              value={nombres} // Asegúrate de definir el estado correspondiente
-              onChange={(e) => setNombres(e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, ""))} // Permite solo letras y espacios
-              required
+        <div className="form-row">
+          <div className="form-group">
+            <label>Nombre</label>
+            <input 
+              type="text" 
+              value={nombres} 
+              onChange={(e) => setNombres(e.target.value)} 
+              required 
             />
-            <span className="frame2-roles-responsablede-gestin-agregar-responsable-text15">
-              Apellidos
-            </span>
-            <input
-              type="number"
-              className="frame2-roles-responsablede-gestin-agregar-responsable-rectangle14"
-              placeholder="Ingresa número aquí"
-              value={carnet} // Asegúrate de tener un estado para esto
-              onChange={(e) => setCarnet(e.target.value.replace(/[^0-9]/g, ""))} // Permite solo números
-              required
-            />
-            <span className="frame2-roles-responsablede-gestin-agregar-responsable-text16">
-              Carnet de Identidad
-            </span>
-            <input
-              type="text" // Manteniendo el tipo como 'text' para permitir letras
-              className="frame2-roles-responsablede-gestin-agregar-responsable-rectangle13"
-              placeholder="Ingresa texto aquí"
-              value={apellidos} // Asegúrate de tener un estado para esto
-              onChange={(e) => setApellidos(e.target.value.replace(/[^a-zA-Z\s]/g, ""))} // Permite solo letras y espacios
-              required
-            />
-            <span className="frame2-roles-responsablede-gestin-agregar-responsable-text17">
-              Correo electrónico
-            </span>
-            <input
-              type="email"
-              className="frame2-roles-responsablede-gestin-agregar-responsable-rectangle17"
-              placeholder="Ingresa correo electronico aquí"
-              value={correo} // Asegúrate de tener un estado para esto
-              onChange={(e) => setCorreo(e.target.value)} // Maneja el cambio normalmente
-              required
-            />
-            <span className="frame2-roles-responsablede-gestin-agregar-responsable-text18">
-              Teléfono
-            </span>
-            <input
-              type="tel"
-              className="frame2-roles-responsablede-gestin-agregar-responsable-rectangle18"
-              placeholder="Ingresa número aquí"
-              value={telefono} // Asegúrate de tener un estado para esto
-              onChange={(e) => setTelefono(e.target.value.replace(/[^0-9]/g, ""))} // Permite solo números
-              pattern="[0-9]{7,10}" // Asegura que el número tenga entre 7 y 10 dígitos
-              required
-            />
-            <span className="frame2-roles-responsablede-gestin-agregar-responsable-text19">
-              Información de Contacto
-            </span>
-            <span className="frame2-roles-responsablede-gestin-agregar-responsable-text20">
-              Datos del Responsable
-            </span>
-            <Link to="/admin/visualizarRegistro">
-            <button className="frame2-roles-responsablede-gestin-agregar-responsable-excel-button1">
-              <span className="frame2-roles-responsablede-gestin-agregar-responsable-text21">
-                Cancelar
-              </span>
-            </button></Link>
           </div>
-          <button className="frame2-roles-responsablede-gestin-agregar-responsable-excel-button2" onClick={abrirVentana}>
-            <span className="frame2-roles-responsablede-gestin-agregar-responsable-text22">
-              Guardar
-            </span>
-          </button>
+          
+          <div className="form-group">
+            <label>Apellidos</label>
+            <input 
+              type="text" 
+              value={apellidos} 
+              onChange={(e) => setApellidos(e.target.value)} 
+              required 
+            />
+          </div>
         </div>
 
-        {/* Ventana emergente */}
-        {mostrarVentana && (
-          <VentanaEmergente
-            mensaje="¿Está seguro de que desea guardar los cambios?"
-            onConfirm={confirmarAccion}
-            onCancel={cancelarAccion}
-            onClose={cerrarVentana}
-          />
-        )}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Carnet de Identidad</label>
+            <input 
+              type="text" 
+              value={ci} 
+              onChange={(e) => setCi(e.target.value)} 
+              required 
+            />
+          </div>
+        </div>
 
-      </div>
+        <div className="section-title">Información de Contacto</div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label>Correo electrónico</label>
+            <input 
+              type="email" 
+              value={correo} 
+              onChange={(e) => setCorreo(e.target.value)} 
+              required 
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Teléfono</label>
+            <input 
+              type="tel" 
+              value={telefono} 
+              onChange={(e) => setTelefono(e.target.value)} 
+              required 
+            />
+          </div>
+        </div>
+
+        <div className="button-groupResp">
+          <button type="button" className="btn-cancelarResp" onClick={handleCancel}>Cancelar</button>
+          <button type="submit" className="btn-guardarResp">Guardar</button>
+        </div>
+      </form>
     </div>
   );
 }
 
-export default RegistrarOrganizador;
+export default AgregarRespon;

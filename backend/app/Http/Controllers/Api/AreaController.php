@@ -85,9 +85,24 @@ class AreaController extends Controller
         ]);
     }
 
-    /**
-     * Eliminar un área.
-     * DELETE /api/areas/{id}
+    /* public function destroy($id)
+        {
+    $area = Area::findOrFail($id);
+
+    // Verifica si tiene relaciones activas
+    if ($area->categorias()->exists() || $area->inscripciones()->exists()) {
+        return response()->json([
+            'message' => 'No se puede eliminar esta área porque tiene categorías o inscripciones activas asociadas.'
+        ], 409); // Código 409 = conflicto
+    }
+
+    $area->delete();
+
+    return response()->json([
+        'message' => 'Área eliminada exitosamente'
+    ]);
+    }
+
      */
     public function destroy($id)
     {
@@ -98,5 +113,7 @@ class AreaController extends Controller
             'message' => 'Área eliminada exitosamente '
         ]);
     }
+
+
 }
 
