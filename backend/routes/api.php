@@ -4,11 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AreaController;
 use App\Http\Controllers\Api\ResponsableGestionController;
+use App\Http\Controllers\apiR\TablaDatosHU2Controller;
+use App\Http\Controllers\apiR\NivelCategoriaControllerR;
+use App\Http\Controllers\apiR\AreaCategoriaR;
+use App\Http\Controllers\apiR\GradoControllerR;
 
-// Ruta para obtener el usuario autenticado (si usas auth)
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 // Rutas RESTful para las áreas de competencia
 Route::apiResource('areas', AreaController::class);
@@ -16,10 +16,7 @@ Route::apiResource('areas', AreaController::class);
 //Rutas RESTful para responsables de gestión
 Route::apiResource('responsables', ResponsableGestionController::class);
 
-use App\Http\Controllers\apiR\TablaDatosHU2Controller;
-use App\Http\Controllers\apiR\NivelCategoriaControllerR;
-use App\Http\Controllers\apiR\AreaCategoriaR;
-use App\Http\Controllers\apiR\GradoControllerR;
+
 
 //obtener areas por relacion categoria y grados
 Route::get('/areaCategoriaGrado', [TablaDatosHU2Controller::class, 'obtenerAreasCategoriaGrados']);

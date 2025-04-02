@@ -21,8 +21,6 @@ import axiosInstance from '../../../../../../interception/interception';
 import { ENDPOINTS } from '../../../../../../api/constans/endpoints';
 import "./crearCategoria.css"
 
-
-
 const CrearCategoria = ({ onClose, onSuccess }) => {
   //  formulario de categoría
   const navigate = useNavigate();
@@ -107,6 +105,10 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
       setLoading(false);
     }
   };
+
+  const cancelarCategoria=()=>{
+    navigate(-1)
+  }
   // Ruta a la página de creación de grado
   const handleCrearGrado = () => {
     if(!areaSeleccionada){
@@ -116,7 +118,7 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
       severity: 'warning'
     });
   }else{
-      navigate("/crearGrado",{
+      navigate("/admin/crearGrado",{
           state: { 
             areaId: areaSeleccionada,
             nombre: nombreCategoria,
@@ -124,7 +126,6 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
       })
     } 
   }
-
 
   const handleCloseNotification = () => {
     setNotification({
@@ -142,7 +143,8 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
         </Typography>
         
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          {/* Eliminado el prop "item" y mantenido "xs" */}
+          <Grid xs={12}>
             <TextField
               className="text-field"
               fullWidth
@@ -155,7 +157,8 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
             />
           </Grid>
           
-          <Grid item xs={12}>
+          {/* Eliminado el prop "item" y mantenido "xs" */}
+          <Grid xs={12}>
             <TextField
               className="textarea-field"
               fullWidth
@@ -169,7 +172,8 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
             />
           </Grid>
           
-          <Grid item xs={12}>
+          {/* Eliminado el prop "item" y mantenido "xs" */}
+          <Grid xs={12}>
             <FormControl fullWidth margin="normal" required className="select-field">
               <InputLabel id="area-select-label">Área</InputLabel>
               <Select
@@ -211,7 +215,7 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
             className="cancel-btn"
             variant="outlined"
             color="inherit"
-            onClick={onClose}
+            onClick={cancelarCategoria}
             disabled={loading}
           >
             Cancelar

@@ -26,6 +26,10 @@ const AgregarArea = () => {
     }
   };
 
+  const handleAddCategoryArea = () => {
+    navigate("/admin/crearCategoria")
+  }
+
   return (
     <div className="form-container">
       <h1>Registrar Nueva Área</h1>
@@ -53,7 +57,7 @@ const AgregarArea = () => {
           required
         />
 
-        <button type="button" className="btn-secondary">
+        <button type="button" className="btn-secondary" onClick={handleAddCategoryArea }>
           Registrar Categorías
         </button>
 
