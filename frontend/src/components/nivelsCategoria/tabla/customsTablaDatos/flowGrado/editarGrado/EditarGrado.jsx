@@ -5,7 +5,7 @@ import {
   FormControl,
   Select,
   MenuItem,
-  Grid,
+  Box,
   Button,
   Snackbar,
   Alert,
@@ -152,7 +152,7 @@ const EditarGrado = () => {
         }
       } else {
 
-        rangoGrados = "-------"
+        rangoGrados = "------"
       }
 
       // Preparar datos para enviar
@@ -209,9 +209,9 @@ const EditarGrado = () => {
             </Typography>
           )}
 
-          <Grid container spacing={4}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
             {/* Columna izquierda - Grado Inicial */}
-            <Grid item xs={12} md={6}>
+            <Box Box sx={{ flex: 1 }}>
               <div className="nivel-section">
                 <Typography className="section-label">Nivel</Typography>
 
@@ -252,10 +252,10 @@ const EditarGrado = () => {
                   </Select>
                 </FormControl>
               </div>
-            </Grid>
+            </Box>
 
             {/* Columna derecha - Grado Final */}
-            <Grid item xs={12} md={6}>
+            <Box sx={{flex:1}}>
               <div className="nivel-section">
                 <Typography className="section-label">Nivel</Typography>
 
@@ -296,8 +296,8 @@ const EditarGrado = () => {
                   </Select>
                 </FormControl>
               </div>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
 
           {/* Botones de acción */}
           <div className="action-buttons">

@@ -5,13 +5,13 @@ import {
   FormControl,
   Select,
   MenuItem,
-  Grid,
+  Box,
   Button,
   Snackbar,
   Alert,
   CircularProgress,
 } from '@mui/material';
-import { useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axiosInstance from '../../../../../../interception/interception';
 import { ENDPOINTS } from '../../../../../../api/constans/endpoints';
 import "./crearGrado.css"
@@ -55,7 +55,7 @@ const CrearGrado = () => {
     if (!areaId) {
       navigate(-1)
     }
-  }, [areaId, navigate,nombreCategoria]);
+  }, [areaId, navigate, nombreCategoria]);
 
   const calcularOrden = (gradoId, nivelId) => {
     console.log(nivelId)
@@ -63,7 +63,7 @@ const CrearGrado = () => {
   };
   
   // Manejar el envío del formulario
-const handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     
     if (!nivelInicial || !gradoInicial || !nivelFinal || !gradoFinal) {
@@ -81,7 +81,7 @@ const handleSubmit = (e) => {
       const ordenInicial = calcularOrden(parseInt(gradoInicial), nivelInicial);
       const ordenFinal = calcularOrden(parseInt(gradoFinal), nivelFinal);
 
-      const data ={
+      const data = {
         //tabla nivel categoria
         grado_inicial_id: gradoInicial,
         grado_final_id: gradoFinal,
@@ -94,18 +94,17 @@ const handleSubmit = (e) => {
       }
       console.log(data)
       // Crear el grado o rango de grados
-  /*     const response = await axiosInstance.post(ENDPOINTS.grados, {
+      /* const response = await axiosInstance.post(ENDPOINTS.grados, {
         
       }); */
 
-      
       setNotification({
         open: true,
         message: 'Grado registrado correctamente',
         severity: 'success'
       });
       
-    setTimeout(() => {
+      setTimeout(() => {
         navigate(-1); // Volver a la página anterior
       }, 2000);
       
@@ -142,9 +141,9 @@ const handleSubmit = (e) => {
             Editor Grado
           </Typography>
           
-          <Grid container spacing={4}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
             {/* Columna izquierda - Grado Inicial */}
-            <Grid item xs={12} md={6}>
+            <Box sx={{ flex: 1 }}>
               <div className="nivel-section">
                 <Typography className="section-label">
                   Nivel
@@ -187,10 +186,10 @@ const handleSubmit = (e) => {
                   </Select>
                 </FormControl>
               </div>
-            </Grid>
+            </Box>
             
             {/* Columna derecha - Grado Final */}
-            <Grid item xs={12} md={6}>
+            <Box sx={{ flex: 1 }}>
               <div className="nivel-section">
                 <Typography className="section-label">
                   Nivel
@@ -233,8 +232,8 @@ const handleSubmit = (e) => {
                   </Select>
                 </FormControl>
               </div>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
           
           {/* Botones de acción */}
           <div className="action-buttons">
@@ -254,7 +253,6 @@ const handleSubmit = (e) => {
               variant="contained"
               color="primary"
               disabled={loading}
-              onClick={()=>handleSubmit}
             >
               {loading ? (
                 <CircularProgress size={24} className="loading-indicator" />
