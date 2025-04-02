@@ -1,3 +1,12 @@
+
+import { useState } from "react";
+import "./App.css";
+import VRegistroOrg from "./page/administrador/AgregarRespon";
+
+
+function App() {
+  return <VRegistroOrg />;
+
 import { useState } from 'react'
 import { BrowserRouter,Route,Routes } from 'react-router-dom'
 import './App.css'
@@ -11,6 +20,7 @@ function App() {
   return (
     
   )
+
 }
 
-export default App
+export default App;

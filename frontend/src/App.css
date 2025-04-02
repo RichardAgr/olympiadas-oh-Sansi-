@@ -1,0 +1,77 @@
+body {
+    font-family: 'Comfortaa', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* opcional para un look limpio */
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .modal {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 470px; /* 👉 un poco más ancho */
+    text-align: center;
+    position: relative;
+    border: 3px solid #0A2E8C; /* 👉 borde azul oscuro */
+  }
+  
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #c92e2e;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+  
+  .modal-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .btn-eliminar2 {
+    background-color: #0A2E8C;
+    color: white;
+    border: none;
+    padding: 8px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .btn-eliminar2:hover {
+    background-color: #061f66;
+  }
+  
+  .btn-cancelar2 {
+    background-color: #DEE1E6;
+    border: none;
+    padding: 8px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .btn-cancelar2:hover {
+    background-color: #cfd1d7;
+  }
+
+  
