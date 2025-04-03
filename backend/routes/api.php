@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\apiK\AreaControllerK;
 use App\Http\Controllers\Api\AreaController;
 use App\Http\Controllers\Api\ResponsableGestionController;
 use App\Http\Controllers\apiR\TablaDatosHU2Controller;
@@ -13,6 +14,7 @@ use App\Http\Controllers\apiR\GradoControllerR;
 // Rutas RESTful para las áreas de competencia
 Route::apiResource('areas', AreaController::class);
 
+Route::get('/areasRegistradas', [AreaControllerK::class, 'getEventosCronograma']);
 //Rutas RESTful para responsables de gestión
 Route::apiResource('responsables', ResponsableGestionController::class);
 
@@ -32,3 +34,4 @@ Route::put('/categorias/{categoriaId}/eliminarGrados', [GradoControllerR::class,
 
 //Editar grados de una categoria:
 Route::put('/editarGrado/{id}', [NivelCategoriaControllerR::class, 'editarGrado']);
+
