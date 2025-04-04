@@ -4,6 +4,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AreaController;
 use App\Http\Controllers\Api\ResponsableGestionController;
+use App\Http\Controllers\Api\EventoController;
+
+Route::get('/evento/fechas', [EventoController::class, 'index']);
+Route::post('/evento/fechas', [EventoController::class, 'store']);
+Route::delete('/evento/fechas', [EventoController::class, 'destroy']);
+
 
 // Ruta para obtener el usuario autenticado (si usas auth)
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
