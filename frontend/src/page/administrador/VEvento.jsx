@@ -60,7 +60,10 @@ const VEvento = () => {
                 {area.fechas_inscripcion?.inicio ? (
                   <>
                     {area.fechas_inscripcion.inicio} - {area.fechas_inscripcion.fin}
-                    <button className="icon-btn">
+                    <button
+                      className="icon-btn"
+                      onClick={() => window.location.href = `/admin/Evento/FechaInscripcion`}
+                    >
                       ✏️
                     </button>
                     <button
@@ -73,8 +76,18 @@ const VEvento = () => {
                 ) : (
                   <>
                     Sin Asignar
-                    <button className="icon-btn">✏️</button>
-                    <button className="icon-btn">🗑️</button>
+                    <button
+                      className="icon-btn"
+                      onClick={() => window.location.href = `/admin/Evento/FechaInscripcion`}
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="icon-btn"
+                      onClick={() => deleteFechas(area.id, "inscripcion")}
+                    >
+                      🗑️
+                    </button>
                   </>
                 )}
               </td>
@@ -84,7 +97,10 @@ const VEvento = () => {
                 {area.fechas_competencia?.inicio ? (
                   <>
                     {area.fechas_competencia.inicio} - {area.fechas_competencia.fin}
-                    <button className="icon-btn">
+                    <button
+                      className="icon-btn"
+                      onClick={() => window.location.href = `/admin/Evento/FechaCompetencia`}
+                    >
                       ✏️
                     </button>
                     <button
@@ -97,8 +113,18 @@ const VEvento = () => {
                 ) : (
                   <>
                     Sin Asignar
-                    <button className="icon-btn">✏️</button>
-                    <button className="icon-btn">🗑️</button>
+                    <button
+                      className="icon-btn"
+                      onClick={() => window.location.href = `/admin/Evento/FechaCompetencia`}
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="icon-btn"
+                      onClick={() => deleteFechas(area.id, "competencia")}
+                    >
+                      🗑️
+                    </button>
                   </>
                 )}
               </td>

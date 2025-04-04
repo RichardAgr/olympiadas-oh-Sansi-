@@ -1,0 +1,66 @@
+.fecha-container {
+  padding: 3rem;
+  text-align: center;
+  font-family: 'Comfortaa', sans-serif;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+}
+
+.calendar-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-bottom: 2rem;
+}
+
+.react-datepicker {
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.btn-back, .btn-save {
+  padding: 0.6rem 2rem;
+  border-radius: 10px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-back {
+  background-color: #ccc;
+}
+
+.btn-save {
+  background-color: #3f51f5;
+  color: white;
+}
+
+.react-datepicker__day--selected {
+  background-color: #3f51f5;
+  border-radius: 50% !important;
+  color: white;
+}
+
+/* Flex column layout */
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Main content grows to fill space */
+.fecha-container {
+  flex: 1;
+  padding: 3rem;
+  text-align: center;
+  font-family: 'Comfortaa', sans-serif;
+}

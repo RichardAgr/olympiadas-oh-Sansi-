@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 
-// Existing views
 import HomeAdmin from "../page/administrador/HomeAdmin";
 import AreasList from "../page/administrador/AreasList";
 import AgregarArea from "../page/administrador/AgregarArea";
@@ -11,6 +10,8 @@ import AgregarRespon from "../page/administrador/AgregarRespon";
 import EditarRespon from "../page/administrador/EditarRespon";
 import AreasRegistradas from "../page/administrador/VerAreasRegistradas";
 import VEvento from "../page/administrador/VEvento";
+import VEditarFechaInscripcion from "../page/administrador/VEditarFechaInscripcion"; // import at top
+
 
 const AppRouter = () => {
   return (
@@ -28,7 +29,7 @@ const AppRouter = () => {
           <Route path="visualizarRegistro" element={<VisualizarRegistro />} />
           <Route path="visualizarRegistro/editarRegistro/:id" element={<EditarRespon />} />
           <Route path="visualizarRegistro/agregarRegistro" element={<AgregarRespon />} />
-          
+          <Route path="/admin/Evento/FechaInscripcion" element={<VEditarFechaInscripcion />} />
           <Route path="Evento" element={<VEvento />} />
         </Route>
       </Routes>
