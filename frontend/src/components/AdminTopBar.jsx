@@ -3,7 +3,8 @@ import logo from '../assets/logo.png';
 import { UserCircle, Bell } from 'lucide-react';
 import { useEffect, useRef, useState } from "react";
 
-const TopBar = () => {
+const AdminTopBar = () => {
+
   const [showRolesMenu, setShowRolesMenu] = useState(false);
   const timeoutRef = useRef(null);
   const location = useLocation();
@@ -66,7 +67,14 @@ const TopBar = () => {
         </li>
 
         <li><a href="#">Competidores</a></li>
-        <li><a href="#">Evento</a></li>
+          <Link 
+            to="/admin/Evento"
+            className={location.pathname === '/admin/Evento' ? 'active' : ''}
+          >
+            Evento
+          </Link>
+
+
 
         <li>
           <button className="notification-button">
@@ -84,4 +92,4 @@ const TopBar = () => {
   );
 };
 
-export default TopBar;
+export default AdminTopBar;
