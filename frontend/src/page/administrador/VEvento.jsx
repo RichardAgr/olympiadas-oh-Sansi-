@@ -11,6 +11,7 @@ const formatDate = (isoString) => {
 
 const VEvento = () => {
   const [areas, setAreas] = useState([]);
+  const [search, setSearch] = useState(""); 
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -40,6 +41,10 @@ const VEvento = () => {
     fetchData();
   }, []);
 
+  const filteredAreas = areas.filter((area) =>
+    area.nombre.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="evento-container">
       <h2>Registrar Fechas</h2>
@@ -47,6 +52,8 @@ const VEvento = () => {
       <input
         className="search"
         placeholder="Buscar por nombre de Área o Categoría"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
       />
 
       <table>
@@ -58,11 +65,12 @@ const VEvento = () => {
           </tr>
         </thead>
         <tbody>
-          {areas.map((area) => (
+          {/* ✅ Use filteredAreas instead of full areas */}
+          {filteredAreas.map((area) => (
             <tr key={area.id}>
               <td>{area.nombre}</td>
 
-              {/* FECHA DE INSCRIPCIÓN */}
+              {/* INSCRIPCIÓN */}
               <td>
                 <div className="fecha-bloque">
                   <span>
@@ -72,9 +80,7 @@ const VEvento = () => {
                   </span>
                   <button
                     className="icon-btn"
-                    onClick={() =>
-                      navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)
-                    }
+                    onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)}
                   >
                     <Edit size={20} color="white" />
                   </button>
@@ -87,7 +93,7 @@ const VEvento = () => {
                 </div>
               </td>
 
-              {/* FECHA DE COMPETENCIA */}
+              {/* COMPETENCIA */}
               <td>
                 <div className="fecha-bloque">
                   <span>
@@ -98,7 +104,7 @@ const VEvento = () => {
                   <button
                     className="icon-btn"
                     onClick={() =>
-                      navigate(`/admin/Evento/FechaCompetencia/${area.id}`)
+                      navigate(`/admin/Evento/FechaCompetencia/${area.id}/${area.competencia_id}`)
                     }
                   >
                     <Edit size={20} color="white" />
@@ -111,6 +117,7 @@ const VEvento = () => {
                   </button>
                 </div>
               </td>
+
             </tr>
           ))}
         </tbody>
