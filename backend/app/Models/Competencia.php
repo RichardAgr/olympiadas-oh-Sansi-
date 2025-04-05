@@ -5,15 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Area;
+use App\Models\Cronograma;
 
 class Competencia extends Model
 {
     use HasFactory;
 
-    // Table name (in case Laravel tries pluralizing it)
     protected $table = 'competencia';
 
-    // Mass assignable fields
     protected $fillable = [
         'area_id',
         'nombre_competencia',
@@ -23,17 +22,34 @@ class Competencia extends Model
         'estado',
     ];
 
-    // Cast dates as Carbon instances
     protected $casts = [
         'fecha_inicio' => 'date',
         'fecha_fin' => 'date',
     ];
 
     /**
-     * A competition belongs to an area.
+     * Una competencia pertenece a un área.
      */
     public function area()
     {
         return $this->belongsTo(Area::class, 'area_id');
+    }
+
+    /**
+     * Get related registration schedule from cronograma.
+     */
+    public function inscripcion()
+    {
+        return $this->hasOne(Cronograma::class, 'competencia_id')
+                    ->where('tipo_evento', 'inscripcion');
+    }
+
+    /**
+     * Get related competition schedule from cronograma.
+     */
+    public function competencia()
+    {
+        return $this->hasOne(Cronograma::class, 'competencia_id')
+                    ->where('tipo_evento', 'competencia');
     }
 }
