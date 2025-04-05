@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
-
 import HomeAdmin from "../page/administrador/HomeAdmin";
 import AreasList from "../page/administrador/AreasList";
 import AgregarArea from "../page/administrador/AgregarArea";
@@ -10,14 +9,13 @@ import AgregarRespon from "../page/administrador/AgregarRespon";
 import EditarRespon from "../page/administrador/EditarRespon";
 import AreasRegistradas from "../page/administrador/VerAreasRegistradas";
 import VEvento from "../page/administrador/VEvento";
-import VEditarFechaInscripcion from "../page/administrador/VEditarFechaInscripcion"; // import at top
-
+import VEditarFechaInscripcion from "../page/administrador/VEditarFechaInscripcion";
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Ruta raíz '/' redirige automáticamente a '/admin' */}
+        {/* Redirect root path '/' to '/admin' */}
         <Route path="/" element={<Navigate to="/admin" />} />
 
         <Route path="/admin" element={<AdminLayout />}>
@@ -29,7 +27,11 @@ const AppRouter = () => {
           <Route path="visualizarRegistro" element={<VisualizarRegistro />} />
           <Route path="visualizarRegistro/editarRegistro/:id" element={<EditarRespon />} />
           <Route path="visualizarRegistro/agregarRegistro" element={<AgregarRespon />} />
-          <Route path="/admin/Evento/FechaInscripcion" element={<VEditarFechaInscripcion />} />
+          <Route
+            path="Evento/FechaInscripcion/:areaId/:competenciaId"
+            element={<VEditarFechaInscripcion />}
+          />
+
           <Route path="Evento" element={<VEvento />} />
         </Route>
       </Routes>

@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./VEvento.css";
 
 const VEvento = () => {
   const [areas, setAreas] = useState([]);
+  const navigate = useNavigate();
 
-  // 🧠 Traer datos desde el backend
+  const formatDate = (isoString) => {
+    if (!isoString) return "Sin fecha";
+    const [year, month, day] = isoString.split("T")[0].split("-");
+    return `${day}/${month}/${year}`;
+  };
+
   const fetchData = async () => {
     try {
       const res = await fetch("http://localhost:8000/api/evento/fechas");
@@ -15,7 +22,6 @@ const VEvento = () => {
     }
   };
 
-  // 🧹 Eliminar fechas de inscripción o competencia
   const deleteFechas = async (areaId, tipo) => {
     try {
       await fetch("http://localhost:8000/api/evento/fechas", {
@@ -23,9 +29,9 @@ const VEvento = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ area_id: areaId, tipo }),
       });
-      fetchData(); // Refrescar datos
+      fetchData();
     } catch (err) {
-      console.error("Error al eliminar fechas:", err);
+      console.error("Error deleting dates:", err);
     }
   };
 
@@ -55,76 +61,58 @@ const VEvento = () => {
             <tr key={area.id}>
               <td>{area.nombre}</td>
 
-              {/* Inscripción */}
               <td>
                 {area.fechas_inscripcion?.inicio ? (
                   <>
-                    {area.fechas_inscripcion.inicio} - {area.fechas_inscripcion.fin}
+                    {formatDate(area.fechas_inscripcion.inicio)} - {formatDate(area.fechas_inscripcion.fin)}
                     <button
                       className="icon-btn"
-                      onClick={() => window.location.href = `/admin/Evento/FechaInscripcion`}
-                    >
-                      ✏️
-                    </button>
+                      onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)}
+                    >✏️</button>
                     <button
                       className="icon-btn"
                       onClick={() => deleteFechas(area.id, "inscripcion")}
-                    >
-                      🗑️
-                    </button>
+                    >🗑️</button>
                   </>
                 ) : (
                   <>
                     Sin Asignar
                     <button
                       className="icon-btn"
-                      onClick={() => window.location.href = `/admin/Evento/FechaInscripcion`}
-                    >
-                      ✏️
-                    </button>
+                      onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)}
+                    >✏️</button>
                     <button
                       className="icon-btn"
                       onClick={() => deleteFechas(area.id, "inscripcion")}
-                    >
-                      🗑️
-                    </button>
+                    >🗑️</button>
                   </>
                 )}
               </td>
 
-              {/* Competencia */}
               <td>
                 {area.fechas_competencia?.inicio ? (
                   <>
-                    {area.fechas_competencia.inicio} - {area.fechas_competencia.fin}
+                    {formatDate(area.fechas_competencia.inicio)} - {formatDate(area.fechas_competencia.fin)}
                     <button
                       className="icon-btn"
-                      onClick={() => window.location.href = `/admin/Evento/FechaCompetencia`}
-                    >
-                      ✏️
-                    </button>
+                      onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/${area.fechas_competencia.id || "null"}`)}
+                    >✏️</button>
                     <button
                       className="icon-btn"
                       onClick={() => deleteFechas(area.id, "competencia")}
-                    >
-                      🗑️
-                    </button>
+                    >🗑️</button>
                   </>
                 ) : (
                   <>
                     Sin Asignar
                     <button
                       className="icon-btn"
-                      onClick={() => window.location.href = `/admin/Evento/FechaCompetencia`}
-                    >
-                      ✏️
-                    </button>
+                      onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)}
+                    >✏️</button>
                     <button
                       className="icon-btn"
                       onClick={() => deleteFechas(area.id, "competencia")}
-                    >
-                      🗑️
-                    </button>
+                    >🗑️</button>
                   </>
                 )}
               </td>
