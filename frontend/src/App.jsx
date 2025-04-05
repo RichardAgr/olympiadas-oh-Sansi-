@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
@@ -12,6 +13,7 @@ import CrearGrado from "./components/nivelsCategoria/tabla/customsTablaDatos/flo
 import EditarCategoria from "./components/nivelsCategoria/tabla/customsTablaDatos/flowCategoria/editarCategoria/EditarCategoria";
 import EditarGrado from "./components/nivelsCategoria/tabla/customsTablaDatos/flowGrado/editarGrado/EditarGrado";
 import VEvento from "./page/administrador/VEvento.jsx";
+
 
 
 function App() {
@@ -31,6 +33,10 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
+
+function App() {
+  return <VRegistroOrg />;
+
 }
 
 export default App;

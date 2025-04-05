@@ -11,6 +11,12 @@ import AreasRegistradas from "../page/administrador/VerAreasRegistradas";
 import VEvento from "../page/administrador/VEvento";
 import VEditarFechaInscripcion from "../page/administrador/VEditarFechaInscripcion";
 import VEditarFechaCompetencia from "../page/administrador/VEditarFechaCompetencia"; 
+import {HU2nivelesCategoria} from "../components/nivelsCategoria/HU2nivelesCategoria"
+import CrearCategoria from "../components/nivelsCategoria/tabla/customsTablaDatos/flowCategoria/crearCategoria/CrearCategoria"
+import EditarCategoria from "../components/nivelsCategoria/tabla/customsTablaDatos/flowCategoria/editarCategoria/EditarCategoria"
+import CrearGrado from "../components/nivelsCategoria/tabla/customsTablaDatos/flowGrado/crearGrado/CrearGrado"
+import EditarGrado from "../components/nivelsCategoria/tabla/customsTablaDatos/flowGrado/editarGrado/EditarGrado"
+
 
 const AppRouter = () => {
   return (
@@ -30,9 +36,16 @@ const AppRouter = () => {
           <Route path="visualizarRegistro/agregarRegistro" element={<AgregarRespon />} />
           <Route path="Evento/FechaInscripcion/:areaId/:competenciaId" element={<VEditarFechaInscripcion />} />
           <Route path="Evento/FechaCompetencia/:areaId/:competenciaId?" element={<VEditarFechaCompetencia />} />
-
-
           <Route path="Evento" element={<VEvento />} />
+          <Route path="visualizarRegistro" element={<VisualizarRegistro/>}/>
+          <Route path="visualizarRegistro/editarRegistro/:id" element={<EditarRespon/>}/>
+          <Route path="visualizarRegistro/agregarRegistro" element={<AgregarRespon/>}/>
+          {/* Rutas del ricardex */}
+          <Route path='tablaAreasCategoria' element={<HU2nivelesCategoria/>} /> 
+          <Route path='crearGrado' element={<CrearGrado/>} /> 
+          <Route path='editCategoria/:id' element={<EditarCategoria/>} /> 
+          <Route path='editGrado/:id' element={<EditarGrado/>} /> 
+          <Route path='crearCategoria' element={<CrearCategoria/>} />
         </Route>
       </Routes>
     </BrowserRouter>

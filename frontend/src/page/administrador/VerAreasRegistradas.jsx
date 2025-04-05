@@ -1,102 +1,105 @@
-import "./VRegistroOrg.css";
-import React, { useState } from "react";
-import buscador from "../../assets/buscador.svg";
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import "../../App.css";
-
-
-const datosEjemplo = [
-  { id: 1, area: "Astronomia y Astrofisica", nombreNivCat: "3p", grados: "3ro Primaria", costo: "15", fechInscripcion: "05/04/2025 - 07/06/2025", fechCompetencia:"05/04/2025 - 07/06/2025" }
-];
-
-const filasPorPagina = 4;
-
+import "./VRegistroOrg.css"
+import { useState, useEffect } from "react"
+import buscador from "../../assets/buscador.svg"
+import { useLocation, useNavigate } from "react-router-dom"
+import axios from "axios"
+import "../../App.css"
 
 function RegistrarOrganizador() {
-  const navigate = useNavigate(); 
-    /**/
-  const [search, setSearch] = useState(""); // Estado del buscador
-  const location = useLocation();
-  /*Para la tabla */
-const [paginaActual, setPaginaActual] = React.useState(1);
+  const navigate = useNavigate()
+  const [search, setSearch] = useState("")
+  const [areas, setAreas] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-// Filtrar datos según la búsqueda
-const datosFiltrados = datosEjemplo.filter((dato) =>
-    dato.area.toLowerCase().includes(search.toLowerCase())
-  );
-  
+  const cargarAreas = async () => {
+    try {
+      setLoading(true)
+      const response = await axios.get("http://127.0.0.1:8000/api/areasRegistradas")
+      const flattenedData = response.data.data.flatMap(item => item.data)
+      setAreas(flattenedData)
+      console.log(flattenedData)
+      setError(null)
+    } catch (err) {
+      console.error("Error al cargar áreas:", err)
+      setError("Error al cargar los datos. Por favor, intente nuevamente.")
+    } finally {
+      setLoading(false)
+    }
+  }
 
-// Aplicar paginación sobre los datos filtrados
-const totalPaginas = Math.ceil(datosFiltrados.length / filasPorPagina);
-const indiceInicio = (paginaActual - 1) * filasPorPagina;
-const indiceFin = indiceInicio + filasPorPagina;
-const datosPagina = datosFiltrados.slice(indiceInicio, indiceFin);
+  useEffect(() => {
+    cargarAreas()
+  }, [])
 
-const paginaAnterior = () => {
-  if (paginaActual > 1) setPaginaActual(paginaActual - 1);
-};
+  // formatear la fecha
+  const formatDate = (dateString) => {
+    if (!dateString) return ""
+    const date = new Date(dateString)
+    return date.toLocaleDateString()
+  }
 
-const paginaSiguiente = () => {
-  if (paginaActual < totalPaginas) setPaginaActual(paginaActual + 1);
-};
   return (
-    
     <div className="home-container">
-        <h1>Areas Registradas</h1>
-        <div className="buscador">
+      <h1>Areas Registradas</h1>
+      <div className="buscador">
         <button className="boton-buscar">
-        <img src={buscador} alt="Buscar" /> </button>
-          <input
-            type="text"
-            placeholder="Buscar por nombre"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+          <img src={buscador || "/placeholder.svg"} alt="Buscar" />
+        </button>
+        <input
+          type="text"
+          placeholder="Buscar por nombre"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      {loading ? (
+        <div className="loading">Cargando datos...</div>
+      ) : error ? (
+        <div className="error">{error}</div>
+      ) : (
         <div className="contenedor-tabla">
-      <table className="tabla">
-        <thead>
-          <tr>
-            <th>Area</th>
-            <th>Nombre Nivel/Categoria</th>
-            <th>Grados</th>
-            <th>Costo (Bs)</th>
-            <th>Fecha Inscripcion Inicio-Fin</th>
-            <th>Fecha Competencia Inicio-Fin</th>
-          </tr>
-        </thead>
-        <tbody>
-          {[...datosPagina, ...Array(Math.max(0, filasPorPagina - datosPagina.length)).fill({})].map((dato, index) => (
-            <tr key={index}>
-              <td>{dato.area || ""}</td>
-              <td>{dato.nombreNivCat || ""}</td>
-              <td>{dato.grados || ""}</td>
-              <td>{dato.costo || ""}</td>
-              <td>{dato.fechInscripcion || ""}</td>
-              <td>{dato.fechCompetencia}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div className="pagination">
-  <button onClick={() => setPaginaActual(paginaActual - 1)} disabled={paginaActual === 1}>{"<"}</button>
-  {Array.from({ length: totalPaginas }, (_, i) => (
-    <button
-      key={i}
-      onClick={() => setPaginaActual(i + 1)}
-      className={paginaActual === i + 1 ? "active" : ""}
-    >
-      {i + 1}
-    </button>
-  ))}
-  <button onClick={() => setPaginaActual(paginaActual + 1)} disabled={paginaActual === totalPaginas}>{">"}</button>
-</div>
-
+          <table className="tabla">
+            <thead>
+              <tr>
+                <th>Área</th>
+                <th>Nivel/Categoría</th>
+                <th>Grado</th>
+                <th>Costo (Bs)</th>
+                <th>Tipo de Evento</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Descripción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {areas.length > 0 ? (
+                areas.map((dato, index) => (
+                  <tr key={index}>
+                    <td>{dato.area || "-"}</td>
+                    <td>{dato.nivel_categoria || "-"}</td>
+                    <td>{dato.grado || "-"}</td>
+                    <td>{dato.costo || "-"}</td>
+                    <td>{dato.tipo_evento || "-"}</td>
+                    <td>{formatDate(dato.fecha_inicio) || "-"}</td>
+                    <td>{formatDate(dato.fecha_fin) || "-"}</td>
+                    <td>{dato.descripcion || "-"}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="no-data">
+                    No se encontraron resultados
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
-        
-    </div>
-  );
+  )
 }
-export default RegistrarOrganizador;
+
+export default RegistrarOrganizador

@@ -1,11 +1,11 @@
 import { useState,useEffect } from "react"
 import AddIcon from "@mui/icons-material/Add"
-import "./tablaDatos.css"
 import axiosInstance from "../../../interception/interception"
 import { ENDPOINTS } from "../../../api/constans/endpoints"
 import {DialogEliminar}  from "./DialogEliminar"
 import CustomTablaDatos from './customsTablaDatos/CustomTablaDatos'
 import { useNavigate } from 'react-router-dom'; 
+import "./tablaDatos.css"
 
 import {
     Table,
@@ -221,9 +221,9 @@ import {
   }
 
   const handlers = {
-    onEditCategory: (id) => navigate(`editCategoria/${id}`),
+    onEditCategory: (id) => navigate(`/admin/editCategoria/${id}`),
     onDeleteCategory: handleOpenDeleteCategoryDialog,
-    onEditGrado: (id) => navigate(`editGrado/${id}`),
+    onEditGrado: (id) => navigate(`/admin/editGrado/${id}`),
     onDeleteGrado: handleOpenDeleteGradoDialog,
   };
 
@@ -238,12 +238,12 @@ import {
 
   // Función para manejar la adición de una nueva categoría
   const handleAddCategory = () => {
-    navigate("/crearCategoria")
+    navigate("/admin/crearCategoria")
   }
 
   // Función para retornar
   const handleCancel = () => {
-    console.log("Retornar Pagina")
+    navigate("/admin")
     // Aquí iría la lógica para cancelar los cambios
   }
 

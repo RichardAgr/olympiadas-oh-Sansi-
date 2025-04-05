@@ -1,4 +1,3 @@
-// RegistrarCategoria.jsx
 import { useState, useEffect } from 'react';
 import {
   Typography,
@@ -9,7 +8,6 @@ import {
   Select,
   MenuItem,
   Paper,
-  Grid,
   Box,
   Divider,
   Snackbar,
@@ -20,8 +18,6 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../../../../interception/interception';
 import { ENDPOINTS } from '../../../../../../api/constans/endpoints';
 import "./crearCategoria.css"
-
-
 
 const CrearCategoria = ({ onClose, onSuccess }) => {
   //  formulario de categoría
@@ -116,7 +112,7 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
       severity: 'warning'
     });
   }else{
-      navigate("/crearGrado",{
+      navigate("/admin/crearGrado",{
           state: { 
             areaId: areaSeleccionada,
             nombre: nombreCategoria,
@@ -124,7 +120,6 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
       })
     } 
   }
-
 
   const handleCloseNotification = () => {
     setNotification({
@@ -136,57 +131,50 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
   return (
     <Paper className="registro-container">
       <form onSubmit={handleSubmit}>
-        {/* Sección de Categoría */}
         <Typography className="section-title">
           Registrar Categoría
         </Typography>
         
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              className="text-field"
-              fullWidth
-              label="Nombre de Categoría"
-              value={nombreCategoria}
-              onChange={(e) => setNombreCategoria(e.target.value)}
-              margin="normal"
-              variant="outlined"
-              required
-            />
-          </Grid>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField
+            className="text-field"
+            fullWidth
+            label="Nombre de Categoría"
+            value={nombreCategoria}
+            onChange={(e) => setNombreCategoria(e.target.value)}
+            margin="normal"
+            variant="outlined"
+            required
+          />
           
-          <Grid item xs={12}>
-            <TextField
-              className="textarea-field"
-              fullWidth
-              label="Descripción de Categoría"
-              value={descripcionCategoria}
-              onChange={(e) => setDescripcionCategoria(e.target.value)}
-              margin="normal"
-              variant="outlined"
-              multiline
-              rows={4}
-            />
-          </Grid>
+          <TextField
+            className="textarea-field"
+            fullWidth
+            label="Descripción de Categoría"
+            value={descripcionCategoria}
+            onChange={(e) => setDescripcionCategoria(e.target.value)}
+            margin="normal"
+            variant="outlined"
+            multiline
+            rows={4}
+          />
           
-          <Grid item xs={12}>
-            <FormControl fullWidth margin="normal" required className="select-field">
-              <InputLabel id="area-select-label">Área</InputLabel>
-              <Select
-                labelId="area-select-label"
-                value={areaSeleccionada}
-                onChange={(e) => setAreaSeleccionada(e.target.value)}
-                label="Área"
-              >
-                {areas.map((area) => (
-                  <MenuItem key={area.area_id} value={area.area_id}>
-                    {area.nombre_area}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
+          <FormControl fullWidth margin="normal" required className="select-field">
+            <InputLabel id="area-select-label">Área</InputLabel>
+            <Select
+              labelId="area-select-label"
+              value={areaSeleccionada}
+              onChange={(e) => setAreaSeleccionada(e.target.value)}
+              label="Área"
+            >
+              {areas.map((area) => (
+                <MenuItem key={area.area_id} value={area.area_id}>
+                  {area.nombre_area}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
         
         <Divider className="divider" />
         
@@ -195,7 +183,6 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
         </Typography>
         
         <div className="grado-display-section">
-         
           <Button
             className="crear-grado-btn"
             variant="contained"
@@ -211,7 +198,7 @@ const CrearCategoria = ({ onClose, onSuccess }) => {
             className="cancel-btn"
             variant="outlined"
             color="inherit"
-            onClick={onClose}
+            onClick={() => navigate(-1)}
             disabled={loading}
           >
             Cancelar

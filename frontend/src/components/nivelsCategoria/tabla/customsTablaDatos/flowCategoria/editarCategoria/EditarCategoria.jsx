@@ -8,7 +8,7 @@ import {
   Select,
   MenuItem,
   Paper,
-  Grid,
+  Box,
   Divider,
   Snackbar,
   Alert,
@@ -131,14 +131,13 @@ const EditarCategoria = () => {
   };
 
   return (
-    <Paper className="registro-container">
+    <Paper className="registro-container" sx={{marginBottom:10, marginTop:10 }}>
       <form onSubmit={handleSubmit}>
         <Typography className="section-title">
           Editar Categoría
         </Typography>
         
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2}}>
             <TextField
               className="text-field"
               fullWidth
@@ -150,9 +149,7 @@ const EditarCategoria = () => {
               required
               disabled={loading}
             />
-          </Grid>
-          
-          <Grid item xs={12}>
+        
             <TextField
               className="textarea-field"
               fullWidth
@@ -165,9 +162,6 @@ const EditarCategoria = () => {
               rows={4}
               disabled={loading}
             />
-          </Grid>
-          
-          <Grid item xs={12}>
             <FormControl fullWidth margin="normal" required className="select-field">
               <InputLabel id="area-select-label">Área</InputLabel>
               <Select
@@ -182,8 +176,7 @@ const EditarCategoria = () => {
                   </MenuItem>
               </Select>
             </FormControl>
-          </Grid>
-        </Grid>
+        </Box>
         
         <Divider className="divider" />
         
