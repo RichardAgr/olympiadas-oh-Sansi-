@@ -12,8 +12,7 @@ const VEditarFechaInscripcion = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const navigate = useNavigate();
-
-  const { areaId, competenciaId } = useParams();
+  const { areaId } = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,6 +20,7 @@ const VEditarFechaInscripcion = () => {
     const body = {
       area_id: areaId,
       tipo: "inscripcion",
+      nombre_evento: "Fecha de inscripción",
       inicio: new Date(startDate).toISOString().split("T")[0],
       fin: new Date(endDate).toISOString().split("T")[0],
     };
@@ -37,7 +37,6 @@ const VEditarFechaInscripcion = () => {
       const result = await res.json();
       console.log("✅ Guardado:", result);
       navigate("/admin/Evento");
-
     } catch (error) {
       console.error("❌ Error al guardar fechas:", error);
     }
@@ -48,7 +47,7 @@ const VEditarFechaInscripcion = () => {
       <h2>Fecha de Inscripción</h2>
       <form onSubmit={handleSubmit}>
         <div className="calendar-wrapper">
-          <div>
+          <div className="date-group">
             <label>Inicio:</label>
             <DatePicker
               selected={startDate}
@@ -57,9 +56,10 @@ const VEditarFechaInscripcion = () => {
               locale="es"
               monthsShown={2}
               placeholderText="Selecciona fecha"
+              className="styled-datepicker"
             />
           </div>
-          <div>
+          <div className="date-group">
             <label>Finaliza:</label>
             <DatePicker
               selected={endDate}
@@ -68,6 +68,7 @@ const VEditarFechaInscripcion = () => {
               locale="es"
               monthsShown={2}
               placeholderText="Selecciona fecha"
+              className="styled-datepicker"
             />
           </div>
         </div>

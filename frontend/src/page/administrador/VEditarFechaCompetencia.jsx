@@ -12,7 +12,6 @@ const VEditarFechaCompetencia = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const navigate = useNavigate();
-
   const { areaId, competenciaId } = useParams();
 
   const handleSubmit = async (e) => {
@@ -21,7 +20,7 @@ const VEditarFechaCompetencia = () => {
     const body = {
       area_id: areaId,
       tipo: "competencia",
-      nombre_evento: "Fecha de competencia", 
+      nombre_evento: "Fecha de competencia",
       inicio: new Date(startDate).toISOString().split("T")[0],
       fin: new Date(endDate).toISOString().split("T")[0],
     };
@@ -48,7 +47,8 @@ const VEditarFechaCompetencia = () => {
       <h2>Fecha de Competencia</h2>
       <form onSubmit={handleSubmit}>
         <div className="calendar-wrapper">
-          <div>
+          {/* ⬇️ Added flex spacing + styling */}
+          <div className="date-group">
             <label>Inicio:</label>
             <DatePicker
               selected={startDate}
@@ -57,9 +57,10 @@ const VEditarFechaCompetencia = () => {
               locale="es"
               monthsShown={2}
               placeholderText="Selecciona fecha"
+              className="styled-datepicker"
             />
           </div>
-          <div>
+          <div className="date-group">
             <label>Finaliza:</label>
             <DatePicker
               selected={endDate}
@@ -68,6 +69,7 @@ const VEditarFechaCompetencia = () => {
               locale="es"
               monthsShown={2}
               placeholderText="Selecciona fecha"
+              className="styled-datepicker"
             />
           </div>
         </div>
