@@ -2,6 +2,8 @@ import { Link, useLocation } from "react-router-dom";
 import logo from '../assets/logo.png';
 import { UserCircle, Bell } from 'lucide-react';
 import { useEffect, useRef, useState } from "react";
+import { NavLink } from "react-router-dom";
+
 
 const AdminTopBar = () => {
 
@@ -67,12 +69,14 @@ const AdminTopBar = () => {
         </li>
 
         <li><a href="#">Competidores</a></li>
-          <Link 
-            to="/admin/Evento"
-            className={location.pathname === '/admin/Evento' ? 'active' : ''}
+        <li>
+          <NavLink 
+            to="/admin/Evento" 
+            className={({ isActive }) => isActive ? 'active' : ''}
           >
             Evento
-          </Link>
+          </NavLink>
+        </li>
 
 
 
