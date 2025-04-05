@@ -10,6 +10,7 @@ import EditarRespon from "../page/administrador/EditarRespon";
 import AreasRegistradas from "../page/administrador/VerAreasRegistradas";
 import VEvento from "../page/administrador/VEvento";
 import VEditarFechaInscripcion from "../page/administrador/VEditarFechaInscripcion";
+import VEditarFechaCompetencia from "../page/administrador/VEditarFechaCompetencia"; 
 
 const AppRouter = () => {
   return (
@@ -27,10 +28,9 @@ const AppRouter = () => {
           <Route path="visualizarRegistro" element={<VisualizarRegistro />} />
           <Route path="visualizarRegistro/editarRegistro/:id" element={<EditarRespon />} />
           <Route path="visualizarRegistro/agregarRegistro" element={<AgregarRespon />} />
-          <Route
-            path="Evento/FechaInscripcion/:areaId/:competenciaId"
-            element={<VEditarFechaInscripcion />}
-          />
+          <Route path="Evento/FechaInscripcion/:areaId/:competenciaId" element={<VEditarFechaInscripcion />} />
+          <Route path="Evento/FechaCompetencia/:areaId/:competenciaId?" element={<VEditarFechaCompetencia />} />
+
 
           <Route path="Evento" element={<VEvento />} />
         </Route>

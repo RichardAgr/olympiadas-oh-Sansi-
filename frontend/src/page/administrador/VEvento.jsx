@@ -43,7 +43,12 @@ const VEvento = () => {
   return (
     <div className="evento-container">
       <h2>Registrar Fechas</h2>
-      <input className="search" placeholder="Buscar por nombre de Área o Categoría" />
+
+      <input
+        className="search"
+        placeholder="Buscar por nombre de Área o Categoría"
+      />
+
       <table>
         <thead>
           <tr>
@@ -57,7 +62,7 @@ const VEvento = () => {
             <tr key={area.id}>
               <td>{area.nombre}</td>
 
-              {/* INSCRIPCIÓN */}
+              {/* FECHA DE INSCRIPCIÓN */}
               <td>
                 <div className="fecha-bloque">
                   <span>
@@ -67,7 +72,9 @@ const VEvento = () => {
                   </span>
                   <button
                     className="icon-btn"
-                    onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)}
+                    onClick={() =>
+                      navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)
+                    }
                   >
                     <Edit size={20} color="white" />
                   </button>
@@ -80,7 +87,7 @@ const VEvento = () => {
                 </div>
               </td>
 
-              {/* COMPETENCIA */}
+              {/* FECHA DE COMPETENCIA */}
               <td>
                 <div className="fecha-bloque">
                   <span>
@@ -90,7 +97,9 @@ const VEvento = () => {
                   </span>
                   <button
                     className="icon-btn"
-                    onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/${area.fechas_competencia?.id || "null"}`)}
+                    onClick={() =>
+                      navigate(`/admin/Evento/FechaCompetencia/${area.id}`)
+                    }
                   >
                     <Edit size={20} color="white" />
                   </button>
