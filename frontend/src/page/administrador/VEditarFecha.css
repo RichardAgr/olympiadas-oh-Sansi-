@@ -13,7 +13,9 @@ h2 {
   display: flex;
   justify-content: center;
   gap: 3rem;
-  margin-bottom: 2rem;
+  margin-bottom: 17rem; /* ⬅️ antes estaba en 2rem */
+  z-index: 1; /* ⬅️ aseguramos visibilidad */
+  position: relative;
 }
 
 .react-datepicker {
@@ -25,24 +27,43 @@ h2 {
   display: flex;
   justify-content: center;
   gap: 2rem;
+  z-index: 0; /* ⬅️ debajo del calendario */
+  position: relative;
+  margin-top: 2rem; 
 }
 
 .btn-back, .btn-save {
-  padding: 0.6rem 2rem;
-  border-radius: 10px;
-  font-weight: bold;
+  padding: 10px 50px;
+  border-radius: 20px;
   border: none;
+  font-weight: 600;
+  font-family: 'Comfortaa', sans-serif;
   cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
 }
 
 .btn-back {
-  background-color: #ccc;
+  background-color: #DEE1E6;
+  color: #565E6C;
 }
 
 .btn-save {
-  background-color: #3f51f5;
-  color: white;
+  background-color: #384FD6;
+  color: #fff;
 }
+
+.btn-back:hover {
+  background-color: #cfd4db;
+  transform: scale(1.05);
+}
+
+.btn-save:hover {
+  background-color: #1f2e8f;
+  transform: scale(1.05);
+}
+
 
 .react-datepicker__day--selected {
   background-color: #3f51f5;
@@ -97,5 +118,5 @@ h2 {
 .date-group {
   display: flex;
   align-items: center;
-  gap: 1.5rem; /* ⬅️ half a centimeter = 8px */
+  gap: 1.5rem; 
 }
