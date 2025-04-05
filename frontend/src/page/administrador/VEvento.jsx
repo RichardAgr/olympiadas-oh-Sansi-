@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Edit, Trash2 } from "lucide-react";
 import "./VEvento.css";
+
+const formatDate = (isoString) => {
+  if (!isoString) return "Sin fecha";
+  const [year, month, day] = isoString.split("T")[0].split("-");
+  return `${day}/${month}/${year}`;
+};
 
 const VEvento = () => {
   const [areas, setAreas] = useState([]);
   const navigate = useNavigate();
-
-  const formatDate = (isoString) => {
-    if (!isoString) return "Sin fecha";
-    const [year, month, day] = isoString.split("T")[0].split("-");
-    return `${day}/${month}/${year}`;
-  };
 
   const fetchData = async () => {
     try {
@@ -42,12 +43,7 @@ const VEvento = () => {
   return (
     <div className="evento-container">
       <h2>Registrar Fechas</h2>
-
-      <input
-        className="search"
-        placeholder="Buscar por nombre de Área o Categoría"
-      />
-
+      <input className="search" placeholder="Buscar por nombre de Área o Categoría" />
       <table>
         <thead>
           <tr>
@@ -61,60 +57,50 @@ const VEvento = () => {
             <tr key={area.id}>
               <td>{area.nombre}</td>
 
+              {/* INSCRIPCIÓN */}
               <td>
-                {area.fechas_inscripcion?.inicio ? (
-                  <>
-                    {formatDate(area.fechas_inscripcion.inicio)} - {formatDate(area.fechas_inscripcion.fin)}
-                    <button
-                      className="icon-btn"
-                      onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)}
-                    >✏️</button>
-                    <button
-                      className="icon-btn"
-                      onClick={() => deleteFechas(area.id, "inscripcion")}
-                    >🗑️</button>
-                  </>
-                ) : (
-                  <>
-                    Sin Asignar
-                    <button
-                      className="icon-btn"
-                      onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)}
-                    >✏️</button>
-                    <button
-                      className="icon-btn"
-                      onClick={() => deleteFechas(area.id, "inscripcion")}
-                    >🗑️</button>
-                  </>
-                )}
+                <div className="fecha-bloque">
+                  <span>
+                    {area.fechas_inscripcion?.inicio
+                      ? `${formatDate(area.fechas_inscripcion.inicio)} - ${formatDate(area.fechas_inscripcion.fin)}`
+                      : "Sin Asignar"}
+                  </span>
+                  <button
+                    className="icon-btn"
+                    onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)}
+                  >
+                    <Edit size={20} color="white" />
+                  </button>
+                  <button
+                    className="icon-btn"
+                    onClick={() => deleteFechas(area.id, "inscripcion")}
+                  >
+                    <Trash2 size={20} color="white" />
+                  </button>
+                </div>
               </td>
 
+              {/* COMPETENCIA */}
               <td>
-                {area.fechas_competencia?.inicio ? (
-                  <>
-                    {formatDate(area.fechas_competencia.inicio)} - {formatDate(area.fechas_competencia.fin)}
-                    <button
-                      className="icon-btn"
-                      onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/${area.fechas_competencia.id || "null"}`)}
-                    >✏️</button>
-                    <button
-                      className="icon-btn"
-                      onClick={() => deleteFechas(area.id, "competencia")}
-                    >🗑️</button>
-                  </>
-                ) : (
-                  <>
-                    Sin Asignar
-                    <button
-                      className="icon-btn"
-                      onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)}
-                    >✏️</button>
-                    <button
-                      className="icon-btn"
-                      onClick={() => deleteFechas(area.id, "competencia")}
-                    >🗑️</button>
-                  </>
-                )}
+                <div className="fecha-bloque">
+                  <span>
+                    {area.fechas_competencia?.inicio
+                      ? `${formatDate(area.fechas_competencia.inicio)} - ${formatDate(area.fechas_competencia.fin) || "Sin fecha"}`
+                      : "Sin Asignar"}
+                  </span>
+                  <button
+                    className="icon-btn"
+                    onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/${area.fechas_competencia?.id || "null"}`)}
+                  >
+                    <Edit size={20} color="white" />
+                  </button>
+                  <button
+                    className="icon-btn"
+                    onClick={() => deleteFechas(area.id, "competencia")}
+                  >
+                    <Trash2 size={20} color="white" />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

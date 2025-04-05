@@ -17,14 +17,14 @@ const VEditarFechaInscripcion = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const body = {
       area_id: areaId,
       tipo: "inscripcion",
       inicio: new Date(startDate).toISOString().split("T")[0],
       fin: new Date(endDate).toISOString().split("T")[0],
     };
-  
+
     try {
       const res = await fetch("http://localhost:8000/api/evento/fechas", {
         method: "POST",
@@ -33,16 +33,15 @@ const VEditarFechaInscripcion = () => {
         },
         body: JSON.stringify(body),
       });
-  
+
       const result = await res.json();
       console.log("✅ Guardado:", result);
-  
-      navigate("/admin/Evento"); // ✅ this works
+      navigate("/admin/Evento");
+
     } catch (error) {
       console.error("❌ Error al guardar fechas:", error);
     }
   };
-  
 
   return (
     <div className="fecha-container">

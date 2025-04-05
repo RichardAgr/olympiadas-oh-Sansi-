@@ -1,21 +1,85 @@
 .evento-container {
-    padding: 2rem;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  th, td {
-    text-align: center;
-    border: 1px solid #ccc;
-    padding: 1rem;
-  }
-  
-  .search {
-    width: 100%;
-    margin: 1rem 0;
-    padding: 0.5rem;
-  }
-  
+  padding: 2rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: center;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.search {
+  width: 100%;
+  margin: 1rem 0;
+  padding: 0.5rem;
+}
+
+/* Icon buttons container (column style) */
+.icon-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Shared style for both icons */
+.icon-btn {
+  background-color: #3b5bfc;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background-color: #2f4be0;
+}
+.fecha-bloque {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.icon-btn {
+  background-color: #3c5dd1;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+  transition: transform 0.2s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.05);
+}
+
+.icon-btn svg {
+  stroke: white;
+}
+.fecha-bloque {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* ⬅️ horizontally center inside <td> */
+  gap: 10px;
+  flex-wrap: nowrap;
+  min-height: 60px; /* ensures vertical space is enough */
+  text-align: center;
+}

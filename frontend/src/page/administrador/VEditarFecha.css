@@ -64,3 +64,22 @@ h2 {
   text-align: center;
   font-family: 'Comfortaa', sans-serif;
 }
+/* 💠 Applies to both edit and delete buttons */
+.boton-icono {
+  background-color: #3D50FF;
+  border: none;
+  border-radius: 16px; /* you can try 50% if you prefer more rounded */
+  padding: 10px;
+  margin: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.boton-icono:hover {
+  transform: scale(1.05);
+  background-color: #2E3EDB; /* subtle hover effect */
+}
