@@ -7,104 +7,140 @@ use Illuminate\Http\Request;
 use App\Models\Area;
 use App\Models\Competencia;
 use App\Models\Cronograma;
+use Illuminate\Support\Facades\DB;
 
 class EventoController extends Controller
 {
-    // ✅ GET all areas with their assigned dates
+    // GET /api/eventos
     public function index()
     {
-        $areas = Area::all();
+        $areas = Area::with(['competencia', 'cronogramas' => function ($query) {
+            $query->whereIn('tipo', ['inscripcion', 'competencia']);
+        }])->get();
 
-        $data = $areas->map(function ($area) {
-            $competencia = Competencia::where('area_id', $area->area_id)->first();
-            $inscripcion = Cronograma::where('area_id', $area->area_id)
-                                     ->where('tipo_evento', 'inscripcion')
-                                     ->first();
+        $areas = $areas->map(function ($area) {
+            $fechasInscripcion = $area->cronogramas->firstWhere('tipo', 'inscripcion');
+            $fechasCompetencia = $area->cronogramas->firstWhere('tipo', 'competencia');
 
             return [
-                'id' => $area->area_id,
+                'id' => $area->id,
                 'nombre' => $area->nombre,
-                'fechas_competencia' => [
-                    'inicio' => optional($competencia)->fecha_inicio,
-                    'fin' => optional($competencia)->fecha_fin
-                ],
-                'fechas_inscripcion' => [
-                    'inicio' => optional($inscripcion)->fecha_inicio,
-                    'fin' => optional($inscripcion)->fecha_fin
-                ]
+                'competencia_id' => $area->competencia->id ?? null,
+                'fechas_inscripcion' => $fechasInscripcion ? [
+                    'inicio' => $fechasInscripcion->inicio,
+                    'fin' => $fechasInscripcion->fin,
+                ] : null,
+                'fechas_competencia' => $fechasCompetencia ? [
+                    'inicio' => $fechasCompetencia->inicio,
+                    'fin' => $fechasCompetencia->fin,
+                ] : null,
             ];
         });
 
-        return response()->json($data);
+        return response()->json($areas);
+    }
+    public function listarFechasEvento()
+    {
+        $areas = Area::with([
+            'competencia.cronograma'
+        ])->get();
+
+        $result = $areas->map(function ($area) {
+            $competencia = $area->competencia;
+            $cronograma = $competencia?->cronograma;
+
+            return [
+                'id' => $area->id,
+                'nombre' => $area->nombre,
+                'competencia_id' => $competencia?->id,
+                'fechas_inscripcion' => $cronograma && $cronograma->fecha_inscripcion_inicio
+                    ? [
+                        'inicio' => $cronograma->fecha_inscripcion_inicio,
+                        'fin' => $cronograma->fecha_inscripcion_fin
+                    ]
+                    : null,
+                'fechas_competencia' => $cronograma && $cronograma->fecha_competencia_inicio
+                    ? [
+                        'inicio' => $cronograma->fecha_competencia_inicio,
+                        'fin' => $cronograma->fecha_competencia_fin
+                    ]
+                    : null,
+            ];
+        });
+
+        return response()->json($result);
     }
 
-    // ✅ POST - Save or update competition/registration dates
+    // POST /api/eventos
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'area_id' => 'required|exists:area,area_id',
-                'tipo' => 'required|in:competencia,inscripcion',
-                'inicio' => 'required|date',
-                'fin' => 'required|date|after_or_equal:inicio',
-            ]);
-
-            if ($request->tipo === 'competencia') {
-                Competencia::updateOrCreate(
-                    ['area_id' => $request->area_id],
-                    [
-                        'fecha_inicio' => $request->inicio,
-                        'fecha_fin' => $request->fin,
-                        'estado' => 1, // Optional, in case you need it active
-                        'descripcion' => 'Generado automáticamente',
-                        'nombre_competencia' => 'Competencia por área',
-                    ]
-                );
-            } else {
-                Cronograma::updateOrCreate(
-                    [
-                        'area_id' => $request->area_id,
-                        'tipo_evento' => 'inscripcion',
-                    ],
-                    [
-                        'fecha_inicio' => $request->inicio,
-                        'fecha_fin' => $request->fin,
-                        'nombre_evento' => 'Fecha de inscripción',
-                        'descripcion' => 'Generado automáticamente',
-                        'anio_olimpiada' => 2025,
-                    ]
-                );
-            }
-
-            return response()->json(['message' => 'Fechas actualizadas correctamente']);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'error' => 'Error al procesar',
-                'details' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
-    // ✅ DELETE - Remove registration or competition dates
-    public function destroy(Request $request)
-    {
         $request->validate([
-            'area_id' => 'required|exists:area,area_id',
-            'tipo' => 'required|in:competencia,inscripcion'
+            'area_id' => 'required|exists:areas,id',
+            'tipo' => 'required|in:inscripcion,competencia',
+            'nombre_evento' => 'required|string',
+            'inicio' => 'required|date',
+            'fin' => 'required|date|after_or_equal:inicio',
         ]);
 
-        if ($request->tipo === 'competencia') {
-            Competencia::where('area_id', $request->area_id)->delete();
-            Cronograma::where('area_id', $request->area_id)
-                      ->where('tipo_evento', 'competencia')
-                      ->delete();
-        } else {
-            Cronograma::where('area_id', $request->area_id)
-                      ->where('tipo_evento', 'inscripcion')
-                      ->delete();
+        $competencia = Competencia::firstOrCreate(
+            ['area_id' => $request->area_id],
+            ['nombre' => $request->nombre_evento]
+        );
+
+        $cronograma = Cronograma::updateOrCreate(
+            ['competencia_id' => $competencia->id, 'tipo' => $request->tipo],
+            ['inicio' => $request->inicio, 'fin' => $request->fin]
+        );
+
+        return response()->json(['message' => 'Fechas actualizadas correctamente']);
+    }
+
+    // DELETE /api/eventos/{id}
+    public function destroy($id)
+    {
+        // Expecting ID to be a cronograma ID
+        $cronograma = Cronograma::find($id);
+
+        if (!$cronograma) {
+            return response()->json(['error' => 'No se encontró el cronograma'], 404);
         }
 
+        $cronograma->delete();
+
         return response()->json(['message' => 'Fechas eliminadas correctamente']);
+    }
+
+    // GET /api/eventos/{id}
+    public function show($id)
+    {
+        $area = Area::with('competencia', 'cronogramas')->find($id);
+
+        if (!$area) {
+            return response()->json(['error' => 'Área no encontrada'], 404);
+        }
+
+        return response()->json($area);
+    }
+
+    // PUT /api/eventos/{id}
+    public function update(Request $request, $id)
+    {
+        $cronograma = Cronograma::find($id);
+
+        if (!$cronograma) {
+            return response()->json(['error' => 'Cronograma no encontrado'], 404);
+        }
+
+        $request->validate([
+            'inicio' => 'required|date',
+            'fin' => 'required|date|after_or_equal:inicio',
+        ]);
+
+        $cronograma->update([
+            'inicio' => $request->inicio,
+            'fin' => $request->fin,
+        ]);
+
+        return response()->json(['message' => 'Fechas actualizadas correctamente']);
     }
 }
