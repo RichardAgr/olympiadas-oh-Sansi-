@@ -1,6 +1,9 @@
 .evento-container {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem;
 }
+
 
 table {
   width: 100%;
@@ -16,9 +19,23 @@ th, td {
 
 .search {
   width: 100%;
-  margin: 1rem 0;
-  padding: 0.5rem;
+  max-width: 1165px;       
+  margin: 0 auto 2rem;    
+  display: block;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  font-family: 'Comfortaa', sans-serif;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+  transition: border-color 0.3s ease;
 }
+
+.search:focus {
+  border-color: #3D50FF;
+}
+
 
 /* Icon buttons container (column style) */
 .icon-actions {
@@ -82,4 +99,59 @@ th, td {
   flex-wrap: nowrap;
   min-height: 60px; /* ensures vertical space is enough */
   text-align: center;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(6px);         /* 🎯 Blurry background */
+  background-color: rgba(255, 255, 255, 0.2); /* Light transparent veil */
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-overlay {
+  transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
+}
+
+
+.modal-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  min-width: 400px;
+}
+
+.modal-box p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  font-family: 'Comfortaa', sans-serif;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+  cursor: pointer;
 }

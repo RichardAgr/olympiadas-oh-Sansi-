@@ -11,7 +11,10 @@ const formatDate = (isoString) => {
 
 const VEvento = () => {
   const [areas, setAreas] = useState([]);
-  const [search, setSearch] = useState(""); 
+  const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [deleteInfo, setDeleteInfo] = useState({ area_id: null, tipo: null });
+
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -24,6 +27,11 @@ const VEvento = () => {
     }
   };
 
+  const handleDeleteClick = (areaId, tipo) => {
+    setDeleteInfo({ area_id: areaId, tipo });
+    setShowModal(true);
+  };
+
   const deleteFechas = async (areaId, tipo) => {
     try {
       await fetch("http://localhost:8000/api/evento/fechas", {
@@ -31,6 +39,20 @@ const VEvento = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ area_id: areaId, tipo }),
       });
+      fetchData();
+    } catch (err) {
+      console.error("Error deleting dates:", err);
+    }
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await fetch("http://localhost:8000/api/evento/fechas", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(deleteInfo),
+      });
+      setShowModal(false);
       fetchData();
     } catch (err) {
       console.error("Error deleting dates:", err);
@@ -65,7 +87,6 @@ const VEvento = () => {
           </tr>
         </thead>
         <tbody>
-          {/* ✅ Use filteredAreas instead of full areas */}
           {filteredAreas.map((area) => (
             <tr key={area.id}>
               <td>{area.nombre}</td>
@@ -86,7 +107,7 @@ const VEvento = () => {
                   </button>
                   <button
                     className="icon-btn"
-                    onClick={() => deleteFechas(area.id, "inscripcion")}
+                    onClick={() => handleDeleteClick(area.id, "inscripcion")}
                   >
                     <Trash2 size={20} color="white" />
                   </button>
@@ -111,17 +132,33 @@ const VEvento = () => {
                   </button>
                   <button
                     className="icon-btn"
-                    onClick={() => deleteFechas(area.id, "competencia")}
+                    onClick={() => handleDeleteClick(area.id, "competencia")}
                   >
                     <Trash2 size={20} color="white" />
                   </button>
                 </div>
               </td>
-
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* MODAL CONFIRMATION FOR BOTH */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <button className="close-btn" onClick={() => setShowModal(false)}>✖</button>
+            <p>
+              ¿Está seguro de Eliminar la Fecha de{" "}
+              {deleteInfo.tipo === "inscripcion" ? "Inscripción" : "Competencia"}?
+            </p>
+            <div className="modal-actions">
+              <button className="btn-back" onClick={() => setShowModal(false)}>No</button>
+              <button className="btn-save" onClick={confirmDelete}>Sí</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
