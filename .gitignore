@@ -12,6 +12,8 @@
 # 🚀 Frontend con Vite
 frontend/node_modules/
 frontend/dist/
+/frontend/package-lock.json
+
 
 # ⚙️ Laravel Mix o Vite compilados (si aplicara)
 public/mix-manifest.json
