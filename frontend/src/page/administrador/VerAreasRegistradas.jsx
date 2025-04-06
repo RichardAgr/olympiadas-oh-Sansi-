@@ -1,6 +1,5 @@
 import "./VRegistroOrg.css"
 import { useState, useEffect } from "react"
-import buscador from "../../assets/buscador.svg"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import "../../App.css"
@@ -11,7 +10,6 @@ function RegistrarOrganizador() {
   const [areas, setAreas] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
@@ -57,20 +55,18 @@ function RegistrarOrganizador() {
   return (
     <div className="home-container">
       <h1>Áreas Registradas</h1>
-      <div className="buscador">
-        <button className="boton-buscar">
-          <img src={buscador || "/placeholder.svg"} alt="Buscar" />
-        </button>
-        <input
-          type="text"
-          placeholder="Buscar por nombre"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value)
-            setCurrentPage(1)
-          }}
-        />
-      </div>
+
+      {/* Input suelto (fuera del contenedor buscador) */}
+      <input
+        type="text"
+        placeholder="Buscar por nombre"
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value)
+          setCurrentPage(1)
+        }}
+        className="input-busqueda"
+      />
 
       {loading ? (
         <div className="loading">Cargando datos...</div>
@@ -125,15 +121,12 @@ function RegistrarOrganizador() {
                 const half = Math.floor(10 / 2)
                 let startPage = Math.max(currentPage - half, 1)
                 let endPage = startPage + 9
-
                 if (endPage > totalPages) {
                   endPage = totalPages
                   startPage = Math.max(endPage - 9, 1)
                 }
-
                 const page = startPage + i
                 if (page > totalPages) return null
-
                 return (
                   <button
                     key={page}
@@ -154,3 +147,4 @@ function RegistrarOrganizador() {
 }
 
 export default RegistrarOrganizador
+

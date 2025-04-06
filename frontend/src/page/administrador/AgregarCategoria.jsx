@@ -57,7 +57,7 @@ function AgregarCategoria() {
 
   return (
     <div className="form-categoria-container">
-      <h2>Registrar Categoría</h2>
+      <h3>Registrar Categoría</h3>
       <form onSubmit={handleSubmit}>
         {/* Nombre */}
         <label>Nombre de Categoría</label>
@@ -78,7 +78,7 @@ function AgregarCategoria() {
         ></textarea>
 
         {/* Área */}
-        <label>Área*</label>
+        <label>Área</label>
         <select
           name="area_id"
           value={formulario.area_id}
@@ -103,7 +103,7 @@ function AgregarCategoria() {
             Cancelar
           </button>
           <button type="submit" className="btn-guardar">
-            Guardar Cambios
+            Guardar
           </button>
         </div>
       </form>

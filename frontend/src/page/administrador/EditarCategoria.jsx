@@ -80,7 +80,7 @@ function EditarCategoria() {
 
   return (
     <div className="form-categoria-container">
-      <h2>Editar Categoría</h2>
+      <h4>Editar Categoría</h4>
       <form onSubmit={handleSubmit}>
         <label>Nombre de Categoría</label>
         <input

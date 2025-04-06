@@ -57,10 +57,6 @@ const AgregarArea = () => {
           required
         />
 
-        <button type="button" className="btn-secondary" onClick={handleAddCategoryArea }>
-          Registrar Categorías
-        </button>
-
         <div className="button-group">
           <button
             type="button"
