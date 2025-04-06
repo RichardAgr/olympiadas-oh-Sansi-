@@ -7,6 +7,7 @@ import "../../App.css";
 
 const AreasList = () => {
   const [areas, setAreas] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // NUEVO
   const [areaToDelete, setAreaToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const areasPerPage = 3;
@@ -18,10 +19,15 @@ const AreasList = () => {
       .catch((error) => console.error("Error fetching areas:", error));
   }, []);
 
+  //Filtramos antes del paginado
+  const filteredAreas = areas.filter((area) =>
+    area.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const indexOfLastArea = currentPage * areasPerPage;
   const indexOfFirstArea = indexOfLastArea - areasPerPage;
-  const currentAreas = areas.slice(indexOfFirstArea, indexOfLastArea);
-  const totalPages = Math.ceil(areas.length / areasPerPage);
+  const currentAreas = filteredAreas.slice(indexOfFirstArea, indexOfLastArea);
+  const totalPages = Math.ceil(filteredAreas.length / areasPerPage);
 
   const goToPage = (page) => {
     if (page < 1 || page > totalPages) return;
@@ -53,6 +59,11 @@ const AreasList = () => {
           type="text"
           placeholder="Buscar por nombre de Área"
           className="search-input"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1); // Reiniciamos la página al buscar
+          }}
         />
         <Link to="/admin/areas/nueva" className="add-area-button">
           + Agregar Nueva Área
@@ -110,3 +121,4 @@ const AreasList = () => {
 };
 
 export default AreasList;
+
