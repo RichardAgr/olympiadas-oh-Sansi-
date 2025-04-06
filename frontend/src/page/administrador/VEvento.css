@@ -107,8 +107,8 @@ th, td {
   left: 0;
   width: 100vw;
   height: 100vh;
-  backdrop-filter: blur(6px);         /* 🎯 Blurry background */
-  background-color: rgba(255, 255, 255, 0.2); /* Light transparent veil */
+  backdrop-filter: blur(6px);         
+  background-color: rgba(255, 255, 255, 0.2); 
   z-index: 1000;
   display: flex;
   justify-content: center;
