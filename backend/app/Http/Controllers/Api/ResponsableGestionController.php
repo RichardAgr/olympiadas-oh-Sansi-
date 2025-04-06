@@ -46,6 +46,7 @@ class ResponsableGestionController extends Controller
                 'correo_electronico' => $request->correo_electronico,
                 'telefono' => $request->telefono,
                 'fecha_asignacion' => $fechaAsignacion, // Asignamos la fecha aquí
+                'estado' => true, 
             ]);
 
             // Respuesta de éxito
@@ -54,12 +55,13 @@ class ResponsableGestionController extends Controller
                 'responsable' => $responsable
             ], 201);
             
-        } catch (\Exception $e) {
-            // Captura cualquier excepción y muestra un mensaje claro
+        }  catch (\Exception $e) {
+            \Log::error('Error registering responsable: ' . $e->getMessage()); 
+    
             return response()->json([
                 'message' => 'Hubo un error al registrar al responsable',
                 'error' => $e->getMessage(),
-            ], 500); // Error interno del servidor
+            ], 500);
         }
     }
 

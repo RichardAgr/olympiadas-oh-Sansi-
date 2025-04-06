@@ -1,0 +1,169 @@
+.evento-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: center;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.search {
+  width: 100%;
+  max-width: 1165px;       
+  margin: 0 auto 2rem;    
+  display: block;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  font-family: 'Comfortaa', sans-serif;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.search:focus {
+  border-color: #3D50FF;
+}
+
+
+/* Icon buttons container (column style) */
+.icon-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Shared style for both icons */
+.icon-btn {
+  background-color: #3b5bfc;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background-color: #2f4be0;
+}
+.fecha-bloque {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.icon-btn {
+  background-color: #3c5dd1;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+  transition: transform 0.2s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.05);
+}
+
+.icon-btn svg {
+  stroke: white;
+}
+.fecha-bloque {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* ⬅️ horizontally center inside <td> */
+  gap: 10px;
+  flex-wrap: nowrap;
+  min-height: 60px; /* ensures vertical space is enough */
+  text-align: center;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(6px);         /* 🎯 Blurry background */
+  background-color: rgba(255, 255, 255, 0.2); /* Light transparent veil */
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-overlay {
+  transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
+}
+
+
+.modal-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  min-width: 400px;
+}
+
+.modal-box p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  font-family: 'Comfortaa', sans-serif;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+  cursor: pointer;
+}
+/* Gray border only for the table header row */
+table thead tr {
+  border-top: 1px solid #ccc; /* light gray */
+}
+
+/* Optional: makes all borders of the header a bit softer */
+table thead th {
+  border-bottom: 1px solid #ccc;
+  padding: 12px;
+  font-weight: bold;
+  background-color: rgb(231, 238, 252);
+}

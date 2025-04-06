@@ -2,8 +2,11 @@ import { Link, useLocation } from "react-router-dom";
 import logo from '../assets/logo.png';
 import { UserCircle, Bell } from 'lucide-react';
 import { useEffect, useRef, useState } from "react";
+import { NavLink } from "react-router-dom";
 
-const TopBar = () => {
+
+const AdminTopBar = () => {
+
   const [showRolesMenu, setShowRolesMenu] = useState(false);
   const timeoutRef = useRef(null);
   const location = useLocation();
@@ -66,7 +69,16 @@ const TopBar = () => {
         </li>
 
         <li><a href="#">Competidores</a></li>
-        <li><a href="#">Evento</a></li>
+        <li>
+          <NavLink 
+            to="/admin/Evento" 
+            className={({ isActive }) => isActive ? 'active' : ''}
+          >
+            Evento
+          </NavLink>
+        </li>
+
+
 
         <li>
           <button className="notification-button">
@@ -84,4 +96,4 @@ const TopBar = () => {
   );
 };
 
-export default TopBar;
+export default AdminTopBar;

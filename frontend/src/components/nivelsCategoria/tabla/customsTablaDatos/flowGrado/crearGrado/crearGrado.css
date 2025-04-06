@@ -1,0 +1,288 @@
+.page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+
+  .registro-container,
+  .editor-grado-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section-title,
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333333;
+    text-align: left;
+  }
+  
+  .page-title {
+    font-size: 1.8rem;
+    margin-bottom: 24px;
+  }
+  
+  .registro-container .text-field, 
+  .registro-container .textarea-field, 
+  .registro-container .select-field {
+    margin-bottom: 16px;
+    width: 100%;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
+  
+  .registro-container .text-field:hover .MuiOutlinedInput-notchedOutline, 
+  .registro-container .textarea-field:hover .MuiOutlinedInput-notchedOutline,
+  .registro-container .select-field:hover .MuiOutlinedInput-notchedOutline {
+    border-color: #bdbdbd;
+  }
+  
+  .registro-container .text-field:focus-within .MuiOutlinedInput-notchedOutline, 
+  .registro-container .textarea-field:focus-within .MuiOutlinedInput-notchedOutline,
+  .registro-container .select-field:focus-within .MuiOutlinedInput-notchedOutline {
+    border-color: #3f51b5;
+    border-width: 2px;
+  }
+  
+  .registro-container .text-field .MuiInputLabel-root.Mui-focused,
+  .registro-container .textarea-field .MuiInputLabel-root.Mui-focused,
+  .registro-container .select-field .MuiInputLabel-root.Mui-focused {
+    color: #3f51b5;
+  }
+  
+  .registro-container .grado-display-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-top: 8px;
+  }
+  
+  .registro-container .grado-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .registro-container .grado-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333333;
+  }
+  
+  .registro-container .grado-detail {
+    font-size: 14px;
+    color: #666666;
+    margin-top: 4px;
+  }
+  
+  .editor-grado-container .section-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333333;
+    margin-bottom: 8px;
+  }
+  
+  .editor-grado-container .cursos-section {
+    margin-bottom: 24px;
+  }
+  
+  .editor-grado-container .cursos-options {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    padding: 8px 0;
+  }
+  
+  .editor-grado-container .curso-option {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .editor-grado-container .curso-option.selected {
+    background-color: #e0e0e0;
+    font-weight: 500;
+  }
+  
+  .editor-grado-container .nivel-section,
+  .editor-grado-container .grado-section {
+    margin-bottom: 24px;
+  }
+  
+  .editor-grado-container .select-field {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
+  
+  .editor-grado-container .select-input {
+    padding: 12px 16px;
+  }
+  
+
+  .registro-container .crear-grado-btn,
+  .editor-grado-container .crear-grado-btn {
+    background-color: #3f51b5;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-transform: none;
+    font-weight: 500;
+    min-width: 120px;
+  }
+  
+  .registro-container .crear-grado-btn:hover,
+  .editor-grado-container .crear-grado-btn:hover {
+    background-color: #303f9f;
+  }
+  
+  .registro-container .action-buttons,
+  .editor-grado-container .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 32px;
+  }
+  
+  .registro-container .cancel-btn,
+  .editor-grado-container .cancel-btn {
+    background-color: transparent;
+    color: #333333;
+    padding: 8px 24px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    text-transform: none;
+  }
+  
+  .registro-container .cancel-btn:hover,
+  .editor-grado-container .cancel-btn:hover {
+    background-color: #f5f5f5;
+    border-color: #bdbdbd;
+  }
+  
+  .registro-container .save-btn,
+  .editor-grado-container .save-btn {
+    background-color: #3f51b5;
+    color: white;
+    padding: 8px 24px;
+    border-radius: 4px;
+    text-transform: none;
+  }
+  
+  .registro-container .save-btn:hover,
+  .editor-grado-container .save-btn:hover {
+    background-color: #303f9f;
+  }
+  
+  .registro-container .save-btn:disabled, 
+  .registro-container .cancel-btn:disabled,
+  .editor-grado-container .save-btn:disabled, 
+  .editor-grado-container .cancel-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .registro-container .divider,
+  .editor-grado-container .divider {
+    margin: 24px 0;
+    background-color: #e0e0e0;
+  }
+  
+  .registro-container .loading-indicator,
+  .editor-grado-container .loading-indicator {
+    margin-right: 8px;
+    color: inherit;
+  }
+  
+  .notification {
+    border-radius: 4px;
+    width: 100%;
+  }
+  
+  .success-notification {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .error-notification {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .warning-notification {
+    background-color: #ff9800;
+    color: white;
+  }
+  
+  .info-notification {
+    background-color: #2196f3;
+    color: white;
+  }
+  
+  @media (max-width: 600px) {
+    .registro-container .grado-display-section {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    
+    .registro-container .crear-grado-btn,
+    .editor-grado-container .crear-grado-btn {
+      width: 100%;
+    }
+    
+    .registro-container .action-buttons,
+    .editor-grado-container .action-buttons {
+      flex-direction: column-reverse;
+      gap: 8px;
+    }
+    
+    .registro-container .cancel-btn, 
+    .registro-container .save-btn,
+    .editor-grado-container .cancel-btn, 
+    .editor-grado-container .save-btn {
+      width: 100%;
+    }
+  }
+  
+  .registro-container .text-field:focus-visible, 
+  .registro-container .textarea-field:focus-visible,
+  .registro-container .select-field:focus-visible,
+  .registro-container .crear-grado-btn:focus-visible,
+  .registro-container .cancel-btn:focus-visible,
+  .registro-container .save-btn:focus-visible,
+  .editor-grado-container .select-field:focus-visible,
+  .editor-grado-container .crear-grado-btn:focus-visible,
+  .editor-grado-container .cancel-btn:focus-visible,
+  .editor-grado-container .save-btn:focus-visible {
+    outline: 2px solid #3f51b5;
+    outline-offset: 2px;
+  }
+  
+  /* Estilos para los estados de hover en dispositivos táctiles */
+  @media (hover: hover) {
+    .registro-container .crear-grado-btn:hover,
+    .editor-grado-container .crear-grado-btn:hover {
+      background-color: #303f9f;
+    }
+    
+    .registro-container .cancel-btn:hover,
+    .editor-grado-container .cancel-btn:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .registro-container .save-btn:hover,
+    .editor-grado-container .save-btn:hover {
+      background-color: #303f9f;
+    }
+  }

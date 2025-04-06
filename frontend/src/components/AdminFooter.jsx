@@ -1,3 +1,5 @@
+import "./AdminFooter.css";
+
 const AdminFooter = () => {
     return (
       <footer className="admin-footer">
