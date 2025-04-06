@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Categoria;
 use App\Models\Inscripcion;
+use App\Models\NivelCategoria;
+use App\Models\Cronograma;
 
 class Area extends Model
 {
@@ -22,15 +24,27 @@ class Area extends Model
         'foto'
     ];
 
-    //  Relación con Categoría
+    // Relación con Categoría (si usas este modelo)
     public function categorias()
     {
         return $this->hasMany(Categoria::class, 'area_id', 'area_id');
     }
 
-    //  Relación con Inscripción
+    // Relación con Inscripciones
     public function inscripciones()
     {
         return $this->hasMany(Inscripcion::class, 'area_id', 'area_id');
+    }
+
+    // ✅ Relación con NivelCategoria (necesaria para /areasRegistradas)
+    public function nivelCategoria()
+    {
+        return $this->hasMany(NivelCategoria::class, 'area_id', 'area_id');
+    }
+
+    // ✅ Relación con Cronograma (necesaria para /areasRegistradas)
+    public function cronograma()
+    {
+        return $this->hasOne(Cronograma::class, 'area_id', 'area_id');
     }
 }

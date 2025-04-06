@@ -9,7 +9,7 @@ use App\Models\Area;
 class AreaController extends Controller
 {
     /**
-     * Mostrar todas las áreas de competencia.
+     * Mostrar todas las áreas.
      * GET /api/areas
      */
     public function index()
@@ -19,21 +19,59 @@ class AreaController extends Controller
     }
 
     /**
-     * Registrar una nueva área de competencia.
+     * Mostrar áreas con eventos y cronogramas.
+     * GET /api/areasRegistradas
+     */
+    public function getEventosCronograma()
+{
+    try {
+        $resultados = \DB::table('area')
+            ->join('nivel_categoria', 'area.area_id', '=', 'nivel_categoria.area_id')
+            ->join('grado as gi', 'nivel_categoria.grado_id_inicial', '=', 'gi.grado_id')
+            ->join('grado as gf', 'nivel_categoria.grado_id_final', '=', 'gf.grado_id')
+            ->leftJoin('cronograma', 'area.area_id', '=', 'cronograma.area_id')
+            ->select(
+                'area.nombre as area',
+                'nivel_categoria.nombre as nivel_categoria',
+                \DB::raw("CONCAT(gi.nombre, ' - ', gf.nombre) as grado"),
+                'area.costo',
+                'cronograma.tipo_evento',
+                'cronograma.fecha_inicio',
+                'cronograma.fecha_fin',
+                'nivel_categoria.descripcion'
+            )
+            ->get();
+
+        return response()->json([
+            'data' => [
+                [
+                    'data' => $resultados
+                ]
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Error al obtener datos de áreas registradas',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
+    /**
+     * Registrar una nueva área.
      * POST /api/areas
      */
     public function store(Request $request)
     {
-        // Validamos la entrada
         $request->validate([
             'nombre' => 'required|string|max:50|unique:area,nombre',
             'descripcion' => 'required|string',
             'costo' => 'required|numeric|min:0',
             'foto' => 'nullable|string',
-            'estado' => 'nullable|boolean' // opcional, por defecto será true
+            'estado' => 'nullable|boolean'
         ]);
 
-        // Creamos el registro
         $area = Area::create([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
@@ -42,9 +80,8 @@ class AreaController extends Controller
             'estado' => $request->estado ?? true
         ]);
 
-        // Devolvemos respuesta de éxito
         return response()->json([
-            'message' => 'Área registrada con éxito ',
+            'message' => 'Área registrada con éxito',
             'area' => $area
         ], 201);
     }
@@ -60,14 +97,13 @@ class AreaController extends Controller
     }
 
     /**
-     * Modificar un área existente.
+     * Actualizar un área.
      * PUT /api/areas/{id}
      */
     public function update(Request $request, $id)
     {
         $area = Area::findOrFail($id);
 
-        // Validar cambios
         $request->validate([
             'nombre' => 'required|string|max:50|unique:area,nombre,' . $id . ',area_id',
             'descripcion' => 'required|string',
@@ -76,33 +112,17 @@ class AreaController extends Controller
             'estado' => 'required|boolean'
         ]);
 
-        // Actualizamos el área
         $area->update($request->all());
 
         return response()->json([
-            'message' => 'Área actualizada correctamente ',
+            'message' => 'Área actualizada correctamente',
             'area' => $area
         ]);
     }
 
-    /* public function destroy($id)
-        {
-    $area = Area::findOrFail($id);
-
-    // Verifica si tiene relaciones activas
-    if ($area->categorias()->exists() || $area->inscripciones()->exists()) {
-        return response()->json([
-            'message' => 'No se puede eliminar esta área porque tiene categorías o inscripciones activas asociadas.'
-        ], 409); // Código 409 = conflicto
-    }
-
-    $area->delete();
-
-    return response()->json([
-        'message' => 'Área eliminada exitosamente'
-    ]);
-    }
-
+    /**
+     * Eliminar un área.
+     * DELETE /api/areas/{id}
      */
     public function destroy($id)
     {
@@ -110,10 +130,9 @@ class AreaController extends Controller
         $area->delete();
 
         return response()->json([
-            'message' => 'Área eliminada exitosamente '
+            'message' => 'Área eliminada exitosamente'
         ]);
     }
-
-
 }
+
 
