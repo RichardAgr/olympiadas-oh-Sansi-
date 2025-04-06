@@ -5,17 +5,25 @@ import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
 import "./VEditarFecha.css";
 
-// Set Spanish calendar
 registerLocale("es", es);
 
 const VEditarFechaInscripcion = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { areaId } = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // ⛔ Validation: end date must be equal or after start
+    if (startDate && endDate && endDate < startDate) {
+      setError("Seleccione una fecha correcta");
+      return;
+    }
+
+    setError(""); // clear any previous error
 
     const body = {
       area_id: areaId,
@@ -59,6 +67,7 @@ const VEditarFechaInscripcion = () => {
               className="styled-datepicker"
             />
           </div>
+
           <div className="date-group">
             <label>Finaliza:</label>
             <DatePicker
@@ -72,6 +81,9 @@ const VEditarFechaInscripcion = () => {
             />
           </div>
         </div>
+
+        {error && <p style={{ color: "red", marginBottom: "1rem" }}>{error}</p>}
+
         <div className="btn-wrapper">
           <button type="button" className="btn-back" onClick={() => navigate(-1)}>
             Atrás

@@ -155,3 +155,15 @@ th, td {
   font-size: 14px;
   cursor: pointer;
 }
+/* Gray border only for the table header row */
+table thead tr {
+  border-top: 1px solid #ccc; /* light gray */
+}
+
+/* Optional: makes all borders of the header a bit softer */
+table thead th {
+  border-bottom: 1px solid #ccc;
+  padding: 12px;
+  font-weight: bold;
+  background-color: rgb(231, 238, 252);
+}

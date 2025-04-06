@@ -11,11 +11,17 @@ registerLocale("es", es);
 const VEditarFechaCompetencia = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const { areaId, competenciaId } = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!startDate || !endDate || endDate < startDate) {
+      setError(true);
+      return;
+    }
 
     const body = {
       area_id: areaId,
@@ -47,12 +53,14 @@ const VEditarFechaCompetencia = () => {
       <h2>Fecha de Competencia</h2>
       <form onSubmit={handleSubmit}>
         <div className="calendar-wrapper">
-          {/* ⬇️ Added flex spacing + styling */}
           <div className="date-group">
             <label>Inicio:</label>
             <DatePicker
               selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              onChange={(date) => {
+                setStartDate(date);
+                setError(false);
+              }}
               dateFormat="dd/MM/yyyy"
               locale="es"
               monthsShown={2}
@@ -64,15 +72,25 @@ const VEditarFechaCompetencia = () => {
             <label>Finaliza:</label>
             <DatePicker
               selected={endDate}
-              onChange={(date) => setEndDate(date)}
+              onChange={(date) => {
+                setEndDate(date);
+                setError(false);
+              }}
               dateFormat="dd/MM/yyyy"
               locale="es"
               monthsShown={2}
               placeholderText="Selecciona fecha"
-              className="styled-datepicker"
+              className={`styled-datepicker ${error ? "error-datepicker" : ""}`}
             />
           </div>
         </div>
+
+        {error && (
+          <p style={{ color: "red", fontWeight: "bold", marginBottom: "1rem" }}>
+            Seleccione una fecha correcta
+          </p>
+        )}
+
         <div className="btn-wrapper">
           <button type="button" className="btn-back" onClick={() => navigate(-1)}>
             Atrás
