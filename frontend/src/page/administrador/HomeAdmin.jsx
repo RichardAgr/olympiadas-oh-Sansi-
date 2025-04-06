@@ -17,7 +17,7 @@ const HomeAdmin = () => {
           <span>Áreas</span>
         </Link>
         <div className="card inactive">
-          <Link to="/admin/tablaAreasCategoria">
+          <Link to="/admin/Registro-categorias" className= "card">
           <img src="https://via.placeholder.com/100" alt="Niveles" />
           <span>Niveles/Categorías</span>
           </Link>

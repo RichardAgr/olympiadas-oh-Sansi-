@@ -1,0 +1,24 @@
+.selector-grado {
+    margin-top: 1rem;
+    background-color: #F7F7F7;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .selector-grado label {
+    display: block;
+    margin-top: 0.8rem;
+    font-weight: bold;
+  }
+  
+  .selector-grado select {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    margin-top: 0.4rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #EFF2FF;
+    font-family: 'Comfortaa', sans-serif;
+  }
+  

@@ -99,11 +99,22 @@ body {
   font-size: 14px;
 }
 
+.home-container {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+
 .admin-welcome-container {
+  margin: 0;
   background-color: #EFF2FF;
   padding: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 95px;
+  width: 100%;              /* Ocupa todo el ancho de la ventana */
+  box-sizing: border-box;    /* Asegura que padding no desborde */
 }
+
 
 .admin-welcome-container h1 {
   margin: 0 0 10px;
