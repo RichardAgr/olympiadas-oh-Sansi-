@@ -169,3 +169,24 @@ table thead th {
 
 }
 
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #eee;
+  font-family: 'Comfortaa';
+}
+
+.pagination button.active {
+  background-color: #3D50FF;
+  color: white;
+  font-weight: bold;
+}

@@ -15,6 +15,9 @@ const VEvento = () => {
   const [showModal, setShowModal] = useState(false);
   const [deleteInfo, setDeleteInfo] = useState({ area_id: null, tipo: null });
 
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 4;
+
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -54,6 +57,11 @@ const VEvento = () => {
     area.nombre.toLowerCase().includes(search.toLowerCase())
   );
 
+  const totalPaginas = Math.ceil(filteredAreas.length / itemsPorPagina);
+  const startIndex = (paginaActual - 1) * itemsPorPagina;
+  const endIndex = startIndex + itemsPorPagina;
+  const areasPaginadas = filteredAreas.slice(startIndex, endIndex);
+
   return (
     <div className="evento-container">
       <h2>Registrar Fechas</h2>
@@ -74,7 +82,7 @@ const VEvento = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredAreas.map((area) => (
+          {areasPaginadas.map((area) => (
             <tr key={area.id}>
               <td>{area.nombre}</td>
 
@@ -111,17 +119,15 @@ const VEvento = () => {
                       ? `${formatDate(area.fechas_competencia.inicio)} - ${formatDate(area.fechas_competencia.fin)}`
                       : "Sin Asignar"}
                   </span>
-                 
                   <button
                     className="icon-btn"
                     onClick={() => {
-                      const competenciaId = area.competencia_id ?? "null"; 
+                      const competenciaId = area.competencia_id ?? "null";
                       navigate(`/admin/Evento/FechaCompetencia/${area.id}/${competenciaId}`);
                     }}
                   >
                     <Edit size={20} color="white" />
                   </button>
-
                   <button
                     className="icon-btn"
                     onClick={() => handleDeleteClick(area.id, "competencia")}
@@ -135,7 +141,32 @@ const VEvento = () => {
         </tbody>
       </table>
 
-      {/* MODAL CONFIRMATION FOR BOTH */}
+      {/* ✅ PAGINATION */}
+      <div className="pagination">
+        <button
+          onClick={() => setPaginaActual(paginaActual - 1)}
+          disabled={paginaActual === 1}
+        >
+          {"<"}
+        </button>
+        {Array.from({ length: totalPaginas }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setPaginaActual(i + 1)}
+            className={paginaActual === i + 1 ? "active" : ""}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button
+          onClick={() => setPaginaActual(paginaActual + 1)}
+          disabled={paginaActual === totalPaginas}
+        >
+          {">"}
+        </button>
+      </div>
+
+      {/* MODAL CONFIRMATION */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-box">
