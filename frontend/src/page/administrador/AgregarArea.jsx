@@ -3,20 +3,48 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../App.css";
 
-
 const AgregarArea = () => {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [costo, setCosto] = useState("");
+  const [errores, setErrores] = useState({});
   const navigate = useNavigate();
+
+  const validarFormulario = () => {
+    const nuevosErrores = {};
+
+    if (!nombre.trim()) {
+      nuevosErrores.nombre = "El nombre es obligatorio.";
+    } else if (nombre.length < 3) {
+      nuevosErrores.nombre = "Debe tener al menos 3 caracteres.";
+    }
+
+    if (!descripcion.trim()) {
+      nuevosErrores.descripcion = "La descripción es obligatoria.";
+    } else if (descripcion.length < 5) {
+      nuevosErrores.descripcion = "Debe tener al menos 5 caracteres.";
+    }
+
+    if (!costo) {
+      nuevosErrores.costo = "El costo es obligatorio.";
+    } else if (isNaN(costo) || parseFloat(costo) <= 0) {
+      nuevosErrores.costo = "Debe ser un número mayor a 0.";
+    }
+
+    setErrores(nuevosErrores);
+    return Object.keys(nuevosErrores).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validarFormulario()) return;
+
     try {
-        await axios.post("http://127.0.0.1:8000/api/areas", {
+      await axios.post("http://127.0.0.1:8000/api/areas", {
         nombre,
         descripcion,
-        costo: costo,
+        costo,
       });
       alert("Área registrada con éxito ✅");
       navigate("/admin/areas");
@@ -25,10 +53,6 @@ const AgregarArea = () => {
       alert("Hubo un error al guardar el área ❌");
     }
   };
-
-  const handleAddCategoryArea = () => {
-    navigate("/admin/crearCategoria")
-  }
 
   return (
     <div className="form-container">
@@ -39,23 +63,23 @@ const AgregarArea = () => {
           type="text"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
-          required
         />
+        {errores.nombre && <small className="error">{errores.nombre}</small>}
 
         <label>Descripción del Área</label>
         <textarea
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
-          required
-        />
+        ></textarea>
+        {errores.descripcion && <small className="error">{errores.descripcion}</small>}
 
         <label>Costo (Bs)</label>
         <input
           type="number"
           value={costo}
           onChange={(e) => setCosto(e.target.value)}
-          required
         />
+        {errores.costo && <small className="error">{errores.costo}</small>}
 
         <div className="button-group">
           <button
@@ -75,4 +99,3 @@ const AgregarArea = () => {
 };
 
 export default AgregarArea;
-
