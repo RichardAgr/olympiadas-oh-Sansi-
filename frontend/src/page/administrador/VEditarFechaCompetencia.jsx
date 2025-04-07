@@ -17,8 +17,6 @@ const parseDateSafely = (iso) => {
 const VEditarFechaCompetencia = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false); // ✅ New success state
 
   const navigate = useNavigate();
   const { areaId, competenciaId } = useParams();
@@ -44,7 +42,7 @@ const VEditarFechaCompetencia = () => {
     e.preventDefault();
 
     if (startDate && endDate && endDate < startDate) {
-      setError("Seleccione una fecha correcta");
+      alert("Seleccione una fecha correcta ❌");
       return;
     }
 
@@ -68,8 +66,8 @@ const VEditarFechaCompetencia = () => {
       const result = await res.json();
       console.log("✅ Guardado:", result);
 
-      setSuccess(true); // ✅ Show success message
-      setTimeout(() => navigate("/admin/Evento"), 1500); // ✅ Auto navigate after short delay
+      alert("Fecha de competencia guardada con éxito ✅");
+      navigate("/admin/Evento");
     } catch (error) {
       console.error("❌ Error al guardar fechas:", error);
     }
@@ -106,18 +104,6 @@ const VEditarFechaCompetencia = () => {
             />
           </div>
         </div>
-
-        {error && (
-          <p style={{ color: "red", fontWeight: "bold", marginBottom: "1rem" }}>
-            Seleccione una fecha correcta
-          </p>
-        )}
-
-        {success && (
-          <p style={{ color: "green", fontWeight: "bold", marginBottom: "1rem" }}>
-            La fecha se guardó con éxito
-          </p>
-        )}
 
         <div className="btn-wrapper">
           <button type="button" className="btn-back" onClick={() => navigate(-1)}>

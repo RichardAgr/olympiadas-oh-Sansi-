@@ -18,16 +18,22 @@ function AgregarRespon() {
 
     if (!nombres.trim()) {
       nuevosErrores.nombres = "El nombre es obligatorio.";
+    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(nombres)) {
+      nuevosErrores.nombres = "El nombre no puede contener números ni caracteres especiales.";
     }
 
     if (!apellidos.trim()) {
       nuevosErrores.apellidos = "Los apellidos son obligatorios.";
+    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(apellidos)) {
+      nuevosErrores.apellidos = "Los apellidos no pueden contener números ni caracteres especiales.";
     }
 
     if (!ci.trim()) {
       nuevosErrores.ci = "El carnet de identidad es obligatorio.";
-    } else if (!/^\d+$/.test(ci)) {
-      nuevosErrores.ci = "Debe contener solo números.";
+    } else if (ci.length < 7) {
+      nuevosErrores.ci = "El CI debe tener al menos 7 caracteres.";
+    } else if (!/^[A-Za-z0-9-]+$/.test(ci)) {
+      nuevosErrores.ci = "El CI solo puede contener letras, números y el carácter '-'";
     }
 
     if (!correo.trim()) {
@@ -38,8 +44,8 @@ function AgregarRespon() {
 
     if (!telefono.trim()) {
       nuevosErrores.telefono = "El teléfono es obligatorio.";
-    } else if (!/^\d{7,8}$/.test(telefono)) {
-      nuevosErrores.telefono = "Debe contener 7 u 8 dígitos.";
+    } else if (!/^[674]\d{6,7}$/.test(telefono)) {
+      nuevosErrores.telefono = "Debe comenzar con 6, 7 o 4 y tener 7 u 8 dígitos.";
     }
 
     setErrores(nuevosErrores);
@@ -150,4 +156,3 @@ function AgregarRespon() {
 }
 
 export default AgregarRespon;
-

@@ -16,28 +16,30 @@ const AgregarArea = () => {
 
   const validarFormulario = () => {
     const nuevosErrores = {};
-
+  
     if (!nombre.trim()) {
       nuevosErrores.nombre = "El nombre es obligatorio.";
     } else if (nombre.length < 3) {
-      nuevosErrores.nombre = "Debe tener al menos 3 caracteres.";
+      nuevosErrores.nombre = "Debe tener al menos 5 caracteres.";
+    } else if (/\d/.test(nombre)) { 
+      nuevosErrores.nombre = "El nombre no puede contener números.";
     }
-
+  
     if (!descripcion.trim()) {
       nuevosErrores.descripcion = "La descripción es obligatoria.";
     } else if (descripcion.length < 5) {
       nuevosErrores.descripcion = "Debe tener al menos 5 caracteres.";
     }
-
+  
     if (!costo) {
       nuevosErrores.costo = "El costo es obligatorio.";
     } else if (isNaN(costo) || parseFloat(costo) <= 0) {
       nuevosErrores.costo = "Debe ser un número mayor a 0.";
     }
-
+  
     setErrores(nuevosErrores);
     return Object.keys(nuevosErrores).length === 0;
-  };
+  };  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

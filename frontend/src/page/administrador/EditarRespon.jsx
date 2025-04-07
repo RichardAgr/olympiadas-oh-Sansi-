@@ -33,14 +33,37 @@ function EditarRespon() {
   const validar = () => {
     const erroresNuevos = {};
 
-    if (!nombres.trim()) erroresNuevos.nombres = "El nombre es obligatorio.";
-    if (!apellidos.trim()) erroresNuevos.apellidos = "Los apellidos son obligatorios.";
-    if (!ci.trim()) erroresNuevos.ci = "El CI es obligatorio.";
-    else if (!/^\d+$/.test(ci)) erroresNuevos.ci = "El CI solo puede contener números.";
-    if (!correo.trim()) erroresNuevos.correo = "El correo es obligatorio.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) erroresNuevos.correo = "Correo inválido.";
-    if (!telefono.trim()) erroresNuevos.telefono = "El teléfono es obligatorio.";
-    else if (!/^\d{7,8}$/.test(telefono)) erroresNuevos.telefono = "Debe tener 7 u 8 dígitos.";
+    if (!nombres.trim()) {
+      erroresNuevos.nombres = "El nombre es obligatorio.";
+    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(nombres)) {
+      erroresNuevos.nombres = "El nombre no puede contener números ni caracteres especiales.";
+    }
+
+    if (!apellidos.trim()) {
+      erroresNuevos.apellidos = "Los apellidos son obligatorios.";
+    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(apellidos)) {
+      erroresNuevos.apellidos = "Los apellidos no pueden contener números ni caracteres especiales.";
+    }
+
+    if (!ci.trim()) {
+      erroresNuevos.ci = "El CI es obligatorio.";
+    } else if (ci.length < 7) {
+      erroresNuevos.ci = "El CI debe tener al menos 7 caracteres.";
+    } else if (!/^[A-Za-z0-9-]+$/.test(ci)) {
+      erroresNuevos.ci = "El CI solo puede contener letras, números y el carácter '-'";
+    }
+
+    if (!correo.trim()) {
+      erroresNuevos.correo = "El correo es obligatorio.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+      erroresNuevos.correo = "Correo inválido.";
+    }
+
+    if (!telefono.trim()) {
+      erroresNuevos.telefono = "El teléfono es obligatorio.";
+    } else if (!/^[674]\d{6,7}$/.test(telefono)) {
+      erroresNuevos.telefono = "Debe comenzar con 6, 7 o 4 y tener 7 u 8 dígitos.";
+    }
 
     setErrores(erroresNuevos);
     return Object.keys(erroresNuevos).length === 0;
@@ -151,4 +174,3 @@ function EditarRespon() {
 }
 
 export default EditarRespon;
-

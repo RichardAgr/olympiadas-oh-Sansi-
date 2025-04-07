@@ -35,9 +35,9 @@ const VEditarFechaInscripcion = () => {
     e.preventDefault();
 
     if (startDate && endDate && endDate < startDate) {
-      setError("Seleccione una fecha correcta");
+      alert("Seleccione una fecha correcta ❌");
       return;
-    }
+    }    
 
     setError("");
 
@@ -59,6 +59,7 @@ const VEditarFechaInscripcion = () => {
       });
       const result = await res.json();
       console.log("✅ Guardado:", result);
+      alert("Fecha de inscripción guardada con éxito ✅");
       navigate("/admin/Evento");
     } catch (error) {
       console.error("❌ Error al guardar fechas:", error);
@@ -96,8 +97,6 @@ const VEditarFechaInscripcion = () => {
             />
           </div>
         </div>
-
-        {error && <p style={{ color: "red", marginBottom: "1rem" }}>{error}</p>}
 
         <div className="btn-wrapper">
           <button type="button" className="btn-back" onClick={() => navigate(-1)}>
