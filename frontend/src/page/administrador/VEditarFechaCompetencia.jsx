@@ -18,6 +18,8 @@ const VEditarFechaCompetencia = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false); // ✅ New success state
+
   const navigate = useNavigate();
   const { areaId, competenciaId } = useParams();
 
@@ -27,7 +29,6 @@ const VEditarFechaCompetencia = () => {
         const res = await fetch(`http://localhost:8000/api/evento/fechas/${areaId}/competencia`);
         const data = await res.json();
 
-        // ✅ Use timezone-safe parser
         if (data?.inicio && data?.fin) {
           setStartDate(parseDateSafely(data.inicio));
           setEndDate(parseDateSafely(data.fin));
@@ -51,7 +52,6 @@ const VEditarFechaCompetencia = () => {
       area_id: areaId,
       tipo: "competencia",
       nombre_evento: "Fecha de competencia",
-      // ✅ Save clean date format
       inicio: startDate.toISOString().split("T")[0],
       fin: endDate.toISOString().split("T")[0],
     };
@@ -67,7 +67,9 @@ const VEditarFechaCompetencia = () => {
 
       const result = await res.json();
       console.log("✅ Guardado:", result);
-      navigate("/admin/Evento");
+
+      setSuccess(true); // ✅ Show success message
+      setTimeout(() => navigate("/admin/Evento"), 1500); // ✅ Auto navigate after short delay
     } catch (error) {
       console.error("❌ Error al guardar fechas:", error);
     }
@@ -108,6 +110,12 @@ const VEditarFechaCompetencia = () => {
         {error && (
           <p style={{ color: "red", fontWeight: "bold", marginBottom: "1rem" }}>
             Seleccione una fecha correcta
+          </p>
+        )}
+
+        {success && (
+          <p style={{ color: "green", fontWeight: "bold", marginBottom: "1rem" }}>
+            La fecha se guardó con éxito
           </p>
         )}
 
