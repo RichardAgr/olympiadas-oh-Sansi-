@@ -176,4 +176,60 @@ body {
   background-color: #384FD6;
   color: white;
 }
+.input-busqueda {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 15px 0;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
 
+.filtros-fecha-y-boton {
+  display: flex;
+  align-items: flex-end; /* 📏 Alínea los inputs y botón a la base */
+  gap: 20px;              /* Espaciado entre cada bloque */
+  margin-bottom: 20px;
+  flex-wrap: wrap;        /* 💡 Hace que se acomode bien en pantallas chicas */
+}
+
+.filtro-fecha {
+  display: flex;
+  flex-direction: column;
+}
+
+.filtro-fecha label {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.filtro-fecha input[type="date"] {
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  min-width: 160px;
+}
+
+.btn-limpiar {
+  padding: 10px 20px;
+  background-color: #d1d1d1;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  height: fit-content; /* ✅ Hace que el botón se alinee con los inputs */
+  margin-top: auto;    /* ✅ Fuerza que se alinee abajo */
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.btn-limpiar:hover {
+  background-color: #bcbcbc;
+}
+/* 📊 Texto de contador */
+.contador-resultados {
+  margin-top: 10px;
+  font-size: 16px;
+}

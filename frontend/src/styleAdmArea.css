@@ -143,15 +143,16 @@ body {
 }
 
 .card-grid {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 30px;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
-  max-width: 900px; /* Alineado con el banner */
-  margin-left: auto;
-  margin-right: auto;
+  justify-content: center; 
+  align-items: center;     
+  padding: 0 20px;
+  max-width: 900px;
+  margin: 0 auto 40px; 
 }
+
 
 .card {
   display: flex;

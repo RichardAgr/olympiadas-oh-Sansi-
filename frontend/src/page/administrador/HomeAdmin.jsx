@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import bannerImage from "../../assets/banner.png";
 import areaIcon from "../../assets/areas.png";
 import categoriaIcon from"../../assets/categorias.png";
-import gradoIcon from"../../assets/grados.png";
 import areaRegIcon from"../../assets/verAreasReg.png";
 import "../../App.css";
 
@@ -24,16 +23,6 @@ const HomeAdmin = () => {
           <img src={categoriaIcon} alt="Niveles" />
           <span>Niveles/Categorías</span>
           </Link>
-        </div>
-        <div className="card-grid">
-        <Link to="/admin/Registro-categorias" className= "card">
-          <img src={gradoIcon} alt="Grados" />
-          <span>Grados</span>
-          </Link>
-        </div>
-        <div className="card inactive">
-          <img src="https://via.placeholder.com/100" alt="Costos" />
-          <span>Costos de inscripción</span>
         </div>
         <div className="card-grid">
           <Link to= "/admin/verAreasRegistradas" className="card">

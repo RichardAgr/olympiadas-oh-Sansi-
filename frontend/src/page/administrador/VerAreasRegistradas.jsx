@@ -7,6 +7,8 @@ import "../../App.css"
 function RegistrarOrganizador() {
   const navigate = useNavigate()
   const [search, setSearch] = useState("")
+  const [fechaDesde, setFechaDesde] = useState("")
+  const [fechaHasta, setFechaHasta] = useState("")
   const [areas, setAreas] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -38,9 +40,22 @@ function RegistrarOrganizador() {
     return date.toLocaleDateString()
   }
 
-  const filteredAreas = areas.filter(area =>
-    area.area?.toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredAreas = areas.filter(area => {
+    const textMatch = [
+      area.area,
+      area.nivel_categoria,
+      area.grado,
+      area.tipo_evento
+    ].some(field => field?.toLowerCase().includes(search.toLowerCase()))
+
+    const fechaInicio = new Date(area.fecha_inicio)
+    const desde = fechaDesde ? new Date(fechaDesde) : null
+    const hasta = fechaHasta ? new Date(fechaHasta) : null
+
+    const fechaMatch = (!desde || fechaInicio >= desde) && (!hasta || fechaInicio <= hasta)
+
+    return textMatch && fechaMatch
+  })
 
   const totalPages = Math.ceil(filteredAreas.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
@@ -52,14 +67,20 @@ function RegistrarOrganizador() {
     }
   }
 
+  const handleLimpiarFiltros = () => {
+    setSearch("")
+    setFechaDesde("")
+    setFechaHasta("")
+    setCurrentPage(1)
+  }
+
   return (
     <div className="home-container">
       <h1>Áreas Registradas</h1>
 
-      {/* Input suelto (fuera del contenedor buscador) */}
       <input
         type="text"
-        placeholder="Buscar por nombre"
+        placeholder="Buscar por área, categoría, grado o evento"
         value={search}
         onChange={(e) => {
           setSearch(e.target.value)
@@ -67,6 +88,32 @@ function RegistrarOrganizador() {
         }}
         className="input-busqueda"
       />
+
+      <div className="filtros-fecha-y-boton">
+        <div className="filtro-fecha">
+          <label>Desde:</label>
+          <input
+            type="date"
+            value={fechaDesde}
+            onChange={(e) => setFechaDesde(e.target.value)}
+          />
+        </div>
+
+        <div className="filtro-fecha">
+          <label>Hasta:</label>
+          <input
+            type="date"
+            value={fechaHasta}
+            onChange={(e) => setFechaHasta(e.target.value)}
+          />
+        </div>
+
+        <button className="btn-limpiar" onClick={handleLimpiarFiltros}>
+          Limpiar filtros
+        </button>
+      </div>
+
+      <p className="contador-resultados">Resultados encontrados: <strong>{filteredAreas.length}</strong></p>
 
       {loading ? (
         <div className="loading">Cargando datos...</div>
@@ -97,8 +144,8 @@ function RegistrarOrganizador() {
                       <td>{dato.grado || "-"}</td>
                       <td>{dato.costo || "-"}</td>
                       <td>{dato.tipo_evento || "-"}</td>
-                      <td>{formatDate(dato.fecha_inicio) || "-"}</td>
-                      <td>{formatDate(dato.fecha_fin) || "-"}</td>
+                      <td>{formatDate(dato.fecha_inicio)}</td>
+                      <td>{formatDate(dato.fecha_fin)}</td>
                       <td>{dato.descripcion || "-"}</td>
                     </tr>
                   ))
@@ -113,20 +160,11 @@ function RegistrarOrganizador() {
             </table>
           </div>
 
-          {/* PAGINACIÓN */}
           {totalPages > 1 && (
             <div className="pagination">
               <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>{"<"}</button>
               {Array.from({ length: Math.min(10, totalPages) }, (_, i) => {
-                const half = Math.floor(10 / 2)
-                let startPage = Math.max(currentPage - half, 1)
-                let endPage = startPage + 9
-                if (endPage > totalPages) {
-                  endPage = totalPages
-                  startPage = Math.max(endPage - 9, 1)
-                }
-                const page = startPage + i
-                if (page > totalPages) return null
+                const page = i + 1
                 return (
                   <button
                     key={page}
@@ -146,5 +184,4 @@ function RegistrarOrganizador() {
   )
 }
 
-export default RegistrarOrganizador
-
+export default RegistrarOrganizador;
