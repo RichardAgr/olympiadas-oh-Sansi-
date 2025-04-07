@@ -64,9 +64,6 @@ const EditArea = () => {
           required
         />
 
-        <button type="button" className="btn-secondary">
-          Registrar Categorías
-        </button>
 
         <div className="button-group">
           <button
