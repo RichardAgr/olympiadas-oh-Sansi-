@@ -12,6 +12,7 @@ class Cronograma extends Model
     use HasFactory;
 
     protected $table = 'cronograma';
+    protected $primaryKey = 'cronograma_id';
 
     protected $fillable = [
         'area_id',
@@ -38,4 +39,5 @@ class Cronograma extends Model
     {
         return $this->belongsTo(Competencia::class, 'competencia_id');
     }
+    
 }

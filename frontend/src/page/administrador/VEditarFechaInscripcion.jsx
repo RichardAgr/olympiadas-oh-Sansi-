@@ -14,16 +14,32 @@ const VEditarFechaInscripcion = () => {
   const navigate = useNavigate();
   const { areaId } = useParams();
 
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/evento/fechas/${areaId}/inscripcion`);
+        const data = await res.json();
+        if (data) {
+          const offsetMs = new Date().getTimezoneOffset() * 60000;
+          if (data.inicio) setStartDate(new Date(Date.parse(data.inicio) + offsetMs));
+          if (data.fin) setEndDate(new Date(Date.parse(data.fin) + offsetMs));
+        }
+      } catch (err) {
+        console.error("Error loading existing dates", err);
+      }
+    };
+    loadData();
+  }, [areaId]);  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ⛔ Validation: end date must be equal or after start
     if (startDate && endDate && endDate < startDate) {
       setError("Seleccione una fecha correcta");
       return;
     }
 
-    setError(""); // clear any previous error
+    setError("");
 
     const body = {
       area_id: areaId,
@@ -41,7 +57,6 @@ const VEditarFechaInscripcion = () => {
         },
         body: JSON.stringify(body),
       });
-
       const result = await res.json();
       console.log("✅ Guardado:", result);
       navigate("/admin/Evento");

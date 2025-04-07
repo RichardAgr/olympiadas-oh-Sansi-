@@ -47,4 +47,10 @@ class Area extends Model
     {
         return $this->hasOne(Cronograma::class, 'area_id', 'area_id');
     }
+
+    public function competencia()
+    {
+        return $this->hasOne(Competencia::class, 'area_id');
+    }
+
 }

@@ -5,21 +5,37 @@ import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
 import "./VEditarFecha.css";
 
-// Set Spanish calendar
 registerLocale("es", es);
 
 const VEditarFechaCompetencia = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { areaId, competenciaId } = useParams();
+  const { areaId } = useParams();
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/evento/fechas/${areaId}/competencia`);
+        const data = await res.json();
+        if (data) {
+          const offsetMs = new Date().getTimezoneOffset() * 60000;
+          if (data.inicio) setStartDate(new Date(Date.parse(data.inicio) + offsetMs));
+          if (data.fin) setEndDate(new Date(Date.parse(data.fin) + offsetMs));
+        }
+      } catch (err) {
+        console.error("Error loading existing dates", err);
+      }
+    };
+    loadData();
+  }, [areaId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!startDate || !endDate || endDate < startDate) {
-      setError(true);
+    if (startDate && endDate && endDate < startDate) {
+      setError("Seleccione una fecha correcta");
       return;
     }
 
@@ -30,7 +46,7 @@ const VEditarFechaCompetencia = () => {
       inicio: new Date(startDate).toISOString().split("T")[0],
       fin: new Date(endDate).toISOString().split("T")[0],
     };
-
+    
     try {
       const res = await fetch("http://localhost:8000/api/evento/fechas", {
         method: "POST",
@@ -39,7 +55,6 @@ const VEditarFechaCompetencia = () => {
         },
         body: JSON.stringify(body),
       });
-
       const result = await res.json();
       console.log("✅ Guardado:", result);
       navigate("/admin/Evento");
@@ -57,10 +72,7 @@ const VEditarFechaCompetencia = () => {
             <label>Inicio:</label>
             <DatePicker
               selected={startDate}
-              onChange={(date) => {
-                setStartDate(date);
-                setError(false);
-              }}
+              onChange={(date) => setStartDate(date)}
               dateFormat="dd/MM/yyyy"
               locale="es"
               monthsShown={2}
@@ -68,25 +80,22 @@ const VEditarFechaCompetencia = () => {
               className="styled-datepicker"
             />
           </div>
+
           <div className="date-group">
             <label>Finaliza:</label>
             <DatePicker
               selected={endDate}
-              onChange={(date) => {
-                setEndDate(date);
-                setError(false);
-              }}
+              onChange={(date) => setEndDate(date)}
               dateFormat="dd/MM/yyyy"
               locale="es"
               monthsShown={2}
               placeholderText="Selecciona fecha"
-              className={`styled-datepicker ${error ? "error-datepicker" : ""}`}
+              className="styled-datepicker"
             />
           </div>
         </div>
 
-        {error && (
-          <p style={{ color: "red", fontWeight: "bold", marginBottom: "1rem" }}>
+        {error && (<p style={{ color: "red", fontWeight: "bold", marginBottom: "1rem" }}>
             Seleccione una fecha correcta
           </p>
         )}

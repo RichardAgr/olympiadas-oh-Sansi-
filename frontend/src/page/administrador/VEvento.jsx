@@ -32,19 +32,6 @@ const VEvento = () => {
     setShowModal(true);
   };
 
-  const deleteFechas = async (areaId, tipo) => {
-    try {
-      await fetch("http://localhost:8000/api/evento/fechas", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ area_id: areaId, tipo }),
-      });
-      fetchData();
-    } catch (err) {
-      console.error("Error deleting dates:", err);
-    }
-  };
-
   const confirmDelete = async () => {
     try {
       await fetch("http://localhost:8000/api/evento/fechas", {
@@ -101,7 +88,9 @@ const VEvento = () => {
                   </span>
                   <button
                     className="icon-btn"
-                    onClick={() => navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)}
+                    onClick={() =>
+                      navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)
+                    }
                   >
                     <Edit size={20} color="white" />
                   </button>
@@ -119,13 +108,13 @@ const VEvento = () => {
                 <div className="fecha-bloque">
                   <span>
                     {area.fechas_competencia?.inicio
-                      ? `${formatDate(area.fechas_competencia.inicio)} - ${formatDate(area.fechas_competencia.fin) || "Sin fecha"}`
+                      ? `${formatDate(area.fechas_competencia.inicio)} - ${formatDate(area.fechas_competencia.fin)}`
                       : "Sin Asignar"}
                   </span>
                   <button
                     className="icon-btn"
                     onClick={() =>
-                      navigate(`/admin/Evento/FechaCompetencia/${area.id}/${area.competencia_id}`)
+                      navigate(`/admin/Evento/FechaCompetencia/${area.id}/null`)
                     }
                   >
                     <Edit size={20} color="white" />
@@ -147,14 +136,20 @@ const VEvento = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-box">
-            <button className="close-btn" onClick={() => setShowModal(false)}>✖</button>
+            <button className="close-btn" onClick={() => setShowModal(false)}>
+              ✖
+            </button>
             <p>
               ¿Está seguro de Eliminar la Fecha de{" "}
               {deleteInfo.tipo === "inscripcion" ? "Inscripción" : "Competencia"}?
             </p>
             <div className="modal-actions">
-              <button className="btn-back" onClick={() => setShowModal(false)}>No</button>
-              <button className="btn-save" onClick={confirmDelete}>Sí</button>
+              <button className="btn-back" onClick={() => setShowModal(false)}>
+                No
+              </button>
+              <button className="btn-save" onClick={confirmDelete}>
+                Sí
+              </button>
             </div>
           </div>
         </div>

@@ -12,6 +12,7 @@ class Competencia extends Model
     use HasFactory;
 
     protected $table = 'competencia';
+    protected $primaryKey = 'competencia_id';
 
     protected $fillable = [
         'area_id',
@@ -51,5 +52,10 @@ class Competencia extends Model
     {
         return $this->hasOne(Cronograma::class, 'competencia_id')
                     ->where('tipo_evento', 'competencia');
+    }
+
+    public function cronograma()
+    {
+        return $this->hasOne(Cronograma::class, 'competencia_id');
     }
 }
