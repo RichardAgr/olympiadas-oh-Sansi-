@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import bannerImage from "../../assets/banner.png";
 import areaIcon from "../../assets/areas.png";
 import categoriaIcon from"../../assets/categorias.png";
-import gradoIcon from"../../assets/grados.png";
 import areaRegIcon from"../../assets/verAreasReg.png";
 import "../../App.css";
 
@@ -25,7 +24,10 @@ const HomeAdmin = () => {
           <span>Niveles/Categorías</span>
           </Link>
         </div>
+<<<<<<< HEAD
         
+=======
+>>>>>>> origin/ValeN
         <div className="card-grid">
           <Link to= "/admin/verAreasRegistradas" className="card">
           <img src={areaRegIcon} className= "card"/>
