@@ -7,25 +7,33 @@ import "./VEditarFecha.css";
 
 registerLocale("es", es);
 
+// ✅ FIX: Safe date parser avoiding timezone shifting
+const parseDateSafely = (iso) => {
+  if (!iso) return null;
+  const [year, month, day] = iso.split("T")[0].split("-");
+  return new Date(`${year}-${month}-${day}T00:00:00`);
+};
+
 const VEditarFechaCompetencia = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { areaId } = useParams();
+  const { areaId, competenciaId } = useParams();
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const res = await fetch(`http://localhost:8000/api/evento/fechas/${areaId}/competencia`);
         const data = await res.json();
-        if (data) {
-          const offsetMs = new Date().getTimezoneOffset() * 60000;
-          if (data.inicio) setStartDate(new Date(Date.parse(data.inicio) + offsetMs));
-          if (data.fin) setEndDate(new Date(Date.parse(data.fin) + offsetMs));
+
+        // ✅ Use timezone-safe parser
+        if (data?.inicio && data?.fin) {
+          setStartDate(parseDateSafely(data.inicio));
+          setEndDate(parseDateSafely(data.fin));
         }
       } catch (err) {
-        console.error("Error loading existing dates", err);
+        console.error("Error loading competencia date:", err);
       }
     };
     loadData();
@@ -43,10 +51,11 @@ const VEditarFechaCompetencia = () => {
       area_id: areaId,
       tipo: "competencia",
       nombre_evento: "Fecha de competencia",
-      inicio: new Date(startDate).toISOString().split("T")[0],
-      fin: new Date(endDate).toISOString().split("T")[0],
+      // ✅ Save clean date format
+      inicio: startDate.toISOString().split("T")[0],
+      fin: endDate.toISOString().split("T")[0],
     };
-    
+
     try {
       const res = await fetch("http://localhost:8000/api/evento/fechas", {
         method: "POST",
@@ -55,6 +64,7 @@ const VEditarFechaCompetencia = () => {
         },
         body: JSON.stringify(body),
       });
+
       const result = await res.json();
       console.log("✅ Guardado:", result);
       navigate("/admin/Evento");
@@ -95,7 +105,8 @@ const VEditarFechaCompetencia = () => {
           </div>
         </div>
 
-        {error && (<p style={{ color: "red", fontWeight: "bold", marginBottom: "1rem" }}>
+        {error && (
+          <p style={{ color: "red", fontWeight: "bold", marginBottom: "1rem" }}>
             Seleccione una fecha correcta
           </p>
         )}

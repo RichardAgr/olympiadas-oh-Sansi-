@@ -111,14 +111,17 @@ const VEvento = () => {
                       ? `${formatDate(area.fechas_competencia.inicio)} - ${formatDate(area.fechas_competencia.fin)}`
                       : "Sin Asignar"}
                   </span>
+                 
                   <button
                     className="icon-btn"
-                    onClick={() =>
-                      navigate(`/admin/Evento/FechaCompetencia/${area.id}/null`)
-                    }
+                    onClick={() => {
+                      const competenciaId = area.competencia_id ?? "null"; 
+                      navigate(`/admin/Evento/FechaCompetencia/${area.id}/${competenciaId}`);
+                    }}
                   >
                     <Edit size={20} color="white" />
                   </button>
+
                   <button
                     className="icon-btn"
                     onClick={() => handleDeleteClick(area.id, "competencia")}

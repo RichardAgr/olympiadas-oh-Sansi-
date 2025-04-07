@@ -54,6 +54,19 @@ class EventoController extends Controller
 
     public function obtenerFechaPorTipo($area_id, $tipo)
     {
+        if ($tipo === 'competencia') {
+            $competencia = Competencia::where('area_id', $area_id)->first();
+            if (!$competencia) {
+                return response()->json(null);
+            }
+
+            return response()->json([
+                'inicio' => $competencia->fecha_inicio,
+                'fin' => $competencia->fecha_fin,
+            ]);
+        }
+
+        // For 'inscripcion' type, still look into cronograma
         $cronograma = Cronograma::where('area_id', $area_id)
             ->where('tipo_evento', $tipo)
             ->first();
@@ -67,6 +80,7 @@ class EventoController extends Controller
             'fin' => $cronograma->fecha_fin,
         ]);
     }
+
 
 
     public function index()
