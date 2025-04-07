@@ -9,6 +9,10 @@ const AgregarArea = () => {
   const [descripcion, setDescripcion] = useState("");
   const [costo, setCosto] = useState("");
   const navigate = useNavigate();
+  const [nombreError, setNombreError] = useState("");
+  const [descripcionError, setDescripcionError] = useState("");
+  const [costoError, setCostoError] = useState("");
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -25,16 +25,7 @@ const HomeAdmin = () => {
           <span>Niveles/Categorías</span>
           </Link>
         </div>
-        <div className="card-grid">
-        <Link to="/admin/Registro-categorias" className= "card">
-          <img src={gradoIcon} alt="Grados" />
-          <span>Grados</span>
-          </Link>
-        </div>
-        <div className="card inactive">
-          <img src="https://via.placeholder.com/100" alt="Costos" />
-          <span>Costos de inscripción</span>
-        </div>
+        
         <div className="card-grid">
           <Link to= "/admin/verAreasRegistradas" className="card">
           <img src={areaRegIcon} className= "card"/>
