@@ -18,6 +18,8 @@ function EditarCategoria() {
     estado: true,
   });
 
+  const [errores, setErrores] = useState({});
+
   // Cargar áreas
   useEffect(() => {
     axios
@@ -26,7 +28,7 @@ function EditarCategoria() {
       .catch((err) => console.error("Error al cargar áreas", err));
   }, []);
 
-  // Cargar categoría a editar
+  // Cargar datos existentes
   useEffect(() => {
     axios
       .get(`http://localhost:8000/api/nivel-categorias/${id}`)
@@ -48,23 +50,40 @@ function EditarCategoria() {
       });
   }, [id]);
 
-  // Manejar cambios en campos
   const handleChange = (e) => {
     setFormulario({ ...formulario, [e.target.name]: e.target.value });
+    setErrores({ ...errores, [e.target.name]: "" });
   };
 
-  // Actualizar grados seleccionados
   const handleGradoSeleccionado = ({ grado_id_inicial, grado_id_final }) => {
     setFormulario((prev) => ({
       ...prev,
       grado_id_inicial,
       grado_id_final,
     }));
+    setErrores((prev) => ({
+      ...prev,
+      grado_id_inicial: "",
+      grado_id_final: ""
+    }));
   };
 
-  // Enviar cambios
+  const validar = () => {
+    const nuevosErrores = {};
+    if (!formulario.nombre.trim()) nuevosErrores.nombre = "El nombre es obligatorio.";
+    if (!formulario.area_id) nuevosErrores.area_id = "Debe seleccionar un área.";
+    if (!formulario.grado_id_inicial) nuevosErrores.grado_id_inicial = "Seleccione el grado inicial.";
+    if (!formulario.grado_id_final) nuevosErrores.grado_id_final = "Seleccione el grado final.";
+    return nuevosErrores;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    const validacion = validar();
+    if (Object.keys(validacion).length > 0) {
+      setErrores(validacion);
+      return;
+    }
 
     axios
       .put(`http://localhost:8000/api/nivel-categorias/${id}`, formulario)
@@ -88,8 +107,8 @@ function EditarCategoria() {
           name="nombre"
           value={formulario.nombre}
           onChange={handleChange}
-          required
         />
+        {errores.nombre && <small className="error">{errores.nombre}</small>}
 
         <label>Descripción de Categoría</label>
         <textarea
@@ -103,7 +122,6 @@ function EditarCategoria() {
           name="area_id"
           value={formulario.area_id}
           onChange={handleChange}
-          required
         >
           <option value="">Seleccione un área</option>
           {areas.map((a) => (
@@ -112,6 +130,7 @@ function EditarCategoria() {
             </option>
           ))}
         </select>
+        {errores.area_id && <small className="error">{errores.area_id}</small>}
 
         <h4>Editar Grado</h4>
         <SelectorGrado
@@ -119,6 +138,12 @@ function EditarCategoria() {
           gradoInicial={formulario.grado_id_inicial}
           gradoFinal={formulario.grado_id_final}
         />
+        {errores.grado_id_inicial && (
+          <small className="error">{errores.grado_id_inicial}</small>
+        )}
+        {errores.grado_id_final && (
+          <small className="error">{errores.grado_id_final}</small>
+        )}
 
         <div className="botones-form">
           <button type="button" className="btn-cancelar" onClick={() => navigate(-1)}>
@@ -134,3 +159,4 @@ function EditarCategoria() {
 }
 
 export default EditarCategoria;
+

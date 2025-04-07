@@ -14,10 +14,10 @@ function AgregarCategoria() {
     grado_id_final: "",
     estado: true,
   });
+  const [errores, setErrores] = useState({});
 
   const navigate = useNavigate();
 
-  // Cargar áreas al iniciar
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/areas")
@@ -25,12 +25,10 @@ function AgregarCategoria() {
       .catch((err) => console.error("Error al cargar áreas", err));
   }, []);
 
-  // Manejar cambios en los inputs
   const handleChange = (e) => {
     setFormulario({ ...formulario, [e.target.name]: e.target.value });
   };
 
-  // Recibir grados seleccionados del componente hijo
   const handleGradoSeleccionado = ({ grado_id_inicial, grado_id_final }) => {
     setFormulario((prev) => ({
       ...prev,
@@ -39,9 +37,41 @@ function AgregarCategoria() {
     }));
   };
 
-  // Enviar datos al backend
+  const validarFormulario = () => {
+    const nuevosErrores = {};
+
+    if (!formulario.nombre || formulario.nombre.trim().length < 3) {
+      nuevosErrores.nombre = "El nombre debe tener al menos 3 caracteres.";
+    }
+
+    if (formulario.descripcion.length > 255) {
+      nuevosErrores.descripcion = "La descripción no puede exceder los 255 caracteres.";
+    }
+
+    if (!formulario.area_id) {
+      nuevosErrores.area_id = "Debe seleccionar un área.";
+    }
+
+    if (!formulario.grado_id_inicial) {
+      nuevosErrores.grado_id_inicial = "Debe seleccionar un grado inicial.";
+    }
+
+    if (!formulario.grado_id_final) {
+      nuevosErrores.grado_id_final = "Debe seleccionar un grado final.";
+    } else if (parseInt(formulario.grado_id_final) < parseInt(formulario.grado_id_inicial)) {
+      nuevosErrores.grado_id_final = "El grado final debe ser mayor o igual al inicial.";
+    }
+
+    setErrores(nuevosErrores);
+    return Object.keys(nuevosErrores).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validarFormulario()) {
+      return;
+    }
 
     axios
       .post("http://localhost:8000/api/nivel-categorias", formulario)
@@ -59,31 +89,28 @@ function AgregarCategoria() {
     <div className="form-categoria-container">
       <h3>Registrar Categoría</h3>
       <form onSubmit={handleSubmit}>
-        {/* Nombre */}
         <label>Nombre de Categoría</label>
         <input
           type="text"
           name="nombre"
           value={formulario.nombre}
           onChange={handleChange}
-          required
         />
+        {errores.nombre && <span className="error-text">{errores.nombre}</span>}
 
-        {/* Descripción */}
         <label>Descripción de Categoría</label>
         <textarea
           name="descripcion"
           value={formulario.descripcion}
           onChange={handleChange}
         ></textarea>
+        {errores.descripcion && <span className="error-text">{errores.descripcion}</span>}
 
-        {/* Área */}
         <label>Área</label>
         <select
           name="area_id"
           value={formulario.area_id}
           onChange={handleChange}
-          required
         >
           <option value="">Seleccione un área</option>
           {areas.map((a) => (
@@ -92,12 +119,17 @@ function AgregarCategoria() {
             </option>
           ))}
         </select>
+        {errores.area_id && <span className="error-text">{errores.area_id}</span>}
 
-        {/* Grados */}
         <h4>Registrar Grado</h4>
         <SelectorGrado onSeleccionarGrados={handleGradoSeleccionado} />
+        {errores.grado_id_inicial && (
+          <span className="error-text">{errores.grado_id_inicial}</span>
+        )}
+        {errores.grado_id_final && (
+          <span className="error-text">{errores.grado_id_final}</span>
+        )}
 
-        {/* Botones */}
         <div className="botones-form">
           <button type="button" className="btn-cancelar" onClick={() => navigate(-1)}>
             Cancelar
@@ -112,4 +144,5 @@ function AgregarCategoria() {
 }
 
 export default AgregarCategoria;
+
 

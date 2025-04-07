@@ -1,24 +1,57 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Asegúrate de que useNavigate esté importado
+import { useNavigate } from "react-router-dom";
 import "./AgregarRespon.css";
 
 function AgregarRespon() {
-  // Estados para cada campo
   const [nombres, setNombres] = useState("");
   const [apellidos, setApellidos] = useState("");
   const [ci, setCi] = useState("");
   const [correo, setCorreo] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [errores, setErrores] = useState({});
 
-  // Inicializa useNavigate para la navegación
   const navigate = useNavigate();
 
-  // Función para manejar el envío del formulario
+  const validarFormulario = () => {
+    const nuevosErrores = {};
+
+    if (!nombres.trim()) {
+      nuevosErrores.nombres = "El nombre es obligatorio.";
+    }
+
+    if (!apellidos.trim()) {
+      nuevosErrores.apellidos = "Los apellidos son obligatorios.";
+    }
+
+    if (!ci.trim()) {
+      nuevosErrores.ci = "El carnet de identidad es obligatorio.";
+    } else if (!/^\d+$/.test(ci)) {
+      nuevosErrores.ci = "Debe contener solo números.";
+    }
+
+    if (!correo.trim()) {
+      nuevosErrores.correo = "El correo es obligatorio.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+      nuevosErrores.correo = "El correo no es válido.";
+    }
+
+    if (!telefono.trim()) {
+      nuevosErrores.telefono = "El teléfono es obligatorio.";
+    } else if (!/^\d{7,8}$/.test(telefono)) {
+      nuevosErrores.telefono = "Debe contener 7 u 8 dígitos.";
+    }
+
+    setErrores(nuevosErrores);
+    return Object.keys(nuevosErrores).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validarFormulario()) return;
+
     try {
-      // Enviar los datos al backend
       await axios.post("http://127.0.0.1:8000/api/responsables", {
         nombres,
         apellidos,
@@ -27,7 +60,6 @@ function AgregarRespon() {
         telefono,
       });
 
-      // Al éxito, mostrar mensaje y redirigir a la vista de registros
       alert("Responsable de Gestión registrado con éxito ✅");
       navigate("/admin/visualizarRegistro");
     } catch (error) {
@@ -36,7 +68,6 @@ function AgregarRespon() {
     }
   };
 
-  // Función para redirigir al cancelar
   const handleCancel = () => {
     navigate("/admin/visualizarRegistro");
   };
@@ -44,41 +75,40 @@ function AgregarRespon() {
   return (
     <div className="form-container">
       <h2>Registrar Nuevo Responsable de Gestión</h2>
-      
       <form onSubmit={handleSubmit}>
         <div className="section-title">Datos del Responsable</div>
-        
+
         <div className="form-row">
           <div className="form-group">
             <label>Nombre</label>
-            <input 
-              type="text" 
-              value={nombres} 
-              onChange={(e) => setNombres(e.target.value)} 
-              required 
+            <input
+              type="text"
+              value={nombres}
+              onChange={(e) => setNombres(e.target.value)}
             />
+            {errores.nombres && <small className="error">{errores.nombres}</small>}
           </div>
-          
+
           <div className="form-group">
             <label>Apellidos</label>
-            <input 
-              type="text" 
-              value={apellidos} 
-              onChange={(e) => setApellidos(e.target.value)} 
-              required 
+            <input
+              type="text"
+              value={apellidos}
+              onChange={(e) => setApellidos(e.target.value)}
             />
+            {errores.apellidos && <small className="error">{errores.apellidos}</small>}
           </div>
         </div>
 
         <div className="form-row">
           <div className="form-group">
             <label>Carnet de Identidad</label>
-            <input 
-              type="text" 
-              value={ci} 
-              onChange={(e) => setCi(e.target.value)} 
-              required 
+            <input
+              type="text"
+              value={ci}
+              onChange={(e) => setCi(e.target.value)}
             />
+            {errores.ci && <small className="error">{errores.ci}</small>}
           </div>
         </div>
 
@@ -87,28 +117,32 @@ function AgregarRespon() {
         <div className="form-row">
           <div className="form-group">
             <label>Correo electrónico</label>
-            <input 
-              type="email" 
-              value={correo} 
-              onChange={(e) => setCorreo(e.target.value)} 
-              required 
+            <input
+              type="email"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
             />
+            {errores.correo && <small className="error">{errores.correo}</small>}
           </div>
 
           <div className="form-group">
             <label>Teléfono</label>
-            <input 
-              type="tel" 
-              value={telefono} 
-              onChange={(e) => setTelefono(e.target.value)} 
-              required 
+            <input
+              type="tel"
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
             />
+            {errores.telefono && <small className="error">{errores.telefono}</small>}
           </div>
         </div>
 
         <div className="button-groupResp">
-          <button type="button" className="btn-cancelarResp" onClick={handleCancel}>Cancelar</button>
-          <button type="submit" className="btn-guardarResp">Guardar</button>
+          <button type="button" className="btn-cancelarResp" onClick={handleCancel}>
+            Cancelar
+          </button>
+          <button type="submit" className="btn-guardarResp">
+            Guardar
+          </button>
         </div>
       </form>
     </div>
@@ -116,3 +150,4 @@ function AgregarRespon() {
 }
 
 export default AgregarRespon;
+

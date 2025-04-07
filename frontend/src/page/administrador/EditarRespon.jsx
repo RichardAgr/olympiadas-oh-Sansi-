@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import "./AgregarRespon.css"; // ✅ Use same CSS as 'AgregarRespon'
+import "./AgregarRespon.css";
 
 function EditarRespon() {
-  const { id } = useParams(); // ✅ Get ID from route
-  const navigate = useNavigate(); // ✅ To redirect after success
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const [nombres, setNombres] = useState("");
   const [apellidos, setApellidos] = useState("");
   const [ci, setCi] = useState("");
   const [correo, setCorreo] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [errores, setErrores] = useState({});
 
-  // ✅ Fetch data for this 'Responsable'
   useEffect(() => {
     axios
       .get(`http://127.0.0.1:8000/api/responsables/${id}`)
@@ -30,9 +30,27 @@ function EditarRespon() {
       });
   }, [id]);
 
-  // ✅ Handle submit to update
+  const validar = () => {
+    const erroresNuevos = {};
+
+    if (!nombres.trim()) erroresNuevos.nombres = "El nombre es obligatorio.";
+    if (!apellidos.trim()) erroresNuevos.apellidos = "Los apellidos son obligatorios.";
+    if (!ci.trim()) erroresNuevos.ci = "El CI es obligatorio.";
+    else if (!/^\d+$/.test(ci)) erroresNuevos.ci = "El CI solo puede contener números.";
+    if (!correo.trim()) erroresNuevos.correo = "El correo es obligatorio.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) erroresNuevos.correo = "Correo inválido.";
+    if (!telefono.trim()) erroresNuevos.telefono = "El teléfono es obligatorio.";
+    else if (!/^\d{7,8}$/.test(telefono)) erroresNuevos.telefono = "Debe tener 7 u 8 dígitos.";
+
+    setErrores(erroresNuevos);
+    return Object.keys(erroresNuevos).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validar()) return;
+
     try {
       await axios.put(`http://127.0.0.1:8000/api/responsables/${id}`, {
         nombres,
@@ -68,8 +86,8 @@ function EditarRespon() {
               type="text"
               value={nombres}
               onChange={(e) => setNombres(e.target.value)}
-              required
             />
+            {errores.nombres && <small className="error">{errores.nombres}</small>}
           </div>
 
           <div className="form-group">
@@ -78,8 +96,8 @@ function EditarRespon() {
               type="text"
               value={apellidos}
               onChange={(e) => setApellidos(e.target.value)}
-              required
             />
+            {errores.apellidos && <small className="error">{errores.apellidos}</small>}
           </div>
         </div>
 
@@ -90,8 +108,8 @@ function EditarRespon() {
               type="text"
               value={ci}
               onChange={(e) => setCi(e.target.value)}
-              required
             />
+            {errores.ci && <small className="error">{errores.ci}</small>}
           </div>
         </div>
 
@@ -104,8 +122,8 @@ function EditarRespon() {
               type="email"
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
-              required
             />
+            {errores.correo && <small className="error">{errores.correo}</small>}
           </div>
 
           <div className="form-group">
@@ -114,8 +132,8 @@ function EditarRespon() {
               type="tel"
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
-              required
             />
+            {errores.telefono && <small className="error">{errores.telefono}</small>}
           </div>
         </div>
 
@@ -133,3 +151,4 @@ function EditarRespon() {
 }
 
 export default EditarRespon;
+
