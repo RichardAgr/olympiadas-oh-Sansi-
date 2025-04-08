@@ -40,8 +40,8 @@ function AgregarCategoria() {
   const validarFormulario = () => {
     const nuevosErrores = {};
 
-    if (!formulario.nombre || formulario.nombre.trim().length < 3) {
-      nuevosErrores.nombre = "El nombre debe tener al menos 3 caracteres.";
+    if (!formulario.nombre || formulario.nombre.trim().length < 2) {
+      nuevosErrores.nombre = "El nombre debe tener al menos 2 caracteres.";
     }
 
     if (formulario.descripcion.length > 255) {
