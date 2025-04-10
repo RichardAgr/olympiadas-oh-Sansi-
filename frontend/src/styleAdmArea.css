@@ -683,6 +683,52 @@ body {
     align-self: flex-end;
   }
 }
+@media (max-width: 768px) {
+  .areas-list-container {
+    padding: 20px; /* Reduce el padding general en pantallas chicas */
+  }
+
+  .areas-title {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .areas-count {
+    text-align: center;
+    font-size: 13px;
+  }
+
+  .area-info h3 {
+    font-size: 18px;
+  }
+
+  .area-info p {
+    font-size: 14px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pagination button {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .no-results,
+  .loading {
+    font-size: 16px;
+    padding: 0 10px;
+  }
+}
+
 
 
 footer {
@@ -794,7 +840,7 @@ footer p {
 /* 📱 Responsive */
 @media (max-width: 768px) {
   .form-container {
-    margin: 20px;
+    margin: 0 auto;
     width: 100%;
     max-width: none;
   }

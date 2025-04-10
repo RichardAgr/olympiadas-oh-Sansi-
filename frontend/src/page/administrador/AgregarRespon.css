@@ -121,7 +121,7 @@
 /* 📱 Responsive */
 @media (max-width: 768px) {
   .form-container2 {
-    margin: 20px;
+    margin: o auto;
     padding: 20px;
   }
 
