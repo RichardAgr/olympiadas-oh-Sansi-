@@ -9,26 +9,14 @@ body {
   font-family: 'Comfortaa', sans-serif;
 }
 
-/* Buscador */
-.buscador {
-  display: flex;
-  align-items: center;
-  background-color: white;
-  padding: 10px 15px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0px 2px 6px rgba(0,0,0,0.08);
-  margin: 20px 0;
+.admin-content {
+ 
+  margin: 0 auto;         /* Lo centra horizontalmente */
+  padding: 0 40px;        /* Espacio a los lados */
+  width: 100%;            /* Asegura que ocupe todo el ancho posible */
+  box-sizing: border-box; /* Incluye padding en el cálculo del ancho */
 }
 
-.buscador input {
-  width: 100%;
-  padding: 8px;
-  border: none;
-  outline: none;
-  background-color: transparent;
-  font-size: 15px;
-}
 
 .boton-buscar {
   background: none;
@@ -36,7 +24,14 @@ body {
   cursor: pointer;
   margin-right: 10px;
 }
-
+.buscador input,
+.filtro-select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: 'Comfortaa', sans-serif;
+  font-size: 15px;
+}
 /* Botones principales */
 .botones_excel_agregar {
   display: flex;
@@ -232,4 +227,61 @@ body {
 .contador-resultados {
   margin-top: 10px;
   font-size: 16px;
+}
+
+
+
+/* 🎯 Responsive: tablet y mobile */
+@media (max-width: 992px) {
+  .home-container {
+    padding: 30px 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 20px;
+  }
+
+  .buscador {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .botones_excel_agregar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .boton-excel,
+  .boton-addUser {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .tabla th,
+  .tabla td {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pagination button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .filtros-fecha-y-boton {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-limpiar {
+    width: 100%;
+  }
 }
