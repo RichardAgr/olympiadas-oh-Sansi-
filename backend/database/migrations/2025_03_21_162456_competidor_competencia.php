@@ -12,7 +12,7 @@ class CompetidorCompetencia extends Migration{
             $table->unsignedBigInteger('competencia_id');
             $table->unsignedBigInteger('area_id');
             $table->unsignedBigInteger('nivel_categoria_id');
-            $table->unsignedBigInteger('boleta_id');
+            $table->unsignedBigInteger('boleta_id')->nullable();
             $table->date('fecha_inscripcion');
             $table->timestamps();
             
