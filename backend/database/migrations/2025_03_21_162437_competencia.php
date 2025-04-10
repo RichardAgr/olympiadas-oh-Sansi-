@@ -13,10 +13,12 @@ class Competencia extends Migration{
             $table->date('fecha_inicio');
             $table->boolean('estado');
             $table->timestamps();
-            
+
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_general_ci';
             $table->engine = 'InnoDB';
+            
+            $table->index('nombre_competencia');
         });
     }
 

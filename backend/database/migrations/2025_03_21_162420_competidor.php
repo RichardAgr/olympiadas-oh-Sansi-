@@ -37,6 +37,12 @@ class Competidor extends Migration{
             $table->collation = 'utf8mb4_general_ci';
             $table->engine = 'InnoDB';
         });
+
+        $table->index('ci');
+        $table->index(['apellidos', 'nombres']);
+        $table->index('colegio_id');
+        $table->index('curso_id');
+        $table->index('ubicacion_id');
     }
 
     public function down(){
