@@ -12,8 +12,9 @@ const formatDate = (isoString) => {
 const VEvento = () => {
   const [areas, setAreas] = useState([]);
   const [paginaActual, setPaginaActual] = useState(1);
-  const itemsPorPagina = 3;
+  const [search, setSearch] = useState("");
 
+  const itemsPorPagina = 3;
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -30,31 +31,51 @@ const VEvento = () => {
     fetchData();
   }, []);
 
-  const totalPaginas = Math.ceil(areas.length / itemsPorPagina);
+  // 🔍 Filter by area name
+  const filteredAreas = areas.filter((area) =>
+    area.nombre.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // 📄 Pagination logic
+  const totalPaginas = Math.ceil(filteredAreas.length / itemsPorPagina);
   const startIndex = (paginaActual - 1) * itemsPorPagina;
   const endIndex = startIndex + itemsPorPagina;
-  const areasPaginadas = areas.slice(startIndex, endIndex);
+  const areasPaginadas = filteredAreas.slice(startIndex, endIndex);
 
   return (
     <div className="evento-grid-container">
       <h2 className="evento-title">Próximos eventos</h2>
 
+      {/* 🔍 Search Box */}
+      <input
+        className="search"
+        type="text"
+        placeholder="Buscar por nombre de Área"
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setPaginaActual(1); // Reset to page 1 on search
+        }}
+      />
+
       <div className="evento-card-grid">
         {areasPaginadas.map((area) => (
           <div className="evento-card" key={area.id}>
-            {/* Placeholder for Area Image */}
+            {/* 🖼️ Image Placeholder */}
             <div className="evento-image-placeholder" />
 
+            {/* 🏷️ Area Name */}
             <h3 className="evento-nombre">{area.nombre}</h3>
 
-            {/* Fecha de Inscripción */}
+            {/* 📅 Fecha de Inscripción */}
             <div className="evento-info-group">
               <p className="evento-info-label">Fecha de Inscripción:</p>
-              <div className="evento-icon-row"
+              <div
+                className="evento-icon-row"
                 onClick={() =>
                   navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)
                 }
-              > 
+              >
                 <CalendarDays size={20} className="evento-icon clickable calendar" />
                 <span className="evento-info-value">
                   {area.fechas_inscripcion?.inicio
@@ -64,7 +85,7 @@ const VEvento = () => {
               </div>
             </div>
 
-            {/* Fecha de Competencia */}
+            {/* 📆 Fecha de Competencia */}
             <div className="evento-info-group">
               <p className="evento-info-label">Fecha de Competencia:</p>
               <div
@@ -83,7 +104,7 @@ const VEvento = () => {
               </div>
             </div>
 
-            {/* Lugar */}
+            {/* 📍 Lugar */}
             <div className="evento-location-row">
               <MapPin size={20} className="evento-icon" />
               <span className="evento-info-value location">
@@ -94,7 +115,7 @@ const VEvento = () => {
         ))}
       </div>
 
-      {/* Pagination */}
+      {/* 📑 Pagination */}
       <div className="pagination">
         <button
           onClick={() => setPaginaActual(paginaActual - 1)}

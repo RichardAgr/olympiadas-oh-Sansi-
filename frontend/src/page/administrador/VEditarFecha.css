@@ -120,3 +120,33 @@ h2 {
   align-items: center;
   gap: 1.5rem; 
 }
+
+.form-container {
+  padding: 4rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.form-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+input[type="date"] {
+  padding: 10px 20px;
+  font-family: 'Comfortaa';
+  border-radius: 10px;
+  border: 1.5px solid #3d50ff;
+}
+
+.form-buttons {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
