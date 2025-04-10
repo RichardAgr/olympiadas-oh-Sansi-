@@ -150,7 +150,7 @@ function EditarCategoria() {
             Cancelar
           </button>
           <button type="submit" className="btn-guardar">
-            Guardar Cambios
+            Guardar
           </button>
         </div>
       </form>

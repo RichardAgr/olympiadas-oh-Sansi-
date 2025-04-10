@@ -5,6 +5,7 @@ body {
   padding: 0;
 }
 
+/* Topbar General */
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -27,6 +28,7 @@ body {
   margin-right: 10px;
 }
 
+/* Menú principal */
 .topbar-menu {
   display: flex;
   gap: 25px;
@@ -73,6 +75,7 @@ body {
   cursor: default;
 }
 
+/* Botón de notificaciones */
 .notification-button {
   background: none;
   border: none;
@@ -84,10 +87,11 @@ body {
   transform: scale(1.2);
 }
 
+/* Admin badge */
 .admin-badge {
   display: flex;
   align-items: center;
-  background-color: #061A8B; /* azul fuerte */
+  background-color: #061A8B;
   padding: 5px 12px;
   border-radius: 25px;
   gap: 6px;
@@ -99,12 +103,133 @@ body {
   font-size: 14px;
 }
 
+/* Dropdown Roles */
+.roles-dropdown {
+  position: relative;
+}
+
+.dropdown-label {
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-top: 10px;
+  z-index: 1000;
+  padding: 10px 0;
+  min-width: 180px;
+}
+
+.dropdown-menu li {
+  padding: 8px 16px;
+}
+
+.dropdown-menu li a {
+  color: #565E6C;
+  text-decoration: none;
+}
+
+.dropdown-menu li a:hover {
+  color: #061A8B;
+}
+
+.active-option a {
+  color: #061A8B;
+  font-weight: bold;
+}
+
+/* Hamburguesa para móvil */
+.hamburger-btn {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 15px;
+  }
+
+  .topbar-left {
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+  }
+
+  .hamburger-btn {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #061A8B;
+  }
+
+  .topbar-menu {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .topbar-menu.show {
+    display: flex;
+  }
+
+  .topbar-menu li {
+    width: 100%;
+  }
+
+  .topbar-menu li a,
+  .dropdown-label {
+    display: block;
+    padding: 10px 0;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+  }
+
+  .dropdown-menu {
+    position: static;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    margin-top: 5px;
+    padding-left: 15px;
+  }
+
+  .dropdown-menu li {
+    padding: 6px 0;
+  }
+
+  .admin-badge {
+    margin-top: 10px;
+    align-self: flex-end;
+  }
+}
+
+
 .home-container {
   padding: 0;
   margin: 0;
   width: 100%;
 }
 
+.admin-content {
+  margin: 0;        
+  padding: 0 30px;        
+  width: 100%;           
+}
 
 .admin-welcome-container {
   margin: 0;
@@ -307,9 +432,10 @@ body {
   font-size: 1.4rem;
 }
 
+/* Layout general */
 .areas-list-container {
   font-family: 'Comfortaa', sans-serif;
-  padding: 20px 50px;
+  padding: 20px 40px;
   background-color: #f9fafb;
   min-height: 100vh;
 }
@@ -322,6 +448,7 @@ body {
   color: #000;
 }
 
+/* Buscador + botón agregar */
 .search-add-container {
   display: flex;
   justify-content: space-between;
@@ -329,9 +456,23 @@ body {
   margin-bottom: 30px;
 }
 
-.search-input {
+.search-wrapper {
+  position: relative;
   width: 60%;
-  padding: 12px;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #aaa;
+  font-size: 14px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 12px 12px 34px;
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -360,6 +501,17 @@ body {
   transform: scale(1.05);
 }
 
+
+/* Contador de áreas */
+.areas-count {
+  text-align: right;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+/* Tarjetas de áreas */
 .area-cards-container {
   display: flex;
   flex-direction: column;
@@ -393,12 +545,14 @@ body {
   margin: 0;
 }
 
+/* Botones dentro de las tarjetas */
 .area-buttons {
   display: flex;
   gap: 10px;
 }
 
-.edit-btn, .delete-btn {
+.edit-btn,
+.delete-btn {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -422,7 +576,6 @@ body {
   transform: scale(1.05);
 }
 
-
 .delete-btn {
   background-color: #DEE1E6;
   color: #565E6C;
@@ -434,6 +587,7 @@ body {
   transform: scale(1.05);
 }
 
+/* Paginación */
 .pagination {
   display: flex;
   justify-content: center;
@@ -461,6 +615,71 @@ body {
   background-color: #ccc;
 }
 
+.pagination button:disabled {
+  background-color: #e0e0e0;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+/* Sin resultados */
+.no-results {
+  text-align: center;
+  font-size: 18px;
+  color: #999;
+  margin-top: 40px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: #384FD6;
+  margin-top: 40px;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .search-add-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .search-wrapper,
+  .search-input {
+    width: 100%;
+  }
+
+  .add-area-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .area-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .area-buttons {
+    align-self: flex-end;
+  }
+}
 
 
 footer {

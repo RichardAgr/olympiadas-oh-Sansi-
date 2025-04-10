@@ -7,14 +7,14 @@ import { Edit, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 import ModalConfirmDelete from "../../components/ModalConfirmDelete";
-import axios from "axios"; 
+import axios from "axios";
 
-
-const filasPorPagina = 6;  
+const filasPorPagina = 6;
 
 function RegistrarOrganizador() {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("todos"); // 👈 NUEVO
   const [paginaActual, setPaginaActual] = useState(1);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
@@ -25,20 +25,21 @@ function RegistrarOrganizador() {
         if (!res.ok) throw new Error("Error en la API");
         return res.json();
       })
-      .then((data) => {
-        setData(data);
-        console.log("Datos cargados:", data);
-      })
-      .catch((err) => {
-        console.error("Error al traer responsables:", err);
-      });
+      .then((data) => setData(data))
+      .catch((err) => console.error("Error al traer responsables:", err));
   }, []);
 
-  const datosFiltrados = data.filter((dato) =>
-    `${dato.nombres} ${dato.apellidos}`
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+  const datosFiltrados = data.filter((dato) => {
+    const nombreCompleto = `${dato.nombres} ${dato.apellidos}`.toLowerCase();
+    const coincideNombre = nombreCompleto.includes(search.toLowerCase());
+
+    const coincideEstado =
+      filtroEstado === "todos" ||
+      (filtroEstado === "activos" && dato.estado === 1) ||
+      (filtroEstado === "inactivos" && dato.estado === 0);
+
+    return coincideNombre && coincideEstado;
+  });
 
   const totalPaginas = Math.ceil(datosFiltrados.length / filasPorPagina);
   const indiceInicio = (paginaActual - 1) * filasPorPagina;
@@ -60,16 +61,13 @@ function RegistrarOrganizador() {
     setModalAbierto(true);
   };
 
-  //  Función para eliminar responsable con confirmación
   const handleEliminarResponsable = async (responsable) => {
     if (!responsable || !responsable.responsable_id) return;
 
     try {
-      // Eliminamos al responsable desde la API
       await axios.delete(
         `http://localhost:8000/api/responsables/${responsable.responsable_id}`
       );
-      // Actualizamos el estado eliminando al responsable
       setData((prevData) =>
         prevData.filter((item) => item.responsable_id !== responsable.responsable_id)
       );
@@ -84,36 +82,44 @@ function RegistrarOrganizador() {
 
   return (
     <div className="home-container">
-      <h1>Registros</h1>
+      <h1>Registros de Responsables de Gestión</h1>
 
-      {/*  Buscador */}
+      {/* Buscador + Filtro */}
       <div className="buscador">
-        <button className="boton-buscar">
-          <img src={buscador} alt="Buscar" />
-        </button>
         <input
           type="text"
           placeholder="Buscar por nombre"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+
+        <select
+          value={filtroEstado}
+          onChange={(e) => setFiltroEstado(e.target.value)}
+          className="filtro-select"
+        >
+          <option value="todos">Todos</option>
+          <option value="activos">Activos</option>
+          <option value="inactivos">Inactivos</option>
+        </select>
       </div>
 
-      {/*  Botones de acción */}
+      {/* Botones Excel y Agregar */}
       <div className="botones_excel_agregar">
         <button className="boton-excel" onClick={exportarExcel}>
           <img src={excel} alt="Excel" className="icono-boton" />
           Descargar Excel
         </button>
 
-        <button 
-          className="boton-addUser" 
-            onClick={() => window.location.href = "/admin/visualizarRegistro/agregarRegistro"}
-          >
+        <button
+          className="boton-addUser"
+          onClick={() =>
+            (window.location.href = "/admin/visualizarRegistro/agregarRegistro")
+          }
+        >
           <img src={addUsuario} alt="Agregar Usuario" className="icono-boton2" />
           Agregar
         </button>
-
       </div>
 
       {/* Tabla */}
@@ -132,7 +138,9 @@ function RegistrarOrganizador() {
           <tbody>
             {datosPagina.length === 0 ? (
               <tr>
-                <td colSpan="6">No hay datos disponibles</td>
+                <td colSpan="6" className="no-datos">
+                  <p>No se encontraron registros</p>
+                </td>
               </tr>
             ) : (
               datosPagina.map((dato) => (
@@ -148,12 +156,14 @@ function RegistrarOrganizador() {
                     <Link
                       to={`/admin/visualizarRegistro/editarRegistro/${dato.responsable_id}`}
                       className="boton-icono"
+                      title="Editar"
                     >
                       <Edit size={20} color="white" />
                     </Link>
                     <button
                       className="boton-icono"
                       onClick={() => abrirModal(dato)}
+                      title="Eliminar"
                     >
                       <Trash2 size={20} color="white" />
                     </button>
@@ -187,7 +197,7 @@ function RegistrarOrganizador() {
         </div>
       </div>
 
-      {/* Modal de confirmación */}
+      {/* Modal eliminar */}
       {modalAbierto && (
         <ModalConfirmDelete
           responsable={itemSeleccionado}
@@ -200,3 +210,4 @@ function RegistrarOrganizador() {
 }
 
 export default RegistrarOrganizador;
+
