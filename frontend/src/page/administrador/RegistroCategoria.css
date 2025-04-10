@@ -6,13 +6,13 @@
 }
 
 .registro-categoria-container {
-  padding: 2rem;
-  background-color: #ffffff;
+  padding: 20px 40px;
   color: #565E6C;
+  background-color: #ffffff;
 }
 
 h5 {
-  font-size: 24px;
+  font-size: 30px;
   color: #000000; /* Azul oscuro */
   margin-bottom: 1.5rem;
 }
@@ -209,4 +209,52 @@ h5 {
     color: white;
   }
   
-  
+ /* 📱 Responsive: tablet y móvil */
+@media (max-width: 768px) {
+  .registro-categoria-container {
+    padding: 20px;
+  }
+
+  .btn-agregar {
+    position: static;       /* Ya no flotante */
+    margin-bottom: 1rem;    /* Espacio inferior */
+    width: 100%;            /* Ocupa todo el ancho */
+    justify-content: center;
+  }
+
+  .buscador-wrapper input {
+    width: 100%;
+    font-size: 13px;
+  }
+
+  .tabla-categorias {
+    min-width: 600px; /* 👈 Evita que se rompa la estructura */
+  }
+
+  .tabla-categorias-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabla-categorias th,
+  .tabla-categorias td {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .botones-accion {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cancelar,
+  .guardar {
+    width: 100%;
+    text-align: center;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+}
+ 

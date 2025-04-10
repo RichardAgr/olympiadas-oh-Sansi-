@@ -77,7 +77,7 @@ function RegistroCategoria() {
 
   return (
     <div className="registro-categoria-container">
-      <h5>Registro de Categoría</h5>
+      <h5>Gestión de Categorías de Competencia</h5>
 
       {/* Buscador */}
       <div className="buscador-wrapper">

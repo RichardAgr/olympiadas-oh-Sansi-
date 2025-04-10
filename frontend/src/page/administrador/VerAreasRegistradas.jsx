@@ -75,7 +75,7 @@ function RegistrarOrganizador() {
   }
 
   return (
-    <div className="home-container">
+    <div className="home-container3">
       <h1>Áreas Registradas</h1>
 
       <input

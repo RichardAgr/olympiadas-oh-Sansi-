@@ -4,14 +4,15 @@ body {
   padding: 0;
   background-color: #f8f9fa; /* opcional para un look limpio */
 }
-.home-container {
+.home-container3 {
   padding: 40px 60px;
   font-family: 'Comfortaa', sans-serif;
+  background-color: #ffffff;
 }
 
 .admin-content {
  
-  margin: 0 auto;         /* Lo centra horizontalmente */
+  margin: 0;         /* Lo centra horizontalmente */
   padding: 0 40px;        /* Espacio a los lados */
   width: 100%;            /* Asegura que ocupe todo el ancho posible */
   box-sizing: border-box; /* Incluye padding en el cálculo del ancho */
@@ -71,8 +72,17 @@ body {
 
 /* Tabla */
 .contenedor-tabla {
+  width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
+
+@media (max-width: 768px) {
+  .tabla {
+    min-width: 600px;
+  }
+}
+
 
 .tabla {
   width: 100%;
@@ -233,13 +243,13 @@ body {
 
 /* 🎯 Responsive: tablet y mobile */
 @media (max-width: 992px) {
-  .home-container {
+  .home-container3 {
     padding: 30px 30px;
   }
 }
 
 @media (max-width: 768px) {
-  .home-container {
+  .home-container3 {
     padding: 20px;
   }
 

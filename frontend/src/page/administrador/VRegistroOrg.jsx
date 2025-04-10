@@ -81,7 +81,7 @@ function RegistrarOrganizador() {
   };
 
   return (
-    <div className="home-container">
+    <div className="home-container3">
       <h1>Registros de Responsables de Gestión</h1>
 
       {/* Buscador + Filtro */}

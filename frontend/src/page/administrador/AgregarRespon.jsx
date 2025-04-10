@@ -79,13 +79,13 @@ function AgregarRespon() {
   };
 
   return (
-    <div className="form-container">
+    <div className="form-container2">
       <h2>Registrar Nuevo Responsable de Gestión</h2>
       <form onSubmit={handleSubmit}>
         <div className="section-title">Datos del Responsable</div>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className="form-row2">
+          <div className="form-group2">
             <label>Nombre</label>
             <input
               type="text"
@@ -95,7 +95,7 @@ function AgregarRespon() {
             {errores.nombres && <small className="error">{errores.nombres}</small>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group2">
             <label>Apellidos</label>
             <input
               type="text"
@@ -106,8 +106,8 @@ function AgregarRespon() {
           </div>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className="form-row2">
+          <div className="form-group2">
             <label>Carnet de Identidad</label>
             <input
               type="text"
@@ -120,8 +120,8 @@ function AgregarRespon() {
 
         <div className="section-title">Información de Contacto</div>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className="form-row2">
+          <div className="form-group2">
             <label>Correo electrónico</label>
             <input
               type="email"
@@ -131,7 +131,7 @@ function AgregarRespon() {
             {errores.correo && <small className="error">{errores.correo}</small>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group2">
             <label>Teléfono</label>
             <input
               type="tel"
