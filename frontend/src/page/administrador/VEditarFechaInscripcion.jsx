@@ -50,7 +50,7 @@ const VEditarFechaInscripcion = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:8000/api/evento/fechas", {
+      const res = await fetch("http://localhost:8000/api/evento/fechas", { //change to a global varaible
         method: "POST",
         headers: {
           "Content-Type": "application/json",

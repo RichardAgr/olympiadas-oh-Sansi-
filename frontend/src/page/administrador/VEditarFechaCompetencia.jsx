@@ -17,7 +17,6 @@ const parseDateSafely = (iso) => {
 const VEditarFechaCompetencia = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
   const navigate = useNavigate();
   const { areaId, competenciaId } = useParams();
 
@@ -65,7 +64,6 @@ const VEditarFechaCompetencia = () => {
 
       const result = await res.json();
       console.log("✅ Guardado:", result);
-
       alert("Fecha de competencia guardada con éxito ✅");
       navigate("/admin/Evento");
     } catch (error) {
