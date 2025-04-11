@@ -1,4 +1,3 @@
-import React from "react";
 import "./ModalAreaInfo.css"; 
 
 const ModalAreaInfo = ({ area, onClose }) => {
