@@ -104,13 +104,6 @@ const VEvento = () => {
               </div>
             </div>
 
-            {/* 📍 Lugar */}
-            <div className="evento-location-row">
-              <MapPin size={20} className="evento-icon" />
-              <span className="evento-info-value location">
-                {area.lugar ? `${area.lugar}, Bolivia` : "Sin Asignar"}
-              </span>
-            </div>
           </div>
         ))}
       </div>

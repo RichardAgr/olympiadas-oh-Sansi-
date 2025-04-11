@@ -14,19 +14,6 @@ const parseDateSafely = (iso) => {
   return new Date(`${year}-${month}-${day}T00:00:00`);
 };
 
-// ✅ Bolivia's 9 departments
-const departamentosBolivia = [
-  "La Paz",
-  "Cochabamba",
-  "Santa Cruz",
-  "Oruro",
-  "Potosí",
-  "Chuquisaca",
-  "Tarija",
-  "Beni",
-  "Pando",
-];
-
 const VEditarFechaCompetencia = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -142,30 +129,6 @@ const VEditarFechaCompetencia = () => {
               className="styled-datepicker"
             />
           </div>
-        </div>
-
-        {/* 📍 Sede Dropdown */}
-        <div style={{ marginTop: "2rem", textAlign: "left", paddingLeft: "2rem" }}>
-          <label style={{ fontWeight: "bold" }}>Sede de competencia:</label><br />
-          <select
-            value={sede}
-            onChange={(e) => setSede(e.target.value)}
-            style={{
-              marginTop: "0.5rem",
-              padding: "10px",
-              borderRadius: "10px",
-              border: "1px solid #ccc",
-              width: "300px",
-              fontFamily: "Comfortaa",
-            }}
-          >
-            <option value="">Selecciona una sede</option>
-            {departamentosBolivia.map((dpto) => (
-              <option key={dpto} value={dpto}>
-                {dpto}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div className="btn-wrapper">

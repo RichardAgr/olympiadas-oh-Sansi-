@@ -10,10 +10,12 @@ registerLocale("es", es);
 const VEditarFechaInscripcion = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [areaNombre, setAreaNombre] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { areaId } = useParams();
 
+  // Load existing inscription dates
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -29,7 +31,21 @@ const VEditarFechaInscripcion = () => {
       }
     };
     loadData();
-  }, [areaId]);  
+  }, [areaId]);
+
+  // Load area name
+  useEffect(() => {
+    const fetchArea = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/areas/${areaId}`);
+        const data = await res.json();
+        setAreaNombre(data.nombre);
+      } catch (err) {
+        console.error("Error fetching area name", err);
+      }
+    };
+    fetchArea();
+  }, [areaId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +53,7 @@ const VEditarFechaInscripcion = () => {
     if (startDate && endDate && endDate < startDate) {
       alert("Seleccione una fecha correcta ❌");
       return;
-    }    
+    }
 
     setError("");
 
@@ -48,16 +64,16 @@ const VEditarFechaInscripcion = () => {
       inicio: new Date(startDate).toISOString().split("T")[0],
       fin: new Date(endDate).toISOString().split("T")[0],
     };
-    console.log("Enviando a la API:", body);
 
     try {
-      const res = await fetch("http://localhost:8000/api/evento/fechas", { //change to a global varaible
+      const res = await fetch("http://localhost:8000/api/evento/fechas", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
       });
+
       const result = await res.json();
       console.log("✅ Guardado:", result);
       alert("Fecha de inscripción guardada con éxito ✅");
@@ -70,6 +86,15 @@ const VEditarFechaInscripcion = () => {
   return (
     <div className="fecha-container">
       <h2>Fecha de Inscripción</h2>
+
+      {/* 🏷️ Show selected area name */}
+      <p style={{ fontSize: "1.2rem", fontWeight: "bold", marginBottom: "1.5rem" }}>
+        Área seleccionada:{" "}
+        <span style={{ color: "#4f46e5" }}>
+          {areaNombre || `(ID ${areaId})`}
+        </span>
+      </p>
+
       <form onSubmit={handleSubmit}>
         <div className="calendar-wrapper">
           <div className="date-group">
