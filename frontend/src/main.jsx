@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import AppRouter from './routes/AppRouter';
+import React from 'react';
 import './index.css';
 import './styleAdmArea.css';
 
