@@ -38,6 +38,6 @@ class Boleta extends Seeder{
         // Insertar boletas en lotes
         DB::table('boleta')->insert($boletas);
         
-        $this->command->info('Se han creado 50 boletas de ejemplo.');
+        $this->command->info('Se han creado 6 boletas de ejemplo.');
     }
 }

@@ -98,7 +98,7 @@ class Cronograma extends Seeder{
                 'descripcion' => 'Fase final de competencia para el área de ' . $area->nombre,
                 'fecha_inicio' => Carbon::parse('2024-11-15'),
                 'fecha_fin' => Carbon::parse('2024-11-15'),
-                'tipo_evento' => 'Competencia',
+                'tipo_evento' => 'Fin',
                 'anio_olimpiada' => 2024,
                 'created_at' => now(),
                 'updated_at' => now(),
