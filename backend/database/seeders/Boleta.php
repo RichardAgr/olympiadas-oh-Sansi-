@@ -12,7 +12,7 @@ class Boleta extends Seeder{
         $tutorIds = DB::table('tutor')->pluck('tutor_id')->toArray();
         
         if (empty($tutorIds)) {
-            $this->command->info('No hay tutores en la base de datos. Ejecuta TutorSeeder primero.');
+            $this->command->info('No hay tutores en la base de datos.');
             return;
         }
         
@@ -35,7 +35,6 @@ class Boleta extends Seeder{
             ];
         }
         
-        // Insertar boletas en lotes
         DB::table('boleta')->insert($boletas);
         
         $this->command->info('Se han creado 6 boletas de ejemplo.');
