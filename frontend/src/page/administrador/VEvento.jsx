@@ -87,7 +87,7 @@ const VEvento = () => {
 
             {/* 📆 Fecha de Competencia */}
             <div className="evento-info-group">
-              <p className="evento-info-label">Fecha de Competencia:</p>
+              <p className="evento-info-label">Fecha de Culminacion:</p>
               <div
                 className="evento-icon-row"
                 onClick={() => {
@@ -97,8 +97,8 @@ const VEvento = () => {
               >
                 <CalendarDays size={20} className="evento-icon clickable calendar" />
                 <span className="evento-info-value">
-                  {area.fechas_competencia?.inicio
-                    ? `${formatDate(area.fechas_competencia.inicio)} - ${formatDate(area.fechas_competencia.fin)}`
+                  {area.fechas_fin?.inicio
+                    ? `${formatDate(area.fechas_fin.inicio)} - ${formatDate(area.fechas_fin.fin)}`
                     : "Sin Asignar"}
                 </span>
               </div>
@@ -108,7 +108,7 @@ const VEvento = () => {
             <div className="evento-location-row">
               <MapPin size={20} className="evento-icon" />
               <span className="evento-info-value location">
-                {area.lugar ? `${area.lugar}, Bolivia` : "Sin Asignar"}
+                {area.lugar ? `${area.lugar}, Bolivia` : "Coliseo UMSS"}
               </span>
             </div>
           </div>

@@ -21,7 +21,6 @@ class Area extends Model
         'descripcion',
         'costo',
         'estado',
-        'foto'
     ];
 
     // Relación con Categoría (si usas este modelo)

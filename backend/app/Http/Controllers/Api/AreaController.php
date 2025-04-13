@@ -68,7 +68,6 @@ class AreaController extends Controller
             'nombre' => 'required|string|max:50|unique:area,nombre',
             'descripcion' => 'required|string',
             'costo' => 'required|numeric|min:0',
-            'foto' => 'nullable|string',
             'estado' => 'nullable|boolean'
         ]);
 
@@ -76,7 +75,6 @@ class AreaController extends Controller
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
             'costo' => $request->costo,
-            'foto' => $request->foto ?? '',
             'estado' => $request->estado ?? true
         ]);
 
@@ -108,7 +106,6 @@ class AreaController extends Controller
             'nombre' => 'required|string|max:50|unique:area,nombre,' . $id . ',area_id',
             'descripcion' => 'required|string',
             'costo' => 'required|numeric|min:0',
-            'foto' => 'nullable|string',
             'estado' => 'required|boolean'
         ]);
 
