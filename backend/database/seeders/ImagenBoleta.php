@@ -17,7 +17,7 @@ class ImagenBoleta extends Seeder{
         }
         
         $googleDriveLinks = [
-            'https://drive.google.com/file/d/1KNpgdeWbURcln80SWRFRaupBLvMwPKNc/view?usp=sharing',
+            'https://drive.google.com/file/d/1N0ngd1AShCs1mVVgG0SWopGCnJmjNI5j/view?usp=drivesdk',
             'https://drive.google.com/file/d/1hg76Wy-L_au8AixQvAXB1qm4MrgpvGEt/view?usp=drive_link',
             'https://drive.google.com/file/d/1wqUU2h4cbuaIt9ti34RbX5gPJsSuYdvz/view?usp=drive_link',
             'https://drive.google.com/file/d/16mi8Hrmck874RejlmdT_s2wJL9IVL35a/view?usp=drive_link',
@@ -31,7 +31,7 @@ class ImagenBoleta extends Seeder{
                 
                 $imagenes[] = [
                     'boleta_id' => $boletaId,
-                    'ruta_imagen' => $googleDriveLinks[$linkIndex],
+                    'ruta_imagen' => $googleDriveLinks[0], //luego cambiar  a $linkIndex
                     'fecha_subida' => Carbon::now()->subDays(rand(0, 15)),
                     'estado' => true,
                     'created_at' => Carbon::now(),
