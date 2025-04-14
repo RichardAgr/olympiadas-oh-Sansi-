@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
 import "./VEditarFecha.css";
 
 registerLocale("es", es);
 
-// ✅ Timezone-safe ISO parser
 const parseDateSafely = (iso) => {
   if (!iso) return null;
   const [year, month, day] = iso.split("T")[0].split("-");
@@ -22,12 +22,12 @@ const VEditarFechaCompetencia = () => {
   const navigate = useNavigate();
   const { areaId, competenciaId } = useParams();
 
-  // Fetch existing competencia dates
+  // 🟢 Load existing competition date
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/evento/fechas/${areaId}/competencia`);
-        const data = await res.json();
+        const res = await axios.get(`http://localhost:8000/api/evento/fechas/${areaId}/competencia`);
+        const data = res.data;
 
         if (data?.inicio) setStartDate(parseDateSafely(data.inicio));
         if (data?.fin) setEndDate(parseDateSafely(data.fin));
@@ -39,14 +39,13 @@ const VEditarFechaCompetencia = () => {
     loadData();
   }, [areaId]);
 
+  // 🟣 Get area name by ID
   useEffect(() => {
     const fetchArea = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/areas/${areaId}`); 
-
-        const data = await res.json();
-        console.log("🌐 Área response:", data);
-        setAreaNombre(data.nombre);
+        const res = await axios.get(`http://localhost:8000/api/areas/${areaId}`);
+        setAreaNombre(res.data?.nombre || "");
+        console.log("🌐 Área:", res.data);
       } catch (err) {
         console.error("Error fetching area:", err);
       }
@@ -57,35 +56,36 @@ const VEditarFechaCompetencia = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (startDate && endDate && endDate < startDate) {
-      alert("Seleccione una fecha correcta ❌");
+    if (!startDate || !endDate) {
+      alert("Debes seleccionar ambas fechas 📆");
+      return;
+    }
+
+    if (endDate < startDate) {
+      alert("Seleccione una fecha válida ❌");
       return;
     }
 
     const body = {
-      area_id: areaId,
-      tipo: "competencia",
+      area_id: parseInt(areaId),
+      tipo_evento: "competencia",
       nombre_evento: "Fecha de competencia",
-      inicio: startDate.toISOString().split("T")[0],
-      fin: endDate.toISOString().split("T")[0],
-      lugar: sede,
+      fecha_inicio: startDate.toISOString().split("T")[0],
+      fecha_fin: endDate.toISOString().split("T")[0],
+      lugar: sede || "No especificado",
+      anio_olimpiada: 2025, // Set dynamically if needed
     };
 
     try {
-      const res = await fetch("http://localhost:8000/api/evento/fechas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
+      const response = await axios.post("http://localhost:8000/api/evento/fechas", body);
+      console.log("✅ Guardado:", response.data);
 
-      const result = await res.json();
-      console.log("✅ Guardado:", result);
       alert("Fecha de competencia guardada con éxito ✅");
       navigate("/admin/Evento");
     } catch (error) {
-      console.error("❌ Error al guardar fechas:", error);
+      console.error("❌ Error al guardar:", error);
+      const msg = error.response?.data?.message || "Ocurrió un error al guardar";
+      alert(`⚠️ ${msg}`);
     }
   };
 

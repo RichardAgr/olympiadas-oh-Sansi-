@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
 import "./VEditarFecha.css";
@@ -18,15 +19,15 @@ const VEditarFechaInscripcion = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/evento/fechas/${areaId}/inscripcion`);
-        const data = await res.json();
-        if (data) {
-          const offsetMs = new Date().getTimezoneOffset() * 60000;
-          if (data.inicio) setStartDate(new Date(Date.parse(data.inicio) + offsetMs));
-          if (data.fin) setEndDate(new Date(Date.parse(data.fin) + offsetMs));
-        }
+        const res = await axios.get(`http://localhost:8000/api/evento/fechas/${areaId}/inscripcion`);
+        const data = res.data;
+
+        const offsetMs = new Date().getTimezoneOffset() * 60000;
+
+        if (data?.inicio) setStartDate(new Date(Date.parse(data.inicio) + offsetMs));
+        if (data?.fin) setEndDate(new Date(Date.parse(data.fin) + offsetMs));
       } catch (err) {
-        console.error("Error loading existing dates", err);
+        console.error("❌ Error loading existing dates:", err);
       }
     };
     loadData();
@@ -35,11 +36,10 @@ const VEditarFechaInscripcion = () => {
   useEffect(() => {
     const fetchArea = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/areas/${areaId}`);
-        const data = await res.json();
-        setAreaNombre(data.nombre);
+        const res = await axios.get(`http://localhost:8000/api/areas/${areaId}`);
+        setAreaNombre(res.data?.nombre || "");
       } catch (err) {
-        console.error("Error fetching area name", err);
+        console.error("❌ Error fetching area name:", err);
       }
     };
     fetchArea();
@@ -48,36 +48,36 @@ const VEditarFechaInscripcion = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (startDate && endDate && endDate < startDate) {
-      alert("Seleccione una fecha correcta ❌");
+    if (!startDate || !endDate) {
+      alert("Debes seleccionar ambas fechas 📆");
+      return;
+    }
+
+    if (endDate < startDate) {
+      alert("Seleccione una fecha válida ❌");
       return;
     }
 
     setError("");
 
     const body = {
-      area_id: areaId,
-      tipo: "inscripcion",
+      area_id: parseInt(areaId),
+      tipo_evento: "inscripcion",
       nombre_evento: "Fecha de inscripción",
-      inicio: new Date(startDate).toISOString().split("T")[0],
-      fin: new Date(endDate).toISOString().split("T")[0],
+      fecha_inicio: startDate.toISOString().split("T")[0],
+      fecha_fin: endDate.toISOString().split("T")[0],
+      anio_olimpiada: 2025, // Optional, or make dynamic if needed
     };
 
     try {
-      const res = await fetch("http://localhost:8000/api/evento/fechas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-
-      const result = await res.json();
-      console.log("✅ Guardado:", result);
+      const res = await axios.post("http://localhost:8000/api/evento/fechas", body);
+      console.log("✅ Guardado:", res.data);
       alert("Fecha de inscripción guardada con éxito ✅");
       navigate("/admin/Evento");
     } catch (error) {
       console.error("❌ Error al guardar fechas:", error);
+      const msg = error.response?.data?.message || "Error al guardar la fecha.";
+      alert(`⚠️ ${msg}`);
     }
   };
 
@@ -85,7 +85,6 @@ const VEditarFechaInscripcion = () => {
     <div className="fecha-container">
       <h2>Fecha de Inscripción</h2>
 
-      {/* 🏷️ Show selected area name */}
       <p style={{ fontSize: "1.2rem", fontWeight: "bold", marginBottom: "1.5rem" }}>
         Área seleccionada:{" "}
         <span style={{ color: "#4f46e5" }}>

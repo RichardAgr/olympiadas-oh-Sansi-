@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Curso extends Model
 {
-    protected $table = 'curso'; // 👈 This tells Laravel to stop looking for 'cursos'
+    protected $table = 'curso'; 
     protected $primaryKey = 'curso_id';
 
     protected $fillable = [

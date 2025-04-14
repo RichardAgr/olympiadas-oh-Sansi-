@@ -8,7 +8,7 @@ use App\Models\Area;
 use App\Models\Competencia;
 use App\Models\Cronograma;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Log;
 
 class EventoController extends Controller
 {
@@ -22,7 +22,6 @@ class EventoController extends Controller
             $competencia = $area->competencia;
             $cronograma = $competencia?->cronograma;
 
-            // Group fechas by tipo_evento in cronograma
             $inscripcion = null;
             $competenciaFecha = null;
 
@@ -66,7 +65,6 @@ class EventoController extends Controller
             ]);
         }
 
-        // For 'inscripcion' type, still look into cronograma
         $cronograma = Cronograma::where('area_id', $area_id)
             ->where('tipo_evento', $tipo)
             ->first();
@@ -80,8 +78,6 @@ class EventoController extends Controller
             'fin' => $cronograma->fecha_fin,
         ]);
     }
-
-
 
     public function index()
     {
@@ -110,24 +106,24 @@ class EventoController extends Controller
         return response()->json($data);
     }
 
-    // ✅ POST - Save or update competition/registration dates
+    // ✅ POST - Save or update competition/registration dates (Frontend format)
     public function store(Request $request)
     {
         try {
             $request->validate([
                 'area_id' => 'required|exists:area,area_id',
-                'tipo' => 'required|in:competencia,inscripcion',
-                'inicio' => 'required|date',
-                'fin' => 'required|date|after_or_equal:inicio',
+                'tipo_evento' => 'required|in:competencia,inscripcion',
+                'fecha_inicio' => 'required|date',
+                'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
             ]);
 
-            if ($request->tipo === 'competencia') {
+            if ($request->tipo_evento === 'competencia') {
                 Competencia::updateOrCreate(
                     ['area_id' => $request->area_id],
                     [
-                        'fecha_inicio' => $request->inicio,
-                        'fecha_fin' => $request->fin,
-                        'estado' => 1, // Optional, in case you need it active
+                        'fecha_inicio' => $request->fecha_inicio,
+                        'fecha_fin' => $request->fecha_fin,
+                        'estado' => 1,
                         'descripcion' => 'Generado automáticamente',
                         'nombre_competencia' => 'Competencia por área',
                     ]
@@ -139,17 +135,23 @@ class EventoController extends Controller
                         'tipo_evento' => 'inscripcion',
                     ],
                     [
-                        'fecha_inicio' => $request->inicio,
-                        'fecha_fin' => $request->fin,
-                        'nombre_evento' => 'Fecha de inscripción',
+                        'fecha_inicio' => $request->fecha_inicio,
+                        'fecha_fin' => $request->fecha_fin,
+                        'nombre_evento' => $request->nombre_evento ?? 'Fecha de inscripción',
                         'descripcion' => 'Generado automáticamente',
                         'anio_olimpiada' => 2025,
+                        'lugar' => $request->lugar ?? 'No especificado',
                     ]
                 );
             }
 
             return response()->json(['message' => 'Fechas actualizadas correctamente']);
         } catch (\Throwable $e) {
+            Log::error('❌ Error al guardar fecha:', [
+                'error' => $e->getMessage(),
+                'request' => $request->all()
+            ]);
+
             return response()->json([
                 'error' => 'Error al procesar',
                 'details' => $e->getMessage()
@@ -157,16 +159,15 @@ class EventoController extends Controller
         }
     }
 
-
     // ✅ DELETE - Remove registration or competition dates
     public function destroy(Request $request)
     {
         $request->validate([
             'area_id' => 'required|exists:area,area_id',
-            'tipo' => 'required|in:competencia,inscripcion'
+            'tipo_evento' => 'required|in:competencia,inscripcion'
         ]);
 
-        if ($request->tipo === 'competencia') {
+        if ($request->tipo_evento === 'competencia') {
             Competencia::where('area_id', $request->area_id)->delete();
             Cronograma::where('area_id', $request->area_id)
                       ->where('tipo_evento', 'competencia')

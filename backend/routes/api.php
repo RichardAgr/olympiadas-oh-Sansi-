@@ -15,7 +15,6 @@ Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
 Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
 Route::get('/evento/fechas', [EventoController::class, 'index']);
 Route::post('/evento/fechas', [EventoController::class, 'store']);
-Route::delete('/evento/fechas', [EventoController::class, 'destroy']);
 
 
 // Ruta para obtener el usuario autenticado (si usas auth)
