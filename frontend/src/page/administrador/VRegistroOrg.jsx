@@ -1,5 +1,5 @@
 import "./VRegistroOrg.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import buscador from "../../assets/buscador.svg";
 import excel from "../../assets/excel.svg";
 import addUsuario from "../../assets/perfil_usuario_add.svg";
@@ -84,7 +84,6 @@ function RegistrarOrganizador() {
     <div className="home-container3">
       <h1>Registros de Responsables de Gestión</h1>
 
-      {/* Buscador + Filtro */}
       <div className="buscador">
         <input
           type="text"
@@ -174,7 +173,6 @@ function RegistrarOrganizador() {
           </tbody>
         </table>
 
-        {/* Paginación */}
         <div className="pagination">
           <button onClick={() => setPaginaActual(paginaActual - 1)} disabled={paginaActual === 1}>
             {"<"}

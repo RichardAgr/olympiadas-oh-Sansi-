@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { useNavigate, useParams } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
@@ -39,11 +39,10 @@ const VEditarFechaCompetencia = () => {
     loadData();
   }, [areaId]);
 
-  // Fetch area name
   useEffect(() => {
     const fetchArea = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/areas/${areaId}`); // 👈 with "areas" (plural)
+        const res = await fetch(`http://localhost:8000/api/areas/${areaId}`); 
 
         const data = await res.json();
         console.log("🌐 Área response:", data);
@@ -94,7 +93,6 @@ const VEditarFechaCompetencia = () => {
     <div className="fecha-container">
       <h2>Fecha de Competencia</h2>
 
-      {/* 👀 Area Name */}
       <p style={{ fontSize: "1.2rem", fontWeight: "bold", marginBottom: "1.5rem" }}>
         Área seleccionada:{" "}
         <span style={{ color: "#4f46e5" }}>

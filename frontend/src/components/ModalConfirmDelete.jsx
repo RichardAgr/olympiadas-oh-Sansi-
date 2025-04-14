@@ -1,4 +1,3 @@
-import React from 'react';
 import '../App.css';
 
 const ModalConfirmDelete = ({ areaName, responsable, onConfirm, onCancel }) => {

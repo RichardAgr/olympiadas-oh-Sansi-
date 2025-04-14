@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CalendarDays, MapPin } from "lucide-react";
 import "./VEvento.css";
@@ -31,12 +31,10 @@ const VEvento = () => {
     fetchData();
   }, []);
 
-  // 🔍 Filter by area name
   const filteredAreas = areas.filter((area) =>
     area.nombre.toLowerCase().includes(search.toLowerCase())
   );
 
-  // 📄 Pagination logic
   const totalPaginas = Math.ceil(filteredAreas.length / itemsPorPagina);
   const startIndex = (paginaActual - 1) * itemsPorPagina;
   const endIndex = startIndex + itemsPorPagina;
@@ -46,7 +44,6 @@ const VEvento = () => {
     <div className="evento-grid-container">
       <h2 className="evento-title">Próximos eventos</h2>
 
-      {/* 🔍 Search Box */}
       <input
         className="search"
         type="text"
@@ -54,20 +51,17 @@ const VEvento = () => {
         value={search}
         onChange={(e) => {
           setSearch(e.target.value);
-          setPaginaActual(1); // Reset to page 1 on search
+          setPaginaActual(1); 
         }}
       />
 
       <div className="evento-card-grid">
         {areasPaginadas.map((area) => (
           <div className="evento-card" key={area.id}>
-            {/* 🖼️ Image Placeholder */}
             <div className="evento-image-placeholder" />
 
-            {/* 🏷️ Area Name */}
             <h3 className="evento-nombre">{area.nombre}</h3>
 
-            {/* 📅 Fecha de Inscripción */}
             <div className="evento-info-group">
               <p className="evento-info-label">Fecha de Inscripción:</p>
               <div
@@ -85,9 +79,8 @@ const VEvento = () => {
               </div>
             </div>
 
-            {/* 📆 Fecha de Competencia */}
             <div className="evento-info-group">
-              <p className="evento-info-label">Fecha de Competencia:</p>
+              <p className="evento-info-label">Fecha de Culminacion:</p>
               <div
                 className="evento-icon-row"
                 onClick={() => {
@@ -97,8 +90,8 @@ const VEvento = () => {
               >
                 <CalendarDays size={20} className="evento-icon clickable calendar" />
                 <span className="evento-info-value">
-                  {area.fechas_competencia?.inicio
-                    ? `${formatDate(area.fechas_competencia.inicio)} - ${formatDate(area.fechas_competencia.fin)}`
+                  {area.fechas_fin?.inicio
+                    ? `${formatDate(area.fechas_fin.inicio)} - ${formatDate(area.fechas_fin.fin)}`
                     : "Sin Asignar"}
                 </span>
               </div>
@@ -108,7 +101,6 @@ const VEvento = () => {
         ))}
       </div>
 
-      {/* 📑 Pagination */}
       <div className="pagination">
         <button
           onClick={() => setPaginaActual(paginaActual - 1)}

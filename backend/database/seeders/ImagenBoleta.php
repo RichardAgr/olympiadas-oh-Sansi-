@@ -16,24 +16,29 @@ class ImagenBoleta extends Seeder{
             return;
         }
         
+        $googleDriveLinks = [
+            'https://drive.google.com/file/d/1N0ngd1AShCs1mVVgG0SWopGCnJmjNI5j/view?usp=drivesdk',
+            'https://drive.google.com/file/d/1hg76Wy-L_au8AixQvAXB1qm4MrgpvGEt/view?usp=drive_link',
+            'https://drive.google.com/file/d/1wqUU2h4cbuaIt9ti34RbX5gPJsSuYdvz/view?usp=drive_link',
+            'https://drive.google.com/file/d/16mi8Hrmck874RejlmdT_s2wJL9IVL35a/view?usp=drive_link',
+            'https://drive.google.com/file/d/1jkGDokqAXAo3_uMXGd49GSM_WgCBfhu2/view?usp=drive_link',
+            'https://drive.google.com/file/d/13vy0-Vmluqq-12NPcjPsJDIx5gZFNGAp/view?usp=drive_link'
+        ];
         $imagenes = [];
-        
-        foreach ($boletaIds as $boletaId) {
-            $numImagenes = rand(1, 2);
-            
-            for ($i = 1; $i <= $numImagenes; $i++) {
+        $totalLinks = count($googleDriveLinks);
+        foreach ($boletaIds as $index => $boletaId) {
+                $linkIndex = $index % $totalLinks;
+                
                 $imagenes[] = [
                     'boleta_id' => $boletaId,
-                    'ruta_imagen' => 'storage/boletas/boleta_' . $boletaId . '_' . $i . '.jpg',
+                    'ruta_imagen' => $googleDriveLinks[0], //luego cambiar  a $linkIndex
                     'fecha_subida' => Carbon::now()->subDays(rand(0, 15)),
                     'estado' => true,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ];
             }
-        }
         
-        // Insertar imágenes en lotes
         DB::table('imagen_boleta')->insert($imagenes);
         
         $this->command->info('Se han creado ' . count($imagenes) . ' imágenes de boletas.');

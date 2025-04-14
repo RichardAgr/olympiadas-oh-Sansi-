@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { useNavigate, useParams } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
@@ -15,7 +15,6 @@ const VEditarFechaInscripcion = () => {
   const navigate = useNavigate();
   const { areaId } = useParams();
 
-  // Load existing inscription dates
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -33,7 +32,6 @@ const VEditarFechaInscripcion = () => {
     loadData();
   }, [areaId]);
 
-  // Load area name
   useEffect(() => {
     const fetchArea = async () => {
       try {
