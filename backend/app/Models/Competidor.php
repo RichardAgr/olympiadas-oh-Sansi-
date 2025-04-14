@@ -44,7 +44,6 @@ class Competidor extends Model
         return $this->belongsTo(Ubicacion::class, 'ubicacion_id');
     }
 
-
     public function getNombreCompletoAttribute()
     {
         return "{$this->nombres} {$this->apellidos}";
