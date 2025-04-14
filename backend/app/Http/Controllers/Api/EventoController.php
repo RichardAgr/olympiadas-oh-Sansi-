@@ -88,23 +88,21 @@ class EventoController extends Controller
         $areas = Area::all();
 
         $data = $areas->map(function ($area) {
-            $inscripcionEvent = Cronograma::where('area_id', $area->area_id)
+            $competencia = Competencia::where('area_id', $area->area_id)->first();
+            $inscripcion = Cronograma::where('area_id', $area->area_id)
                                      ->where('tipo_evento', 'inscripcion')
-                                     ->first();
-            $finEvent = Cronograma::where('area_id', $area->area_id)
-                                     ->where('tipo_evento', 'Fin')
                                      ->first();
 
             return [
                 'id' => $area->area_id,
                 'nombre' => $area->nombre,
-                'fechas_fin' => [
-                    'inicio' => optional($finEvent)->fecha_inicio,
-                    'fin' => optional($finEvent)->fecha_fin
+                'fechas_competencia' => [
+                    'inicio' => optional($competencia)->fecha_inicio,
+                    'fin' => optional($competencia)->fecha_fin
                 ],
                 'fechas_inscripcion' => [
-                    'inicio' => optional($inscripcionEvent)->fecha_inicio,
-                    'fin' => optional($inscripcionEvent)->fecha_fin
+                    'inicio' => optional($inscripcion)->fecha_inicio,
+                    'fin' => optional($inscripcion)->fecha_fin
                 ]
             ];
         });

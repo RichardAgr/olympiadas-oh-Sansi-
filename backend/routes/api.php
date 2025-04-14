@@ -8,7 +8,9 @@ use App\Http\Controllers\Api\EventoController;
 use App\Http\Controllers\Api\NivelEducativoController;
 use App\Http\Controllers\Api\GradoController;
 use App\Http\Controllers\Api\NivelCategoriaController;
+use App\Http\Controllers\Api\CompetidorController;
 
+Route::get('/competidores', [CompetidorController::class, 'index']);
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
 Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
 Route::get('/evento/fechas', [EventoController::class, 'index']);
