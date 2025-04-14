@@ -1,5 +1,5 @@
 import "./VRegistroOrg.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import buscador from "../../assets/buscador.svg";
 import excel from "../../assets/excel.svg";
 import addUsuario from "../../assets/perfil_usuario_add.svg";

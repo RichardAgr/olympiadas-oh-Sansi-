@@ -12,6 +12,8 @@ class Ubicacion extends Migration
             $table->string('departamento', 50);
             $table->string('provincia', 50);
             $table->timestamps();
+
+            $table->index(['departamento', 'provincia']);
             
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_general_ci';

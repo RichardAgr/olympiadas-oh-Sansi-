@@ -17,6 +17,8 @@ class ResponsableGestion extends Migration{
             $table->date('fecha_asignacion');
             $table->boolean('estado');
             $table->timestamps();
+
+            $table->index('ci');
             
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_general_ci';

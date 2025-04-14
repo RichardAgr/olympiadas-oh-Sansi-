@@ -17,6 +17,9 @@ class Colegio extends Migration{
                   ->references('ubicacion_id')
                   ->on('ubicacion')
                   ->onDelete('cascade');
+
+            $table->index('ubicacion_id');
+            $table->index('nombre');
             
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_general_ci';
