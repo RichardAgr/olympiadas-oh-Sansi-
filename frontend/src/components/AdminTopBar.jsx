@@ -24,8 +24,8 @@ const AdminTopBar = () => {
   }, [location.pathname]);
 
   const isRolesRoute =
-    location.pathname.includes("/admin/visualizarRegistro") ||
-    location.pathname.includes("/admin/tutores");
+    location.pathname.includes("/admin/visualizarRegistro")
+/*     location.pathname.includes("/admin/tutores"); */
 
   return (
     <nav className="topbar">
@@ -80,21 +80,21 @@ const AdminTopBar = () => {
                 <Link to="/admin/visualizarRegistro">Resp. de Gestión</Link>
               </li>
               <li
-                className={
+                /* className={
                   location.pathname === "/admin/tutores"
                     ? "active-option"
                     : ""
-                }
+                } */
               >
-                <Link to="/admin/tutores">Tutores</Link>
+{/*                 <Link to="/admin/tutores">Tutores</Link> */}
               </li>
             </ul>
           )}
         </li>
 
-        <li>
+{/*         <li>
           <a href="#">Competidores</a>
-        </li>
+        </li> */}
 
         <li>
           <NavLink
@@ -105,14 +105,14 @@ const AdminTopBar = () => {
           </NavLink>
         </li>
 
-        <li>
+        {/* <li>
           <button
             className="notification-button"
             aria-label="Notificaciones"
           >
             <Bell size={22} color="#0A2E8C" />
           </button>
-        </li>
+        </li> */}
 
         <li>
           <div className="admin-badge">
