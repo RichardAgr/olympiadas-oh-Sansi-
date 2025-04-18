@@ -14,16 +14,15 @@ import VEditarFechaCompetencia from "../page/administrador/VEditarFechaCompetenc
 import RegistroCategoria from "../page/administrador/RegistroCategoria";
 import EditarCategoria from "../page/administrador/EditarCategoria";
 import AgregarCategoria from "../page/administrador/AgregarCategoria";
-
+import AppRouteRespGest from "./AppRouteRespGest";
 
 const AppRouter = () => {
   return (
-    <BrowserRouter>
       <Routes>
         {/* Redirect root path '/' to '/admin' */}
         <Route path="/" element={<Navigate to="/admin" />} />
 
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="" element={<AdminLayout />}>
           <Route index element={<HomeAdmin />} />
           <Route path="areas" element={<AreasList />} />
           <Route path="verAreasRegistradas" element={<AreasRegistradas />} />
@@ -42,8 +41,8 @@ const AppRouter = () => {
           <Route path="registro-categorias/editar/:id" element={<EditarCategoria />} />
           <Route path="registro-categorias/nueva" element={<AgregarCategoria />} />
         </Route>
+        <Route path="/homeRespGestion/*" element={<AppRouteRespGest />} />
       </Routes>
-    </BrowserRouter>
   );
 };
 
