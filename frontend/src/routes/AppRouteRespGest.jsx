@@ -6,6 +6,8 @@ import ListaTutores from "../page/reponsableGestion/ListaTutores";
 import ValidarPagos from "../page/reponsableGestion/ValidacionDePagos";
 import DetalleCompetidoresInscritos from "../page/reponsableGestion/DetalleCompetidoresInscritos";
 import EstadoTutores from "../page/reponsableGestion/EstadoTutores";
+import Prueba from "../page/reponsableGestion/VisualListTutor";
+
 function AppRouteRespGest() {
   return (
     <Routes>
@@ -17,6 +19,7 @@ function AppRouteRespGest() {
         <Route path="ValidarPagos" element={<ValidarPagos />} />
         <Route path="DetalleCompetidoresInscritos" element={<DetalleCompetidoresInscritos />} />
         <Route path="EstadoTutores" element={<EstadoTutores />} />
+        <Route path="VisualListTutor" element={<Prueba />} />
       </Route>
     </Routes>
   );
