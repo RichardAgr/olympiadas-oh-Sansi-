@@ -1,0 +1,10 @@
+{
+    "responsable_id": 1,
+    "tutor_id": 42,
+    "competidor_id": null,
+    "asunto": "Deshabilitación de tutor",
+    "mensaje": "Se deshabilita al tutor por no cumplir con los criterios mínimos.",
+    "fecha_envio": "2025-04-19",
+    "estado": 1
+  }
+  
