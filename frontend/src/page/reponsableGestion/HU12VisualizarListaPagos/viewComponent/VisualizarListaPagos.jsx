@@ -1,5 +1,6 @@
 import { useState,useEffect, use } from "react";
 import SearchBar from "../../../../components/searchBar(hu12)/SearchBar"
+import VisualizarTablaPagos from "../../../../components/visualizarTablaPagos/VisualizarTablaPagos";
 import "./visualizarListaPagos.css"
 import axios from "axios";
 
@@ -55,7 +56,7 @@ export default function VisualizarListaPagos(){
             ): error? (
                 <div className="error">{error}</div>
             ):(
-                <h1>Mostrar tabla de pagos</h1>
+                <VisualizarTablaPagos payments={filteredPayments}/>
             )}
         </div>
     )
