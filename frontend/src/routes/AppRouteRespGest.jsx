@@ -7,6 +7,7 @@ import VisualizarListaPagos from "../page/reponsableGestion/HU12VisualizarListaP
 import DetalleCompetidoresInscritos from "../page/reponsableGestion/DetalleCompetidoresInscritos";
 import EstadoTutores from "../page/reponsableGestion/EstadoTutores";
 import VerDetallesPago  from "../components/verDetallesPago/VerDetallesPago";
+import Tutores from "../page/reponsableGestion/VisualListTutor";
 
 function AppRouteRespGest() {
   return (
@@ -20,6 +21,7 @@ function AppRouteRespGest() {
         <Route path="DetalleCompetidoresInscritos" element={<DetalleCompetidoresInscritos />} />
         <Route path="EstadoTutores" element={<EstadoTutores />} />
         <Route path="DetallePago" element={<VerDetallesPago />} />
+        <Route path="VisualListTutor" element={<Tutores />} />
       </Route>
     </Routes>
   );
