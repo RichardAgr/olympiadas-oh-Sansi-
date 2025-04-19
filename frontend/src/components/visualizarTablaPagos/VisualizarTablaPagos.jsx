@@ -54,7 +54,7 @@ const VisualizarTablaPagos = ({payments}) => {
                         </td>
                         <td>
                           <button className="details-button" onClick={() => handleViewDetails(payment)}>
-                            Más Detallesss
+                            Más Detalles
                           </button>
                         </td>
                       </tr>
