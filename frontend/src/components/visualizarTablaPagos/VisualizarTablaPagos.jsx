@@ -15,7 +15,7 @@ const VisualizarTablaPagos = ({payments}) => {
           setAlertOpen(true)
           return
         }
-        navigate('/detallePago', { state: { payment } });
+        navigate('/respGest/DetallePago', { state: { payment } });
       }
 
       const closeAlert = () => {
@@ -54,7 +54,7 @@ const VisualizarTablaPagos = ({payments}) => {
                         </td>
                         <td>
                           <button className="details-button" onClick={() => handleViewDetails(payment)}>
-                            Más Detalles
+                            Más Detallesss
                           </button>
                         </td>
                       </tr>
