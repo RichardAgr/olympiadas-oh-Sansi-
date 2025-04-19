@@ -1,4 +1,5 @@
 import { useState,useEffect, use } from "react";
+import SearchBar from "../../../../components/searchBar(hu12)/SearchBar"
 import "./visualizarListaPagos.css"
 import axios from "axios";
 
@@ -48,7 +49,7 @@ export default function VisualizarListaPagos(){
 
     return(
         <div className="payment-container">
-            <h1>Buscador</h1>
+            <SearchBar onSearch={handleSearch}/>
             {isLoading? (
                 <div className="loading">Cargando...</div>
             ): error? (
