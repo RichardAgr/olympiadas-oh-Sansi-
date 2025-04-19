@@ -1,19 +1,124 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./ListaInscritos.css";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
-function ListIns() {
+function ListaInscritos() {
+  const [inscritos, setInscritos] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState("Todos los cursos");
+
+  useEffect(() => {
+    axios.get("/inscritos.json")
+      .then(response => {
+        setInscritos(response.data);
+      })
+      .catch(error => {
+        console.error("Error al cargar los inscritos:", error);
+      });
+  }, []);
+
+  const inscritosFiltrados = inscritos.filter((inscrito) => {
+    const search = searchQuery.toLowerCase();
+    const coincideBusqueda =
+      inscrito.nombre.toLowerCase().includes(search) ||
+      inscrito.apellido.toLowerCase().includes(search) ||
+      inscrito.colegio.toLowerCase().includes(search) ||
+      inscrito.departamento.toLowerCase().includes(search);
+
+    const coincideCurso =
+      selectedCourse === "Todos los cursos" ||
+      inscrito.curso === selectedCourse;
+
+    return coincideBusqueda && coincideCurso;
+  });
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Lista de Inscritos", 14, 20);
+
+    autoTable(doc, {
+      startY: 30,
+      head: [["Apellidos", "Nombres", "Colegio", "Departamento", "Provincia"]],
+      body: inscritosFiltrados.map((inscrito) => [
+        inscrito.apellido,
+        inscrito.nombre,
+        inscrito.colegio,
+        inscrito.departamento,
+        inscrito.provincia,
+      ]),
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [255, 255, 255], textColor: 0 },
+    });
+
+    doc.save("lista_inscritos.pdf");
+  };
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Lista de Inscritos</h1>
-      <p>Selecciona una opción:</p>
+    <div className="lista-container">
+      <h1>Lista de inscritos</h1>
 
-      <div>
-        <button style={{ margin: "10px", padding: "10px" }}>Botón 1</button>
-        <button style={{ margin: "10px", padding: "10px" }}>Botón 2</button>
-        <button style={{ margin: "10px", padding: "10px" }}>Botón 3</button>
-        <button style={{ margin: "10px", padding: "10px" }}>Botón 4</button>
+      <div className="search-bar">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Buscar"
+        />
       </div>
+
+      <div className="filters">
+        <select
+          value={selectedCourse}
+          onChange={(e) => setSelectedCourse(e.target.value)}
+          className="course-dropdown"
+        >
+          <option value="Todos los cursos">Todos los cursos</option>
+          <option value="1ro Secundaria">1ro Secundaria</option>
+          <option value="2do Secundaria">2do Secundaria</option>
+          <option value="3ro Secundaria">3ro Secundaria</option>
+          <option value="4to Secundaria">4to Secundaria</option>
+        </select>
+
+        <button className="export-button" onClick={exportToPDF}>
+          Exportar Lista
+        </button>
+      </div>
+
+      <table className="inscritos-table">
+        <thead>
+          <tr>
+            <th>Apellidos</th>
+            <th>Nombres</th>
+            <th>Colegio</th>
+            <th>Departamento</th>
+            <th>Provincia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {inscritosFiltrados.length > 0 ? (
+            inscritosFiltrados.map((inscrito, index) => (
+              <tr key={index}>
+                <td>{inscrito.apellido}</td>
+                <td>{inscrito.nombre}</td>
+                <td>{inscrito.colegio}</td>
+                <td>{inscrito.departamento}</td>
+                <td>{inscrito.provincia}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" style={{ textAlign: "center" }}>
+                No se encontraron resultados.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-export default ListIns;
+export default ListaInscritos;
