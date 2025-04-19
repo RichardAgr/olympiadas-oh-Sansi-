@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { X } from "lucide-react"
 import {  useLocation, useNavigate } from 'react-router-dom';
+import TablaCompetidores from "../tablaCompetidores/TablaCompetidores";
 import "./verDetallesPago.css"
 import { fetchStudentsByTutor } from "../../../public/json/hu12Estudiante";
 
@@ -81,7 +82,7 @@ export default function VerDetallesPago(){
               ) : students.length === 0 ? (
                 <div className="no-students">No hay estudiantes asociados a este tutor</div>
               ) : ( 
-                 {/* <StudentTable students={students} />  */} 
+                 <TablaCompetidores students={students} /> 
               )}
             </div> 
             {showReceipt && ruta_imagen && (
