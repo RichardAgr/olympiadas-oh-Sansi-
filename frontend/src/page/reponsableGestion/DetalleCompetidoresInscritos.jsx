@@ -1,17 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function DetalleCompetidoresInscritos() {
+  const [competidores, setCompetidores] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
+
+  useEffect(() => {
+    axios
+      .get("/src/competidores.json")
+      .then((res) => setCompetidores(res.data))
+      .catch((err) => console.error("Error cargando datos:", err));
+  }, []);
+
+  const competidoresFiltrados = competidores.filter((comp) =>
+    comp.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   return (
-    <div >
+    <div>
       <h1>Detalle Competidores Inscritos</h1>
-       {/* Buscador + Filtro */}
-       <div className="buscador">
+      <div className="buscador">
         <input
           type="text"
           placeholder="Buscar por nombre"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
         />
       </div>
-        {/* Tabla */}
       <div className="contenedor-tabla">
         <table className="tabla">
           <thead>
@@ -26,10 +41,24 @@ function DetalleCompetidoresInscritos() {
             </tr>
           </thead>
           <tbody>
-            
+            {competidoresFiltrados.map((comp) => (
+              <tr key={comp.id}>
+                <td>{comp.nombre}</td>
+                <td>{comp.colegio}</td>
+                <td>{comp.ci}</td>
+                <td>{comp.curso}</td>
+                <td>{comp.estado}</td>
+                <td>{comp.competencia}</td>
+                <td>{comp.fecha}</td>
+              </tr>
+            ))}
+            {competidoresFiltrados.length === 0 && (
+              <tr>
+                <td colSpan="7">No se encontraron resultados.</td>
+              </tr>
+            )}
           </tbody>
         </table>
-
       </div>
     </div>
   );
