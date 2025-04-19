@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nombre": "Juan Pérez",
+    "estado": 1,
+    "competidores": [
+      { "id": 101, "nombre": "Carlos", "estado": 1 },
+      { "id": 102, "nombre": "Lucía", "estado": 1 },      
+      { "id": 103, "nombre": "Luis", "estado": 0 }
+    ]
+  },
+  {
+    "id": 2,
+    "nombre": "Ana Gómez",
+    "estado": 0,
+    "competidores": []
+  },
+  {
+    "id": 3,
+    "nombre": "Pedro Ríos",
+    "estado": 1,
+    "competidores": [
+      { "id": 104, "nombre": "Mario", "estado": 1 }
+    ]
+  }
+]
