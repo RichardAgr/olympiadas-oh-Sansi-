@@ -1,0 +1,41 @@
+ {
+  "data": [
+    {
+      "competidor_id": 1,
+      "nombre_completo": "Juan Carlos Pérez Mendoza",
+      "area_competencia": "Matemáticas",
+      "estado": "Habilitado"
+    },
+    {
+      "competidor_id": 2,
+      "nombre_completo": "María Fernanda Gómez López",
+      "area_competencia": "Matemáticas, Ciencias Naturales",
+      "estado": "Pendiente"
+    },
+    {
+      "competidor_id": 3,
+      "nombre_completo": "Luis Alberto Martínez Rojas",
+      "area_competencia": "Física",
+      "estado": "Habilitado"
+    },
+    {
+     "competidor_id": 4,
+     "nombre_completo": "Ana Patricia Rodríguez Vargas",
+     "area_competencia": "Matemáticas",
+     "estado": "Deshabilitado"
+    },
+    {
+      "competidor_id": 5,
+      "nombre_completo": "Carlos Eduardo Torres Sánchez",
+      "area_competencia": "Ciencias Naturales, Tecnología",
+      "estado": "Habilitado"
+    },
+    {
+      "competidor_id": 6,
+      "nombre_completo": "Sofía Alejandra García Méndez",
+      "area_competencia": "Física",
+      "estado": "Pendiente"
+    }
+  ]
+}
+

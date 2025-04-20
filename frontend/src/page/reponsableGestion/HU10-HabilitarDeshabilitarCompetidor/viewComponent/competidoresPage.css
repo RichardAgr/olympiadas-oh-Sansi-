@@ -1,0 +1,105 @@
+.competitors-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  .filters-container {
+    margin-bottom: 1.5rem;
+  }
+  
+  .search-sectionH {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+  
+  .search-containerH {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .search-iconH {
+    color: #888;
+    margin-right: 0.5rem;
+  }
+  
+  .search-inputH {
+    border: none;
+    outline: none;
+    background-color: #fff;
+    margin-bottom: -0.3px;
+    box-shadow: none;
+    width: 100%;
+    font-size: 0.9rem;
+    font-family: "Comfortaa", sans-serif;
+  }
+  
+  .tutors-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+  }
+  
+  .tutors-button:hover {
+    background-color: #3a5bd9;
+  }
+  
+  .status-filters {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .radio-label {
+    display: flex;
+/*     align-items: center; */
+    cursor: pointer;
+  }
+  
+  .radio-inputH {
+    margin-right: 0.5rem;
+  }
+  
+  .radio-text {
+    font-size: 1rem;
+  }
+  
+  .competitors-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .loading,
+  .error,
+  .no-results {
+    text-align: center;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .error {
+    color: #dc3545;
+  }
+  

@@ -62,7 +62,9 @@ function HomeRespGest() {
 
           {/* Botón: Habilitar/Deshabilitar Competidores */}
           <div className="button-box">
-            <button>Habilitar/Deshabilitar Competidores</button>
+            <Link to={"/respGest/EstadoCompetidores"}>
+              <button>Habilitar/Deshabilitar Competidores</button>
+            </Link>
             <p>Administre el estado de los Competidores.</p>
           </div>
         </div>

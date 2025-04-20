@@ -8,6 +8,8 @@ import DetalleCompetidoresInscritos from "../page/reponsableGestion/DetalleCompe
 import EstadoTutores from "../page/reponsableGestion/EstadoTutores";
 import VerDetallesPago  from "../components/verDetallesPago/VerDetallesPago";
 import Tutores from "../page/reponsableGestion/VisualListTutor";
+import CompetidoresPage from "../page/reponsableGestion/HU10-HabilitarDeshabilitarCompetidor/viewComponent/CompetidoresPage";
+import InformacionCompetidor from "../components/informacionCompetidor/InformacionCompetidor";
 
 function AppRouteRespGest() {
   return (
@@ -22,6 +24,8 @@ function AppRouteRespGest() {
         <Route path="EstadoTutores" element={<EstadoTutores />} />
         <Route path="DetallePago" element={<VerDetallesPago />} />
         <Route path="VisualListTutor" element={<Tutores />} />
+        <Route path="EstadoCompetidores" element={<CompetidoresPage />} />
+        <Route path="DatosCompetidor/:id" element={< InformacionCompetidor />}/>
       </Route>
     </Routes>
   );
