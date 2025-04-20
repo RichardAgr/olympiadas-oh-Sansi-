@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\NivelEducativoController;
 use App\Http\Controllers\Api\GradoController;
 use App\Http\Controllers\Api\NivelCategoriaController;
 use App\Http\Controllers\Api\CompetidorController;
+use App\Http\Controllers\Api\TutorController;
 
 Route::get('/competidores', [CompetidorController::class, 'index']);
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
@@ -34,3 +35,4 @@ Route::apiResource('niveles-educativos', NivelEducativoController::class);
 Route::apiResource('grados', GradoController::class);
 Route::apiResource('nivel-categorias', NivelCategoriaController::class);
 Route::get('/competidores', [CompetidorController::class, 'index']);
+Route::get('/tutores', [TutorController::class, 'index']);

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -11,16 +12,16 @@ class CompetidorController extends Controller
     {
         $query = Competidor::with(['colegio', 'curso', 'ubicacion']);
 
-        // Búsqueda por texto
+        // Búsqueda por nombre, apellido, CI, colegio, departamento o provincia
         if ($request->has('search')) {
             $search = strtolower($request->search);
+
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(nombres) LIKE ?', ["%{$search}%"])
                   ->orWhereRaw('LOWER(apellidos) LIKE ?', ["%{$search}%"])
                   ->orWhereRaw('LOWER(ci) LIKE ?', ["%{$search}%"]);
             });
 
-            // Búsqueda en relaciones
             $query->orWhereHas('colegio', function ($q) use ($search) {
                 $q->whereRaw('LOWER(nombre) LIKE ?', ["%{$search}%"]);
             });
@@ -31,8 +32,7 @@ class CompetidorController extends Controller
             });
         }
 
-        // Filtro por curso
-        if ($request->has('curso')) {
+        if ($request->filled('curso') && strtolower($request->curso) !== 'todos los cursos') {
             $query->whereHas('curso', function ($q) use ($request) {
                 $q->where('nombre', $request->curso);
             });
@@ -40,19 +40,20 @@ class CompetidorController extends Controller
 
         $query->distinct();
 
-        return response()->json(
-            $query->get()->map(function ($c) {
-                return [
-                    'nombre' => $c->nombres ?? '',
-                    'apellido' => $c->apellidos ?? '',
-                    'colegio' => $c->colegio->nombre ?? '',
-                    'departamento' => $c->ubicacion->departamento ?? '',
-                    'provincia' => $c->ubicacion->provincia ?? '',
-                    'curso' => $c->curso->nombre ?? '',
-                ];
-            })
-        );
-        
+        //Formato plano para frontend
+        $result = $query->get()->map(function ($c) {
+            return [
+                'nombre' => $c->nombres ?? '',
+                'apellido' => $c->apellidos ?? '',
+                'colegio' => $c->colegio->nombre ?? '',
+                'departamento' => $c->ubicacion->departamento ?? '',
+                'provincia' => $c->ubicacion->provincia ?? '',
+                'curso' => $c->curso->nombre ?? '',
+            ];
+        });
+
+        return response()->json($result);
     }
 }
+
 

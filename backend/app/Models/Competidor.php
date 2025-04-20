@@ -47,4 +47,15 @@ class Competidor extends Model
     {
         return "{$this->nombres} {$this->apellidos}";
     }
+
+    public function tutores()
+{
+    return $this->belongsToMany(
+        Tutor::class,
+        'tutor_competidor',
+        'competidor_id',
+        'tutor_id'
+    )->withTimestamps();
+}
+
 }
