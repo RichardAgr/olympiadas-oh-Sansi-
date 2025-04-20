@@ -1,75 +1,136 @@
-import React, { useState } from "react";
-import "./estilosResponsable.css";
+/* Topbar General */
+.seleccionadorDesplegable {
+    border-radius: 5px;
+    border: 0px solid #000;
+    background: #F7F7F7;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  }
+ /* Estilos para el Switch (Toggle) */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 20px;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #3498DB; /* Cambia el color cuando está activado */
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(14px); /* Mueve el círculo cuando está activado */
+  }
 
-function EstadoTutores() {
-  const [estadoTutores, setEstadoTutores] = useState([
-    { id: 1, nombre: "Tutor 1", estado: true },
-    { id: 2, nombre: "Tutor 2", estado: false },
-  ]);
-
-  const toggleEstado = (id) => {
-    setEstadoTutores((prev) =>
-      prev.map((tutor) =>
-        tutor.id === id ? { ...tutor, estado: !tutor.estado } : tutor
-      )
-    );
-  };
-
-  return (
-    <div className="estado-tutores-container">
-      <h1>Habilitar/Deshabilitar Tutores</h1>
-
-      {/* Buscador + Filtro */}
-      <div className="buscador">
-        <input type="text" placeholder="Buscar por nombre" />
-      </div>
-
-      {/* Seleccionador Desplegable */}
-      <select className="seleccionadorDesplegable" defaultValue="">
-        <option value="" disabled>
-          -- Ninguno --
-        </option>
-        <option value="todos">Todos</option>
-        <option value="opcion2">Opción 2</option>
-        <option value="opcion3">Opción 3</option>
-      </select>
-
-      {/* Tabla */}
-      <div className="contenedor-tabla">
-        <table className="tabla">
-          <thead>
-            <tr>
-              <th>Nombre del Tutor</th>
-              <th>Estado</th>
-              <th>Competidores Activos</th>
-              <th>Descripción de Estado</th>
-              <th>Deshabilitar/Habilitar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {estadoTutores.map((tutor) => (
-              <tr key={tutor.id}>
-                <td>{tutor.nombre}</td>
-                <td>{tutor.estado ? "Activo" : "Inactivo"}</td>
-                <td>0</td>
-                <td>{tutor.estado ? "Disponible para asignar" : "Deshabilitado"}</td>
-                <td>
-                  <label className="switch">
-                    <input
-                      type="checkbox"
-                      checked={tutor.estado}
-                      onChange={() => toggleEstado(tutor.id)}
-                    />
-                    <span className="slider"></span>
-                  </label>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+ /* Estilo del modal (fondo, contenedor central, etc.) */
+.modal1 {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  z-index: 1000;
 }
 
-export default EstadoTutores;
+/* Estilo del contenido del modal */
+.modal2 {
+  background-color: #F7F7F7;
+  width: 800px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column; /* importante para el layout interno */
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Título del modal */
+.modal-content h2 {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+/* Estilo para el textarea dentro del modal */
+textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  resize: none;
+}
+
+/* Contenedor de los botones centrado abajo */
+.modal-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: auto; /* esto empuja los botones al fondo */
+  padding-top: 10px;
+}
+
+/* Estilo de ambos botones */
+.botones-modal {
+  flex: 1;
+  font-size: 14px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Botón Cancelar */
+button.cancelar {
+  background-color: #D9D9D9;
+  padding: 0.6rem 3.4rem;
+  color: black;
+  border-radius: 30px;
+  font-weight: 600;
+}
+
+/* Botón Enviar */
+button.enviar {
+  background-color: #2D42C8;
+  color: white;
+  padding: 0.6rem 3.4rem;
+  border-radius: 25px;
+  border: none;
+  font-weight: 600;
+}
