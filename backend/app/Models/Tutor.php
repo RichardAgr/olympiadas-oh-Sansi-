@@ -22,18 +22,7 @@ class Tutor extends Model
         'estado',
     ];
 
-    // Relaciones
-
-    public function colegio()
-    {
-        return $this->belongsTo(Colegio::class, 'colegio_id');
-    }
-
-    public function curso()
-    {
-        return $this->belongsTo(Curso::class, 'curso_id');
-    }
-
+    
     public function competidores()
     {
         return $this->belongsToMany(
@@ -44,4 +33,5 @@ class Tutor extends Model
         )->withTimestamps();
     }
 }
+
 
