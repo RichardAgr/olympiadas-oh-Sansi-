@@ -27,7 +27,6 @@ class Competidor extends Model
         'fecha_nacimiento' => 'date',
     ];
 
-    // 🔗 Relaciones
 
     public function colegio()
     {

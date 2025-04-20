@@ -33,3 +33,4 @@ Route::apiResource('responsables', ResponsableGestionController::class);
 Route::apiResource('niveles-educativos', NivelEducativoController::class);
 Route::apiResource('grados', GradoController::class);
 Route::apiResource('nivel-categorias', NivelCategoriaController::class);
+Route::get('/competidores', [CompetidorController::class, 'index']);

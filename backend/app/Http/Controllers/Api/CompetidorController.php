@@ -40,7 +40,19 @@ class CompetidorController extends Controller
 
         $query->distinct();
 
-        return response()->json($query->paginate(10));
+        return response()->json(
+            $query->get()->map(function ($c) {
+                return [
+                    'nombre' => $c->nombres ?? '',
+                    'apellido' => $c->apellidos ?? '',
+                    'colegio' => $c->colegio->nombre ?? '',
+                    'departamento' => $c->ubicacion->departamento ?? '',
+                    'provincia' => $c->ubicacion->provincia ?? '',
+                    'curso' => $c->curso->nombre ?? '',
+                ];
+            })
+        );
+        
     }
 }
 
