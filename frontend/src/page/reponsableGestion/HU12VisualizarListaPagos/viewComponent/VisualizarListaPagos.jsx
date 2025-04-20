@@ -9,6 +9,7 @@ export default function VisualizarListaPagos(){
     const [filteredPayments, setFilteredPayments] = useState([])
     const [isLoading,setIsLoading] = useState(true)
     const [error,setError] = useState(null)
+    const [searchPerformed, setSearchPerformed] = useState(false)
 
 
     useEffect(()=>{
@@ -35,6 +36,7 @@ export default function VisualizarListaPagos(){
     },[])
     
     const handleSearch = (searchTerm) => {
+        setSearchPerformed(!!searchTerm.trim())
         if(!searchTerm.trim()){
             setFilteredPayments(payments)
             return
@@ -55,7 +57,11 @@ export default function VisualizarListaPagos(){
                 <div className="loading">Cargando...</div>
             ): error? (
                 <div className="error">{error}</div>
-            ):(
+            ): filteredPayments.length ===0 && searchPerformed ?(
+                <div className="no-resut">
+                  <h3>No se encontraron tutores</h3>
+                </div>
+              ) : (
                 <VisualizarTablaPagos payments={filteredPayments}/>
             )}
         </div>

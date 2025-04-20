@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { Eye, CheckCircle,X } from "lucide-react"
+import { Eye, CheckCircle,X,Bell } from "lucide-react"
 import {  MostrarDatos } from "../../../public/json/competidoresId"
 import "./informacionCompetidor.css"
 
@@ -20,6 +20,7 @@ export default function InformacionCompetidor() {
   const [notificationReason, setNotificationReason] = useState("")
   const [notificationError, setNotificationError] = useState("")
   const [showReceipt, setShowReceipt] = useState(false)
+  const [showNotificationSent, setShowNotificationSent] = useState(false)
 
   useEffect(() => {
     const fetchCompetitorDetail = async () => {
@@ -74,9 +75,19 @@ export default function InformacionCompetidor() {
     }, 2000)
   }
 
+  const countWords = (text) => {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+  }
+
   const handleSendNotification = () => {
     if (!notificationReason.trim()) {
       setNotificationError("Por favor, describa el motivo de la deshabilitación")
+      return
+    }
+    
+    const wordCount = countWords(notificationReason);
+    if (wordCount < 3) {
+      setNotificationError(`El mensaje debe contener al menos 3 palabras. Actualmente tiene ${wordCount} ${wordCount === 1 ? 'palabra' : 'palabras'}.`)
       return
     }
 
@@ -89,8 +100,12 @@ export default function InformacionCompetidor() {
       motivo: notificationReason,
     })
     setShowNotificationModal(false)
+    setShowNotificationSent(true)
     setNotificationReason("")
     setNotificationError("")
+    setTimeout(() => {
+      setShowNotificationSent(false)
+    }, 2000)
   }
 
   const handleCancelNotification = () => {
@@ -108,6 +123,10 @@ export default function InformacionCompetidor() {
   const handleShowReceipt = () => {
     console.log("se Muestra")
     setShowReceipt(true)
+  }
+
+  const handleCloseNotificationSent = () => {
+    setShowNotificationSent(false)
   }
 
   if (isLoading) {
@@ -327,6 +346,21 @@ export default function InformacionCompetidor() {
           </div>
         </div>
       )}
+
+      {/* Confirmación de notificación enviada */}
+{showNotificationSent && (
+  <div className="notification-sent-overlay" onClick={handleCloseNotificationSent}>
+    <div className="notification-sent" onClick={(e) => e.stopPropagation()}>
+      <div className="notification-sent-icon">
+        <Bell size={48} />
+      </div>
+      <div className="notification-sent-content">
+        <h3>¡Notificación enviada!</h3>
+        <p>La notificación ha sido enviada correctamente al tutor.</p>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   )
 }
