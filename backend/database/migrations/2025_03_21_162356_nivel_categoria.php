@@ -30,6 +30,9 @@ class NivelCategoria extends Migration{
                   ->references('area_id')
                   ->on('area')
                   ->onDelete('cascade');
+
+            $table->index('area_id');
+            $table->index(['grado_id_inicial', 'grado_id_final']);
             
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_general_ci';

@@ -19,8 +19,11 @@ class DatabaseSeeder extends Seeder{
             NivelCategoria::class,        
             Competidor::class,              
             TutorCompetidor::class,      
+            Boleta::class,
             CompetidorCompetencia::class, 
             Cronograma::class,
+            ImagenBoleta::class,
+            Notificacion::class,
         ]);
     }
 }

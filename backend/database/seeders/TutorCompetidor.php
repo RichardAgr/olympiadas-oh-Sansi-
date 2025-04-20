@@ -33,7 +33,7 @@ class TutorCompetidor extends Seeder{
                 'competidor_id' => $competidores[$i]->competidor_id,
                 'tutor_id' => $tutor2->tutor_id,
                 'nivel_respansabilidad' => 'Principal',
-                'realcion_competidor' => 'Mamá o Papá del estudiante',
+                'realcion_competidor' => 'Papa',
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -56,7 +56,7 @@ class TutorCompetidor extends Seeder{
             'competidor_id' => $competidores[0]->competidor_id,
             'tutor_id' => $tutores[5]->tutor_id,
             'nivel_respansabilidad' => 'Secundario',
-            'realcion_competidor' => 'Mamá o Papá del estudiante',
+            'realcion_competidor' => 'Madre',
             'created_at' => now(),
             'updated_at' => now(),
         ];

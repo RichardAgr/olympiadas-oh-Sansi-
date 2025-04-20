@@ -15,6 +15,10 @@ class Tutor extends Migration{
             $table->string('telefono', 100);
             $table->boolean('estado');
             $table->timestamps();
+
+            $table->index('ci');
+            $table->index(['apellidos', 'nombres']);
+            $table->index('correo_electronico');
             
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_general_ci';

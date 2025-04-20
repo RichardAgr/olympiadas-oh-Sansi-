@@ -12,6 +12,7 @@ class CompetidorCompetencia extends Migration{
             $table->unsignedBigInteger('competencia_id');
             $table->unsignedBigInteger('area_id');
             $table->unsignedBigInteger('nivel_categoria_id');
+            $table->unsignedBigInteger('boleta_id')->nullable();
             $table->date('fecha_inscripcion');
             $table->timestamps();
             
@@ -34,7 +35,19 @@ class CompetidorCompetencia extends Migration{
                   ->references('nivel_categoria_id')
                   ->on('nivel_categoria')
                   ->onDelete('cascade');
+
+            $table->foreign('boleta_id')
+                  ->references('boleta_id')
+                  ->on('boleta')
+                  ->onDelete('cascade');
             
+            $table->index('competidor_id');
+            $table->index('competencia_id');
+            $table->index('area_id');
+            $table->index('nivel_categoria_id');
+            $table->index('boleta_id');
+            $table->index('fecha_inscripcion');
+
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_general_ci';
             $table->engine = 'InnoDB';

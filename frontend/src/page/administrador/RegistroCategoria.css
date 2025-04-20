@@ -1,0 +1,260 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
+
+* {
+  font-family: 'Comfortaa', sans-serif;
+  box-sizing: border-box;
+}
+
+.registro-categoria-container {
+  padding: 20px 40px;
+  color: #565E6C;
+  background-color: #ffffff;
+}
+
+h5 {
+  font-size: 30px;
+  color: #000000; /* Azul oscuro */
+  margin-bottom: 1.5rem;
+}
+
+/* 🆕 Alinear botón Agregar a la derecha */
+.tabla-categorias-wrapper {
+  background-color: #ffffff;
+  padding: 2rem 1rem 1rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.btn-agregar {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #2D42C8; /* Azul medio */
+  color: white;
+  padding: 0.6rem 1.4rem;
+  border-radius: 25px;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-agregar:hover {
+  background-color: #061A8B; /* Azul oscuro */
+}
+
+.tabla-categorias {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  margin-top: 2rem;
+}
+
+.tabla-categorias th,
+.tabla-categorias td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #DEE1E6; /* Gris intermedio */
+  color: #565E6C;
+}
+
+.tabla-categorias thead th {
+    background-color: #f2f2f2
+  }
+
+.tabla-categorias td.acciones {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* 🆕 Botones de acción con estilo del mockup */
+.btn-icon {
+  border: none;
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  background-color: #2D42C8; /* Azul medio */
+  color: white;
+  font-size: 16px;
+}
+
+.btn-icon:hover {
+  transform: scale(1.1);
+}
+
+.btn-icon.editar {
+  background-color: #2D42C8;
+}
+
+.btn-icon.eliminar {
+  background-color: #2D42C8;
+}
+
+/* Botones inferior */
+.botones-accion {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cancelar,
+.guardar {
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.cancelar {
+  background-color: #DEE1E6;
+  color: #565E6C;
+}
+
+.cancelar:hover {
+  background-color: #CFCFCF;
+}
+
+.guardar {
+  background-color: #2D42C8;
+  color: white;
+}
+
+.guardar:hover {
+  background-color: #061A8B;
+}
+
+/* Buscador */
+.buscador-wrapper {
+  margin-bottom: 1rem;
+}
+
+.buscador-wrapper input {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid #dee1e6;
+  width: 100%;
+  max-width: 1200px;
+  font-size: 14px;
+}
+
+/* Paginación */
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.pagination button {
+  border: none;
+  background-color: #eff2ff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #000000;
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination button:hover {
+  background-color: #dce3ff;
+}
+
+.pagination button.active {
+  background-color: #2d42c8;
+  color: white;
+}
+
+/* Botones de acción (estilo compartido con otros módulos) */
+.botones-tabla {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .boton-icono {
+    background-color: #384FD6;
+    border: none;
+    border-radius: 15px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .boton-icono:hover {
+    transform: scale(1.05);
+  }
+  
+  .boton-icono svg {
+    width: 20px;
+    height: 20px;
+    color: white;
+  }
+  
+ /* 📱 Responsive: tablet y móvil */
+@media (max-width: 768px) {
+  .registro-categoria-container {
+    padding: 20px;
+  }
+
+  .btn-agregar {
+    position: static;       /* Ya no flotante */
+    margin-bottom: 1rem;    /* Espacio inferior */
+    width: 100%;            /* Ocupa todo el ancho */
+    justify-content: center;
+  }
+
+  .buscador-wrapper input {
+    width: 100%;
+    font-size: 13px;
+  }
+
+  .tabla-categorias {
+    min-width: 600px; /* 👈 Evita que se rompa la estructura */
+  }
+
+  .tabla-categorias-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabla-categorias th,
+  .tabla-categorias td {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .botones-accion {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cancelar,
+  .guardar {
+    width: 100%;
+    text-align: center;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+}
+ 
