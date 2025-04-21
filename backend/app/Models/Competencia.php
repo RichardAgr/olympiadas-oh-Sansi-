@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Area;
 use App\Models\Cronograma;
+use App\Models\Competidor;
 
 class Competencia extends Model
 {
@@ -37,7 +38,7 @@ class Competencia extends Model
     }
 
     /**
-     * Get related registration schedule from cronograma.
+     * Relación con cronograma tipo inscripción.
      */
     public function inscripcion()
     {
@@ -46,7 +47,7 @@ class Competencia extends Model
     }
 
     /**
-     * Get related competition schedule from cronograma.
+     * Relación con cronograma tipo competencia.
      */
     public function competencia()
     {
@@ -54,8 +55,24 @@ class Competencia extends Model
                     ->where('tipo_evento', 'competencia');
     }
 
+    /**
+     * Relación genérica con cronograma.
+     */
     public function cronograma()
     {
         return $this->hasOne(Cronograma::class, 'competencia_id');
+    }
+
+    /**
+     * Relación muchos a muchos con competidores.
+     */
+    public function competidores()
+    {
+        return $this->belongsToMany(
+            Competidor::class,
+            'competidor_competencia',
+            'competencia_id',
+            'competidor_id'
+        )->withPivot(['fecha_inscripcion'])->withTimestamps();
     }
 }
