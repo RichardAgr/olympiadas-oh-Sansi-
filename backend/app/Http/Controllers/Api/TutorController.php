@@ -94,4 +94,15 @@ class TutorController extends Controller
 
         return response()->json(['mensaje' => 'Estado actualizado']);
     }
+
+    public function exportar(Request $request)
+    {
+        $formato = $request->query('formato', 'xlsx');
+
+        if (!in_array($formato, ['xlsx', 'pdf'])) {
+            return response()->json(['error' => 'Formato inválido'], 400);
+        }
+
+        return Excel::download(new TutoresExport, 'tutores.' . $formato);
+    }
 }
