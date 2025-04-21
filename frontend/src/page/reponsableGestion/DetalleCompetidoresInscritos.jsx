@@ -4,6 +4,23 @@ import axios from "axios";
 function DetalleCompetidoresInscritos() {
   const [competidores, setCompetidores] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const [cursoSeleccionado, setCursoSeleccionado] = useState("");
+
+  const cursos = [
+    "-- Todos --",
+    "1ro Primaria",
+    "2ro Primaria", 
+    "3ro Primaria",
+    "4to Primaria",
+    "5to Primaria",
+    "6to Primaria",
+    "1ro Secundaria",
+    "2ro Secundaria",
+    "3ro Secundaria", 
+    "4to Secundaria",
+    "5to Secundaria",
+    "6to Secundaria"
+  ];
 
   useEffect(() => {
     axios
@@ -12,21 +29,55 @@ function DetalleCompetidoresInscritos() {
       .catch((err) => console.error("Error cargando datos:", err));
   }, []);
 
-  const competidoresFiltrados = competidores.filter((comp) =>
-    comp.nombre.toLowerCase().includes(busqueda.toLowerCase())
-  );
+  const competidoresFiltrados = competidores.filter((comp) => {
+    const search = busqueda.toLowerCase();
+    const matchNombreCI =
+      comp.nombre.toLowerCase().includes(search) ||
+      comp.ci.toLowerCase().includes(search);
+
+    const matchCurso =
+      cursoSeleccionado === "" ||
+      cursoSeleccionado === "-- Todos --" ||
+      comp.curso === cursoSeleccionado;
+
+    return matchNombreCI && matchCurso;
+  });
 
   return (
     <div>
       <h1>Detalle Competidores Inscritos</h1>
+
       <div className="buscador">
         <input
           type="text"
-          placeholder="Buscar por nombre"
+          placeholder="Buscar por nombre o CI"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
       </div>
+
+      <div className="filtro-curso" style={{ marginTop: "12px", marginBottom: "20px" }}>
+        <select
+          className="filtro-select"
+          value={cursoSeleccionado}
+          onChange={(e) => setCursoSeleccionado(e.target.value)}
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            fontSize: "14px",
+            width: "100%",
+            maxWidth: "300px"
+          }}
+        >
+          {cursos.map((curso, idx) => (
+            <option key={idx} value={curso}>
+              {curso}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="contenedor-tabla">
         <table className="tabla">
           <thead>

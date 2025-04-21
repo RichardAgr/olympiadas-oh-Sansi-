@@ -17,7 +17,7 @@ const SearchBar = ({onSearch}) =>{
                 <Search className="search-iconB" size={24} />
                 <input
                     type="text"
-                    placeholder="Buscar por nombre"
+                    placeholder="Buscar por nombre o CI"
                     value={searchTerm}
                     onChange={handleChange}
                     className="search-inputB"

@@ -35,18 +35,24 @@ export default function VisualizarListaPagos(){
     },[])
     
     const handleSearch = (searchTerm) => {
-        if(!searchTerm.trim()){
-            setFilteredPayments(payments)
-            return
+        if (!searchTerm.trim()) {
+          setFilteredPayments(payments);
+          return;
         }
-
-        const filtered = payments.filter(
-            (payment) =>
-              payment.tutor.nombres.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              payment.tutor.apellidos.toLowerCase().includes(searchTerm.toLowerCase()),
-          )
-          setFilteredPayments(filtered)
-    }
+    
+        const searchLower = searchTerm.toLowerCase();
+    
+        const filtered = payments.filter((payment) => {
+          const { nombres, apellidos, ci } = payment.tutor;
+          return (
+            nombres.toLowerCase().includes(searchLower) ||
+            apellidos.toLowerCase().includes(searchLower) ||
+            ci.toString().toLowerCase().includes(searchLower)
+          );
+        });
+    
+        setFilteredPayments(filtered);
+      };
 
     return(
         <div className="payment-container">
