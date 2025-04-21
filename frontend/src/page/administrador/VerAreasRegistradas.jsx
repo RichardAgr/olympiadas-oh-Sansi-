@@ -181,7 +181,7 @@ function RegistrarOrganizador() {
         </>
       )}
     </div>
-  )
+  ) 
 }
 
 export default RegistrarOrganizador;
