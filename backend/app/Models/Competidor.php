@@ -27,6 +27,7 @@ class Competidor extends Model
         'fecha_nacimiento' => 'date',
     ];
 
+    // Relaciones
 
     public function colegio()
     {
@@ -43,19 +44,33 @@ class Competidor extends Model
         return $this->belongsTo(Ubicacion::class, 'ubicacion_id');
     }
 
+    public function tutores()
+    {
+        return $this->belongsToMany(
+            Tutor::class,
+            'tutor_competidor',
+            'competidor_id',
+            'tutor_id'
+        )->withTimestamps();
+    }
+
+    public function competencias()
+    {
+        return $this->belongsToMany(
+            Competencia::class,
+            'competidor_competencia',
+            'competidor_id',
+            'competencia_id'
+        )
+        ->using(\App\Models\CompetidorCompetencia::class)
+        ->withPivot(['fecha_inscripcion', 'area_id']) 
+        ->withTimestamps();
+    }
+    
+    
+    // Accesor para nombre completo
     public function getNombreCompletoAttribute()
     {
         return "{$this->nombres} {$this->apellidos}";
     }
-
-    public function tutores()
-{
-    return $this->belongsToMany(
-        Tutor::class,
-        'tutor_competidor',
-        'competidor_id',
-        'tutor_id'
-    )->withTimestamps();
-}
-
 }
