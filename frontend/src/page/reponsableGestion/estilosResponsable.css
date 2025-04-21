@@ -135,3 +135,27 @@ button.enviar {
   border: none;
   font-weight: 600;
 }
+
+.boton-descarga {
+  background-color: #2D42C8;
+  color: white;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.boton-descarga:hover {
+  background-color: #1a2aa0;
+}
+
+.boton-pdf {
+  background-color: #5A5A5A;
+}
+
+.boton-pdf:hover {
+  background-color: #3c3c3c;
+}

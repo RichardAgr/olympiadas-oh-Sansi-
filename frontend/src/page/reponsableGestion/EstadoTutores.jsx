@@ -25,6 +25,10 @@ function EstadoTutores() {
       });
   }, []);
 
+  const handleDownload = (formato) => {
+    window.open(`http://localhost:8000/api/tutores/exportar?formato=${formato}`, "_blank");
+  };
+
   const handleMostrarModal = (tutor) => {
     setTutorSeleccionado(tutor);
     setEsDeshabilitar(tutor.estado === 1);
@@ -84,6 +88,9 @@ function EstadoTutores() {
         </select>
       </div>
 
+      
+
+
       <div className="contenedor-tabla">
         <table className="tabla">
           <thead>
@@ -119,22 +126,20 @@ function EstadoTutores() {
         </table>
       </div>
 
-      {/* Modal */}
       {modalShow && (
         <div className="modal1">
           <div className="modal2">
-            <h2>¿Esta seguro de {esDeshabilitar ? "Deshabilitar Tutor" : "Habilitar Tutor"} a {tutorSeleccionado?.nombre}?</h2>
-            {esDeshabilitar &&(
-            <p><strong>Descripcion:</strong></p>
-           )}
+            <h2>¿Está seguro de {esDeshabilitar ? "Deshabilitar" : "Habilitar"} al tutor {tutorSeleccionado?.nombre}?</h2>
             {esDeshabilitar && (
-              <textarea
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-                placeholder="Escriba el motivo por el cual se deshabilita al tutor"
-              />
+              <>
+                <p><strong>Descripción:</strong></p>
+                <textarea
+                  value={descripcion}
+                  onChange={(e) => setDescripcion(e.target.value)}
+                  placeholder="Escriba el motivo por el cual se deshabilita al tutor"
+                />
+              </>
             )}
-
             <div className="modal-buttons">
               <button className="cancelar" onClick={handleCloseModal}>Cancelar</button>
               <button className="enviar"
@@ -163,13 +168,13 @@ function EstadoTutores() {
                   confirmarCambioEstado(descripcion, tutorSeleccionado.id);
                 }}
               >
-                  Enviar  
+                Enviar
               </button>
             </div>
           </div>
         </div>
       )}
-    </div> 
+    </div>
   );
 }
 
