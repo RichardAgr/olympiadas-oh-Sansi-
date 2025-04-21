@@ -24,11 +24,11 @@
           "tutor": {
             "tutor_id": 1,
             "ci": "36565459",
-            "nombres": "Pedro",
-            "apellidos": "Aguilar Mendoza"
+            "nombres": "Manuel",
+            "apellidos": "Rojas Mendoza"
           },
           "fecha_pago": "2023-04-02",
-          "monto_total": 15,
+          "monto_total": 120,
           "estado": "Pagado",
           "imagen_boleta": {
             "imagen_id": 2,
@@ -41,11 +41,11 @@
           "tutor": {
             "tutor_id": 1,
             "ci": "89774541",
-            "nombres": "Pedro",
+            "nombres": "Mariela",
             "apellidos": "Aguilar Mendoza"
           },
           "fecha_pago": null,
-          "monto_total": 15,
+          "monto_total": null,
           "estado": "Pendiente",
           "imagen_boleta": null
         },
@@ -60,7 +60,7 @@
           },
           "fecha_emision": "2023-03-22",
           "fecha_pago": null,
-          "monto_total": 15,
+          "monto_total": null,
           "estado": "Pendiente",
           "imagen_boleta": null
         },
@@ -74,7 +74,7 @@
             "apellidos": "Morales Rodriguez"
           },
           "fecha_pago": "2023-03-28",
-          "monto_total": 15,
+          "monto_total": 105,
           "estado": "Pagado",
           "imagen_boleta": {
             "imagen_id": 5,
@@ -88,7 +88,7 @@
             "tutor_id": 4,
             "ci": "132214455",
             "nombres": "Vanessa",
-            "apellidos": "Iriarte Torrico"
+            "apellidos": "Mamani Torrico"
           },
           "fecha_pago": "2023-04-01",
           "monto_total": 15,
@@ -105,7 +105,7 @@
             "apellidos": "Iriarte Torrico"
           },
           "fecha_pago": "2023-04-01",
-          "monto_total": 15,
+          "monto_total": 60,
           "estado": "Pagado",
           "imagen_boleta": {
             "imagen_id": 7,
