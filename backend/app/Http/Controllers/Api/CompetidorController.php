@@ -39,6 +39,7 @@ class CompetidorController extends Controller
         }
 
         $query->distinct();
+        
 
         //Formato plano para frontend
         $result = $query->get()->map(function ($c) {
