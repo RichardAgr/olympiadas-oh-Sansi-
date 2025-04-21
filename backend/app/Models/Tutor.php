@@ -27,18 +27,19 @@ class Tutor extends Model
     ];
 
     // Relaciones
-    public function responsable()
+    public function competidores()
     {
-        return $this->belongsTo(ResponsableGestion::class, 'responsable_id', 'responsable_id');
+        return $this->belongsToMany(Competidor::class, 'tutor_competidor', 'tutor_id', 'competidor_id')
+                    ->withPivot('nivel_respansabilidad', 'realcion_competidor');
     }
 
-    public function tutor()
+    public function boletas()
     {
-        return $this->belongsTo(Tutor::class, 'tutor_id', 'tutor_id');
+        return $this->hasMany(Boleta::class, 'tutor_id', 'tutor_id');
     }
 
-    public function competidor()
+    public function notificaciones()
     {
-        return $this->belongsTo(Competidor::class, 'competidor_id', 'competidor_id');
+        return $this->hasMany(Notificacion::class, 'tutor_id', 'tutor_id');
     }
 }

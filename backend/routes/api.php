@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\EventoController;
 use App\Http\Controllers\Api\NivelEducativoController;
 use App\Http\Controllers\Api\GradoController;
 use App\Http\Controllers\Api\NivelCategoriaController;
+use App\Http\Controllers\Api\BoletaController;
+use App\Http\Controllers\Api\TutorController;
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
 Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
@@ -32,3 +34,6 @@ Route::apiResource('responsables', ResponsableGestionController::class);
 Route::apiResource('niveles-educativos', NivelEducativoController::class);
 Route::apiResource('grados', GradoController::class);
 Route::apiResource('nivel-categorias', NivelCategoriaController::class);
+
+Route::get('/pagos', [BoletaController::class, 'index']);
+Route::get('/tutores/{tutorId}/competidores', [TutorController::class, 'competidores']);
