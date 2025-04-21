@@ -36,3 +36,8 @@ Route::apiResource('grados', GradoController::class);
 Route::apiResource('nivel-categorias', NivelCategoriaController::class);
 Route::get('/competidores', [CompetidorController::class, 'index']);
 Route::get('/tutores', [TutorController::class, 'index']);
+
+Route::get('/tutores', [TutorController::class, 'index']);
+Route::put('/tutores/estado/masivo', [TutorController::class, 'actualizarEstadoMasivo']);
+Route::put('/tutores/{id}/estado', [TutorController::class, 'cambiarEstado']);
+Route::get('/tutores/exportar', [TutorController::class, 'exportar']);
