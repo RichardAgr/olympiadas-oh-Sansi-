@@ -22,7 +22,6 @@ class Tutor extends Model
         'estado',
     ];
 
-    
     public function competidores()
     {
         return $this->belongsToMany(
@@ -32,6 +31,9 @@ class Tutor extends Model
             'competidor_id'
         )->withTimestamps();
     }
+
+    public function getNombreCompletoAttribute()
+    {
+        return "{$this->nombres} {$this->apellidos}";
+    }
 }
-
-
