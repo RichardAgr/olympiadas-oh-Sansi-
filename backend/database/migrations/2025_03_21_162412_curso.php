@@ -17,6 +17,8 @@ class Curso extends Migration{
                   ->references('grado_id')
                   ->on('grado')
                   ->onDelete('cascade');
+
+            $table->index('grado_id');
             
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_general_ci';

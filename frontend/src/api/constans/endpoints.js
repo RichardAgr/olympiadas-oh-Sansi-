@@ -1,3 +1,12 @@
+import CrearCategoria from "../../components/nivelsCategoria/tabla/customsTablaDatos/flowCategoria/crearCategoria/CrearCategoria";
+
 export const ENDPOINTS = {
-    hello: '/hello',
+    /* obtiene el area relacionado a su categoria y grado */
+    areaCategoriaGrado:"areaCategoriaGrado",
+    eliminarCategoria:(id)=>`/categorias/${id}`,
+    eliminarGrado:(id)=>`/categorias/${id}/eliminarGrados`,
+    crearCategoria:"crearCategoria",
+    categoriaDatos:(id)=>`/categoriaDatos/${id}`,
+    editarCategoria:(id)=>`/editCategoria/${id}`,
+    editarGrado:(id)=>`/editarGrado/${id}`
 }
