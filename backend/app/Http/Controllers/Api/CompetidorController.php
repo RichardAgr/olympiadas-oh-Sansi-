@@ -66,6 +66,6 @@ class CompetidorController extends Controller
             });
         });
 
-        return response()->json($result->values());
+        return response()->json($result->values()); 
     }
 }
