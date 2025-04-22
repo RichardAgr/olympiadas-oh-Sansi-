@@ -11,22 +11,38 @@ class CompetidoresTutorResource extends JsonResource{
         $estudiantes = new Collection();
         
         foreach ($this->competidores as $competidor) {
-            foreach ($competidor->competencias as $competencia) {
+            if ($competidor->competencias && $competidor->competencias->isNotEmpty()) {
+                foreach ($competidor->competencias as $competencia) {
+
+                    $nombreArea = 'No especificada';
+
+                    if ($competencia && $competencia->area) {
+                        $nombreArea = $competencia->area->nombre;
+                    }
+                    
+                    $estudiantes->push([
+                        'id' => $competidor->competidor_id,
+                        'nombre' => $competidor->nombres . ' ' . $competidor->apellidos,
+                        'colegio' => $competidor->colegio ? $competidor->colegio->nombre : 'No especificado',
+                        'curso' => $competidor->curso ? 
+                            ($competidor->curso->grado ? 
+                                $competidor->curso->nombre . ' ' . $competidor->curso->grado->nombre : 
+                                $competidor->curso->nombre) : 
+                            'No especificado',
+                        'competencia' => $nombreArea,
+                    ]);
+                }
+            } else {
+                // Si el competidor no tiene competencias, agregarlo de todas formas
                 $estudiantes->push([
                     'id' => $competidor->competidor_id,
                     'nombre' => $competidor->nombres . ' ' . $competidor->apellidos,
-                    'colegio' => $competidor->colegio->nombre,
-                    'curso' => $competidor->curso->nombre,
-                    'competencia' => $competencia->area->nombre,
-                ]);
-            }
-            
-            if ($competidor->competencias->isEmpty()) {
-                $estudiantes->push([
-                    'id' => $competidor->competidor_id,
-                    'nombre' => $competidor->nombres . ' ' . $competidor->apellidos,
-                    'colegio' => $competidor->colegio->nombre,
-                    'curso' => $competidor->curso->nombre,
+                    'colegio' => $competidor->colegio ? $competidor->colegio->nombre : 'No especificado',
+                    'curso' => $competidor->curso ? 
+                        ($competidor->curso->grado ? 
+                            $competidor->curso->nombre . ' ' . $competidor->curso->grado->nombre : 
+                            $competidor->curso->nombre) : 
+                        'No especificado',
                     'competencia' => 'No inscrito',
                 ]);
             }
