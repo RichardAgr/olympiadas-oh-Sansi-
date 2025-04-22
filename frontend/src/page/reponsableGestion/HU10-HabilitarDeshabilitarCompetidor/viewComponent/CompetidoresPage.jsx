@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { Search} from "lucide-react"
 import CompetidorCard from "../../../../components/competidorCard/CompetidorCard"
 import "./competidoresPage.css"
+import axios from "axios"
 
 export default function CompetidoresPage() {
   const [competitors, setCompetitors] = useState([])
@@ -15,16 +16,15 @@ export default function CompetidoresPage() {
     const fetchCompetitors = async () => {
       try {
         setIsLoading(true)
-        const res = await fetch("/json/competidores.json")
-
-        if (!res.ok) {
+        const res = await axios.get("http://127.0.0.1:8000/api/competidores")
+        
+        if (res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`); 
         }
-
-        const data = await res.json()
-        setCompetitors(data.data)
-        console.log(data.data)
-        setFilteredCompetitors(data.data)
+        /* console.log(res.data.data) */
+        const data = res.data.data
+        setCompetitors(data)
+        setFilteredCompetitors(data)
         setIsLoading(false)
       } catch (err) {
         setError("Error al cargar los datos")

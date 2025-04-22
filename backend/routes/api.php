@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\GradoController;
 use App\Http\Controllers\Api\NivelCategoriaController;
 use App\Http\Controllers\Api\BoletaController;
 use App\Http\Controllers\Api\TutorController;
+use App\Http\Controllers\Api\CompetidorController;
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
 Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
@@ -37,3 +38,5 @@ Route::apiResource('nivel-categorias', NivelCategoriaController::class);
 
 Route::get('/pagos', [BoletaController::class, 'index']);
 Route::get('/tutores/{tutorId}/competidores', [TutorController::class, 'competidores']);
+
+Route::get('/competidores', [CompetidorController::class, 'index']);
