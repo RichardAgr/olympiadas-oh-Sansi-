@@ -4,6 +4,7 @@ import {  useLocation, useNavigate } from 'react-router-dom';
 import TablaCompetidores from "../tablaCompetidores/TablaCompetidores";
 import "./verDetallesPago.css"
 import { fetchStudentsByTutor } from "../../../public/json/hu12Estudiante";
+import axios from "axios"
 
 export default function VerDetallesPago(){
     const location = useLocation()
@@ -27,9 +28,9 @@ export default function VerDetallesPago(){
           const getPaymentDetails = async () => {
             try {
                 setIsLoadingStudents(true)
-                const studentsData = await fetchStudentsByTutor(tutor_id)
-                console.log(studentsData.data.estudiantes)
-                setStudents(studentsData.data.estudiantes)
+                const studentsData = await axios.get(`http://127.0.0.1:8000/api/tutores/${tutor_id}/competidores`)
+
+                setStudents(studentsData.data.data.estudiantes)
                 setIsLoadingStudents(false)
               
             } catch (err) {
