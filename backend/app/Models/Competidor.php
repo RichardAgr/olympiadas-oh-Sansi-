@@ -59,4 +59,15 @@ class Competidor extends Model
     {
         return $this->hasMany(Notificacion::class, 'competidor_id', 'competidor_id');
     }
+
+    public function tutorCompetidores()
+    {
+        return $this->hasMany(TutorCompetidor::class, 'competidor_id', 'competidor_id');
+    }
+
+    public function competidorCompetencias()
+{
+    return $this->hasMany(CompetidorCompetencia::class, 'competidor_id', 'competidor_id');
+}
+
 }
