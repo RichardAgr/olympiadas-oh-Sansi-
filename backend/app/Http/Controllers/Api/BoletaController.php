@@ -12,10 +12,7 @@ class BoletaController extends Controller{
     public function index()
     {
         $boletas = Boleta::with(['tutor'])->get();
-        
-        // Para cada boleta, buscar su imagen manualmente
         foreach ($boletas as $boleta) {
-            // Buscar la imagen más reciente para esta boleta
             $imagen = ImagenBoleta::where('boleta_id', $boleta->boleta_id)
                 ->orderBy('fecha_subida', 'desc')
                 ->first();
