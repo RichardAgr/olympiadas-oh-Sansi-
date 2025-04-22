@@ -3,7 +3,6 @@ import { X } from "lucide-react"
 import {  useLocation, useNavigate } from 'react-router-dom';
 import TablaCompetidores from "../tablaCompetidores/TablaCompetidores";
 import "./verDetallesPago.css"
-import { fetchStudentsByTutor } from "../../../public/json/hu12Estudiante";
 import axios from "axios"
 
 export default function VerDetallesPago(){

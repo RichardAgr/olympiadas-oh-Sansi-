@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { Eye, CheckCircle,X,Bell } from "lucide-react"
-import {  MostrarDatos } from "../../../public/json/competidoresId"
+import axios from "axios"
 import "./informacionCompetidor.css"
 
 export default function InformacionCompetidor() {
@@ -26,14 +26,11 @@ export default function InformacionCompetidor() {
     const fetchCompetitorDetail = async () => {
       try {
         setIsLoading(true)
-        const data = await MostrarDatos(id)
-        
-        /*         if (!response.ok) {
+        const data = await axios.get(`http://127.0.0.1:8000/api/informacionCompetidores/${id}/competidor`)
+/*          if (!data.ok) {
             throw new Error("No se pudo cargar la información del competidor")
-            } */
-           /*         const data = await response.json() */
+        }  */
         setCompetitor(data.data.informacion_competidor)
-        console.log(data.data.informacion_competidor)
         setTutors(data.data.tutores)
         setSelectedStatus(data.data.informacion_competidor.estado)
         setPreviousStatus(data.data.informacion_competidor.estado)
