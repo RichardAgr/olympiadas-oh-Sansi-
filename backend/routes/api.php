@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\NivelCategoriaController;
 use App\Http\Controllers\Api\BoletaController;
 use App\Http\Controllers\Api\TutorController;
 use App\Http\Controllers\Api\CompetidorController;
+use App\Http\Controllers\Api\NotificacionController;
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
 Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
@@ -41,3 +42,7 @@ Route::get('/tutores/{tutorId}/competidores', [TutorController::class, 'competid
 
 Route::get('/competidores', [CompetidorController::class, 'index']);
 Route::get('/informacionCompetidores/{id}/competidor', [CompetidorController::class, 'getDetallesCompetidor']);
+Route::put('/competidor/{id}/estado', [CompetidorController::class, 'actualizarEstadoCompetidor']);
+
+
+Route::post('/notificaciones', [NotificacionController::class, 'crearNotificacion']);

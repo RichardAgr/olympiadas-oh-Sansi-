@@ -8,6 +8,7 @@ use App\Models\CompetidorCompetencia;
 use App\Models\TutorCompetidor;
 use App\Models\Area;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class CompetidorController extends Controller{
@@ -108,5 +109,35 @@ class CompetidorController extends Controller{
         ];
 
         return response()->json($response);
+    }
+
+    public function actualizarEstadoCompetidor(Request $request, $id)
+    {
+        $request->validate([
+            'estado' => ['required', Rule::in(['Habilitado', 'Deshabilitado', 'Pendiente'])],
+        ]);
+
+        $competidor = Competidor::find($id);
+
+        if (!$competidor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Competidor no encontrado'
+            ], 404);
+        }
+
+        // Actualizar el estado del competidor
+        $competidor->estado = $request->estado;
+        $competidor->save();
+
+        // Devolver respuesta exitosa
+        return response()->json([
+            'success' => true,
+            'message' => 'Estado del competidor actualizado correctamente',
+            'data' => [
+                'competidor_id' => $competidor->competidor_id,
+                'estado' => $competidor->estado
+            ]
+        ]);
     }
 }
