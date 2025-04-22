@@ -24,7 +24,6 @@ class Boleta extends Model{
     protected $casts = [
         'fecha_emision' => 'date',
         'fecha_pago' => 'date',
-        'monto_total' => 'decimal:2',
     ];
 
     // Relaciones

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ImagenBoleta;
 use App\Models\Boleta;
 use App\Http\Resources\PagoCollection;
 use Illuminate\Http\Request;
@@ -10,10 +11,20 @@ use Illuminate\Http\Request;
 class BoletaController extends Controller{
     public function index()
     {
-        $boletas = Boleta::with(['tutor', 'imagenes' => function($query) {
-            $query->where('estado', true)->orderBy('fecha_subida', 'desc')->limit(1);
-        }])->get();
+        $boletas = Boleta::with(['tutor'])->get();
+        
+        // Para cada boleta, buscar su imagen manualmente
+        foreach ($boletas as $boleta) {
+            // Buscar la imagen más reciente para esta boleta
+            $imagen = ImagenBoleta::where('boleta_id', $boleta->boleta_id)
+                ->orderBy('fecha_subida', 'desc')
+                ->first();
+            
+            // Asignar la imagen a la boleta
+            $boleta->imagen_manual = $imagen;
+        }
 
+        // Devolver la colección formateada como JSON
         return new PagoCollection($boletas);
     }
 }

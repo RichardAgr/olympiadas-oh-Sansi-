@@ -9,21 +9,16 @@ class Tutor extends Model
 {
     use HasFactory;
 
-    protected $table = 'notificacion';
-    protected $primaryKey = 'notificacion_id';
+    protected $table = 'tutor';
+    protected $primaryKey = 'tutor_id';
     
     protected $fillable = [
-        'responsable_id',
-        'tutor_id',
-        'competidor_id',
-        'asunto',
-        'mensaje',
-        'fecha_envio',
+        'ci',
+        'nombres',
+        'apellidos',
+        'correo_electronico',
+        'telefono',
         'estado',
-    ];
-
-    protected $casts = [
-        'fecha_envio' => 'date',
     ];
 
     // Relaciones

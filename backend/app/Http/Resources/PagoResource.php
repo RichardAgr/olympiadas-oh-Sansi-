@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class PagoResource extends JsonResource{
 
     public function toArray(Request $request): array{
-        $imagen = $this->imagenes->first();
+        $imagen = $this->imagen_manual;
         
         return [
             'boleta_id' => $this->boleta_id,
