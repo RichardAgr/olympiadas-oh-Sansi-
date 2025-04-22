@@ -1,0 +1,67 @@
+[
+    {
+      "apellido": "García",
+      "nombre": "Lucía",
+      "colegio": "Colegio Nacional",
+      "departamento": "Lima",
+      "provincia": "Lima",
+      "curso": "1ro Secundaria"
+    },
+    {
+      "apellido": "Rojas",
+      "nombre": "Mateo",
+      "colegio": "San Martín",
+      "departamento": "Cusco",
+      "provincia": "Cusco",
+      "curso": "2do Secundaria"
+    },
+    {
+      "apellido": "Fernández",
+      "nombre": "Valentina",
+      "colegio": "Santa María",
+      "departamento": "Arequipa",
+      "provincia": "Arequipa",
+      "curso": "3ro Secundaria"
+    },
+    {
+      "apellido": "Ramírez",
+      "nombre": "Joaquín",
+      "colegio": "La Salle",
+      "departamento": "Tacna",
+      "provincia": "Tacna",
+      "curso": "4to Secundaria"
+    },
+    {
+      "apellido": "Rocabado",
+      "nombre": "Joaquín",
+      "colegio": "La Salle Tocoraba",
+      "departamento": "Cercado",
+      "provincia": "Tacna",
+      "curso": "4to Secundaria"
+    },
+    {
+      "apellido": "Fernández",
+      "nombre": "Valeria",
+      "colegio": "Santa María",
+      "departamento": "Arequipa",
+      "provincia": "Arequipa",
+      "curso": "3ro Secundaria"
+    },
+    {
+      "apellido": "Sanchez",
+      "nombre": "Joaquín",
+      "colegio": "La Salle",
+      "departamento": "Tacna",
+      "provincia": "Tacna",
+      "curso": "4to Secundaria"
+    },
+    {
+      "apellido": "Fernandez",
+      "nombre": "Rosario",
+      "colegio": "La Salle Tocoraba",
+      "departamento": "Cercado",
+      "provincia": "Tacna",
+      "curso": "4to Secundaria"
+    }
+  ]
+  

@@ -10,7 +10,7 @@ function ListaInscritos() {
   const [selectedCourse, setSelectedCourse] = useState("Todos los cursos");
 
   useEffect(() => {
-    axios.get("/inscritos.json")
+    axios.get("/hu8ListaCompetidores.json")
       .then(response => {
         setInscritos(response.data);
       })
