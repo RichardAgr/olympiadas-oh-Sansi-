@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Boleta;
 use App\Models\Competencia;
 use App\Models\Competidor;
+use App\Models\Area;
 use Illuminate\Support\Facades\DB;
 
 class EstadisticasController extends Controller{
@@ -19,8 +20,8 @@ class EstadisticasController extends Controller{
                 ->sum('monto_total');
 
             // Obtener el total de competencias activas
-            $totalCompetenciasActivas = Competencia::where('estado', true)
-                ->count();
+            $totalCompetenciasActivas = Area::where('estado', true)
+            ->count();
 
             // Obtener el total de competidores habilitados
             $totalCompetidoresHabilitados = Competidor::where('estado', 'Habilitado')
