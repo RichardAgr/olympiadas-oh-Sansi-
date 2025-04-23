@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tutor;
+use App\Models\Competidor;
+use App\Models\TutorCompetidor;
+use App\Models\CompetidorCompetencia;
+use App\Models\Area;;
 use App\Http\Resources\CompetidoresTutorResource;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -12,32 +16,65 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
 class TutorController extends Controller{
-    public function competidores($tutorId){
+    public function competidoresTutor($id){
         try {
-            // Verificar si el tutor existe
-            $tutor = Tutor::findOrFail($tutorId);
-            
-            $tutor->load([
-                'competidores.colegio',
-                'competidores.curso.grado',
-                'competidores.competencias.area'
-            ]);
-            
-            foreach ($tutor->competidores as $competidor) {
-                foreach ($competidor->competencias as $competencia) {
-                    if (!$competencia->area) {
-                        Log::warning("Competencia ID {$competencia->competencia_id} no tiene área asociada para el competidor ID {$competidor->competidor_id}");
-                    }
-                }
+            $tutor = Tutor::find($id);
+            if (!$tutor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tutor no encontrado'
+                ], 404);
             }
-            
-            // Devolver la respuesta formateada
-            return new CompetidoresTutorResource($tutor);
+
+            $competidores = Competidor::select([
+                'competidor.competidor_id as id',
+                'competidor.nombres',
+                'competidor.apellidos',
+                'colegio.nombre as colegio',
+                'curso.nombre as curso',
+                'grado.nombre as grado'
+            ])
+            ->join('tutor_competidor', 'competidor.competidor_id', '=', 'tutor_competidor.competidor_id')
+            ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
+            ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
+            ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
+            ->where('tutor_competidor.tutor_id', $id)
+            ->get();
+
+            $competidoresFormateados = $competidores->map(function ($competidor) {
+                $areas = CompetidorCompetencia::select('area.nombre')
+                    ->join('area', 'competidor_competencia.area_id', '=', 'area.area_id')
+                    ->where('competidor_competencia.competidor_id', $competidor->id)
+                    ->pluck('area.nombre')
+                    ->unique()
+                    ->implode(', ');
+
+                $nombreCompleto = $competidor->nombres . ' ' . $competidor->apellidos;
+
+                $cursoCompleto = $competidor->grado;
+
+                return [
+                    'id' => $competidor->id,
+                    'nombre' => $nombreCompleto,
+                    'colegio' => $competidor->colegio,
+                    'curso' => $cursoCompleto,
+                    'competencia' => $areas ?: 'No asignada'
+                ];
+            });
+
+            // Construir la respuesta en el formato solicitado
+            $respuesta = [
+                'data' => [
+                    'estudiantes' => $competidoresFormateados
+                ]
+            ];
+
+            return response()->json($respuesta);
         } catch (\Exception $e) {
-            Log::error("Error al obtener competidores del tutor {$tutorId}: " . $e->getMessage());
             return response()->json([
-                'error' => 'Error al obtener los competidores',
-                'message' => $e->getMessage()
+                'success' => false,
+                'message' => 'Error al obtener los competidores del tutor',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

@@ -39,7 +39,7 @@ Route::apiResource('nivel-categorias', NivelCategoriaController::class);
 
 Route::get('/pagos', [BoletaController::class, 'index']);
 
-Route::get('/tutores/{tutorId}/competidores', [TutorController::class, 'competidores']);
+Route::get('/tutores/{tutorId}/competidores', [TutorController::class, 'competidoresTutor']);
 Route::get('/tutoresInformacion', [TutorController::class, 'obtenerInformacionTutores']);
 Route::put('/tutores/{id}/estado', [TutorController::class, 'actualizarEstadoTutor']);
 
