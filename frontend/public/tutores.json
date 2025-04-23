@@ -3,70 +3,33 @@
       "tutor_id": 1,
       "nombres": "Mariana",
       "apellidos": "Gonzales Aguirre",
-      "colegio": "La Salle",
       "ci": "9636557",
-      "curso": "Sto primaria",
-      "competidores": 2,
-      "telefono": "73566784"
+      "competidores": 5,
+      "telefono": "73566784",
+      "correo": "marian@gmial",
+      "estado": "activo",
+      "fechaRegistro":"23/04/2024"
     },
     {
       "tutor_id": 2,
-      "nombres": "Carlos Andres",
-      "apellidos": "Cespedes Duran",
-      "colegio": "La Salle",
-      "ci": "36565459",
-      "curso": "Sto primaria",
-      "competidores": 4,
-      "telefono": "73566784"
+      "nombres": "Mariana",
+      "apellidos": "Gonzales Aguirre",
+      "ci": "9636557",
+      "competidores": 5,
+      "telefono": "73566784",
+      "correo": "marian@gmial",
+      "estado": "activo",
+      "fechaRegistro":"23/04/2024"
     },
     {
       "tutor_id": 3,
-      "nombres": "Pablo Andres",
-      "apellidos": "Orihuela Duran",
-      "colegio": "Santa Ana",
-      "ci": "89774541",
-      "curso": "Sto secundaria",
-      "competidores": 2,
-      "telefono": "63576953"
-    },
-    {
-      "tutor_id": 4,
-      "nombres": "Emiliano",
-      "apellidos": "Saavedra Gutierrez",
-      "colegio": "Santa Ana",
-      "ci": "63332255",
-      "curso": "Sto secundaria",
-      "competidores": 3,
-      "telefono": "95744788"
-    },
-    {
-      "tutor_id": 5,
-      "nombres": "Valentina",
-      "apellidos": "Caero Villarroel",
-      "colegio": "Don Bosco",
-      "ci": "99699565",
-      "curso": "Sto primaria",
-      "competidores": 4,
-      "telefono": "63596949"
-    },
-    {
-      "tutor_id": 6,
-      "nombres": "Adriana",
-      "apellidos": "Peredo Suarez",
-      "colegio": "Don Bosco",
-      "ci": "132214455",
-      "curso": "Sto primaria",
-      "competidores": 3,
-      "telefono": "63596949"
-    },
-    {
-      "tutor_id": 7,
-      "nombres": "Daniela Andrea",
-      "apellidos": "Guizada Durazno",
-      "colegio": "Don Bosco",
-      "ci": "112542242",
-      "curso": "Sto secundaria",
-      "competidores": 4,
-      "telefono": "63596949"
+      "nombres": "Mariana",
+      "apellidos": "Gonzales Aguirre",
+      "ci": "9636557",
+      "competidores": 5,
+      "telefono": "73566784",
+      "correo": "marian@gmial",
+      "estado": "activo",
+      "fechaRegistro":"23/04/2024"
     }
   ]
