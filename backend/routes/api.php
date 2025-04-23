@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\BoletaController;
 use App\Http\Controllers\Api\TutorController;
 use App\Http\Controllers\Api\CompetidorController;
 use App\Http\Controllers\Api\NotificacionController;
+use App\Http\Controllers\Api\EstadisticasController;
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
 Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
@@ -50,4 +51,6 @@ Route::get('/detallesCompetidor', [CompetidorController::class, 'obtenerDetalles
 
 
 Route::post('/notificaciones', [NotificacionController::class, 'crearNotificacion']);
+
+Route::get('/estadisticasRespoGestion', [EstadisticasController::class, 'obtenerEstadisticasGenerales']);
 
