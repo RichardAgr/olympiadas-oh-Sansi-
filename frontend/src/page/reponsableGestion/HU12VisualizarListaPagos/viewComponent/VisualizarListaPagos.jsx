@@ -16,12 +16,12 @@ export default function VisualizarListaPagos(){
         const getPayments = async () =>{
             try {
                 setIsLoading(true)           
-                const res = await axios.get('/json/hu12VisulizarPagos.json')
+                const res = await axios.get('http://127.0.0.1:8000/api/pagos')
                 
                 if(res.status !== 200){
                     throw new Error(`HTTP error! status: ${res.status}`)
                 }
-                //console.log(res.data.data.pagos)
+                console.log(res.data.data.pagos)
                 setPayments(res.data.data.pagos)
                 setFilteredPayments(res.data.data.pagos)
                 setIsLoading(false)

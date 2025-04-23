@@ -1,34 +1,53 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./HomeRespGest.css";
 
 function HomeRespGest() {
   const [dashboardData, setDashboardData] = useState({
-    totalPagos: 0,
+    totalPagos: "0.00",
     competenciasActivas: 0,
     competidoresHabilitados: 0,
-    proximaCompetencia: "",
+    proximaCompetencia: "No hay competencias programadas"
   });
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
-    // Realizar la solicitud para obtener los datos del dashboard
-    axios.get("/dashboardData.json")
+    axios.get("http://127.0.0.1:8000/api/estadisticasRespoGestion")
       .then(response => {
-        setDashboardData(response.data);
+        if (response.data.success) {
+          setDashboardData(prev => ({
+            ...prev,
+            ...response.data.data
+          }));
+        }
       })
       .catch(error => {
         console.error("Hubo un error al obtener los datos:", error);
+        setError("Error al cargar los datos del dashboard");
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
   // Desestructuración con valores por defecto
   const {
-    totalPagos = 0,
-    competenciasActivas = 0,
-    competidoresHabilitados = 0,
-    proximaCompetencia = "",
+    totalPagos,
+    competenciasActivas,
+    competidoresHabilitados,
+    proximaCompetencia
   } = dashboardData;
+
+  if (loading) {
+    return <div className="panel-container">Cargando datos...</div>;
+  }
+
+  if (error) {
+    return <div className="panel-container error-message">{error}</div>;
+  }
 
   return (
     <div className="panel-container">
@@ -48,7 +67,7 @@ function HomeRespGest() {
           <div className="info-box">
             <h2>Total de Pagos Recibidos</h2>
             <p className="big-number">
-              Bs {totalPagos !== undefined ? totalPagos.toFixed(2) : "0.00"}
+              Bs {totalPagos}
             </p>
           </div>
 

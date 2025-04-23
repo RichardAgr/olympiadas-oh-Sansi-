@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "./estilosResponsable.css";
 
@@ -10,9 +10,15 @@ function EstadoTutores() {
   const [tutorSeleccionado, setTutorSeleccionado] = useState(null);
   const [descripcion, setDescripcion] = useState("");
   const [esDeshabilitar, setEsDeshabilitar] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    axios.get("/src/tutores.json")
+    cargarTutores();
+  }, []);
+
+  const cargarTutores = () => {
+    setLoading(true);
+    axios.get("http://127.0.0.1:8000/api/tutoresInformacion")
       .then((response) => {
         if (Array.isArray(response.data)) {
           setEstadoTutores(response.data);
@@ -22,12 +28,13 @@ function EstadoTutores() {
       })
       .catch((error) => {
         console.error("Error al cargar los tutores:", error);
-      });
-  }, []);
+      })
+      .finally(() => setLoading(false));
+  };
 
   const handleMostrarModal = (tutor) => {
     setTutorSeleccionado(tutor);
-    setEsDeshabilitar(tutor.estado === 1);
+    setEsDeshabilitar(tutor.estado === "activo");
     setModalShow(true);
   };
 
@@ -37,31 +44,60 @@ function EstadoTutores() {
     setDescripcion("");
   };
 
-  const confirmarCambioEstado = (descripcion, tutorId) => {
-    setEstadoTutores((prev) =>
-      prev.map((tutor) =>
-        tutor.id === tutorId
-          ? { ...tutor, estado: tutor.estado === 1 ? 0 : 1 }
-          : tutor
-      )
-    );
-    handleCloseModal();
+  const actualizarEstadoTutor = async (tutorId, nuevoEstado, descripcion) => {
+    try {
+      setLoading(true);
+      
+      await axios.put(`http://127.0.0.1:8000/api/tutores/${tutorId}/estado`, {
+        estado: nuevoEstado==="activo"?true:false
+      })
+
+      // 2. Si es deshabilitar, enviar notificación
+      if (nuevoEstado === "inactivo" && descripcion) {
+        const notificacionData = {
+          id_responsable: 1, // ID del responsable actual (ajustar según tu sistema)
+          id_tutorPrincipal: tutorId,
+          id_competidor:null,
+          asunto: "Deshabilitación de tutor",
+          motivo: descripcion
+        };
+        console.log(notificacionData)
+        await axios.post("http://127.0.0.1:8000/api/notificaciones", notificacionData); 
+      }
+
+      setEstadoTutores(prev => 
+        prev.map(tutor => 
+          tutor.tutor_id === tutorId 
+            ? { ...tutor, estado: nuevoEstado } 
+            : tutor
+        )
+      );
+
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error al actualizar el tutor:", error);
+      alert("Ocurrió un error al actualizar el tutor");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filteredTutores = estadoTutores.filter((tutor) => {
-    const nombreMatch = tutor.nombre.toLowerCase().includes(busqueda.toLowerCase());
+    const nombreMatch = tutor.nombres.toLowerCase().includes(busqueda.toLowerCase());
     const estadoMatch =
       filtroEstado === ""
         ? true
         : filtroEstado === "activo"
-        ? tutor.estado === 1
-        : tutor.estado === 0;
+        ? tutor.estado === "activo"
+        : tutor.estado === "inactivo";
     return nombreMatch && estadoMatch;
   });
 
   return (
     <div className="estado-tutores-container">
       <h1>Habilitar/Deshabilitar Tutores</h1>
+
+      {loading && <div className="loading">Cargando...</div>}
 
       <div className="buscador">
         <input
@@ -90,80 +126,82 @@ function EstadoTutores() {
             <tr>
               <th>Nombre del Tutor</th>
               <th>Estado</th>
-              <th>Competidores Activos</th>
+              <th>Competidores Habilitados</th>
+              <th>Competidores Deshabilitados</th>
               <th>Deshabilitar/Habilitar</th>
             </tr>
           </thead>
           <tbody>
-            {filteredTutores.map((tutor) => {
-              const competidoresActivos = tutor.competidores?.filter((c) => c.estado === 1).length || 0;
-              return (
-                <tr key={tutor.id}>
-                  <td>{tutor.nombre}</td>
-                  <td>{tutor.estado === 1 ? "Activo" : "Inactivo"}</td>
-                  <td>{competidoresActivos}</td>
-                  <td>
-                    <label className="switch">
-                      <input
-                        type="checkbox"
-                        checked={tutor.estado === 1}
-                        onChange={() => handleMostrarModal(tutor)}
-                      />
-                      <span className="slider"></span>
-                    </label>
-                  </td>
-                </tr>
-              );
-            })}
+            {filteredTutores.map((tutor) => (
+              <tr key={tutor.tutor_id}>
+                <td>{tutor.nombres} {tutor.apellidos}</td>
+                <td>
+                  <span className={`badge ${tutor.estado === 'activo' ? 'activo' : 'inactivo'}`}>
+                    {tutor.estado}
+                  </span>
+                </td>
+                <td>{tutor.competidores_habilitados || 0}</td>
+                <td>{tutor.competidores_deshabilitados || 0}</td>
+                <td>
+                  <label className="switch">
+                    <input
+                      type="checkbox"
+                      checked={tutor.estado === "activo"}
+                      onChange={() => handleMostrarModal(tutor)}
+                      disabled={loading}
+                    />
+                    <span className="slider round"></span>
+                  </label>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
 
-      {/* Modal */}
+      {/* Modal de confirmación */}
       {modalShow && (
-        <div className="modal1">
-          <div className="modal2">
-            <h2>¿Esta seguro de {esDeshabilitar ? "Deshabilitar Tutor" : "Habilitar Tutor"} a {tutorSeleccionado?.nombre}?</h2>
-            {esDeshabilitar &&(
-            <p><strong>Descripcion:</strong></p>
-           )}
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>
+              ¿Está seguro de {esDeshabilitar ? "deshabilitar" : "habilitar"} al tutor 
+              {tutorSeleccionado && ` ${tutorSeleccionado.nombres} ${tutorSeleccionado.apellidos}`}?
+            </h2>
+            
             {esDeshabilitar && (
-              <textarea
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-                placeholder="Escriba el motivo por el cual se deshabilita al tutor"
-              />
+              <>
+                <p><strong>Descripción:</strong></p>
+                <textarea
+                  value={descripcion}
+                  onChange={(e) => setDescripcion(e.target.value)}
+                  placeholder="Escriba el motivo por el cual se deshabilita al tutor"
+                  required
+                />
+              </>
             )}
 
-            <div className="modal-buttons">
-              <button className="cancelar" onClick={handleCloseModal}>Cancelar</button>
-              <button className="enviar"
+            <div className="modal-actions">
+              <button 
+                className="btn-cancelar" 
+                onClick={handleCloseModal}
+                disabled={loading}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="btn-confirmar"
                 onClick={() => {
-                  if (esDeshabilitar && descripcion.trim() === "") {
-                    alert("Debe escribir un motivo para deshabilitar al tutor.");
+                  if (esDeshabilitar && !descripcion.trim()) {
+                    alert("Debe escribir un motivo para deshabilitar al tutor");
                     return;
                   }
-
-                  if (esDeshabilitar) {
-                    const notificacionData = {
-                      responsable_id: 1,
-                      tutor_id: tutorSeleccionado.id,
-                      competidor_id: null,
-                      asunto: "Deshabilitación de tutor",
-                      mensaje: descripcion,
-                      fecha_envio: new Date().toISOString().split("T")[0],
-                      estado: 1,
-                    };
-
-                    axios.post("/src/notificaciones", notificacionData)
-                      .then((res) => console.log("Notificación enviada:", res.data))
-                      .catch((err) => console.error("Error al enviar notificación:", err));
-                  }
-
-                  confirmarCambioEstado(descripcion, tutorSeleccionado.id);
+                  
+                  const nuevoEstado = esDeshabilitar ? "inactivo" : "activo";
+                  actualizarEstadoTutor(tutorSeleccionado.tutor_id, nuevoEstado, descripcion);
                 }}
+                disabled={loading}
               >
-                  Enviar  
+                {loading ? 'Procesando...' : 'Confirmar'}
               </button>
             </div>
           </div>

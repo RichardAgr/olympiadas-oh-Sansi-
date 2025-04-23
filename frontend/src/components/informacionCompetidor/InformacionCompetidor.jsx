@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { Eye, CheckCircle,X,Bell } from "lucide-react"
-import {  MostrarDatos } from "../../../public/json/competidoresId"
+import axios from "axios"
 import "./informacionCompetidor.css"
 
 export default function InformacionCompetidor() {
@@ -26,14 +26,11 @@ export default function InformacionCompetidor() {
     const fetchCompetitorDetail = async () => {
       try {
         setIsLoading(true)
-        const data = await MostrarDatos(id)
-        
-        /*         if (!response.ok) {
+        const data = await axios.get(`http://127.0.0.1:8000/api/informacionCompetidores/${id}/competidor`)
+/*          if (!data.ok) {
             throw new Error("No se pudo cargar la información del competidor")
-            } */
-           /*         const data = await response.json() */
+        }  */
         setCompetitor(data.data.informacion_competidor)
-        console.log(data.data.informacion_competidor)
         setTutors(data.data.tutores)
         setSelectedStatus(data.data.informacion_competidor.estado)
         setPreviousStatus(data.data.informacion_competidor.estado)
@@ -63,8 +60,11 @@ export default function InformacionCompetidor() {
   }
 
   const handleSubmit = () => {
-    // Aquí iría la lógica para guardar los cambios
-    console.log("Guardando cambios...", { ...competitor, estado: selectedStatus })
+    axios.put(`http://127.0.0.1:8000/api/competidor/${competitor.id}/estado`, {
+      estado: selectedStatus
+  })
+  .then(response => console.log(response.data))
+  .catch(error => console.error(error))
 
     // Mostrar alerta de éxito personalizada
     setShowSuccessAlert(true)
@@ -92,13 +92,22 @@ export default function InformacionCompetidor() {
     }
 
     // Aquí iría la lógica para enviar la notificación
-    console.log("Enviando notificación:", {
+    const data = {
+      id_responsable: 1,
       id_tutorPrincipal: tutors[0].id_tutor,
       id_competidor: competitor.id,
-      competidor: competitor.nombres + " " + competitor.apellidos,
-      estado: "Deshabilitado",
-      motivo: notificationReason,
+      asunto: selectedStatus,
+      motivo: notificationReason
+    }
+
+    axios.post('http://127.0.0.1:8000/api/notificaciones', data)
+    .then(response => {
+        console.log('Notificación creada:', response.data);
     })
+    .catch(error => {
+        console.error('Error al crear notificación:', error);
+    });
+
     setShowNotificationModal(false)
     setShowNotificationSent(true)
     setNotificationReason("")

@@ -11,7 +11,7 @@ function VisualListTutor() {
   useEffect(() => {
     const fetchTutores = async () => {
       try {
-        const response = await axios.get("/tutores.json"); // Carga desde public/
+        const response = await axios.get("http://127.0.0.1:8000/api/tutoresInformacion"); // Carga desde public/
         setTableData(response.data);
       } catch (error) {
         console.error("Error al cargar tutores:", error);
@@ -32,11 +32,12 @@ function VisualListTutor() {
       filteredData.map((item) => ({
         ID: item.tutor_id,
         "Nombre Completo": `${item.nombres} ${item.apellidos}`,
-        Colegio: item.colegio,
         CI: item.ci,
-        Curso: item.curso,
         Competidores: item.competidores,
         Teléfono: item.telefono,
+        Correo: item.correo,
+        Estado: item.estado,
+        "Cuenta Creada": item.fechaRegistro
       }))
     );
     const workbook = XLSX.utils.book_new();
@@ -68,11 +69,12 @@ function VisualListTutor() {
           <thead>
             <tr>
               <th>Nombre Completo</th>
-              <th>Colegio</th>
               <th>CI</th>
-              <th>Curso</th>
               <th>Nro. Competidores</th>
               <th>Teléfono</th>
+              <th>Correo</th>
+              <th>Estado</th>
+              <th>Cuenta Creada</th>
             </tr>
           </thead>
           <tbody>
@@ -86,11 +88,12 @@ function VisualListTutor() {
               filteredData.map((item) => (
                 <tr key={item.tutor_id}>
                   <td>{`${item.nombres} ${item.apellidos}`}</td>
-                  <td>{item.colegio}</td>
                   <td>{item.ci}</td>
-                  <td>{item.curso}</td>
                   <td>{item.competidores}</td>
                   <td>{item.telefono}</td>
+                  <td>{item.correo}</td>
+                  <td>{item.estado}</td>
+                  <td>{item.fechaRegistro}</td>
                 </tr>
               ))
             )}
