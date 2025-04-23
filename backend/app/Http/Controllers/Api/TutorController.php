@@ -41,10 +41,13 @@ class TutorController extends Controller{
         }
     }
 
-    public function obtenerInformacionTutores(){
+
+    public function obtenerInformacionTutores(Request $request){
         try {
-            // En esta parte deberia ir la paginacion si es que se tiene mas de 100 tutores 
-            //se recomiendo que sea de 15 en 15
+                // En esta parte deberia ir la paginacion si es que se tiene mas de 100 tutores 
+                //se recomiendo que sea de 15 en 15
+
+
             $tutores = Tutor::select([
                 'tutor.tutor_id',
                 'tutor.nombres',
@@ -55,11 +58,29 @@ class TutorController extends Controller{
                 'tutor.estado',
                 'tutor.created_at'
             ])
-            ->withCount('competidores')
-            ->get()
-            ->map(function ($tutor) {
-                $estadoFormateado = $tutor->estado ? 'activo' : 'inactivo';
-                $fechaRegistro = $tutor->created_at ? Carbon::parse($tutor->created_at)->format('d/m/Y') : null;
+            ->withCount(['competidores' => function ($query) {
+            }])
+            ->withCount(['competidores as competidores_habilitados_count' => function ($query) {
+                $query->where('competidor.estado', 'Habilitado');
+            }])
+            ->withCount(['competidores as competidores_deshabilitados_count' => function ($query) {
+                $query->where('competidor.estado', 'Deshabilitado');
+            }])
+            ->withCount(['competidores as competidores_pendientes_count' => function ($query) {
+                $query->where('competidor.estado', 'Pendiente');
+            }]);
+            
+            
+            // Ordenar resultados
+            $ordenarPor = $request->input('ordenar_por', 'tutor_id');
+            $orden = $request->input('orden', 'asc');
+            $tutores->orderBy($ordenarPor, $orden);
+            
+            // Obtener todos los resultados
+            $tutoresResultados = $tutores->get();
+            $tutoresFormateados = $tutoresResultados->map(function ($tutor) {
+            $estadoFormateado = $tutor->estado ? 'activo' : 'inactivo';
+            $fechaRegistro = $tutor->created_at ? Carbon::parse($tutor->created_at)->format('d/m/Y') : null;
                 
                 return [
                     'tutor_id' => $tutor->tutor_id,
@@ -67,18 +88,21 @@ class TutorController extends Controller{
                     'apellidos' => $tutor->apellidos,
                     'ci' => $tutor->ci,
                     'competidores' => $tutor->competidores_count,
+                    'competidores_habilitados' => $tutor->competidores_habilitados_count,
+                    'competidores_deshabilitados' => $tutor->competidores_deshabilitados_count,
+                    'competidores_pendientes' => $tutor->competidores_pendientes_count,
                     'telefono' => $tutor->telefono,
                     'correo' => $tutor->correo,
                     'estado' => $estadoFormateado,
                     'fechaRegistro' => $fechaRegistro
                 ];
             });
-
-            return response()->json($tutores);
+            
+            return response()->json($tutoresFormateados);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener la informacion de los tutores',
+                'message' => 'Error al obtener los tutores',
                 'error' => $e->getMessage()
             ], 500);
         }
