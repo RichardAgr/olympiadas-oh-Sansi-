@@ -38,7 +38,9 @@ Route::apiResource('grados', GradoController::class);
 Route::apiResource('nivel-categorias', NivelCategoriaController::class);
 
 Route::get('/pagos', [BoletaController::class, 'index']);
+
 Route::get('/tutores/{tutorId}/competidores', [TutorController::class, 'competidores']);
+Route::get('/tutoresInformacion', [TutorController::class, 'obtenerInformacionTutores']);
 
 Route::get('/competidores', [CompetidorController::class, 'index']);
 Route::get('/informacionCompetidores/{id}/competidor', [CompetidorController::class, 'getDetallesCompetidor']);
@@ -47,3 +49,4 @@ Route::get('/detallesCompetidor', [CompetidorController::class, 'obtenerDetalles
 
 
 Route::post('/notificaciones', [NotificacionController::class, 'crearNotificacion']);
+

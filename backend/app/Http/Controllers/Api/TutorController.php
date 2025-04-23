@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Tutor;
 use App\Http\Resources\CompetidoresTutorResource;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class TutorController extends Controller{
     public function competidores($tutorId){
@@ -35,6 +37,49 @@ class TutorController extends Controller{
             return response()->json([
                 'error' => 'Error al obtener los competidores',
                 'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function obtenerInformacionTutores(){
+        try {
+            // En esta parte deberia ir la paginacion si es que se tiene mas de 100 tutores 
+            //se recomiendo que sea de 15 en 15
+            $tutores = Tutor::select([
+                'tutor.tutor_id',
+                'tutor.nombres',
+                'tutor.apellidos',
+                'tutor.ci',
+                'tutor.telefono',
+                'tutor.correo_electronico as correo',
+                'tutor.estado',
+                'tutor.created_at'
+            ])
+            ->withCount('competidores')
+            ->get()
+            ->map(function ($tutor) {
+                $estadoFormateado = $tutor->estado ? 'activo' : 'inactivo';
+                $fechaRegistro = $tutor->created_at ? Carbon::parse($tutor->created_at)->format('d/m/Y') : null;
+                
+                return [
+                    'tutor_id' => $tutor->tutor_id,
+                    'nombres' => $tutor->nombres,
+                    'apellidos' => $tutor->apellidos,
+                    'ci' => $tutor->ci,
+                    'competidores' => $tutor->competidores_count,
+                    'telefono' => $tutor->telefono,
+                    'correo' => $tutor->correo,
+                    'estado' => $estadoFormateado,
+                    'fechaRegistro' => $fechaRegistro
+                ];
+            });
+
+            return response()->json($tutores);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener la informacion de los tutores',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
