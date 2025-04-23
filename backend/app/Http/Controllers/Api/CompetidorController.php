@@ -160,9 +160,11 @@ class CompetidorController extends Controller{
                     'apellido' => $competidor->apellidos,
                     'ci' => $competidor->ci,
                     'colegio' => $competidor->colegio->nombre ?? '',
-                    'curso' => $competidor->curso->nombre ?? '',
+                    'curso' => $competidor->curso->grado->nombre ?? '',
                     'estado' => $competidor->estado ?? '',
                     'area' => $areaNombre, 
+                    'departamento' => $competidor->ubicacion->departamento, 
+                    'provincia' => $competidor->ubicacion->provincia,
                     'fecha' => $competencia->pivot->fecha_inscripcion ?? '',
                 ];
             });
