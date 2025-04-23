@@ -14,9 +14,10 @@ class NotificacionController extends Controller{
         $validator = Validator::make($request->all(), [
             'id_responsable' => 'required|integer|exists:responsable_gestion,responsable_id',
             'id_tutorPrincipal' => 'required|integer|exists:tutor,tutor_id',
-            'id_competidor' => 'required|integer|exists:competidor,competidor_id',
+            'id_competidor' => 'nullable|integer|exists:competidor,competidor_id',
             'asunto' => 'required|string|max:255',
-            'motivo' => 'required|string'
+            'motivo' => 'required|string',
+            'estado' => 'integer'
         ]);
 
         if ($validator->fails()) {
@@ -34,8 +35,8 @@ class NotificacionController extends Controller{
             $notificacion->competidor_id = $request->id_competidor;
             $notificacion->asunto = $request->asunto;
             $notificacion->mensaje = $request->motivo;
-            $notificacion->fecha_envio = Carbon::now(); // Fecha actual
-            $notificacion->estado = true; // Por defecto activo
+            $notificacion->fecha_envio = Carbon::now(); 
+            $notificacion->estado = false; // Por defecto activo
             
             $notificacion->save();
 

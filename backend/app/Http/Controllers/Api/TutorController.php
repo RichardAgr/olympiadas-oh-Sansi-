@@ -8,6 +8,7 @@ use App\Http\Resources\CompetidoresTutorResource;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
 class TutorController extends Controller{
@@ -103,6 +104,55 @@ class TutorController extends Controller{
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener los tutores',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function actualizarEstadoTutor(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            'estado' => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+
+            $tutor = Tutor::find($id);
+
+            if (!$tutor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tutor no encontrado'
+                ], 404);
+            }
+
+            $estadoAnterior = $tutor->estado;
+            $tutor->estado = $request->estado;
+            $tutor->save();
+
+            $estadoAnteriorFormateado = $estadoAnterior ? 'activo' : 'inactivo';
+            $nuevoEstadoFormateado = $tutor->estado ? 'activo' : 'inactivo';
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado del tutor actualizado correctamente',
+                'data' => [
+                    'tutor_id' => $tutor->tutor_id,
+                    'estado_anterior' => $estadoAnteriorFormateado,
+                    'estado_nuevo' => $nuevoEstadoFormateado
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estado del tutor',
                 'error' => $e->getMessage()
             ], 500);
         }

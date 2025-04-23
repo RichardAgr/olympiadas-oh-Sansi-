@@ -48,23 +48,21 @@ function EstadoTutores() {
     try {
       setLoading(true);
       
-      console.log(nuevoEstado)
-/*       await axios.put(`http://127.0.0.1:8000/api/tutores/${tutorId}`, {
-        estado: nuevoEstado
-      }); */
+      await axios.put(`http://127.0.0.1:8000/api/tutores/${tutorId}/estado`, {
+        estado: nuevoEstado==="activo"?true:false
+      })
 
       // 2. Si es deshabilitar, enviar notificación
       if (nuevoEstado === "inactivo" && descripcion) {
         const notificacionData = {
-          responsable_id: 1, // ID del responsable actual (ajustar según tu sistema)
-          tutor_id: tutorId,
+          id_responsable: 1, // ID del responsable actual (ajustar según tu sistema)
+          id_tutorPrincipal: tutorId,
+          id_competidor:null,
           asunto: "Deshabilitación de tutor",
-          mensaje: descripcion,
-          fecha_envio: new Date().toISOString().split("T")[0],
-          estado: "activo",
+          motivo: descripcion
         };
         console.log(notificacionData)
-        /* await axios.post("http://127.0.0.1:8000/api/notificaciones", notificacionData); */
+        await axios.post("http://127.0.0.1:8000/api/notificaciones", notificacionData); 
       }
 
       setEstadoTutores(prev => 
