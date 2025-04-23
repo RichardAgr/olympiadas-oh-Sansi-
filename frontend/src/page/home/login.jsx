@@ -16,6 +16,9 @@ function login() {
         <Link to={"/respGest"}>
         <button style={{ margin: "10px", padding: "10px" }}>Responsable de Gestion</button>
         </Link>
+        <Link to={"/tutor/${id}"}>
+        <button style={{ margin: "10px", padding: "10px" }}>Tutor</button>
+        </Link>
         
       </div>
     </div>
