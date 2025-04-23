@@ -7,7 +7,7 @@ function DetalleCompetidoresInscritos() {
 
   useEffect(() => {
     axios
-      .get("/src/competidores.json")
+      .get("http://127.0.0.1:8000/api/detallesCompetidor")
       .then((res) => setCompetidores(res.data))
       .catch((err) => console.error("Error cargando datos:", err));
   }, []);
@@ -41,14 +41,14 @@ function DetalleCompetidoresInscritos() {
             </tr>
           </thead>
           <tbody>
-            {competidoresFiltrados.map((comp) => (
-              <tr key={comp.id}>
+            {competidoresFiltrados.map((comp, index) => (
+              <tr key={index}>
                 <td>{comp.nombre}</td>
                 <td>{comp.colegio}</td>
                 <td>{comp.ci}</td>
                 <td>{comp.curso}</td>
                 <td>{comp.estado}</td>
-                <td>{comp.competencia}</td>
+                <td>{comp.area}</td>
                 <td>{comp.fecha}</td>
               </tr>
             ))}

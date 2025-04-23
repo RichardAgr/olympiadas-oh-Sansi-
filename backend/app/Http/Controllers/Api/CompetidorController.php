@@ -140,4 +140,34 @@ class CompetidorController extends Controller{
             ]
         ]);
     }
+
+    public function obtenerDetallesCompetidor(Request $request){
+        $query = Competidor::with(['colegio', 'curso', 'ubicacion', 'competencias']);
+
+        $competidores = $query->get();
+
+        $result = $competidores->flatMap(function ($competidor) {
+            return $competidor->competencias->map(function ($competencia) use ($competidor) {
+                $areaNombre = null;
+                if (!empty($competencia->pivot->area_id)) {
+                    $area = Area::find($competencia->pivot->area_id);
+                    $areaNombre = $area ? $area->nombre : '';
+                }
+
+                return [
+                    'id' => $competidor->competidor_id,
+                    'nombre' => $competidor->nombres,
+                    'apellido' => $competidor->apellidos,
+                    'ci' => $competidor->ci,
+                    'colegio' => $competidor->colegio->nombre ?? '',
+                    'curso' => $competidor->curso->nombre ?? '',
+                    'estado' => $competidor->estado ?? '',
+                    'area' => $areaNombre, 
+                    'fecha' => $competencia->pivot->fecha_inscripcion ?? '',
+                ];
+            });
+        });
+
+        return response()->json($result->values());
+    }
 }
