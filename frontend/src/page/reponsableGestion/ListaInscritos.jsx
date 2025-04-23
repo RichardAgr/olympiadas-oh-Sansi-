@@ -10,7 +10,7 @@ function ListaInscritos() {
   const [selectedCourse, setSelectedCourse] = useState("Todos los cursos");
 
   useEffect(() => {
-    axios.get("/inscritos.json")
+    axios.get("http://127.0.0.1:8000/api/detallesCompetidor")
       .then(response => {
         setInscritos(response.data);
       })
@@ -76,10 +76,18 @@ function ListaInscritos() {
           className="course-dropdown"
         >
           <option value="Todos los cursos">Todos los cursos</option>
+          <option value="1ro Primaria">1ro Primaria</option>
+          <option value="2do Primaria">2do Primaria</option>
+          <option value="3ro Primaria">3ro Primaria</option>
+          <option value="4to Primaria">4to Primaria</option>
+          <option value="5to Primaria">5to Primaria</option>
+          <option value="6to Primaria">6to Primaria</option>
           <option value="1ro Secundaria">1ro Secundaria</option>
           <option value="2do Secundaria">2do Secundaria</option>
           <option value="3ro Secundaria">3ro Secundaria</option>
           <option value="4to Secundaria">4to Secundaria</option>
+          <option value="5to Secundaria">5to Secundaria</option>
+          <option value="6to Secundaria">6to Secundaria</option>
         </select>
 
         <button className="export-button" onClick={exportToPDF}>
@@ -104,6 +112,7 @@ function ListaInscritos() {
                 <td>{inscrito.apellido}</td>
                 <td>{inscrito.nombre}</td>
                 <td>{inscrito.colegio}</td>
+                <td>{inscrito.curso}</td>
                 <td>{inscrito.departamento}</td>
                 <td>{inscrito.provincia}</td>
               </tr>
