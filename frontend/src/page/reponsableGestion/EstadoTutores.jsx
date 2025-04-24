@@ -11,6 +11,7 @@ function EstadoTutores() {
   const [descripcion, setDescripcion] = useState("");
   const [esDeshabilitar, setEsDeshabilitar] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [descripcionError, setDescripcionError] = useState("");
 
   useEffect(() => {
     cargarTutores();
@@ -42,6 +43,11 @@ function EstadoTutores() {
     setModalShow(false);
     setTutorSeleccionado(null);
     setDescripcion("");
+    setDescripcionError("");
+  };
+
+  const countWords = (text) => {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
   };
 
   const actualizarEstadoTutor = async (tutorId, nuevoEstado, descripcion) => {
@@ -50,18 +56,18 @@ function EstadoTutores() {
       
       await axios.put(`http://127.0.0.1:8000/api/tutores/${tutorId}/estado`, {
         estado: nuevoEstado==="activo"?true:false
-      })
+      });
 
       // 2. Si es deshabilitar, enviar notificación
       if (nuevoEstado === "inactivo" && descripcion) {
         const notificacionData = {
           id_responsable: 1, // ID del responsable actual (ajustar según tu sistema)
           id_tutorPrincipal: tutorId,
-          id_competidor:null,
+          id_competidor: null,
           asunto: "Deshabilitación de tutor",
           motivo: descripcion
         };
-        console.log(notificacionData)
+        console.log(notificacionData);
         await axios.post("http://127.0.0.1:8000/api/notificaciones", notificacionData); 
       }
 
@@ -92,6 +98,24 @@ function EstadoTutores() {
         : tutor.estado === "inactivo";
     return nombreMatch && estadoMatch;
   });
+
+  const handleConfirmAction = () => {
+    if (esDeshabilitar) {
+      if (!descripcion.trim()) {
+        setDescripcionError("Por favor, describa el motivo de la deshabilitación");
+        return;
+      }
+      
+      const wordCount = countWords(descripcion);
+      if (wordCount < 3) {
+        setDescripcionError(`El mensaje debe contener al menos 3 palabras. Actualmente tiene ${wordCount} ${wordCount === 1 ? 'palabra' : 'palabras'}.`);
+        return;
+      }
+    }
+    
+    const nuevoEstado = esDeshabilitar ? "inactivo" : "activo";
+    actualizarEstadoTutor(tutorSeleccionado.tutor_id, nuevoEstado, descripcion);
+  };
 
   return (
     <div className="estado-tutores-container">
@@ -173,10 +197,14 @@ function EstadoTutores() {
                 <p><strong>Descripción:</strong></p>
                 <textarea
                   value={descripcion}
-                  onChange={(e) => setDescripcion(e.target.value)}
+                  onChange={(e) => {
+                    setDescripcion(e.target.value);
+                    setDescripcionError("");
+                  }}
                   placeholder="Escriba el motivo por el cual se deshabilita al tutor"
                   required
                 />
+                {descripcionError && <div className="error-message">{descripcionError}</div>}
               </>
             )}
 
@@ -190,15 +218,7 @@ function EstadoTutores() {
               </button>
               <button 
                 className="btn-confirmar"
-                onClick={() => {
-                  if (esDeshabilitar && !descripcion.trim()) {
-                    alert("Debe escribir un motivo para deshabilitar al tutor");
-                    return;
-                  }
-                  
-                  const nuevoEstado = esDeshabilitar ? "inactivo" : "activo";
-                  actualizarEstadoTutor(tutorSeleccionado.tutor_id, nuevoEstado, descripcion);
-                }}
+                onClick={handleConfirmAction}
                 disabled={loading}
               >
                 {loading ? 'Procesando...' : 'Confirmar'}
