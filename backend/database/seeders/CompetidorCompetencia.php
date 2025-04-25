@@ -8,145 +8,125 @@ use Carbon\Carbon;
 
 class CompetidorCompetencia extends Seeder{
     public function run(){
+        // Obtener datos necesarios
         $competidores = DB::table('competidor')->get();
         $competencia = DB::table('competencia')->where('nombre_competencia', 'Olimpiada Oh! SanSi 2024')->first();
         $areas = DB::table('area')->get();
         $niveles_categorias = DB::table('nivel_categoria')->get();
+        $tutoresCompetidores = DB::table('tutor_competidor')
+            ->where('nivel_respansabilidad', 'Principal')
+            ->get()
+            ->groupBy('tutor_id');
         
-        $competidor_competencias = [];
+        // Obtener o crear boletas para cada tutor
+        $boletasPorTutor = [];
+        foreach ($tutoresCompetidores as $tutorId => $relaciones) {
+            $fechaEmision = Carbon::now()->subDays(rand(1, 30));
+            $fechaPago = rand(0, 10) > 2 ? $fechaEmision->copy()->addDays(rand(1, 3)) : null;
+            
+            $boletaId = DB::table('boleta')->insertGetId([
+                'tutor_id' => $tutorId,
+                'numero_boleta' => 'BOL-' . str_pad(rand(1000, 9999), 5, '0', STR_PAD_LEFT),
+                'nombre_pagador' => DB::table('tutor')->where('tutor_id', $tutorId)->value('nombres') . ' ' . 
+                                   DB::table('tutor')->where('tutor_id', $tutorId)->value('apellidos'),
+                'monto_total' => count($relaciones) * 150, // $150 por competidor
+                'fecha_emision' => $fechaEmision,
+                'fecha_pago' => $fechaPago,
+                'estado' => $fechaPago !== null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            
+            $boletasPorTutor[$tutorId] = $boletaId;
+            
+            // Crear imagen de boleta si está pagada
+            if ($fechaPago !== null) {
+                $googleDriveLinks = [
+                    'https://i.ibb.co/svnPKS1b/boleta1.jpg',
+                    'https://drive.google.com/file/d/1hg76Wy-L_au8AixQvAXB1qm4MrgpvGEt/view?usp=drive_link',
+                    'https://drive.google.com/file/d/1wqUU2h4cbuaIt9ti34RbX5gPJsSuYdvz/view?usp=drive_link',
+                    'https://drive.google.com/file/d/16mi8Hrmck874RejlmdT_s2wJL9IVL35a/view?usp=drive_link'
+                ];
+                
+                DB::table('imagen_boleta')->insert([
+                    'boleta_id' => $boletaId,
+                    'ruta_imagen' => $googleDriveLinks[array_rand($googleDriveLinks)],
+                    'fecha_subida' => $fechaPago,
+                    'estado' => true,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
         
-        // Inscribir a Fresia Ticona en Química 6S
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '14268363')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'QUÍMICA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'QUÍMICA')->first()->area_id)
-                                                    ->where('nombre', '6S')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(10),
-            'created_at' => now(),
-            'updated_at' => now(),
+        // Inscripciones de competidores con referencia a boleta
+        $inscripciones = [];
+        
+        // Mapeo de competidores específicos a áreas y categorías
+        $inscripcionesEspecificas = [
+            '14268363' => ['QUÍMICA', '6S'],
+            '15582477' => ['ROBÓTICA', 'Lego P'],
+            '14567890' => ['FÍSICA', '4S'],
+            '14567890' => ['MATEMÁTICA', 'Cuarto Nivel'], // Segundo registro para el mismo competidor
+            '14678901' => ['BIOLOGÍA', '3S'],
+            '14789012' => ['QUÍMICA', '2S'],
+            '14890123' => ['MATEMÁTICA', 'Primer Nivel'],
+            '14901234' => ['INFORMÁTICA', 'Guacamayo'],
+            '15012345' => ['ROBÓTICA', 'Builders P'],
+            '15123456' => ['ASTRONOMÍA Y ASTROFÍSICA', '4P'],
+            '15234567' => ['ASTRONOMÍA Y ASTROFÍSICA', '3P']
         ];
         
-        // Inscribir a Dayra Damian en Robótica Lego P
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '15582477')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'ROBÓTICA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'ROBÓTICA')->first()->area_id)
-                                                    ->where('nombre', 'Lego P')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(15),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
+        // Procesar inscripciones específicas
+        foreach ($inscripcionesEspecificas as $ci => $datos) {
+            $competidor = $competidores->where('ci', $ci)->first();
+            if (!$competidor) continue;
+            
+            $tutorId = DB::table('tutor_competidor')
+                ->where('competidor_id', $competidor->competidor_id)
+                ->where('nivel_respansabilidad', 'Principal')
+                ->value('tutor_id');
+                
+            $inscripciones[] = [
+                'competidor_id' => $competidor->competidor_id,
+                'competencia_id' => $competencia->competencia_id,
+                'area_id' => $areas->where('nombre', $datos[0])->first()->area_id,
+                'nivel_categoria_id' => $niveles_categorias
+                    ->where('area_id', $areas->where('nombre', $datos[0])->first()->area_id)
+                    ->where('nombre', $datos[1])->first()->nivel_categoria_id,
+                'boleta_id' => $boletasPorTutor[$tutorId] ?? null,
+                'fecha_inscripcion' => Carbon::now()->subDays(rand(1, 15)),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
         
-        // Inscribir a Carlos Mendoza en Física 4S
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '14567890')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'FÍSICA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'FÍSICA')->first()->area_id)
-                                                    ->where('nombre', '4S')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(12),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
+        // Inscribir competidores adicionales (hasta 25)
+        $competidoresRestantes = $competidores->whereNotIn('ci', array_keys($inscripcionesEspecificas));
+        $areasDisponibles = $areas->pluck('nombre')->toArray();
         
-        // Inscribir a Carlos Mendoza también en Matemática (caso de un competidor en múltiples áreas)
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '14567890')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'MATEMÁTICA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'MATEMÁTICA')->first()->area_id)
-                                                    ->where('nombre', 'Cuarto Nivel')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(12),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-        
-        // Inscribir a Patricia Flores en Biología 3S
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '14678901')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'BIOLOGÍA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'BIOLOGÍA')->first()->area_id)
-                                                    ->where('nombre', '3S')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(8),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-        
-        // Inscribir a Roberto Guzmán en Química 2S
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '14789012')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'QUÍMICA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'QUÍMICA')->first()->area_id)
-                                                    ->where('nombre', '2S')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(7),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-        
-        // Inscribir a María López en Matemática Primer Nivel
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '14890123')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'MATEMÁTICA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'MATEMÁTICA')->first()->area_id)
-                                                    ->where('nombre', 'Primer Nivel')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(6),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-        
-        // Inscribir a Fernando Camacho en Informática Guacamayo
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '14901234')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'INFORMÁTICA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'INFORMÁTICA')->first()->area_id)
-                                                    ->where('nombre', 'Guacamayo')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(5),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-        
-        // Inscribir a Lucía Montaño en Robótica Builders P
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '15012345')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'ROBÓTICA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'ROBÓTICA')->first()->area_id)
-                                                    ->where('nombre', 'Builders P')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(4),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-        
-        // Inscribir a Jorge Pérez en Astronomía y Astrofísica 4P
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '15123456')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'ASTRONOMÍA Y ASTROFÍSICA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'ASTRONOMÍA Y ASTROFÍSICA')->first()->area_id)
-                                                    ->where('nombre', '4P')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(3),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-        
-        // Inscribir a Ana Rodríguez en Astronomía y Astrofísica 3P
-        $competidor_competencias[] = [
-            'competidor_id' => $competidores->where('ci', '15234567')->first()->competidor_id,
-            'competencia_id' => $competencia->competencia_id,
-            'area_id' => $areas->where('nombre', 'ASTRONOMÍA Y ASTROFÍSICA')->first()->area_id,
-            'nivel_categoria_id' => $niveles_categorias->where('area_id', $areas->where('nombre', 'ASTRONOMÍA Y ASTROFÍSICA')->first()->area_id)
-                                                    ->where('nombre', '3P')->first()->nivel_categoria_id,
-            'fecha_inscripcion' => Carbon::now()->subDays(2),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
+        foreach ($competidoresRestantes as $competidor) {
+            $areaNombre = $areasDisponibles[array_rand($areasDisponibles)];
+            $area = $areas->where('nombre', $areaNombre)->first();
+            $categoriasArea = $niveles_categorias->where('area_id', $area->area_id);
+            
+            $tutorId = DB::table('tutor_competidor')
+                ->where('competidor_id', $competidor->competidor_id)
+                ->where('nivel_respansabilidad', 'Principal')
+                ->value('tutor_id');
+            
+            $inscripciones[] = [
+                'competidor_id' => $competidor->competidor_id,
+                'competencia_id' => $competencia->competencia_id,
+                'area_id' => $area->area_id,
+                'nivel_categoria_id' => $categoriasArea->random()->nivel_categoria_id,
+                'boleta_id' => $boletasPorTutor[$tutorId] ?? null,
+                'fecha_inscripcion' => Carbon::now()->subDays(rand(1, 15)),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
 
-        DB::table('competidor_competencia')->insert($competidor_competencias);
+        DB::table('competidor_competencia')->insert($inscripciones);
     }
 }

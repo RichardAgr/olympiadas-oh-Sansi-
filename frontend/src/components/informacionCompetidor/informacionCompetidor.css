@@ -1,0 +1,462 @@
+.competitor-detail-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  .detail-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+  
+  .detail-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
+  
+  
+  .back-button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .receipt-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+  
+  .receipt-label {
+    font-weight: 500;
+    margin: 0;
+  }
+  
+  .show-receipt-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .show-receipt-button:hover {
+    background-color: #0e1358;
+  }
+  
+  .competitor-form {
+    background-color: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group label {
+    display: block;
+    font-size: 1.2rem;
+    font-weight:bold;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 0.75rem 0;
+    font-size: 1rem;
+    border-bottom: none;
+    background-color: transparent;
+  }
+  
+  .tutor-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+  }
+  
+  .tutor-title {
+    font-size: 1.2rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .tutor-relation {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: normal;
+  }
+  
+  .status-sectionI {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .status-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .status-description {
+    color: #666;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .status-optionsI {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .radio-label {
+    display: flex;
+/*     align-items: center; */
+    cursor: pointer;
+  }
+  
+  .radio-label input {
+    margin-right: 0.5rem;
+    width: 15px;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .submit-button {
+    background-color: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .submit-button:hover {
+    background-color: #0e1358;
+  }
+  
+  .cancel-button {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .cancel-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .loading-container,
+  .error-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin: 2rem 0;
+  }
+  
+  .error-container {
+    color: var(--error-color);
+  }
+  
+  /* Estilos para el modal de notificación */
+  .notification-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .notification-modal {
+    background-color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .notification-modal h2 {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .notification-subtitle {
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #666;
+  }
+  
+  .notification-info {
+    margin-bottom: 1.5rem;
+  }
+  
+  .notification-row {
+    display: flex;
+    margin-bottom: 0.5rem;
+  }
+  
+  .notification-label {
+    font-weight: 600;
+    width: 150px;
+    color: #333;
+  }
+  
+  .notification-value {
+    flex: 1;
+  }
+  
+  .notification-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  
+  .notification-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    resize: vertical;
+    font-family: inherit;
+  }
+  
+  .notification-error {
+    color: #dc3545;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: rgba(220, 53, 69, 0.1);
+    border-radius: 4px;
+  }
+  
+  .notification-example-error {
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .notification-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .notification-send {
+    background-color: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+  }
+  
+  .notification-cancel {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+  }
+  
+  /* Estilos para la alerta de éxito */
+  .success-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .success-alert {
+    display: flex;
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    max-width: 450px;
+    width: 90%;
+    animation: slideUp 0.4s ease-out;
+    position: relative;
+  }
+  
+  .success-icon {
+    color: #28a745;
+    margin-right: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .success-content {
+    flex: 1;
+  }
+  
+  .success-content h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-size: 1.3rem;
+  }
+  
+  .success-content p {
+    margin: 0;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  .receipt-image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .receipt-image-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    position: relative;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+  }
+  
+  .close-receipt {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: rgb(203, 71, 71);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  /* Estilos para la confirmación de notificación enviada */
+.notification-sent-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.notification-sent {
+  display: flex;
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+  max-width: 450px;
+  width: 90%;
+  animation: slideUp 0.4s ease-out;
+  position: relative;
+}
+
+.notification-sent-icon {
+  color: #1a237e;
+  margin-right: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-sent-content {
+  flex: 1;
+}
+
+.notification-sent-content h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.notification-sent-content p {
+  margin: 0;
+  color: #666;
+  line-height: 1.5;
+}
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  

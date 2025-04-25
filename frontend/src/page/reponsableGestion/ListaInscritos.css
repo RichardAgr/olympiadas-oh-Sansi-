@@ -1,0 +1,99 @@
+/* Contenedor principal */
+.lista-container {
+     font-family: Arial, comfortaa;
+     padding: 38px;
+   }
+   
+   /* Título */
+   h1 {
+     text-align: left;
+     font-size: 38px;
+     color: #333;
+     margin-bottom: 20px;
+   }
+   
+   /* Barra de búsqueda */
+   .search-bar {
+     margin-bottom: 20px;
+   }
+   
+   .search-bar input {
+     width: 100%;
+     padding: 10px;
+     font-size: 16px;
+     border-radius: 8px;
+     border: 1px solid #ccc;
+   }
+   
+   /* Fila de botones (desplegable y exportar) */
+   .filters {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 20px;
+   }
+   
+   /* Estilo del botón desplegable (cursos) */
+   .course-dropdown {
+     padding: 10px;
+     font-size: 16px;
+     border-radius: 8px;
+     border: 1px solid #ccc;
+     width: 200px;
+   }
+   
+   /* Botón Exportar Lista */
+   .export-button {
+     padding: 10px 20px;
+     font-size: 16px;
+     background-color: #2D42C8;
+     color: white;
+     border: none;
+     border-radius: 8px;
+     cursor: pointer;
+     transition: background-color 0.3s;
+   }
+   
+   .export-button:hover {
+     background-color: #061A8B; /* Azul más oscuro al pasar el cursor */
+   }
+   
+   /* Tabla de Inscritos */
+   .inscritos-table {
+     width: 100%;
+     border-collapse: collapse;
+     margin-top: 20px;
+   }
+   
+   .inscritos-table th, .inscritos-table td {
+     padding: 12px;
+     text-align: left;
+     border: 1px solid #ddd;
+   }
+   
+   .inscritos-table th {
+     background-color: #f4f4f4;
+     font-weight: bold;
+   }
+   
+   .inscritos-table tr:nth-child(even) {
+     background-color: #f9f9f9;
+   }
+   
+   /* Responsive */
+   @media (max-width: 768px) {
+     .filters {
+       flex-direction: column;
+       align-items: flex-start;
+     }
+   
+     .course-dropdown {
+       width: 100%;
+       margin-bottom: 10px;
+     }
+   
+     .export-button {
+       width: 100%;
+     }
+   }
+   

@@ -66,7 +66,7 @@ const RespGestTopBar = () => {
 
         <li  className={location.pathname === "/respGest" ? "active" : ""}>
         <NavLink
-        to="/respGest/ListaTutores"
+        to="/respGest/VisualListTutor"
        
             >
             Tutores
