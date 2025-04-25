@@ -18,7 +18,7 @@ class Boleta extends Seeder{
         
         $boletas = [];
         
-        for ($i = 1; $i <= 6; $i++) {
+        for ($i = 1; $i <= 4; $i++) {
             $fechaEmision = Carbon::now()->subDays(rand(1, 30));
             $fechaPago = rand(0, 10) > 2 ? $fechaEmision->copy()->addDays(rand(1, 3)) : null;
             

@@ -1,0 +1,35 @@
+.search-containerB {
+    margin-bottom: 2rem;
+  }
+  
+  .search-wrapperB {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .search-iconB {
+    color: #888;
+    margin-right: 0.5rem;
+  }
+  
+  .search-inputB {
+    border: none;
+    outline: none;
+    margin-bottom: -0.3px;
+    background-color: #fff;
+    box-shadow: none;
+    width: 100%;
+    font-size: 0.9rem;
+    font-family: "Comfortaa", sans-serif;
+  }
+  
+  .search-input::placeholder {
+    color: #aaa;
+  }
+  

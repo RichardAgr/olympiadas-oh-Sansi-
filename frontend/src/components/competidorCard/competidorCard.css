@@ -1,0 +1,110 @@
+.competitor-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+  }
+  
+  .competitor-card.status-enabled {
+    background-color: rgba(40, 167, 69, 0.1);
+  }
+  
+  .competitor-card.status-pending {
+    background-color: rgba(13, 110, 253, 0.1);
+  }
+  
+  .competitor-card.status-disabled {
+    background-color: rgba(108, 117, 125, 0.1);
+  }
+  
+  .competitor-info {
+    flex: 1;
+  }
+  
+  .competitor-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .competitor-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .detail-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .detail-label {
+    font-weight: 500;
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .detail-value {
+    font-size: 0.9rem;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  .status-badge.habilitado {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+  }
+  
+  .status-badge.pendiente {
+    background-color: rgba(13, 110, 253, 0.2);
+    color: #0d6efd;
+  }
+  
+  .status-badge.deshabilitado {
+    background-color: rgba(108, 117, 125, 0.2);
+    color: #6c757d;
+  }
+  
+  .review-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .review-button.habilitado {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .review-button.pendiente {
+    background-color: #0d6efd;
+    color: white;
+  }
+  
+  .review-button.deshabilitado {
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  .review-button:hover {
+    opacity: 0.9;
+  }
+  
