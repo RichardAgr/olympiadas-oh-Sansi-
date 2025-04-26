@@ -10,7 +10,7 @@ function AppRouteLogin() {
       <Route path="login" element={<Login />} />
       <Route path="admin/*" element={<AppRouter />} />
       <Route path="respGest/*" element={<AppRouteRespGest />} />
-      <Route path="tutor/:id/*" element={<AppRouteTutor />} />
+      <Route path="homeTutor/:id/tutor/*" element={<AppRouteTutor />} />
       {/* Otras rutas de login */}
     </Routes>
   );

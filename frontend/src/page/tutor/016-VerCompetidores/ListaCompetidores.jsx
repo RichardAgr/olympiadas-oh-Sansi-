@@ -6,7 +6,7 @@ function ListaCompetidores() {
   const navigate = useNavigate();  // Para manejar la navegación programáticamente
   // Función para redirigir al usuario
   const handleEditCompetidor = () => {
-    navigate(`/tutor/${id}/ListaCompetidores/editarCompetidores`);
+    navigate(`/homeTutor/${id}/tutor/ListaCompetidores/editarCompetidores`);
   };
 
   return (

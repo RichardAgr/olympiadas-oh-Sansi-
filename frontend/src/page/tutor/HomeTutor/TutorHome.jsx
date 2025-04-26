@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, useParams } from "react-router-dom";
 
 function TutorHome () {
@@ -8,12 +7,12 @@ function TutorHome () {
       <h1>Home Tutor</h1>
       <div>
       <p>Inscribir Competidor:</p>
-        <Link to ={`/tutor/${id}/InscribirManual`}>
+        <Link to ={`/homeTutor/${id}/tutor/InscribirManual`}>
         <button style={{ margin: "10px", padding: "10px" }}>MANUAL</button>
         </Link>
         <button style={{ margin: "10px", padding: "10px" }}>EXCEL</button>
         <p>SUBIR COMPROBANTE:</p>
-        <Link to={`/tutor/${id}/SubirComprobante`} >
+        <Link to={`/homeTutor/${id}/tutor/SubirComprobante`} >
         <button style={{ margin: "10px", padding: "10px" }}>SUBIR COMPROBANTE DE PAGO</button>
         </Link>
         

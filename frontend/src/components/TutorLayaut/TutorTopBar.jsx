@@ -17,7 +17,7 @@ const TutorTopBar = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false); 
 
   const handleViewNotificacion = () => {
-    navigate(`/tutor/${id}/NotificacionesTutor`);
+    navigate(`/homeTutor/${id}/tutor/NotificacionesTutor`);
   }
 
   useEffect(() => {
@@ -46,8 +46,8 @@ const TutorTopBar = () => {
       <ul className={`topbar-menu ${menuOpen ? "show" : ""}`}>
         <li>
           <Link
-            to={`/tutor/${id}`}
-            className={location.pathname == (`/tutor/${id}`) ? "active" : ""}
+            to={`/homeTutor/${id}/tutor`}
+            className={location.pathname == (`/homeTutor/${id}/tutor`) ? "active" : ""}
           >
             Inicio
           </Link>
@@ -55,16 +55,16 @@ const TutorTopBar = () => {
 
         <li className="roles-dropdown">
           <Link
-            to={`/tutor/${id}/ListaCompetidores`}
-            className={location.pathname.startsWith (`/tutor/${id}/ListaCompetidores`)   ? "active" : ""  }
+            to={`/homeTutor/${id}/tutor/ListaCompetidores`}
+            className={location.pathname.startsWith (`/homeTutor/${id}/tutor/ListaCompetidores`)   ? "active" : ""  }
           >
             Competidores
           </Link>
         </li>
         
         <li className="roles-dropdown">
-          <Link to={`/tutor/${id}/VerBoletas`}
-            className={location.pathname === `/tutor/${id}/VerBoletas`  ? "active" : ""}>
+          <Link to={`/homeTutor/${id}/tutor/VerBoletas`}
+            className={location.pathname === `/homeTutor/${id}/tutor/VerBoletas`  ? "active" : ""}>
           Boletas de Pagos 
           </Link>
         </li>
@@ -83,8 +83,8 @@ const TutorTopBar = () => {
           </div>
           {userMenuOpen && (
             <ul className="dropdown-menu">
-              <li><Link to={`/tutor/${id}/MiPerfil`}>Mi perfil</Link></li>
-              <li><Link to={`/tutor/${id}/Configuracion`}>Configuración</Link></li>
+              <li><Link to={`/homeTutor/${id}/tutor/MiPerfil`}>Mi perfil</Link></li>
+              <li><Link to={`/homeTutor/${id}/tutor/Configuracion`}>Configuración</Link></li>
               <li><Link to={`/login`}>Cerrar Sesion</Link></li>
             </ul>
           )}
