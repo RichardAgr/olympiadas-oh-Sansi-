@@ -23,9 +23,6 @@ function TutorHome () {
         console.error("Error al obtener datos del tutor:", err)
         setError("No se pudieron cargar los datos del tutor")
         setLoading(false)
-        
-        // Usar datos simulados en caso de error
-        setTutor(tutoresData[id])
       }
     }
     

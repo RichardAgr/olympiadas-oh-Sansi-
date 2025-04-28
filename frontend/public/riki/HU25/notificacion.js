@@ -1,14 +1,5 @@
-// URL base para las peticiones API (ajustar según tu backend)
-const API_URL = "https://api.ejemplo.com"
-
-// Obtener notificaciones por usuario
 export const getNotificacionesByUsuario = async (usuarioId) => {
   try {
-    // En un entorno real, esta sería la llamada a la API
-    // const response = await axios.get(`${API_URL}/notificaciones/${usuarioId}`);
-    // return response.data;
-
-    // Para este ejemplo, usamos los datos mockeados
     return mockGetNotificaciones(usuarioId)
   } catch (error) {
     console.error("Error al obtener notificaciones:", error)
@@ -16,14 +7,8 @@ export const getNotificacionesByUsuario = async (usuarioId) => {
   }
 }
 
-// Marcar notificación como leída
 export const marcarComoLeida = async (notificacionId) => {
   try {
-    // En un entorno real, esta sería la llamada a la API
-    // const response = await axios.put(`${API_URL}/notificaciones/${notificacionId}/leer`);
-    // return response.data;
-
-    // Para este ejemplo, usamos los datos mockeados
     return mockMarcarComoLeida(notificacionId)
   } catch (error) {
     console.error("Error al marcar como leída:", error)
@@ -31,7 +16,7 @@ export const marcarComoLeida = async (notificacionId) => {
   }
 }
 
-// Datos mockeados para simular la API
+
 const notificacionesData = {
   1: [
     {
@@ -299,7 +284,7 @@ const notificacionesData = {
       },
       "fechaEnvio": "2025-03-24",
       "asunto": "Formulario de salud incompleto",
-      "mensaje": "El formulario de salud del competidor no ha sido completado.",
+      "mensaje": "El formulario de salud del competidor no ha sido completado. El formulario de salud del competidor no ha sido completado. El formulario de salud del competidor no ha sido completado. El formulario de salud del competidor no ha sido completado. El formulario de salud del competidor no ha sido completado. El formulario de salud del competidor no ha sido completado. El formulario de salud del competidor no ha sido completado. El formulario de salud del competidor no ha sido completado. ",
       "estado": false
     },
     {
@@ -325,7 +310,7 @@ const notificacionesData = {
   ]
 }
 
-// Función mock para simular getNotificaciones
+// simular getNotificaciones
 const mockGetNotificaciones = (usuarioId) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -334,7 +319,7 @@ const mockGetNotificaciones = (usuarioId) => {
   })
 }
 
-// Función mock para simular marcarComoLeida
+//  simular marcarComoLeida
 const mockMarcarComoLeida = (notificacionId) => {
   return new Promise((resolve) => {
     setTimeout(() => {
