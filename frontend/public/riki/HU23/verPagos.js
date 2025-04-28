@@ -1,4 +1,3 @@
-// Datos de ejemplo de boletas (simulando una base de datos)
 const boletasData = {   
   1: {
     "nombre_completo": "Juan Mendoza Perez",
