@@ -1,0 +1,73 @@
+.notificacion-item {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+  
+  .notificacion-item.no-leida {
+    border-left: 4px solid #2962ff;
+  }
+  
+  .notificacion-item.leida {
+    border-left: 4px solid #e0e0e0;
+    opacity: 0.8;
+  }
+  
+  .notificacion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .remitente {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  .fecha {
+    font-size: 12px;
+    color: #757575;
+  }
+  
+  .destinatario {
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: #555;
+  }
+  
+  .mensaje {
+    font-size: 14px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    color: #333;
+  }
+  
+  .acciones {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .ver-mas-btn {
+    background-color: #2962ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-family: "Comfortaa", sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .ver-mas-btn:hover {
+    background-color: #1e4bd8;
+  }
+  
+  .ver-mas-btn:disabled {
+    background-color: #b0bec5;
+    cursor: not-allowed;
+  }
+  

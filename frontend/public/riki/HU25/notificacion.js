@@ -1,69 +1,103 @@
+// URL base para las peticiones API (ajustar según tu backend)
+const API_URL = "https://api.ejemplo.com"
 
-// Datos de notificaciones (normalmente vendrían de una API)
+// Obtener notificaciones por usuario
+export const getNotificacionesByUsuario = async (usuarioId) => {
+  try {
+    // En un entorno real, esta sería la llamada a la API
+    // const response = await axios.get(`${API_URL}/notificaciones/${usuarioId}`);
+    // return response.data;
+
+    // Para este ejemplo, usamos los datos mockeados
+    return mockGetNotificaciones(usuarioId)
+  } catch (error) {
+    console.error("Error al obtener notificaciones:", error)
+    throw error
+  }
+}
+
+// Marcar notificación como leída
+export const marcarComoLeida = async (notificacionId) => {
+  try {
+    // En un entorno real, esta sería la llamada a la API
+    // const response = await axios.put(`${API_URL}/notificaciones/${notificacionId}/leer`);
+    // return response.data;
+
+    // Para este ejemplo, usamos los datos mockeados
+    return mockMarcarComoLeida(notificacionId)
+  } catch (error) {
+    console.error("Error al marcar como leída:", error)
+    throw error
+  }
+}
+
+// Datos mockeados para simular la API
 const notificacionesData = {
   1: [
     {
-        "notificacion_id": 1,
-        "responsableGestion": {
-          "responsable_id": 1,
-          "nombres": "JULIO CESAR",
-          "apellidos": "COSSIO MONTENEGRO"
-        },
-        "destinatario": {
-          "tipo": "competidor",
-          "competidor": {
-            "competidor_id": 1,
-            "nombres": "SANTIAGO",
-            "apellidos": "PEREZ MENDOZA"
-          }
-        },
-        "fechaEnvio": "2025-03-12",
-        "asunto": "Nombre incorrecto en registros",
-        "mensaje": "El nombre registrado no coincide con el documento de identidad. Corrija esta discrepancia.",
-        "estado": false
+      notificacion_id: 1,
+      responsableGestion: {
+        responsable_id: 1,
+        nombres: "JULIO CESAR",
+        apellidos: "COSSIO MONTENEGRO",
       },
-      {
-        "notificacion_id": 2,
-        "responsableGestion": {
-          "responsable_id": 1,
-          "nombres": "JULIO CESAR",
-          "apellidos": "COSSIO MONTENEGRO"
+      destinatario: {
+        tipo: "competidor",
+        competidor: {
+          competidor_id: 1,
+          nombres: "SANTIAGO",
+          apellidos: "PEREZ MENDOZA",
         },
-        "destinatario": {
-          "tipo": "tutor",
-          "tutor": {
-            "tutor_id": 1,
-            "nombres": "CARLOS ALBERTO",
-            "apellidos": "GOMEZ MARTINEZ"
-          }
-        },
-        "fechaEnvio": "2025-03-13",
-        "asunto": "Cuenta deshabilitada",
-        "mensaje": "Su cuenta ha sido deshabilitada temporalmente por intentos fallidos de autenticación.",
-        "estado": true
       },
-      {
-        "notificacion_id": 3,
-        "responsableGestion": {
-          "responsable_id": 2,
-          "nombres": "MARIA FERNANDA",
-          "apellidos": "LOPEZ GARCIA"
+      fechaEnvio: "2025-03-12",
+      asunto: "Nombre incorrecto en registros",
+      mensaje:
+        "El nombre del competidor Santiago Perez Mendoza no cumple con los requisitos establecidos en el reglamento.",
+      estado: false,
+    },
+    {
+      notificacion_id: 2,
+      responsableGestion: {
+        responsable_id: 1,
+        nombres: "JULIO CESAR",
+        apellidos: "COSSIO MONTENEGRO",
+      },
+      destinatario: {
+        tipo: "competidor",
+        competidor: {
+          competidor_id: 2,
+          nombres: "MARIANA",
+          apellidos: "GONZALES AGUIRRE",
         },
-        "destinatario": {
-          "tipo": "competidor",
-          "competidor": {
-            "competidor_id": 2,
-            "nombres": "VALERIA",
-            "apellidos": "SANCHEZ RODRIGUEZ"
-          }
+      },
+      fechaEnvio: "2025-03-11",
+      asunto: "Correo electrónico inválido",
+      mensaje:
+        "El correo electrónico tiene un formato válido, pero pertenece a un dominio no permitido para el registro.",
+      estado: false,
+    },
+    {
+      notificacion_id: 3,
+      responsableGestion: {
+        responsable_id: 1,
+        nombres: "JULIO CESAR",
+        apellidos: "COSSIO MONTENEGRO",
+      },
+      destinatario: {
+        tipo: "competidor",
+        competidor: {
+          competidor_id: 3,
+          nombres: "JUAN CARLOS",
+          apellidos: "PEREZ TORREZ",
         },
-        "fechaEnvio": "2025-03-14",
-        "asunto": "Documentación rechazada",
-        "mensaje": "El certificado médico enviado no cumple con los requisitos. Por favor, suba uno válido.",
-        "estado": false
-      }
+      },
+      fechaEnvio: "2025-03-11",
+      asunto: "Correo electrónico inválido",
+      mensaje:
+        "El correo electrónico tiene un formato válido, pero pertenece a un dominio no permitido para el registro.",
+      estado: false,
+    },
   ],
-
   2: [
     {
       "notificacion_id": 4,
@@ -289,38 +323,22 @@ const notificacionesData = {
       "estado": true
     }
   ]
+}
 
-
-};
-
-
-
-
-let notificaciones = [...notificacionesData.notificaciones];
-
-// Servicio para obtener notificaciones por tutor
-export const getNotificaciones = async (tutorId) => {
-  return new Promise(resolve => {
+// Función mock para simular getNotificaciones
+const mockGetNotificaciones = (usuarioId) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
-      const filtradas = notificaciones.filter(notif =>
-        notif.destinatario.tipo === "tutor" &&
-        notif.destinatario.tutor.tutor_id === tutorId
-      );
-      resolve({ [tutorId]: filtradas });
-    }, 300);
-  });
-};
+      resolve(notificacionesData)
+    }, 500)
+  })
+}
 
-// Servicio para marcar como leída
-export const marcarComoLeida = async (notificacionId) => {
-  return new Promise(resolve => {
+// Función mock para simular marcarComoLeida
+const mockMarcarComoLeida = (notificacionId) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
-      notificaciones = notificaciones.map(notif => 
-        notif.notificacion_id === notificacionId 
-          ? { ...notif, estado: true } 
-          : notif
-      );
-      resolve({ success: true });
-    }, 300);
-  });
-};
+      resolve({ success: true })
+    }, 300)
+  })
+}
