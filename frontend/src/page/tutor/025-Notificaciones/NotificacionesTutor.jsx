@@ -2,6 +2,7 @@ import { useParams} from 'react-router-dom';
 import { useState, useEffect } from "react"
 import { getNotificacionesByUsuario} from '../../../../public/riki/HU25/notificacion';
 import NotificacionesList from '../../../components/notificacionesList/NotificacionesList';
+import "./notificacionesTutor.css"
 
 function NotificacionesTutor() {
   const [notificaciones, setNotificaciones] = useState([])
