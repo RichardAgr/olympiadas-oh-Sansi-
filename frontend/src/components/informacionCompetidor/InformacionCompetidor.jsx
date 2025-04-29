@@ -130,7 +130,6 @@ export default function InformacionCompetidor() {
   }
 
   const handleShowReceipt = () => {
-    console.log("se Muestra")
     setShowReceipt(true)
   }
 

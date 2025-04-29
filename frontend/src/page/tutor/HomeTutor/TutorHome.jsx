@@ -16,7 +16,6 @@ function TutorHome () {
     const fetchTutorData = async () => {
       try {
         const response = await getTutorById(id)
-        console.log(response)
         setTutor(response)
         setLoading(false)
       } catch (err) {
