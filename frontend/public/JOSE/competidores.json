@@ -1,0 +1,74 @@
+[
+  {
+    "competidor_id": 1,
+    "nombres": "Juan",
+    "apellidos": "Pérez",
+    "ci": "1234567",
+    "fechaNacimiento": "2005-05-15",
+    "colegio": "Colegio San José",
+    "curso": "4to de secundaria",
+    "departamento": "La Paz",
+    "provincia": "Murillo",
+    "areasInscritas": "Matemáticas,Física"
+  },
+  {
+    "competidor_id": 2,
+    "nombres": "PedRo",
+    "apellidos": "Gómez Gonzales",
+    "ci": "1234567",
+    "fechaNacimiento": "2005-05-15",
+    "colegio": "Colegio San José",
+    "curso": "4to de secundaria",
+    "departamento": "La Paz",
+    "provincia": "Murillo",
+    "areasInscritas": "Matemáticas,Física"
+  },
+  {
+    "competidor_id": 3,
+    "nombres": "Teresa",
+    "apellidos": "Morales Ayala",
+    "ci": "1234567",
+    "fechaNacimiento": "2005-05-15",
+    "colegio": "Colegio San José",
+    "curso": "4to de secundaria",
+    "departamento": "La Paz",
+    "provincia": "Murillo",
+    "areasInscritas": "Matemáticas,Física"
+  },
+  {
+    "competidor_id": 4,
+    "nombres": "María",
+    "apellidos": "Cruz Villarroel",
+    "ci": "1234567",
+    "fechaNacimiento": "2005-05-15",
+    "colegio": "Colegio San José",
+    "curso": "4to de secundaria",
+    "departamento": "La Paz",
+    "provincia": "Murillo",
+    "areasInscritas": "Matemáticas,Física"
+  },
+  {
+    "competidor_id": 5,
+    "nombres": "Diego",
+    "apellidos": "Gómez Gonzales",
+    "ci": "1234567",
+    "fechaNacimiento": "2005-05-15",
+    "colegio": "Colegio San José",
+    "curso": "4to de secundaria",
+    "departamento": "La Paz",
+    "provincia": "Murillo",
+    "areasInscritas": "Matemáticas,Física"
+  },
+  {
+    "competidor_id": 6,
+    "nombres": "Alejandro",
+    "apellidos": "Chura Ticona",
+    "ci": "1234567",
+    "fechaNacimiento": "2005-05-15",
+    "colegio": "Colegio San José",
+    "curso": "4to de secundaria",
+    "departamento": "La Paz",
+    "provincia": "Murillo",
+    "areasInscritas": "Matemáticas,Física"
+  }
+]

@@ -1,0 +1,52 @@
+ [
+    {
+      "competidor_id": 1,
+      "nombre_completo": "Pedro Gómez Gonzales",
+      "area": "Matemáticas",
+      "categoria": "Avanzado",
+      "curso": "3ro de secundaria",
+      "estado": "Habilitado"
+    },
+    {
+      "competidor_id": 2,
+      "nombre_completo": "Teresa Morales Ayala",
+      "area": "Matemáticas",
+      "categoria": "Intermedio",
+      "curso": "4to de secundaria",
+      "estado": "Habilitado"
+    },
+    {
+      "competidor_id": 3,
+      "nombre_completo": "Juan García Moreira",
+      "area": "Matemáticas",
+      "categoria": "Avanzado",
+      "curso": "4to de secundaria",
+      "estado": "Deshabilitado"
+    },
+    {
+      "competidor_id": 4,
+      "nombre_completo": "María Cruz Villarroel",
+      "area": "Física",
+      "categoria": "Intermedio",
+      "curso": "3ro de secundaria",
+      "estado": "Habilitado"
+    },
+    {
+      "competidor_id": 5,
+      "nombre_completo": "Mónica Mercedes Campo",
+      "area": "Física",
+      "categoria": "Avanzado",
+      "curso": "4to de secundaria",
+      "estado": "Habilitado"
+    },
+    {
+      "competidor_id": 6,
+      "nombre_completo": "Marco Antonio Morales Salazar",
+      "area": "Biología",
+      "categoria": "Intermedio",
+      "curso": "4to de secundaria",
+      "estado": "Habilitado"
+    }
+  ]
+
+
