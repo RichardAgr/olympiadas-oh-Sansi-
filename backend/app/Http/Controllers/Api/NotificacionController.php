@@ -102,5 +102,35 @@ class NotificacionController extends Controller{
         'data' => $resultado
     ], 200);
 }
+public function cambiarEstadoNotificacion(Request $request, $id_tutor, $id_notificacion)
+{
+    $notificacion = Notificacion::where('tutor_id', $id_tutor)
+        ->where('notificacion_id', $id_notificacion)
+        ->first();
+
+    if (!$notificacion) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Notificación no encontrada',
+        ], 404);
+    }
+
+    if ($notificacion->estado) {
+        return response()->json([
+            'success' => false,
+            'message' => 'La notificación ya está en estado leído',
+        ], 400);
+    }
+
+    // Solo cambiamos si el estado aún no era leído (false)
+    $notificacion->estado = true;
+    $notificacion->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Estado de la notificación actualizado correctamente',
+        'data' => $notificacion
+    ], 200);
+}
 
 }
