@@ -53,4 +53,54 @@ class NotificacionController extends Controller{
             ], 500);
         }
     }
+    public function VerNotificacionesTutor(Request $request, $id_tutor)
+{
+    $notificaciones = Notificacion::with(['responsable', 'competidor', 'tutor'])
+        ->where('tutor_id', $id_tutor)
+        ->get();
+
+    $resultado = $notificaciones->map(function ($notificacion) {
+        // Determinar destinatario
+        if ($notificacion->competidor_id !== null) {
+            $destinatario = [
+                'tipo' => 'competidor',
+                'competidor' => [
+                    'competidor_id' => optional($notificacion->competidor)->competidor_id,
+                    'nombres' => optional($notificacion->competidor)->nombres,
+                    'apellidos' => optional($notificacion->competidor)->apellidos,
+                ]
+            ];
+        } else {
+            $destinatario = [
+                'tipo' => 'tutor',
+                'tutor' => [
+                    'tutor_id' => optional($notificacion->tutor)->tutor_id,
+                    'nombres' => optional($notificacion->tutor)->nombres,
+                    'apellidos' => optional($notificacion->tutor)->apellidos,
+                ]
+            ];
+        }
+
+        return [
+            'notificacion_id' => $notificacion->notificacion_id,
+            'responsableGestion' => [
+                'responsable_id' => optional($notificacion->responsable)->responsable_id,
+                'nombres' => optional($notificacion->responsable)->nombres,
+                'apellidos' => optional($notificacion->responsable)->apellidos,
+            ],
+            'destinatario' => $destinatario,
+            'fechaEnvio' => optional($notificacion->fecha_envio)->toDateString(),
+            'asunto' => $notificacion->asunto,
+            'mensaje' => $notificacion->mensaje,
+            'estado' => (bool) $notificacion->estado,
+        ];
+    });
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Notificaciones del tutor obtenidas correctamente',
+        'data' => $resultado
+    ], 200);
+}
+
 }
