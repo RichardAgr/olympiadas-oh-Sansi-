@@ -28,7 +28,7 @@ function EditarCompetidores() {
       try {
         const response = await axios.get("/JOSE/competidores.json");
         const competidorEncontrado = response.data.find(
-          (c) => c.competidor_id === parseInt(idCompetidor)
+          (c) => c.competidor_id === parseInt(idCompetidor) && c.tutor_id.toString() === tutorId
         );
 
         if (!competidorEncontrado) {
@@ -43,7 +43,7 @@ function EditarCompetidores() {
       }
     };
     fetchData();
-  }, [idCompetidor]);
+  }, [idCompetidor, tutorId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
