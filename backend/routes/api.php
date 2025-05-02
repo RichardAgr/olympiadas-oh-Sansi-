@@ -54,6 +54,7 @@ Route::post('/notificaciones', [NotificacionController::class, 'crearNotificacio
 
 Route::get('/estadisticasRespoGestion', [EstadisticasController::class, 'obtenerEstadisticasGenerales']);
 Route::get('/tutor/perfil/{id}', [TutorController::class, 'verPerfilTutor']);
+Route::get('/tutor/{id}/boletas', [BoletaController::class, 'boletasPorTutor']);
 
 
 
