@@ -53,4 +53,7 @@ Route::get('/detallesCompetidor', [CompetidorController::class, 'obtenerDetalles
 Route::post('/notificaciones', [NotificacionController::class, 'crearNotificacion']);
 
 Route::get('/estadisticasRespoGestion', [EstadisticasController::class, 'obtenerEstadisticasGenerales']);
+Route::get('/tutor/perfil/{id}', [TutorController::class, 'verPerfilTutor']);
+
+
 

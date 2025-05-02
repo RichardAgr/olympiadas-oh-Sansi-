@@ -7,7 +7,7 @@ use App\Models\Tutor;
 use App\Models\Competidor;
 use App\Models\TutorCompetidor;
 use App\Models\CompetidorCompetencia;
-use App\Models\Area;;
+use App\Models\Area;
 use App\Http\Resources\CompetidoresTutorResource;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
-class TutorController extends Controller{
-    public function competidoresTutor($id){
+class TutorController extends Controller
+{
+    public function competidoresTutor($id)
+    {
         try {
             $tutor = Tutor::find($id);
             if (!$tutor) {
@@ -34,12 +36,12 @@ class TutorController extends Controller{
                 'curso.nombre as curso',
                 'grado.nombre as grado'
             ])
-            ->join('tutor_competidor', 'competidor.competidor_id', '=', 'tutor_competidor.competidor_id')
-            ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
-            ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
-            ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
-            ->where('tutor_competidor.tutor_id', $id)
-            ->get();
+                ->join('tutor_competidor', 'competidor.competidor_id', '=', 'tutor_competidor.competidor_id')
+                ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
+                ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
+                ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
+                ->where('tutor_competidor.tutor_id', $id)
+                ->get();
 
             $competidoresFormateados = $competidores->map(function ($competidor) {
                 $areas = CompetidorCompetencia::select('area.nombre')
@@ -62,7 +64,6 @@ class TutorController extends Controller{
                 ];
             });
 
-            // Construir la respuesta en el formato solicitado
             $respuesta = [
                 'data' => [
                     'estudiantes' => $competidoresFormateados
@@ -79,13 +80,9 @@ class TutorController extends Controller{
         }
     }
 
-
-    public function obtenerInformacionTutores(Request $request){
+    public function obtenerInformacionTutores(Request $request)
+    {
         try {
-                // En esta parte deberia ir la paginacion si es que se tiene mas de 100 tutores 
-                //se recomiendo que sea de 15 en 15
-
-
             $tutores = Tutor::select([
                 'tutor.tutor_id',
                 'tutor.nombres',
@@ -96,30 +93,27 @@ class TutorController extends Controller{
                 'tutor.estado',
                 'tutor.created_at'
             ])
-            ->withCount(['competidores' => function ($query) {
-            }])
-            ->withCount(['competidores as competidores_habilitados_count' => function ($query) {
-                $query->where('competidor.estado', 'Habilitado');
-            }])
-            ->withCount(['competidores as competidores_deshabilitados_count' => function ($query) {
-                $query->where('competidor.estado', 'Deshabilitado');
-            }])
-            ->withCount(['competidores as competidores_pendientes_count' => function ($query) {
-                $query->where('competidor.estado', 'Pendiente');
-            }]);
-            
-            
-            // Ordenar resultados
+                ->withCount(['competidores' => function ($query) {
+                }])
+                ->withCount(['competidores as competidores_habilitados_count' => function ($query) {
+                    $query->where('competidor.estado', 'Habilitado');
+                }])
+                ->withCount(['competidores as competidores_deshabilitados_count' => function ($query) {
+                    $query->where('competidor.estado', 'Deshabilitado');
+                }])
+                ->withCount(['competidores as competidores_pendientes_count' => function ($query) {
+                    $query->where('competidor.estado', 'Pendiente');
+                }]);
+
             $ordenarPor = $request->input('ordenar_por', 'tutor_id');
             $orden = $request->input('orden', 'asc');
             $tutores->orderBy($ordenarPor, $orden);
-            
-            // Obtener todos los resultados
+
             $tutoresResultados = $tutores->get();
             $tutoresFormateados = $tutoresResultados->map(function ($tutor) {
-            $estadoFormateado = $tutor->estado ? 'activo' : 'inactivo';
-            $fechaRegistro = $tutor->created_at ? Carbon::parse($tutor->created_at)->format('d/m/Y') : null;
-                
+                $estadoFormateado = $tutor->estado ? 'activo' : 'inactivo';
+                $fechaRegistro = $tutor->created_at ? Carbon::parse($tutor->created_at)->format('d/m/Y') : null;
+
                 return [
                     'tutor_id' => $tutor->tutor_id,
                     'nombres' => $tutor->nombres,
@@ -135,7 +129,7 @@ class TutorController extends Controller{
                     'fechaRegistro' => $fechaRegistro
                 ];
             });
-            
+
             return response()->json($tutoresFormateados);
         } catch (\Exception $e) {
             return response()->json([
@@ -146,7 +140,8 @@ class TutorController extends Controller{
         }
     }
 
-    public function actualizarEstadoTutor(Request $request, $id){
+    public function actualizarEstadoTutor(Request $request, $id)
+    {
         $validator = Validator::make($request->all(), [
             'estado' => 'required|boolean',
         ]);
@@ -160,7 +155,6 @@ class TutorController extends Controller{
         }
 
         try {
-
             $tutor = Tutor::find($id);
 
             if (!$tutor) {
@@ -194,4 +188,49 @@ class TutorController extends Controller{
             ], 500);
         }
     }
+
+    // MÉTODO: HU-014 - Ver información personal del tutor  SIN LOGIN (usando ID directamente)
+    public function verPerfilTutor($id)
+    {
+        try {
+            $tutor = Tutor::find($id);
+    
+            if (!$tutor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tutor no encontrado'
+                ], 404);
+            }
+    
+            $competidoresCount = TutorCompetidor::where('tutor_id', $tutor->tutor_id)->count();
+    
+            $areasCount = DB::table('competidor_competencia')
+                ->join('tutor_competidor', 'competidor_competencia.competidor_id', '=', 'tutor_competidor.competidor_id')
+                ->where('tutor_competidor.tutor_id', $tutor->tutor_id)
+                ->distinct()
+                ->count('competidor_competencia.area_id');
+    
+            return response()->json([
+                'tutor_id' => $tutor->tutor_id,
+                'ci' => $tutor->ci,
+                'nombres' => $tutor->nombres,
+                'apellidos' => $tutor->apellidos,
+                'correo_electronico' => $tutor->correo_electronico,
+                'telefono' => $tutor->telefono,
+                'estado' => (bool) $tutor->estado, 
+                'fecha_registro' => optional($tutor->created_at)->format('Y-m-d'),
+                'competidores_asignados' => $competidoresCount,
+                'areas_asignadas' => $areasCount
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener el perfil del tutor',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+
 }
+
