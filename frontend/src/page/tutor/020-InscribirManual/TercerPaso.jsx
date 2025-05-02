@@ -63,41 +63,41 @@ function TercerPaso({ onBack, onSubmit }) {
         },
       ],
     };
-  
+
     const doc = new jsPDF();
-  
+
     doc.setFontSize(10);
     doc.text("UNIVERSIDAD MAYOR DE SAN SIMON", 14, 10);
     doc.text("DIRECCION ADMINISTRATIVA Y FINANCIERA", 14, 15);
-  
+
     doc.setFontSize(12);
     doc.setTextColor(255, 0, 0);
     doc.text(`Nro. ${boletaData.numero}`, 160, 15);
-  
+
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
     doc.text("BOLETA DE PAGO", 105, 30, { align: "center" });
-  
+
     doc.setFontSize(12);
     doc.text("Periodo :", 14, 45);
     doc.text(boletaData.periodo, 45, 45);
-  
+
     doc.text("Área :", 14, 52);
     doc.text(boletaData.area, 45, 52);
-  
+
     doc.text("Nombre :", 14, 59);
     doc.text(boletaData.nombre, 45, 59);
-  
+
     doc.text("Monto Total (Bs) :", 14, 66);
     doc.text(boletaData.montoTotal.toString(), 60, 66);
-  
+
     const bodyData = boletaData.competidores.map((c, i) => [
       `${i + 1}.`,
       c.nombre,
       c.categoria,
       c.monto.toFixed(2),
     ]);
-  
+
     autoTable(doc, {
       startY: 75,
       head: [["Nro", "Nombre Competidor", "Categoría", "Monto"]],
@@ -105,21 +105,22 @@ function TercerPaso({ onBack, onSubmit }) {
       styles: { fontSize: 10, cellPadding: 3 },
       headStyles: { fillColor: [255, 255, 255], textColor: 0 },
     });
-  
+
     // Guarda localmente
     doc.save("boleta_pago.pdf");
-  
-    // Envía al servidor para guardar en assets
+
+    // Prepara la solicitud para el backend, aunque aún no esté conectado
     try {
       const pdfBlob = doc.output("blob");
       const formData = new FormData();
       formData.append("file", pdfBlob, `boleta_${boletaData.numero}.pdf`);
-  
-      const response = await fetch("http://localhost:8000/api/guardar-boleta", {
+
+      // Aquí se conectará al backend cuando esté listo
+      const response = await fetch(`http://localhost:8000/api/guardar-boleta/${idTutor}`, { 
         method: "POST",
         body: formData,
       });
-  
+
       const result = await response.json();
       if (!response.ok) {
         console.error("Error al guardar en el servidor:", result.message || result);
@@ -129,7 +130,7 @@ function TercerPaso({ onBack, onSubmit }) {
     } catch (error) {
       console.error("Fallo en la subida de PDF:", error);
     }
-  };  
+  };
 
   const renderTutorCard = (index) => {
     const tutor = tutores[index];
