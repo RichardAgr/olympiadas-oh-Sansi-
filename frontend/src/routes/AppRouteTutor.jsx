@@ -18,7 +18,7 @@ function AppRouteTutor() {
         <Route index element={<TutorHome />} />
         {/* Otras rutas dentro de homeRespGestion */}
         <Route path="ListaCompetidores" element={<ListaCompetidores />} />
-        <Route path="ListaCompetidores/editarCompetidores" element={<EditarCompetidores />} />
+        <Route path="ListaCompetidores/editarCompetidores/:idCompetidor" element={<EditarCompetidores />} />
         <Route path="VerBoletas" element={<BoletasView />} />
         <Route path="NotificacionesTutor" element={<NotificacionesTutor />} />
         <Route path="MiPerfil" element={<MiPerfil/>}/>
