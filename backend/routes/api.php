@@ -44,13 +44,15 @@ Route::get('/tutores/{tutorId}/competidores', [TutorController::class, 'competid
 Route::get('/tutoresInformacion', [TutorController::class, 'obtenerInformacionTutores']);
 Route::put('/tutores/{id}/estado', [TutorController::class, 'actualizarEstadoTutor']);
 Route::get('/tutores/{id}/competidores-filtrados', [TutorController::class, 'competidoresFiltrados']);
+Route::put('/tutor/{tutor_id}/competidor/{competidor_id}', [TutorController::class, 'actualizarDatosCompetidor']);
 
 
 Route::get('/competidores', [CompetidorController::class, 'index']);
 Route::get('/informacionCompetidores/{id}/competidor', [CompetidorController::class, 'getDetallesCompetidor']);
 Route::put('/competidor/{id}/estado', [CompetidorController::class, 'actualizarEstadoCompetidor']);
 Route::get('/detallesCompetidor', [CompetidorController::class, 'obtenerDetallesCompetidor']);
-
+Route::get('/competidor/{id}', [CompetidorController::class, 'getDetallesCompetidor']);
+Route::put('/competidor/{id}', [CompetidorController::class, 'update']);
 
 Route::post('/notificaciones', [NotificacionController::class, 'crearNotificacion']);
 

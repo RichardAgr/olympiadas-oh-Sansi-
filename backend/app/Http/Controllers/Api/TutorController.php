@@ -250,4 +250,95 @@ class TutorController extends Controller{
         }
     }
 
+    public function actualizarDatosCompetidor(Request $request, $tutor_id, $competidor_id)
+    {
+        $validator = Validator::make($request->all(), [
+            'nombres' => 'required|string',
+            'apellidos' => 'required|string',
+            'ci' => 'required|string',
+            'fechaNacimiento' => 'required|date',
+            'colegio' => 'required|string',
+            'curso' => 'required|string',
+            'departamento' => 'required|string',
+            'provincia' => 'required|string',
+            'areasInscritas' => 'required|array'
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Confirm the tutor is linked to this competidor
+            $asignacion = DB::table('tutor_competidor')
+                ->where('tutor_id', $tutor_id)
+                ->where('competidor_id', $competidor_id)
+                ->first();
+
+            if (!$asignacion) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Este tutor no tiene asignado este competidor.'
+                ], 403);
+            }
+
+            $competidor = Competidor::find($competidor_id);
+            if (!$competidor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Competidor no encontrado.'
+                ], 404);
+            }
+
+            // Actualizar datos simples
+            $competidor->nombres = $request->nombres;
+            $competidor->apellidos = $request->apellidos;
+            $competidor->ci = $request->ci;
+            $competidor->fecha_nacimiento = $request->fechaNacimiento;
+            $competidor->departamento = $request->departamento;
+            $competidor->provincia = $request->provincia;
+            $competidor->save();
+
+            // Actualizar colegio
+            $colegio = Colegio::firstOrCreate(['nombre' => $request->colegio]);
+            $competidor->colegio_id = $colegio->colegio_id;
+
+            // Actualizar curso
+            $curso = Curso::firstOrCreate(['nombre' => $request->curso]);
+            $competidor->curso_id = $curso->curso_id;
+
+            $competidor->save();
+
+            // Actualizar áreas inscritas
+            $areaNombres = array_map('trim', explode(',', $request->areasInscritas));
+            $areaIDs = Area::whereIn('nombre', $areaNombres)->pluck('area_id')->toArray();
+
+            // Sincronizar en tabla pivote competidor_competencia
+            DB::table('competidor_competencia')->where('competidor_id', $competidor_id)->delete();
+
+            foreach ($areaIDs as $areaID) {
+                DB::table('competidor_competencia')->insert([
+                    'competidor_id' => $competidor_id,
+                    'area_id' => $areaID
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Datos del competidor actualizados correctamente.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
