@@ -295,8 +295,6 @@ function configurarHojaCompetidores(hoja) {
     { header: "Nombres (*)", key: "nombres", width: 20 },
     { header: "Apellidos (*)", key: "apellidos", width: 20 },
     { header: "Fecha Nacimiento (*)", key: "fecha_nacimiento", width: 25 },
-    { header: "Correo Electrónico", key: "correo", width: 30 },
-    { header: "Teléfono", key: "telefono", width: 15 },
     { header: "Colegio (*)", key: "colegio", width: 25 },
     { header: "Curso (*)", key: "curso", width: 20 },
     { header: "Departamento (*)", key: "departamento", width: 20 },
@@ -342,14 +340,14 @@ function configurarHojaCompetidores(hoja) {
       operator: "between",
       showErrorMessage: true,
       allowBlank: false,
-      formulae: [1, 7],
+      formulae: [7],
       errorStyle: "error",
       errorTitle: "CI Inválido",
-      error: "El CI debe tener entre 1 y 7 caracteres",
+      error: "El CI debe tener entre 7 dígitos",
     }
   }
 
-  // Validación para fecha de nacimiento (debe ser una fecha)
+  // Validación para fecha de nacimiento 
   for (let i = 2; i <= 101; i++) {
     hoja.getCell(`E${i}`).dataValidation = {
       type: "date",
