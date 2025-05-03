@@ -106,7 +106,7 @@ export async function generateExcelTemplate() {
   })
   row++
 
-  // Datos de ejemplo para la tabla de áreas y categorías
+  // Datos de ejemplo para la tabla de áreas y categorías backend123
   const areasCategoriasData = [
     ["ASTRONOMÍA - ASTROFÍSICA", "3P", "3ro Primaria"],
     ["ASTRONOMÍA - ASTROFÍSICA", "4P", "4to Primaria"],
@@ -335,13 +335,13 @@ function configurarHojaCompetidores(hoja) {
     { header: "CI (*)", key: "ci", width: 15 },
     { header: "Nombres (*)", key: "nombres", width: 20 },
     { header: "Apellidos (*)", key: "apellidos", width: 20 },
-    { header: "Fecha Nacimiento (*)", key: "fecha_nacimiento", width: 15 },
-    { header: "Correo Electrónico", key: "correo", width: 25 },
+    { header: "Fecha Nacimiento (*)", key: "fecha_nacimiento", width: 25 },
+    { header: "Correo Electrónico", key: "correo", width: 30 },
     { header: "Teléfono", key: "telefono", width: 15 },
     { header: "Colegio (*)", key: "colegio", width: 25 },
-    { header: "Curso (*)", key: "curso", width: 15 },
-    { header: "Departamento (*)", key: "departamento", width: 15 },
-    { header: "Provincia (*)", key: "provincia", width: 15 },
+    { header: "Curso (*)", key: "curso", width: 20 },
+    { header: "Departamento (*)", key: "departamento", width: 20 },
+    { header: "Provincia (*)", key: "provincia", width: 20},
     { header: "Área 1 (*)", key: "area1", width: 20 },
     { header: "Categoría/Nivel 1 (*)", key: "nivel1", width: 20 },
     { header: "Área 2", key: "area2", width: 20 },

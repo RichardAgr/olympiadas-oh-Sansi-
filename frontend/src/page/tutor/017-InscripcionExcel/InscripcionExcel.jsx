@@ -30,8 +30,6 @@ const InscripcionMasiva = () => {
     }
   }
 
-
-
   const renderStepContent = () => {
     switch (step) {
       case 1:
@@ -295,8 +293,7 @@ const InscripcionMasiva = () => {
 
   return (
     <div className="inscripcionMasiva">
-      <h1>Olimpiadas Oh! SanSi</h1>
-      <h2>Sistema de Inscripción Masiva</h2>
+      <h1>Inscripción Mediante Excel</h1>
 
       <div className="stepsContainer">
         <div className={`step ${step >= 1 ? "active" : ""} ${step > 1 ? "completed" : ""}`}>
