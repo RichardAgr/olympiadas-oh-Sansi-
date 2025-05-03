@@ -545,7 +545,6 @@ function configurarHojaRelacionCompetidorTutor(hoja) {
     { header: "Relación con Competidor (*)", key: "relacion", width: 25 },
     { header: "Responsable de Pago", key: "responsable_pago", width: 18 },
     { header: "Área Específica", key: "area_especifica", width: 20 },
-    { header: "Observaciones", key: "observaciones", width: 30 },
   ]
 
   hoja.columns = headers
@@ -594,7 +593,7 @@ function configurarHojaRelacionCompetidorTutor(hoja) {
     hoja.getCell(`E${i}`).dataValidation = {
       type: "list",
       allowBlank: false,
-      formulae: ['"Profesor,Padre/Madre,Familiar,Otro"'],
+      formulae: ['"Profesor,Padre,Madre"'],
       showErrorMessage: true,
       errorStyle: "error",
       errorTitle: "Relación Inválida",
@@ -628,7 +627,7 @@ function configurarHojaRelacionCompetidorTutor(hoja) {
     }
   }
 
-  // Agregar numeración automática
+  // Agregar numeración 
   for (let i = 2; i <= 101; i++) {
     hoja.getCell(`A${i}`).value = { formula: `=${i - 1}` }
     hoja.getCell(`A${i}`).alignment = { horizontal: "center" }
