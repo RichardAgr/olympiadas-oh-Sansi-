@@ -83,7 +83,7 @@ const ListComp = () => {
   if (!tutorExiste) {
     return (
       <div className="error-message">
-        No se encontraron competidores para el tutor con ID {id} o el tutor no existe.
+        No se encontraron competidores del tutor.
       </div>
     );
   }
