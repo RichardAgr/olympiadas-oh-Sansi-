@@ -35,7 +35,7 @@ const InscripcionMasiva = () => {
     }
   }
   const handleFileUpload = async (uploadedFile) => {
-    console.log(uploadedFile)
+    console.log("Se cargo el excel")
   }
 
   const renderStepContent = () => {
