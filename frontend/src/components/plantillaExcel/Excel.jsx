@@ -31,7 +31,7 @@ export async function generateExcelTemplate() {
     llenarHojaAreas(hojaAreas)
     llenarHojaNiveles(hojaNiveles)
     configurarHojaCompetidores(hojaCompetidores)
-    configurarHojaTutores(hojaTutores)
+    configurarHojaTutores(hojaTutores) //------> Por hacer
     configurarHojaRelacionCompetidorTutor(hojaRelacionCompetidorTutor)
 
     // Agregar ejemplos de datos
@@ -208,7 +208,7 @@ function llenarHojaAreas(hoja) {
   hoja.getCell("B1").value = "Nombre"
   hoja.getCell("C1").value = "Costo"
 
-  // Datos de áreas
+  // Datos de áreas backend123
   const areasData = [
     [1, "ASTRONOMÍA - ASTROFÍSICA", 15],
     [2, "BIOLOGÍA", 15],
@@ -234,7 +234,7 @@ function llenarHojaNiveles(hoja) {
   hoja.getCell("C1").value = "Nombre"
   hoja.getCell("D1").value = "Grados"
 
-  // Datos de niveles/categorías
+  // Datos de niveles/categorías backend123
   const nivelesData = [
     [1, 1, "3P", "3ro Primaria"],
     [2, 1, "4P", "4to Primaria"],
@@ -335,10 +335,10 @@ function configurarHojaCompetidores(hoja) {
 
   // Agregar validaciones y listas desplegables
 
-  // Validación para CI (solo números y letras)
+  // Validación para CI solo números
   for (let i = 2; i <= 101; i++) {
     hoja.getCell(`B${i}`).dataValidation = {
-      type: "numero",
+      type: "textLength",
       operator: "between",
       showErrorMessage: true,
       allowBlank: false,
@@ -356,10 +356,10 @@ function configurarHojaCompetidores(hoja) {
       operator: "between",
       showErrorMessage: true,
       allowBlank: false,
-      formulae: [new Date(2000, 0, 1), new Date(2020, 11, 31)],
+      formulae: [new Date(2007, 0, 1), new Date(2025, 11, 31)],
       errorStyle: "error",
       errorTitle: "Fecha Inválida",
-      error: "La fecha debe estar entre 01/01/2000 y 31/12/2020",
+      error: "La fecha debe estar entre 01/01/2007 y 31/12/2025",
     }
   }
 
@@ -410,7 +410,7 @@ function configurarHojaCompetidores(hoja) {
     }
   }
 
-  // Agregar numeración automática
+  // Agregar numeración 
   for (let i = 2; i <= 101; i++) {
     hoja.getCell(`A${i}`).value = { formula: `=${i - 1}` }
     hoja.getCell(`A${i}`).alignment = { horizontal: "center" }
@@ -439,7 +439,7 @@ function configurarHojaCompetidores(hoja) {
     fgColor: { argb: "FFFF00" },
   }
 
-  // Ajustar la altura de la fila de instrucciones
+  //altura de la fila de instrucciones
   hoja.getRow(1).height = 25
 }
 
@@ -452,7 +452,6 @@ function configurarHojaTutores(hoja) {
     { header: "Apellidos (*)", key: "apellidos", width: 20 },
     { header: "Correo Electrónico (*)", key: "correo", width: 30 },
     { header: "Teléfono (*)", key: "telefono", width: 15 },
-    { header: "Estado", key: "estado", width: 10 },
   ]
 
   hoja.columns = headers
@@ -483,17 +482,17 @@ function configurarHojaTutores(hoja) {
 
   // Agregar validaciones
 
-  // Validación para CI (solo números y letras)
+  // Validación para CI solo números
   for (let i = 2; i <= 51; i++) {
     hoja.getCell(`B${i}`).dataValidation = {
       type: "textLength",
       operator: "between",
       showErrorMessage: true,
       allowBlank: false,
-      formulae: [1, 20],
+      formulae: [7],
       errorStyle: "error",
       errorTitle: "CI Inválido",
-      error: "El CI debe tener entre 1 y 20 caracteres",
+      error: "El CI debe tener entre 7 dígitos",
     }
   }
 
@@ -504,27 +503,15 @@ function configurarHojaTutores(hoja) {
       operator: "between",
       showErrorMessage: true,
       allowBlank: false,
-      formulae: [7, 15],
+      formulae: [8],
       errorStyle: "error",
       errorTitle: "Teléfono Inválido",
-      error: "El teléfono debe tener entre 7 y 15 caracteres",
+      error: "El teléfono debe tener entre 8 dígitos",
     }
   }
 
-  // Validación para estado
-  for (let i = 2; i <= 51; i++) {
-    hoja.getCell(`G${i}`).dataValidation = {
-      type: "list",
-      allowBlank: false,
-      formulae: ['"Activo,Inactivo"'],
-      showErrorMessage: true,
-      errorStyle: "error",
-      errorTitle: "Estado Inválido",
-      error: "Seleccione un estado de la lista",
-    }
-  }
 
-  // Agregar numeración automática
+  // Agregar numeración 
   for (let i = 2; i <= 51; i++) {
     hoja.getCell(`A${i}`).value = { formula: `=${i - 1}` }
     hoja.getCell(`A${i}`).alignment = { horizontal: "center" }
@@ -546,7 +533,7 @@ function configurarHojaTutores(hoja) {
     fgColor: { argb: "FFFF00" },
   }
 
-  // Ajustar la altura de la fila de instrucciones
+  // Ajustar la altura de la fila 
   hoja.getRow(1).height = 25
 }
 
