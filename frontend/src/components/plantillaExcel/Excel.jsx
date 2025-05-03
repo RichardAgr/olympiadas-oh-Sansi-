@@ -203,7 +203,6 @@ export async function generateExcelTemplate() {
 }
 
 function llenarHojaAreas(hoja) {
-  // Encabezado
   hoja.getCell("A1").value = "ID"
   hoja.getCell("B1").value = "Nombre"
   hoja.getCell("C1").value = "Costo"
@@ -228,7 +227,6 @@ function llenarHojaAreas(hoja) {
 }
 
 function llenarHojaNiveles(hoja) {
-  // Encabezado
   hoja.getCell("A1").value = "ID"
   hoja.getCell("B1").value = "Area_ID"
   hoja.getCell("C1").value = "Nombre"
@@ -663,8 +661,6 @@ function agregarEjemplosCompetidores(hoja) {
       nombres: "FRESIA GRETY",
       apellidos: "TICONA PLATA",
       fecha_nacimiento: new Date(2007, 5, 6), // 06/06/2007
-      correo: "fresiaticona.p@gmail.com",
-      telefono: "68653473",
       colegio: "UNIDAD EDUCATIVA NUEVA ESPERANZA",
       curso: "Sexto Secundaria",
       departamento: "Cochabamba",
@@ -679,8 +675,6 @@ function agregarEjemplosCompetidores(hoja) {
       nombres: "DAYRA",
       apellidos: "DAMIAN GRAGEDA",
       fecha_nacimiento: new Date(2014, 5, 30), // 30/06/2014
-      correo: "dayra.damian@sadosa.edu.bo",
-      telefono: "",
       colegio: "SANTO DOMINGO SAVIO A",
       curso: "Quinto primaria",
       departamento: "Cochabamba",
@@ -695,8 +689,6 @@ function agregarEjemplosCompetidores(hoja) {
       nombres: "JUAN",
       apellidos: "PÉREZ GÓMEZ",
       fecha_nacimiento: new Date(2010, 2, 15), // 15/03/2010
-      correo: "juan.perez@colegio.edu.bo",
-      telefono: "70123456",
       colegio: "COLEGIO SAN AGUSTÍN",
       curso: "Segundo Secundaria",
       departamento: "Cochabamba",
@@ -717,16 +709,14 @@ function agregarEjemplosCompetidores(hoja) {
     row.getCell(3).value = competidor.nombres
     row.getCell(4).value = competidor.apellidos
     row.getCell(5).value = competidor.fecha_nacimiento
-    row.getCell(6).value = competidor.correo
-    row.getCell(7).value = competidor.telefono
-    row.getCell(8).value = competidor.colegio
-    row.getCell(9).value = competidor.curso
-    row.getCell(10).value = competidor.departamento
-    row.getCell(11).value = competidor.provincia
-    row.getCell(12).value = competidor.area1
-    row.getCell(13).value = competidor.nivel1
-    row.getCell(14).value = competidor.area2
-    row.getCell(15).value = competidor.nivel2
+    row.getCell(6).value = competidor.colegio
+    row.getCell(7).value = competidor.curso
+    row.getCell(8).value = competidor.departamento
+    row.getCell(9).value = competidor.provincia
+    row.getCell(10).value = competidor.area1
+    row.getCell(11).value = competidor.nivel1
+    row.getCell(12).value = competidor.area2
+    row.getCell(13).value = competidor.nivel2
   })
 }
 
@@ -740,7 +730,6 @@ function agregarEjemplosTutores(hoja) {
       apellidos: "TICONA PLATA",
       correo: "jofre.ticona@gmail.com",
       telefono: "76543210",
-      estado: "Activo",
     },
     {
       id: 2,
@@ -749,7 +738,6 @@ function agregarEjemplosTutores(hoja) {
       apellidos: "GRAGEDA GONZÁLES",
       correo: "daysigragedagonzales@gmail.com",
       telefono: "76464453",
-      estado: "Activo",
     },
     {
       id: 3,
@@ -758,7 +746,6 @@ function agregarEjemplosTutores(hoja) {
       apellidos: "MENDOZA LÓPEZ",
       correo: "carlos.mendoza@colegio.edu.bo",
       telefono: "70123456",
-      estado: "Activo",
     },
     {
       id: 4,
@@ -767,7 +754,6 @@ function agregarEjemplosTutores(hoja) {
       apellidos: "VARGAS ROJAS",
       correo: "maria.vargas@gmail.com",
       telefono: "71234567",
-      estado: "Activo",
     },
   ]
 
@@ -782,7 +768,6 @@ function agregarEjemplosTutores(hoja) {
     row.getCell(4).value = tutor.apellidos
     row.getCell(5).value = tutor.correo
     row.getCell(6).value = tutor.telefono
-    row.getCell(7).value = tutor.estado
   })
 }
 
@@ -797,7 +782,6 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
       relacion: "Familiar",
       responsable_pago: "Sí",
       area_especifica: "",
-      observaciones: "Tutor principal para todas las áreas",
     },
     {
       id: 2,
@@ -807,7 +791,6 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
       relacion: "Profesor",
       responsable_pago: "No",
       area_especifica: "QUÍMICA",
-      observaciones: "Profesor de química que apoya en esa área",
     },
     {
       id: 3,
@@ -817,7 +800,6 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
       relacion: "Otro",
       responsable_pago: "No",
       area_especifica: "MATEMÁTICAS",
-      observaciones: "Profesora de matemáticas que apoya en esa área",
     },
     {
       id: 4,
@@ -827,7 +809,6 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
       relacion: "Padre/Madre",
       responsable_pago: "Sí",
       area_especifica: "",
-      observaciones: "",
     },
     {
       id: 5,
@@ -837,7 +818,6 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
       relacion: "Profesor",
       responsable_pago: "Sí",
       area_especifica: "",
-      observaciones: "Tutor principal para todas las áreas",
     },
   ]
 
@@ -853,6 +833,5 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
     row.getCell(5).value = relacion.relacion
     row.getCell(6).value = relacion.responsable_pago
     row.getCell(7).value = relacion.area_especifica
-    row.getCell(8).value = relacion.observaciones
   })
 }
