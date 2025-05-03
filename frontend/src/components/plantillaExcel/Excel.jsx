@@ -12,17 +12,32 @@ export async function generateExcelTemplate() {
     workbook.modified = new Date();
 
     // Crear hojas
-    const hojaInstrucciones = workbook.addWorksheet("Instrucciones");
-    const hojaCompetidores = workbook.addWorksheet("Competidores");
-    const hojaTutores = workbook.addWorksheet("Tutores");
-    const hojaRelacion = workbook.addWorksheet("Relación Competidor-Tutor");
+    const hojaInstrucciones = workbook.addWorksheet("Instrucciones")
+    const hojaCompetidores = workbook.addWorksheet("Competidores")
+    const hojaTutores = workbook.addWorksheet("Tutores")
+    const hojaRelacionCompetidorTutor = workbook.addWorksheet("Relación Competidor-Tutor")
+
+    // Crear hojas auxiliares para listas desplegables, luego se van a ocultar
+    const hojaAreas = workbook.addWorksheet("Areas")
+    const hojaNiveles = workbook.addWorksheet("Niveles")
+
+/*     // Ocultar hojas auxiliares
+    hojaAreas.state = "hidden"
+    hojaNiveles.state = "hidden"
+ */
 
     // Configurar hojas
-    configurarHojaInstrucciones(hojaInstrucciones);  
-    configurarHojaCompetidores(hojaCompetidores);//--------------------haciendo
-    configurarHojaTutores(hojaTutores);
-    configurarHojaRelacionCompetidorTutor(hojaRelacion);
+    configurarHojaInstrucciones(hojaInstrucciones)
+    llenarHojaAreas(hojaAreas)
+    llenarHojaNiveles(hojaNiveles)
+    configurarHojaCompetidores(hojaCompetidores)
+    configurarHojaTutores(hojaTutores)
+    configurarHojaRelacionCompetidorTutor(hojaRelacionCompetidorTutor)
 
+    // Agregar ejemplos de datos
+    agregarEjemplosCompetidores(hojaCompetidores)
+    agregarEjemplosTutores(hojaTutores)
+    agregarEjemplosRelacionCompetidorTutor(hojaRelacionCompetidorTutor)
     // Convertir el libro a un buffer
     const buffer = await workbook.xlsx.writeBuffer();
 
@@ -271,62 +286,6 @@ function llenarHojaNiveles(hoja) {
   })
 }
 
-function llenarHojaColegios(hoja) {
-  // Encabezado
-  hoja.getCell("A1").value = "ID"
-  hoja.getCell("B1").value = "Nombre"
-
-  // Datos de ejemplo de colegios
-  const colegiosData = [
-    [1, "UNIDAD EDUCATIVA NUEVA ESPERANZA"],
-    [2, "SANTO DOMINGO SAVIO A"],
-    [3, "COLEGIO SAN AGUSTÍN"],
-    [4, "UNIDAD EDUCATIVA SIMÓN BOLÍVAR"],
-    [5, "COLEGIO SANTA ANA"],
-    [6, "UNIDAD EDUCATIVA JUAN XXIII"],
-    [7, "COLEGIO LA SALLE"],
-    [8, "UNIDAD EDUCATIVA AMÉRICA"],
-    [9, "COLEGIO DON BOSCO"],
-    [10, "UNIDAD EDUCATIVA ADELA ZAMUDIO"],
-  ]
-
-  colegiosData.forEach((colegio, index) => {
-    const row = hoja.getRow(index + 2)
-    row.getCell(1).value = colegio[0]
-    row.getCell(2).value = colegio[1]
-  })
-}
-
-function llenarHojaUbicaciones(hoja) {
-  // Encabezado
-  hoja.getCell("A1").value = "ID"
-  hoja.getCell("B1").value = "Departamento"
-  hoja.getCell("C1").value = "Provincia"
-
-  // Datos de ejemplo de ubicaciones
-  const ubicacionesData = [
-    [1, "Cochabamba", "Cercado"],
-    [2, "Cochabamba", "Quillacollo"],
-    [3, "Cochabamba", "Sacaba"],
-    [4, "La Paz", "Murillo"],
-    [5, "La Paz", "Ingavi"],
-    [6, "Santa Cruz", "Andrés Ibáñez"],
-    [7, "Santa Cruz", "Warnes"],
-    [8, "Chuquisaca", "Oropeza"],
-    [9, "Oruro", "Cercado"],
-    [10, "Potosí", "Tomás Frías"],
-    [11, "Tarija", "Cercado"],
-    [12, "Beni", "Cercado"],
-    [13, "Pando", "Nicolás Suárez"],
-  ]
-
-  ubicacionesData.forEach((ubicacion, index) => {
-    const row = hoja.getRow(index + 2)
-    row.getCell(1).value = ubicacion[0]
-    row.getCell(2).value = ubicacion[1]
-    row.getCell(3).value = ubicacion[2]
-  })
-}
 
 function configurarHojaCompetidores(hoja) {
   // Definir encabezados
@@ -379,14 +338,14 @@ function configurarHojaCompetidores(hoja) {
   // Validación para CI (solo números y letras)
   for (let i = 2; i <= 101; i++) {
     hoja.getCell(`B${i}`).dataValidation = {
-      type: "textLength",
+      type: "numero",
       operator: "between",
       showErrorMessage: true,
       allowBlank: false,
-      formulae: [1, 20],
+      formulae: [1, 7],
       errorStyle: "error",
       errorTitle: "CI Inválido",
-      error: "El CI debe tener entre 1 y 20 caracteres",
+      error: "El CI debe tener entre 1 y 7 caracteres",
     }
   }
 
@@ -401,19 +360,6 @@ function configurarHojaCompetidores(hoja) {
       errorStyle: "error",
       errorTitle: "Fecha Inválida",
       error: "La fecha debe estar entre 01/01/2000 y 31/12/2020",
-    }
-  }
-
-  // Listas desplegables para colegios
-  for (let i = 2; i <= 101; i++) {
-    hoja.getCell(`H${i}`).dataValidation = {
-      type: "list",
-      allowBlank: false,
-      formulae: ["=Colegios!$B$2:$B$11"],
-      showErrorMessage: true,
-      errorStyle: "error",
-      errorTitle: "Colegio Inválido",
-      error: "Seleccione un colegio de la lista",
     }
   }
 
