@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react"
 import {UserRoundPen,FileSpreadsheet,Upload} from "lucide-react"
 import { getTutorById} from "../../../../public/riki/homeTutor/datosTutor";
@@ -7,6 +7,7 @@ import './tutorHome.css'
 
 
 function TutorHome () {
+  const navigate = useNavigate()
   const {id}= useParams();
   const [tutor, setTutor] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -34,8 +35,7 @@ function TutorHome () {
   }
 
   const handleExcelUpload = () => {
-    // Simular clic en input file oculto
-    console.log("Escribir por exel")
+    navigate(`/homeTutor/${id}/tutor/InscripcionExcel`)
   }
 
   const handleUploadClick = () => {
