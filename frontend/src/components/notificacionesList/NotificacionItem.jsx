@@ -1,8 +1,8 @@
-import { useState } from "react"
-import { marcarComoLeida } from "../../../public/riki/HU25/notificacion"
-import "./notificacionItem.css"
 
-const NotificacionItem = ({ notificacion, setNotificaciones, onOpenModal}) => {
+import "./notificacionItem.css"
+import axios from "axios"
+
+const NotificacionItem = ({ idTutor,notificacion, setNotificaciones, onOpenModal}) => {
   
     // Extraer datos de la notificación
     const { notificacion_id, responsableGestion, destinatario, fechaEnvio, mensaje, estado } = notificacion
@@ -17,7 +17,7 @@ const NotificacionItem = ({ notificacion, setNotificaciones, onOpenModal}) => {
     const handleClick = async () => {
       if (!estado) {
         try {
-          await marcarComoLeida(notificacion_id)
+          await axios.post(`http://127.0.0.1:8000/api/tutor/${idTutor}/cambiarEstadoNotificacion/${notificacion_id}`)
           setNotificaciones((prevNotificaciones) =>
             prevNotificaciones.map((item) =>
               item.notificacion_id === notificacion_id ? { ...item, estado: true } : item,

@@ -3,7 +3,7 @@ import NotificacionItem from "./NotificacionItem"
 import NotificacionModal from "./NotificacionModal"
 import "./notificacionesList.css"
 
-const NotificacionesList = ({ notificaciones, setNotificaciones }) => {
+const NotificacionesList = ({ idTutor,notificaciones, setNotificaciones }) => {
 
     const [modalNotificacion, setModalNotificacion] = useState(null)
 
@@ -24,6 +24,7 @@ const NotificacionesList = ({ notificaciones, setNotificaciones }) => {
       {notificaciones.map((notificacion) => (
         <NotificacionItem
           key={notificacion.notificacion_id}
+          idTutor={idTutor}
           notificacion={notificacion}
           setNotificaciones={setNotificaciones}
           onOpenModal={handleOpenModal}
