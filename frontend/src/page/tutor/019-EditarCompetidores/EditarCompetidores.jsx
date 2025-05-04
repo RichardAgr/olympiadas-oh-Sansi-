@@ -16,7 +16,7 @@ function EditarCompetidores() {
     curso: "",
     departamento: "",
     provincia: "",
-    areasInscritas: "",
+    areasInscritas: ""
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,10 +26,8 @@ function EditarCompetidores() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/JOSE/competidores.json");
-        const competidorEncontrado = response.data.find(
-          (c) => c.competidor_id === parseInt(idCompetidor) && c.tutor_id.toString() === tutorId
-        );
+        const response = await axios.get(`http://127.0.0.1:8000/api/informacionCompetidores/${idCompetidor}/competidor`);
+        const competidorEncontrado = response.data.informacion_competidor;
 
         if (!competidorEncontrado) {
           throw new Error("Competidor no encontrado");
@@ -56,11 +54,12 @@ function EditarCompetidores() {
 
     try {
       //await axios.put(`/api/competidores/${idCompetidor}`, competidor);
+      console.log(competidor)
       setShowSuccessModal(true);
 
       setTimeout(() => {
         setShowSuccessModal(false);
-        navigate(`/homeTutor/${tutorId}/tutor/ListaCompetidores`);
+        navigate(-1);
       }, 2000);
     } catch (err) {
       setError(err.message || "Error al actualizar los datos");
@@ -82,7 +81,29 @@ function EditarCompetidores() {
   };
 
   const handleCancel = () => {
-    navigate(`/homeTutor/${tutorId}/tutor/ListaCompetidores`);
+    navigate(-1);
+  };
+
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return dateString;
+    }
+  
+    // Para formato "dd/mm/yyyy" o "dd-mm-yyyy"
+    if (dateString.includes('/') || dateString.includes('-')) {
+      const [day, month, year] = dateString.split(/[/-]/);
+      return `${year.padStart(4, '20')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+  
+    // Para formato "ddmmyy" (como "06/06/07")
+    if (dateString.length === 8 && dateString.includes('/')) {
+      const [day, month, year] = dateString.split('/');
+      return `20${year.padStart(2, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+  
+    return '';
   };
 
   if (loading && !competidor.nombres) {
@@ -136,7 +157,8 @@ function EditarCompetidores() {
           <input
             type="date"
             id="fechaNacimiento"
-            value={competidor.fechaNacimiento}
+            name="fecha_nacimiento"
+            value={formatDateForInput(competidor.fecha_nacimiento)}
             onChange={handleChange}
             required
           />
@@ -177,11 +199,9 @@ function EditarCompetidores() {
         <div className="form-group">
           <label>Áreas Inscritas:</label>
           <div className="read-only-field">
-            {competidor.areasInscritas.split(",").map((area) => (
-              <span key={area} className="area-tag">
-                {area.trim()}
+              <span className="area-tag">
+                {competidor.area}
               </span>
-            ))}
           </div>
         </div>
 

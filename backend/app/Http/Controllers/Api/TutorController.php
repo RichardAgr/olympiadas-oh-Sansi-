@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Tutor;
 use App\Models\Competidor;
 use App\Models\TutorCompetidor;
+use App\Models\Colegio;
+use App\Models\Curso;
+use App\Models\Ubicacion;
 use App\Models\CompetidorCompetencia;
 use App\Models\Area;;
 use App\Http\Resources\CompetidoresTutorResource;
@@ -333,4 +336,5 @@ public function competidoresFiltrados($id, Request $request){
         ], 500);
     }
 }
+
 }

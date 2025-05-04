@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import { Loader, AlertTriangle, X } from "lucide-react";
-import { getBoletasById } from '../../../../public/riki/HU23/verPagos';
+import axios from 'axios'
 import "./boletasView.css";
 
 function BoletasView() {
@@ -17,9 +17,9 @@ function BoletasView() {
   useEffect(() => {
     const fetchTutorData = async () => {
       try {
-        const response = await getBoletasById(id);
-        setBoletas(response.boletas);
-        setNombreTutor(response.nombre_completo);
+        const response = await axios.get(`http://127.0.0.1:8000/api/tutor/${id}/boletas`);
+        setBoletas(response.data.boletas);
+        setNombreTutor(response.data.tutor.nombre_completo);
         setLoading(false);
       } catch (err) {
         console.error("Error al obtener las boletas del tutor:", err);
@@ -87,8 +87,8 @@ function BoletasView() {
               </tr>
             </thead>
             <tbody>
-              {boletas.map((boleta) => (
-                <tr key={boleta.boleta_id}>
+              {boletas.map((boleta, index) => (
+                <tr key={index}>
                   <td>{boleta.area}</td>
                   <td>{boleta.numero_comprobante}</td>
                   <td>{boleta.monto}</td>
