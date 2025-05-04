@@ -4,6 +4,7 @@ import {UserRoundPen,FileSpreadsheet,Upload} from "lucide-react"
 import { getTutorById} from "../../../../public/riki/homeTutor/datosTutor";
 import axios from "axios"
 import './tutorHome.css'
+import { useNavigate } from "react-router-dom";
 
 
 function TutorHome () {
@@ -11,6 +12,7 @@ function TutorHome () {
   const [tutor, setTutor] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTutorData = async () => {
@@ -31,6 +33,7 @@ function TutorHome () {
   const handleManualInscription = () => {
     console.log("Inscripción manual iniciada")
     // Aquí iría la lógica para abrir un formulario de inscripción manual
+    navigate(`/homeTutor/${id}/tutor/InscribirManual/`);
   }
 
   const handleExcelUpload = () => {
