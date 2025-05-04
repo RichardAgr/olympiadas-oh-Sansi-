@@ -1,6 +1,3 @@
-//import React from "react";
-//import { Link, useParams } from "react-router-dom";
-
 import { useState } from "react";
 import "./InscribirManual.css";
 import SegundoPaso from "./SegundoPaso";
@@ -128,8 +125,8 @@ function InscribirManual() {
             <label>Fecha de Nacimiento:</label>
             <input
               type="date"
-              name="fechaNacimiento"
-              value={formData.fechaNacimiento}
+              name="fecha_nacimiento"
+              value={formData.fecha_nacimiento}
               onChange={handleChange}
             />
           </div>
