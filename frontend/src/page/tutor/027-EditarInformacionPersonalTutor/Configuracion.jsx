@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import './Configuracion.css';
 import perfilDefault from '../../../assets/perfil-default.png';
 import correoIcon from '../../../assets/email.png';
@@ -43,7 +43,7 @@ function Configuracion() {
   };
 
   const volverHome = () => {
-    navigate('/home');
+    navigate('/homeTutor/${id}/tutor');
   };
 
   return (
@@ -153,6 +153,7 @@ function Configuracion() {
               <img src={ConfirmacionIcon} alt="Confirmación" className="icono-modal" />
             </div>
             <p>Cambios guardados con éxito</p>
+            {/* Al hacer clic en este botón, se redirige a la página del TutorHome */}
             <button className="btn-guardar" onClick={volverHome}>Volver al Home</button>
           </div>
         </div>
