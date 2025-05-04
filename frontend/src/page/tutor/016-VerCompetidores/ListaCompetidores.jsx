@@ -19,10 +19,8 @@ const ListComp = () => {
     const fetchCompetidores = async () => {
       try {
         setCargando(true);
-        const response = await axios.get("/JOSE/lista-inscritos.json");
-        
-        // Filtrar competidores por tutor_id
-        const competidoresDelTutor = response.data.filter(comp => comp.tutor_id.toString() === id);
+        const response = await axios.get(`http://127.0.0.1:8000/api/tutores/${id}/competidoresTutor`);
+        const competidoresDelTutor = response.data.data;
         
         if (competidoresDelTutor.length > 0) {
           setCompetidores(competidoresDelTutor);

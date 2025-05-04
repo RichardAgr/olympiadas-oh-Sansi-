@@ -279,6 +279,58 @@ public function ActualizarMiPerfil(Request $request, $id)
             'error' => $e->getMessage()
         ], 500);
     }
-        
+}
+
+public function competidoresFiltrados($id, Request $request){
+    try {
+        $tutor = Tutor::find($id);
+        if (!$tutor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tutor no encontrado'
+            ], 404);
+        }
+
+        $query = DB::table('competidor')
+            ->join('tutor_competidor', 'competidor.competidor_id', '=', 'tutor_competidor.competidor_id')
+            ->leftJoin('competidor_competencia', 'competidor.competidor_id', '=', 'competidor_competencia.competidor_id')
+            ->leftJoin('area', 'competidor_competencia.area_id', '=', 'area.area_id')
+            ->leftJoin('curso', 'competidor.curso_id', '=', 'curso.curso_id')
+            ->leftJoin('nivel_categoria', 'competidor_competencia.nivel_categoria_id', '=', 'nivel_categoria.nivel_categoria_id')
+            ->where('tutor_competidor.tutor_id', $id)
+            ->select(
+                'competidor.competidor_id',
+                DB::raw("CONCAT(competidor.nombres, ' ', competidor.apellidos) as nombre_completo"),
+                'area.nombre as area',
+                'nivel_categoria.nombre as categoria',
+                'curso.nombre as curso',
+                'competidor.estado'
+            );
+
+        if ($request->has('estado')) {
+            $query->where('competidor.estado', $request->estado);
+        }
+
+        if ($request->has('nombre')) {
+            $query->where(DB::raw("CONCAT(competidor.nombres, ' ', competidor.apellidos)"), 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->has('area')) {
+            $query->where('area.nombre', $request->area);
+        }
+
+        $competidores = $query->get();
+
+        return response()->json([
+            'data' => $competidores
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener los competidores filtrados',
+            'error' => $e->getMessage()
+        ], 500);
+    }
 }
 }
