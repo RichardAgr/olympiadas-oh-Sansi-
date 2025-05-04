@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import './MiPerfil.css';
 import perfilDefault from '../../../assets/perfil-default.png';
 import correoIcon from '../../../assets/email.png'; 
 import telefonoIcon from '../../../assets/telefono.png'; 
 import ciIcon from '../../../assets/ci.png';
+import axios from 'axios';
+import './MiPerfil.css';
 
 function MiPerfil() {
   const { id } = useParams();
@@ -15,7 +15,6 @@ function MiPerfil() {
     try {
       const getDataTutor = async ()=>{
         const response = await axios.get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Tutor`)
-        console.log(response.data)
         setDatosTutor(response.data)
       }
       getDataTutor()

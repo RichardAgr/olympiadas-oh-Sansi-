@@ -195,3 +195,10 @@
    .modal p {
      margin-bottom: 20px; 
    }
+  
+  .mensaje-error {
+    color: #ff3333;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    display: block;
+  }
