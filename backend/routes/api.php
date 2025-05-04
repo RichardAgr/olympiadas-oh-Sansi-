@@ -59,6 +59,7 @@ Route::get('/estadisticasRespoGestion', [EstadisticasController::class, 'obtener
 
 
 // Rutas para el Tutor
+Route::get('/tutor/perfil/{id}', [TutorController::class, 'verPerfilTutor']);
 Route::get('/VerMiPerfil/{idTutor}/Tutor', [TutorController::class, 'VerMiPerfil']);
 Route::put('/tutor/ActualizarMiPerfil/{id}', [TutorController::class, 'ActualizarMiPerfil']);
 Route::get('/tutor/VerNotificaciones/{id}/Notificaciones',[NotificacionController::class, 'VerNotificacionesTutor']);

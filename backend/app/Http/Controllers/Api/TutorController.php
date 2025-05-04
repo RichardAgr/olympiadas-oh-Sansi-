@@ -336,5 +336,44 @@ public function competidoresFiltrados($id, Request $request){
         ], 500);
     }
 }
-
+public function verPerfilTutor($id)
+     {
+         try {
+             $tutor = Tutor::find($id);
+     
+             if (!$tutor) {
+                 return response()->json([
+                     'success' => false,
+                     'message' => 'Tutor no encontrado'
+                 ], 404);
+             }
+     
+             $competidoresCount = TutorCompetidor::where('tutor_id', $tutor->tutor_id)->count();
+     
+             $areasCount = DB::table('competidor_competencia')
+                 ->join('tutor_competidor', 'competidor_competencia.competidor_id', '=', 'tutor_competidor.competidor_id')
+                 ->where('tutor_competidor.tutor_id', $tutor->tutor_id)
+                 ->distinct()
+                 ->count('competidor_competencia.area_id');
+     
+             return response()->json([
+                 'tutor_id' => $tutor->tutor_id,
+                 'ci' => $tutor->ci,
+                 'nombres' => $tutor->nombres,
+                 'apellidos' => $tutor->apellidos,
+                 'correo_electronico' => $tutor->correo_electronico,
+                 'telefono' => $tutor->telefono,
+                 'estado' => (bool) $tutor->estado, 
+                 'fecha_registro' => optional($tutor->created_at)->format('Y-m-d'),
+                 'competidores_asignados' => $competidoresCount,
+                 'areas_asignadas' => $areasCount
+             ], 200);
+         } catch (\Exception $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Error al obtener el perfil del tutor',
+                 'error' => $e->getMessage()
+             ], 500);
+         }
+     }
 }
