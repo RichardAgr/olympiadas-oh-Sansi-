@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './MiPerfil.css';
 import perfilDefault from '../../../assets/perfil-default.png';
@@ -6,18 +6,25 @@ import correoIcon from '../../../assets/email.png';
 import telefonoIcon from '../../../assets/telefono.png'; 
 import ciIcon from '../../../assets/ci.png';
 
-// Importa el archivo JSON desde el mismo directorio
-import datosTutorJson from './datosTutor.json';
-
 function MiPerfil() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [datosTutor, setDatosTutor] = useState(datosTutorJson); // Asignamos el JSON directamente
+  const [datosTutor, setDatosTutor] = useState(null);
+
+  useEffect(() => {
+    fetch('/datosTutor.json')
+      .then(res => res.json())
+      .then(data => setDatosTutor(data))
+      .catch(error => console.error('Error cargando datos del tutor:', error));
+  }, []);
+
+  if (!datosTutor) {
+    return <p>Cargando datos del tutor...</p>;
+  }
 
   return (
     <div className="perfil-container">
       <h1 className="titulo-pagina">Detalles del Perfil</h1>
-
       <div className="card-perfil">
         <img src={perfilDefault} alt="Foto de perfil" className="imagen-perfil" />
         <div className="info-personal">
@@ -31,7 +38,6 @@ function MiPerfil() {
           </div>
         </div>
       </div>
-
       <div className="card-perfil vertical">
         <div className="campo">
           <label>Correo :</label>

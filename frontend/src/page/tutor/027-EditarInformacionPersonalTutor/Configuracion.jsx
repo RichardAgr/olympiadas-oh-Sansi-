@@ -13,22 +13,15 @@ function Configuracion() {
   const navigate = useNavigate();
 
   // Estado para los datos del tutor
-  const [datosTutor, setDatosTutor] = useState({
-    nombre: "",
-    apellido: "",
-    correo: "",
-    telefono: "",
-    carnet: ""
-  });
-
+  const [datosTutor, setDatosTutor] = useState({});
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [exito, setExito] = useState(false);
 
   // Cargar datos desde el archivo JSON usando Axios
   useEffect(() => {
-    axios.get('/page/datosTutor.json') // Ruta del archivo JSON
+    axios.get('/datosTutor.json')
       .then(response => {
-        setDatosTutor(response.data); // Setear los datos obtenidos
+        setDatosTutor(response.data);
       })
       .catch(error => {
         console.error("Hubo un error al cargar los datos del tutor:", error);
@@ -46,7 +39,6 @@ function Configuracion() {
   const guardarCambios = () => {
     setMostrarConfirmacion(false);
     setExito(true);
-    // Aquí puedes hacer una petición para guardar los datos en el backend si fuera necesario
     console.log("Datos guardados:", datosTutor);
   };
 
@@ -69,7 +61,7 @@ function Configuracion() {
               <input
                 type="text"
                 name="nombre"
-                value={datosTutor.nombre}
+                value={datosTutor.nombre || ''}
                 onChange={handleChange}
               />
             </div>
@@ -81,7 +73,7 @@ function Configuracion() {
               <input
                 type="text"
                 name="apellido"
-                value={datosTutor.apellido}
+                value={datosTutor.apellido || ''}
                 onChange={handleChange}
               />
             </div>
@@ -98,7 +90,7 @@ function Configuracion() {
             <input
               type="email"
               name="correo"
-              value={datosTutor.correo}
+              value={datosTutor.correo || ''}
               onChange={handleChange}
             />
           </div>
@@ -111,7 +103,7 @@ function Configuracion() {
             <input
               type="tel"
               name="telefono"
-              value={datosTutor.telefono}
+              value={datosTutor.telefono || ''}
               onChange={handleChange}
             />
           </div>
@@ -124,7 +116,7 @@ function Configuracion() {
             <input
               type="text"
               name="carnet"
-              value={datosTutor.carnet}
+              value={datosTutor.carnet || ''}
               onChange={handleChange}
             />
           </div>
