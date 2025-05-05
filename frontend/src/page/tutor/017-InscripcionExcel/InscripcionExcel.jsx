@@ -1,7 +1,7 @@
-
+import saveAs from "file-saver"
 import { useState } from "react"
 import {Download,Info} from "lucide-react"
-import { generateExcelTemplate } from "../../../components/plantillaExcel/excel"
+import { generateExcelTemplate } from "../../../components/plantillaExcel/Excel"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
 import "./inscripcionExcel.css"
 
@@ -20,17 +20,14 @@ const InscripcionMasiva = () => {
     try {
       setIsLoading(true)
       setError(null)
-    //se puede poner la funcion blob() para que muestre si se puede descargar o no en el navegador
-      const response = await generateExcelTemplate()
 
-      if (!response) {
-        throw new Error(`Error al descargar la plantilla: ${response.status}`)
-      }
+      const blob = await generateExcelTemplate()
 
-      setIsLoading(false)
+      saveAs(blob, "Plantilla_Inscripcion_Masiva_Olimpiadas.xlsx")
     } catch (error) {
       console.error("Error al descargar la plantilla:", error)
       setError("Error al descargar la plantilla: " + error.message)
+    } finally {
       setIsLoading(false)
     }
   }

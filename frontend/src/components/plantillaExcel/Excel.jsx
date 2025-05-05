@@ -1,15 +1,14 @@
-import { saveAs } from 'file-saver';
 import ExcelJS from "exceljs"
 
 export async function generateExcelTemplate() {
   try {
-    const workbook = new ExcelJS.Workbook();
-    
+    const workbook = new ExcelJS.Workbook()
+
     // Metadatos del libro
-    workbook.creator = "Sistema Olimpiadas";
-    workbook.lastModifiedBy = "Sistema Olimpiadas";
-    workbook.created = new Date();
-    workbook.modified = new Date();
+    workbook.creator = "Sistema Olimpiadas"
+    workbook.lastModifiedBy = "Sistema Olimpiadas"
+    workbook.created = new Date()
+    workbook.modified = new Date()
 
     // Crear hojas
     const hojaInstrucciones = workbook.addWorksheet("Instrucciones")
@@ -21,7 +20,7 @@ export async function generateExcelTemplate() {
     const hojaAreas = workbook.addWorksheet("Areas")
     const hojaNiveles = workbook.addWorksheet("Niveles")
 
-/*     // Ocultar hojas auxiliares
+    /*     // Ocultar hojas auxiliares
     hojaAreas.state = "hidden"
     hojaNiveles.state = "hidden"
  */
@@ -31,7 +30,7 @@ export async function generateExcelTemplate() {
     llenarHojaAreas(hojaAreas)
     llenarHojaNiveles(hojaNiveles)
     configurarHojaCompetidores(hojaCompetidores)
-    configurarHojaTutores(hojaTutores) //------> Por hacer
+    configurarHojaTutores(hojaTutores)
     configurarHojaRelacionCompetidorTutor(hojaRelacionCompetidorTutor)
 
     // Agregar ejemplos de datos
@@ -39,24 +38,21 @@ export async function generateExcelTemplate() {
     agregarEjemplosTutores(hojaTutores)
     agregarEjemplosRelacionCompetidorTutor(hojaRelacionCompetidorTutor)
     // Convertir el libro a un buffer
-    const buffer = await workbook.xlsx.writeBuffer();
+    const buffer = await workbook.xlsx.writeBuffer()
 
     // Crear Blob y descargar
     const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    });
-    
-    saveAs(blob, "Plantilla_Inscripcion.xlsx");
-    
-    return true;
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    })
+
+    return blob
   } catch (error) {
-    console.error("Error al generar la plantilla:", error);
-    throw error;
+    console.error("Error al generar la plantilla:", error)
+    throw error
   }
 }
 
- function configurarHojaInstrucciones(hoja) {
-  // Título
+function configurarHojaInstrucciones(hoja) {
   hoja.mergeCells("A1:H1")
   const tituloCell = hoja.getCell("A1")
   tituloCell.value = "INSTRUCCIONES PARA LA INSCRIPCIÓN MASIVA DE COMPETIDORES"
@@ -284,7 +280,6 @@ function llenarHojaNiveles(hoja) {
   })
 }
 
-
 function configurarHojaCompetidores(hoja) {
   // Definir encabezados
   const headers = [
@@ -296,7 +291,7 @@ function configurarHojaCompetidores(hoja) {
     { header: "Colegio (*)", key: "colegio", width: 25 },
     { header: "Curso (*)", key: "curso", width: 20 },
     { header: "Departamento (*)", key: "departamento", width: 20 },
-    { header: "Provincia (*)", key: "provincia", width: 20},
+    { header: "Provincia (*)", key: "provincia", width: 20 },
     { header: "Área 1 (*)", key: "area1", width: 20 },
     { header: "Categoría/Nivel 1 (*)", key: "nivel1", width: 20 },
     { header: "Área 2", key: "area2", width: 20 },
@@ -332,7 +327,7 @@ function configurarHojaCompetidores(hoja) {
   // Agregar validaciones y listas desplegables
 
   // Validación para CI solo números
-  for (let i = 2; i <= 101; i++) {
+/*   for (let i = 2; i <= 101; i++) {
     hoja.getCell(`B${i}`).dataValidation = {
       type: "textLength",
       operator: "between",
@@ -343,9 +338,9 @@ function configurarHojaCompetidores(hoja) {
       errorTitle: "CI Inválido",
       error: "El CI debe tener entre 7 dígitos",
     }
-  }
+  } */
 
-  // Validación para fecha de nacimiento 
+  // Validación para fecha de nacimiento
   for (let i = 2; i <= 101; i++) {
     hoja.getCell(`E${i}`).dataValidation = {
       type: "date",
@@ -372,7 +367,7 @@ function configurarHojaCompetidores(hoja) {
     "Pando",
   ]
   for (let i = 2; i <= 101; i++) {
-    hoja.getCell(`J${i}`).dataValidation = {
+    hoja.getCell(`H${i}`).dataValidation = {
       type: "list",
       allowBlank: false,
       formulae: [`"${departamentos.join(",")}"`],
@@ -385,7 +380,7 @@ function configurarHojaCompetidores(hoja) {
 
   // Listas desplegables para áreas
   for (let i = 2; i <= 101; i++) {
-    hoja.getCell(`L${i}`).dataValidation = {
+    hoja.getCell(`J${i}`).dataValidation = {
       type: "list",
       allowBlank: false,
       formulae: ["=Areas!$B$2:$B$8"],
@@ -395,7 +390,7 @@ function configurarHojaCompetidores(hoja) {
       error: "Seleccione un área de la lista",
     }
 
-    hoja.getCell(`N${i}`).dataValidation = {
+    hoja.getCell(`L${i}`).dataValidation = {
       type: "list",
       allowBlank: true,
       formulae: ["=Areas!$B$2:$B$8"],
@@ -406,7 +401,7 @@ function configurarHojaCompetidores(hoja) {
     }
   }
 
-  // Agregar numeración 
+  // Agregar numeración
   for (let i = 2; i <= 101; i++) {
     hoja.getCell(`A${i}`).value = { formula: `=${i - 1}` }
     hoja.getCell(`A${i}`).alignment = { horizontal: "center" }
@@ -421,7 +416,7 @@ function configurarHojaCompetidores(hoja) {
   hoja.insertRow(1, [
     "Instrucciones: Complete todos los campos marcados con (*). Puede inscribir hasta 100 competidores.",
   ])
-  hoja.mergeCells("A1:O1")
+  hoja.mergeCells("A1:M1")
   const instrCell = hoja.getCell("A1")
   instrCell.font = {
     name: "Arial",
@@ -479,7 +474,7 @@ function configurarHojaTutores(hoja) {
   // Agregar validaciones
 
   // Validación para CI solo números
-  for (let i = 2; i <= 51; i++) {
+/*   for (let i = 2; i <= 51; i++) {
     hoja.getCell(`B${i}`).dataValidation = {
       type: "textLength",
       operator: "between",
@@ -490,7 +485,7 @@ function configurarHojaTutores(hoja) {
       errorTitle: "CI Inválido",
       error: "El CI debe tener entre 7 dígitos",
     }
-  }
+  } */
 
   // Validación para teléfono
   for (let i = 2; i <= 51; i++) {
@@ -506,8 +501,7 @@ function configurarHojaTutores(hoja) {
     }
   }
 
-
-  // Agregar numeración 
+  // Agregar numeración
   for (let i = 2; i <= 51; i++) {
     hoja.getCell(`A${i}`).value = { formula: `=${i - 1}` }
     hoja.getCell(`A${i}`).alignment = { horizontal: "center" }
@@ -515,7 +509,7 @@ function configurarHojaTutores(hoja) {
 
   // Agregar instrucciones en la primera fila
   hoja.insertRow(1, ["Instrucciones: Registre todos los tutores que participarán en la inscripción de competidores."])
-  hoja.mergeCells("A1:G1")
+  hoja.mergeCells("A1:F1")
   const instrCell = hoja.getCell("A1")
   instrCell.font = {
     name: "Arial",
@@ -529,7 +523,7 @@ function configurarHojaTutores(hoja) {
     fgColor: { argb: "FFFF00" },
   }
 
-  // Ajustar la altura de la fila 
+  // Ajustar la altura de la fila
   hoja.getRow(1).height = 25
 }
 
@@ -625,7 +619,7 @@ function configurarHojaRelacionCompetidorTutor(hoja) {
     }
   }
 
-  // Agregar numeración 
+  // Agregar numeración
   for (let i = 2; i <= 101; i++) {
     hoja.getCell(`A${i}`).value = { formula: `=${i - 1}` }
     hoja.getCell(`A${i}`).alignment = { horizontal: "center" }
@@ -635,7 +629,7 @@ function configurarHojaRelacionCompetidorTutor(hoja) {
   hoja.insertRow(1, [
     "Instrucciones: Establezca las relaciones entre competidores y tutores. Cada competidor debe tener al menos un tutor principal.",
   ])
-  hoja.mergeCells("A1:H1")
+  hoja.mergeCells("A1:G1")
   const instrCell = hoja.getCell("A1")
   instrCell.font = {
     name: "Arial",
@@ -702,7 +696,7 @@ function agregarEjemplosCompetidores(hoja) {
 
   // Agregar los ejemplos a la hoja
   competidores.forEach((competidor, index) => {
-    const rowIndex = index + 3 // +3 porque hay 2 filas de encabezado (instrucciones + headers)
+    const rowIndex = index + 3
     const row = hoja.getRow(rowIndex)
 
     row.getCell(2).value = competidor.ci
@@ -759,7 +753,7 @@ function agregarEjemplosTutores(hoja) {
 
   // Agregar los ejemplos a la hoja
   tutores.forEach((tutor, index) => {
-    const rowIndex = index + 3 // +3 porque hay 2 filas de encabezado (instrucciones + headers)
+    const rowIndex = index + 3 // +3 porque hay 2 filas de encabezado 
     const row = hoja.getRow(rowIndex)
 
     row.getCell(1).value = tutor.id
@@ -776,7 +770,7 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
   const relaciones = [
     {
       id: 1,
-      ci_competidor: "14268363", // FRESIA
+      ci_competidor: "1426363", // FRESIA
       ci_tutor: "5487632", // JOFRE
       nivel_responsabilidad: "Principal",
       relacion: "Familiar",
@@ -823,7 +817,7 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
 
   // Agregar los ejemplos a la hoja
   relaciones.forEach((relacion, index) => {
-    const rowIndex = index + 3 // +3 porque hay 2 filas de encabezado (instrucciones + headers)
+    const rowIndex = index + 3 // +3 porque hay 2 filas de encabezado
     const row = hoja.getRow(rowIndex)
 
     row.getCell(1).value = relacion.id
