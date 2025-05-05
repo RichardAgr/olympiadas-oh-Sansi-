@@ -1,5 +1,6 @@
 import ExcelJS from "exceljs"
 
+//cosntruccion de la plantilla excel
 export async function generateExcelTemplate() {
   try {
     const workbook = new ExcelJS.Workbook()
@@ -324,36 +325,6 @@ function configurarHojaCompetidores(hoja) {
     }
   })
 
-  // Agregar validaciones y listas desplegables
-
-  // Validación para CI solo números
-/*   for (let i = 2; i <= 101; i++) {
-    hoja.getCell(`B${i}`).dataValidation = {
-      type: "textLength",
-      operator: "between",
-      showErrorMessage: true,
-      allowBlank: false,
-      formulae: [7],
-      errorStyle: "error",
-      errorTitle: "CI Inválido",
-      error: "El CI debe tener entre 7 dígitos",
-    }
-  } */
-
-  // Validación para fecha de nacimiento
-  for (let i = 2; i <= 101; i++) {
-    hoja.getCell(`E${i}`).dataValidation = {
-      type: "date",
-      operator: "between",
-      showErrorMessage: true,
-      allowBlank: false,
-      formulae: [new Date(2007, 0, 1), new Date(2025, 11, 31)],
-      errorStyle: "error",
-      errorTitle: "Fecha Inválida",
-      error: "La fecha debe estar entre 01/01/2007 y 31/12/2025",
-    }
-  }
-
   // Listas desplegables para departamentos
   const departamentos = [
     "Cochabamba",
@@ -366,7 +337,7 @@ function configurarHojaCompetidores(hoja) {
     "Beni",
     "Pando",
   ]
-  for (let i = 2; i <= 101; i++) {
+  for (let i = 2; i <= 31; i++) {
     hoja.getCell(`H${i}`).dataValidation = {
       type: "list",
       allowBlank: false,
@@ -379,7 +350,7 @@ function configurarHojaCompetidores(hoja) {
   }
 
   // Listas desplegables para áreas
-  for (let i = 2; i <= 101; i++) {
+  for (let i = 2; i <= 31; i++) {
     hoja.getCell(`J${i}`).dataValidation = {
       type: "list",
       allowBlank: false,
@@ -402,7 +373,7 @@ function configurarHojaCompetidores(hoja) {
   }
 
   // Agregar numeración
-  for (let i = 2; i <= 101; i++) {
+  for (let i = 2; i <= 31; i++) {
     hoja.getCell(`A${i}`).value = { formula: `=${i - 1}` }
     hoja.getCell(`A${i}`).alignment = { horizontal: "center" }
   }
@@ -414,7 +385,7 @@ function configurarHojaCompetidores(hoja) {
 
   // Agregar instrucciones en la primera fila
   hoja.insertRow(1, [
-    "Instrucciones: Complete todos los campos marcados con (*). Puede inscribir hasta 100 competidores.",
+    "Instrucciones: Complete todos los campos marcados con (*). Puede inscribir hasta 30 competidores.",
   ])
   hoja.mergeCells("A1:M1")
   const instrCell = hoja.getCell("A1")
@@ -471,38 +442,10 @@ function configurarHojaTutores(hoja) {
     }
   })
 
-  // Agregar validaciones
-
-  // Validación para CI solo números
-/*   for (let i = 2; i <= 51; i++) {
-    hoja.getCell(`B${i}`).dataValidation = {
-      type: "textLength",
-      operator: "between",
-      showErrorMessage: true,
-      allowBlank: false,
-      formulae: [7],
-      errorStyle: "error",
-      errorTitle: "CI Inválido",
-      error: "El CI debe tener entre 7 dígitos",
-    }
-  } */
-
-  // Validación para teléfono
-  for (let i = 2; i <= 51; i++) {
-    hoja.getCell(`F${i}`).dataValidation = {
-      type: "textLength",
-      operator: "between",
-      showErrorMessage: true,
-      allowBlank: false,
-      formulae: [8],
-      errorStyle: "error",
-      errorTitle: "Teléfono Inválido",
-      error: "El teléfono debe tener entre 8 dígitos",
-    }
-  }
+  
 
   // Agregar numeración
-  for (let i = 2; i <= 51; i++) {
+  for (let i = 2; i <= 31; i++) {
     hoja.getCell(`A${i}`).value = { formula: `=${i - 1}` }
     hoja.getCell(`A${i}`).alignment = { horizontal: "center" }
   }
@@ -568,7 +511,7 @@ function configurarHojaRelacionCompetidorTutor(hoja) {
   // Agregar validaciones
 
   // Validación para nivel de responsabilidad
-  for (let i = 2; i <= 101; i++) {
+  for (let i = 2; i <= 31; i++) {
     hoja.getCell(`D${i}`).dataValidation = {
       type: "list",
       allowBlank: false,
@@ -581,7 +524,7 @@ function configurarHojaRelacionCompetidorTutor(hoja) {
   }
 
   // Validación para relación con competidor
-  for (let i = 2; i <= 101; i++) {
+  for (let i = 2; i <= 31; i++) {
     hoja.getCell(`E${i}`).dataValidation = {
       type: "list",
       allowBlank: false,
@@ -594,7 +537,7 @@ function configurarHojaRelacionCompetidorTutor(hoja) {
   }
 
   // Validación para responsable de pago
-  for (let i = 2; i <= 101; i++) {
+  for (let i = 2; i <= 31; i++) {
     hoja.getCell(`F${i}`).dataValidation = {
       type: "list",
       allowBlank: true,
@@ -607,7 +550,7 @@ function configurarHojaRelacionCompetidorTutor(hoja) {
   }
 
   // Validación para área específica
-  for (let i = 2; i <= 101; i++) {
+  for (let i = 2; i <= 311; i++) {
     hoja.getCell(`G${i}`).dataValidation = {
       type: "list",
       allowBlank: true,
@@ -620,7 +563,7 @@ function configurarHojaRelacionCompetidorTutor(hoja) {
   }
 
   // Agregar numeración
-  for (let i = 2; i <= 101; i++) {
+  for (let i = 2; i <= 31; i++) {
     hoja.getCell(`A${i}`).value = { formula: `=${i - 1}` }
     hoja.getCell(`A${i}`).alignment = { horizontal: "center" }
   }
@@ -651,12 +594,12 @@ function agregarEjemplosCompetidores(hoja) {
   // Ejemplos de competidores
   const competidores = [
     {
-      ci: "14268363",
-      nombres: "FRESIA GRETY",
+      ci: "1426836",
+      nombres: "FRESIA1 GRETY",
       apellidos: "TICONA PLATA",
-      fecha_nacimiento: new Date(2007, 5, 6), // 06/06/2007
+      fecha_nacimiento: new Date(2010, 5, 6), // 06/06/2007
       colegio: "UNIDAD EDUCATIVA NUEVA ESPERANZA",
-      curso: "Sexto Secundaria",
+      curso: "6to Secundaria",
       departamento: "Cochabamba",
       provincia: "CERCADO",
       area1: "QUÍMICA",
@@ -665,12 +608,12 @@ function agregarEjemplosCompetidores(hoja) {
       nivel2: "Sexto Nivel",
     },
     {
-      ci: "15582477",
-      nombres: "DAYRA",
+      ci: "1558247",
+      nombres: "DAYRA1",
       apellidos: "DAMIAN GRAGEDA",
       fecha_nacimiento: new Date(2014, 5, 30), // 30/06/2014
       colegio: "SANTO DOMINGO SAVIO A",
-      curso: "Quinto primaria",
+      curso: "5to primaria",
       departamento: "Cochabamba",
       provincia: "Cercado",
       area1: "ROBÓTICA",
@@ -679,12 +622,12 @@ function agregarEjemplosCompetidores(hoja) {
       nivel2: "",
     },
     {
-      ci: "16789012",
-      nombres: "JUAN",
-      apellidos: "PÉREZ GÓMEZ",
+      ci: "1678901",
+      nombres: "Juan1",
+      apellidos: "Perez Gomez",
       fecha_nacimiento: new Date(2010, 2, 15), // 15/03/2010
       colegio: "COLEGIO SAN AGUSTÍN",
-      curso: "Segundo Secundaria",
+      curso: "2do Secundaria",
       departamento: "Cochabamba",
       provincia: "Quillacollo",
       area1: "BIOLOGÍA",
@@ -719,33 +662,33 @@ function agregarEjemplosTutores(hoja) {
   const tutores = [
     {
       id: 1,
-      ci: "5487632",
-      nombres: "JOFRE",
-      apellidos: "TICONA PLATA",
+      ci: "548762",
+      nombres: "Jofre",
+      apellidos: "Ticona Plata",
       correo: "jofre.ticona@gmail.com",
       telefono: "76543210",
     },
     {
       id: 2,
-      ci: "4567890",
-      nombres: "DAYSI",
-      apellidos: "GRAGEDA GONZÁLES",
+      ci: "456789",
+      nombres: "Daysi",
+      apellidos: "Gregeda Gonzales",
       correo: "daysigragedagonzales@gmail.com",
       telefono: "76464453",
     },
     {
       id: 3,
-      ci: "3456789",
-      nombres: "CARLOS",
-      apellidos: "MENDOZA LÓPEZ",
+      ci: "345678",
+      nombres: "Carlos",
+      apellidos: "Mendoza Lopez",
       correo: "carlos.mendoza@colegio.edu.bo",
       telefono: "70123456",
     },
     {
       id: 4,
-      ci: "7890123",
-      nombres: "MARÍA",
-      apellidos: "VARGAS ROJAS",
+      ci: "789012",
+      nombres: "Maria",
+      apellidos: "Vargas Rojas",
       correo: "maria.vargas@gmail.com",
       telefono: "71234567",
     },
@@ -770,7 +713,7 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
   const relaciones = [
     {
       id: 1,
-      ci_competidor: "1426363", // FRESIA
+      ci_competidor: "1426836", // FRESIA
       ci_tutor: "5487632", // JOFRE
       nivel_responsabilidad: "Principal",
       relacion: "Familiar",
@@ -779,7 +722,7 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
     },
     {
       id: 2,
-      ci_competidor: "14268363", // FRESIA
+      ci_competidor: "1426836", // FRESIA
       ci_tutor: "3456789", // CARLOS
       nivel_responsabilidad: "Secundario",
       relacion: "Profesor",
@@ -788,7 +731,7 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
     },
     {
       id: 3,
-      ci_competidor: "14268363", // FRESIA
+      ci_competidor: "1426836", // FRESIA
       ci_tutor: "7890123", // MARÍA
       nivel_responsabilidad: "Secundario",
       relacion: "Otro",
@@ -797,16 +740,16 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
     },
     {
       id: 4,
-      ci_competidor: "15582477", // DAYRA
+      ci_competidor: "1558247", // DAYRA
       ci_tutor: "4567890", // DAYSI
       nivel_responsabilidad: "Principal",
-      relacion: "Padre/Madre",
+      relacion: "Padre",
       responsable_pago: "Sí",
       area_especifica: "",
     },
     {
       id: 5,
-      ci_competidor: "16789012", // JUAN
+      ci_competidor: "1678901", // JUAN
       ci_tutor: "3456789", // CARLOS
       nivel_responsabilidad: "Principal",
       relacion: "Profesor",
