@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./EditarCompetidores.css";
-import { CheckCheck } from 'lucide-react';
+import { CheckCheck } from "lucide-react";
 
 function EditarCompetidores() {
   const { id: tutorId, idCompetidor } = useParams();
@@ -16,8 +16,9 @@ function EditarCompetidores() {
     curso: "",
     departamento: "",
     provincia: "",
-    areasInscritas: ""
+    areasInscritas: "",
   });
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -26,7 +27,9 @@ function EditarCompetidores() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/informacionCompetidores/${idCompetidor}/competidor`);
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/informacionCompetidores/${idCompetidor}/competidor`
+        );
         const competidorEncontrado = response.data.informacion_competidor;
 
         if (!competidorEncontrado) {
@@ -43,9 +46,51 @@ function EditarCompetidores() {
     fetchData();
   }, [idCompetidor, tutorId]);
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (competidor.nombres.trim().length < 3)
+      newErrors.nombres = "Debe tener al menos 3 caracteres.";
+    if (competidor.apellidos.trim().length < 6)
+      newErrors.apellidos = "Debe tener al menos 6 caracteres.";
+    if (competidor.ci.trim().length < 7)
+      newErrors.ci = "Debe tener al menos 7 caracteres.";
+    if (competidor.departamento.trim().length < 4)
+      newErrors.departamento = "Debe tener al menos 4 caracteres.";
+    if (competidor.provincia.trim().length < 4)
+      newErrors.provincia = "Debe tener al menos 4 caracteres.";
+
+    // Validación de fecha de nacimiento
+    if (!competidor.fecha_nacimiento) {
+      newErrors.fecha_nacimiento = "La fecha de nacimiento es requerida";
+    } else {
+      const birthDate = new Date(competidor.fecha_nacimiento);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+
+      if (age < 5 || age > 18) {
+        newErrors.fecha_nacimiento = "La edad debe estar entre 5 y 18 años";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowConfirmationModal(true);
+
+    if (validateForm()) {
+      setShowConfirmationModal(true);
+    }
   };
 
   const confirmSave = async () => {
@@ -54,7 +99,7 @@ function EditarCompetidores() {
 
     try {
       //await axios.put(`/api/competidores/${idCompetidor}`, competidor);
-      console.log(competidor)
+      console.log(competidor);
       setShowSuccessModal(true);
 
       setTimeout(() => {
@@ -78,6 +123,14 @@ function EditarCompetidores() {
       ...prev,
       [id]: value,
     }));
+
+    if (errors[id]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[id];
+        return newErrors;
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -85,25 +138,31 @@ function EditarCompetidores() {
   };
 
   const formatDateForInput = (dateString) => {
-    if (!dateString) return '';
-    
+    if (!dateString) return "";
+
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
       return dateString;
     }
-  
+
     // Para formato "dd/mm/yyyy" o "dd-mm-yyyy"
-    if (dateString.includes('/') || dateString.includes('-')) {
+    if (dateString.includes("/") || dateString.includes("-")) {
       const [day, month, year] = dateString.split(/[/-]/);
-      return `${year.padStart(4, '20')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      return `${year.padStart(4, "20")}-${month.padStart(
+        2,
+        "0"
+      )}-${day.padStart(2, "0")}`;
     }
-  
+
     // Para formato "ddmmyy" (como "06/06/07")
-    if (dateString.length === 8 && dateString.includes('/')) {
-      const [day, month, year] = dateString.split('/');
-      return `20${year.padStart(2, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    if (dateString.length === 8 && dateString.includes("/")) {
+      const [day, month, year] = dateString.split("/");
+      return `20${year.padStart(2, "0")}-${month.padStart(
+        2,
+        "0"
+      )}-${day.padStart(2, "0")}`;
     }
-  
-    return '';
+
+    return "";
   };
 
   if (loading && !competidor.nombres) {
@@ -111,7 +170,7 @@ function EditarCompetidores() {
   }
 
   if (error) {
-    return <div className="error-message">Error: {error}</div>;
+    return <div className="error-message2">Error: {error}</div>;
   }
 
   return (
@@ -128,6 +187,9 @@ function EditarCompetidores() {
             onChange={handleChange}
             required
           />
+          {errors.nombres && (
+            <span className="error-message2">{errors.nombres}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -139,6 +201,9 @@ function EditarCompetidores() {
             onChange={handleChange}
             required
           />
+          {errors.apellidos && (
+            <span className="error-message2">{errors.apellidos}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -147,21 +212,30 @@ function EditarCompetidores() {
             type="text"
             id="ci"
             value={competidor.ci}
-            onChange={handleChange}
+            onChange={(e) => {
+              // Validación para aceptar solo números
+              if (/^\d*$/.test(e.target.value)) {
+                handleChange(e);
+              }
+            }}
             required
           />
+          {errors.ci && <span className="error-message2">{errors.ci}</span>}
         </div>
 
         <div className="form-group">
           <label htmlFor="fechaNacimiento">Fecha de Nacimiento:</label>
           <input
             type="date"
-            id="fechaNacimiento"
+            id="fecha_nacimiento"
             name="fecha_nacimiento"
             value={formatDateForInput(competidor.fecha_nacimiento)}
             onChange={handleChange}
             required
           />
+          {errors.fecha_nacimiento && (
+            <span className="error-message2">{errors.fecha_nacimiento}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -176,13 +250,26 @@ function EditarCompetidores() {
 
         <div className="form-group">
           <label htmlFor="departamento">Departamento:</label>
-          <input
-            type="text"
+          <select
             id="departamento"
             value={competidor.departamento}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">Seleccione un departamento</option>
+            <option value="Beni">Beni</option>
+            <option value="Chuquisaca">Chuquisaca</option>
+            <option value="Cochabamba">Cochabamba</option>
+            <option value="La Paz">La Paz</option>
+            <option value="Oruro">Oruro</option>
+            <option value="Pando">Pando</option>
+            <option value="Potosí">Potosí</option>
+            <option value="Santa Cruz">Santa Cruz</option>
+            <option value="Tarija">Tarija</option>
+          </select>
+          {errors.departamento && (
+            <span className="error-message2">{errors.departamento}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -194,14 +281,15 @@ function EditarCompetidores() {
             onChange={handleChange}
             required
           />
+          {errors.provincia && (
+            <span className="error-message2">{errors.provincia}</span>
+          )}
         </div>
 
         <div className="form-group">
           <label>Áreas Inscritas:</label>
           <div className="read-only-field">
-              <span className="area-tag">
-                {competidor.area}
-              </span>
+            <span className="area-tag">{competidor.area}</span>
           </div>
         </div>
 

@@ -347,3 +347,20 @@
     transform: scale(1);
   }
 }
+.error-message2 {
+  color: #721c24;           
+  font-size: 0.85em;       
+  margin: 5px 0 0 0;       
+  padding: 5px 8px;         
+  background-color: #f8d7da; 
+  border: 1px solid #f5c6cb; 
+  border-radius: 3px;        
+  display: inline-block;     
+  width: auto;             
+  animation: fadeIn 0.2s ease-out; 
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
