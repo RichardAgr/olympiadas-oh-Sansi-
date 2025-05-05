@@ -1,5 +1,5 @@
 import ExcelJS from "exceljs"
-
+import * as XLSX from "xlsx"
 //cosntruccion de la plantilla excel
 export async function generateExcelTemplate() {
   try {
@@ -379,7 +379,7 @@ function configurarHojaCompetidores(hoja) {
   }
 
   // Agregar formato para fechas
-  for (let i = 2; i <= 101; i++) {
+  for (let i = 2; i <= 31; i++) {
     hoja.getCell(`E${i}`).numFmt = "dd/mm/yyyy"
   }
 
@@ -662,7 +662,7 @@ function agregarEjemplosTutores(hoja) {
   const tutores = [
     {
       id: 1,
-      ci: "548762",
+      ci: "548763",
       nombres: "Jofre",
       apellidos: "Ticona Plata",
       correo: "jofre.ticona@gmail.com",
@@ -714,7 +714,7 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
     {
       id: 1,
       ci_competidor: "1426836", // FRESIA
-      ci_tutor: "5487632", // JOFRE
+      ci_tutor: "548763", // JOFRE
       nivel_responsabilidad: "Principal",
       relacion: "Familiar",
       responsable_pago: "Sí",
@@ -723,7 +723,7 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
     {
       id: 2,
       ci_competidor: "1426836", // FRESIA
-      ci_tutor: "3456789", // CARLOS
+      ci_tutor: "345678", // CARLOS
       nivel_responsabilidad: "Secundario",
       relacion: "Profesor",
       responsable_pago: "No",
@@ -732,7 +732,7 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
     {
       id: 3,
       ci_competidor: "1426836", // FRESIA
-      ci_tutor: "7890123", // MARÍA
+      ci_tutor: "789012", // MARÍA
       nivel_responsabilidad: "Secundario",
       relacion: "Otro",
       responsable_pago: "No",
@@ -741,7 +741,7 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
     {
       id: 4,
       ci_competidor: "1558247", // DAYRA
-      ci_tutor: "4567890", // DAYSI
+      ci_tutor: "456789", // DAYSI
       nivel_responsabilidad: "Principal",
       relacion: "Padre",
       responsable_pago: "Sí",
@@ -750,7 +750,7 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
     {
       id: 5,
       ci_competidor: "1678901", // JUAN
-      ci_tutor: "3456789", // CARLOS
+      ci_tutor: "345678", // CARLOS
       nivel_responsabilidad: "Principal",
       relacion: "Profesor",
       responsable_pago: "Sí",
@@ -771,4 +771,182 @@ function agregarEjemplosRelacionCompetidorTutor(hoja) {
     row.getCell(6).value = relacion.responsable_pago
     row.getCell(7).value = relacion.area_especifica
   })
+}
+
+
+//procesa archivo excel
+export async function procesarArchivoExcel(file) {
+  try {
+    if (!file) {
+      throw new Error("No se proporcionó ningún archivo")
+    }
+
+    console.log("Archivo recibido:", file.name, "Tamaño:", file.size)
+
+    // Leer el archivo
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.onload = (e) => {
+        try {
+          const buffer = e.target.result
+
+          // Leer el archivo Excel  para mejorar la compatibilidad
+          const workbook = XLSX.read(buffer, {
+            type: "array",
+            cellDates: true,
+            cellNF: false,
+            cellText: false,
+          })
+
+          console.log("Hojas encontradas:", workbook.SheetNames)
+
+          // Verificar que el archivo tenga las hojas necesarias
+          const requiredSheets = ["Competidores", "Tutores", "Relación Competidor-Tutor"]
+          const missingSheets = []
+
+          for (const sheet of requiredSheets) {
+            if (!workbook.SheetNames.includes(sheet)) {
+              missingSheets.push(sheet)
+            }
+          }
+
+          if (missingSheets.length > 0) {
+            reject(
+              new Error(
+                `El archivo Excel no contiene las siguientes hojas: ${missingSheets.join(
+                  ", ",
+                )}. Asegúrate de usar la plantilla correcta.`,
+              ),
+            )
+            return
+          }
+
+          // Extraer datos
+          const competidoresSheet = workbook.Sheets["Competidores"]
+          const tutoresSheet = workbook.Sheets["Tutores"]
+          const relacionesSheet = workbook.Sheets["Relación Competidor-Tutor"]
+
+          // Convertir hojas a JSON para poder leeer mejor
+          const competidores = XLSX.utils.sheet_to_json(competidoresSheet, {
+            raw: false,
+            dateNF: "dd/mm/yyyy",
+            defval: "",
+            header: "A", //encabezados de columna
+            range: 2, // Comenzar desde la fila 3 para omitir encabezados
+          })
+
+          const tutores = XLSX.utils.sheet_to_json(tutoresSheet, {
+            raw: false,
+            defval: "",
+            header: "A", // Usar encabezados de columna
+            range: 2, // Comenzar desde la fila 3 para omitir encabezados
+          })
+
+          const relaciones = XLSX.utils.sheet_to_json(relacionesSheet, {
+            raw: false,
+            defval: "",
+            header: "A", // Usar encabezados de columna
+            range: 2, // Comenzar desde la fila 3 para omitir encabezados
+          })
+
+          // Mapear los datos para usar nombres de columnas consistentes
+          const mappedCompetidores = competidores
+            .map((c) => {
+              // Ignorar filas vacías o que solo tienen el número
+              if (Object.keys(c).length <= 1) return null
+
+              // Verificar si hay al menos un campo con datos significativos
+              const hasData = c.B || c.C || c.D || c.E || c.H || c.J || c.K
+              if (!hasData) return null
+
+              return {
+                "CI (*)": c.B || "",
+                "Nombres (*)": c.C || "",
+                "Apellidos (*)": c.D || "",
+                "Fecha Nacimiento (*)": c.E || "",
+                "Colegio (*)": c.F || "",
+                "Curso (*)": c.G || "",
+                "Departamento (*)": c.H || "",
+                "Provincia (*)": c.I || "",
+                "Área 1 (*)": c.J || "",
+                "Categoría/Nivel 1 (*)": c.K || "",
+                "Área 2": c.L || "",
+                "Categoría/Nivel 2": c.M || "",
+              }
+            })
+            .filter((c) => c !== null)
+
+          const mappedTutores = tutores
+            .map((t) => {
+              // Ignorar filas vacías o que solo tienen el número
+              if (Object.keys(t).length <= 1) return null
+
+              // Verificar si hay al menos un campo con datos
+              const hasData = t.B || t.C || t.D
+              if (!hasData) return null
+
+              /* console.log("Datos del tutor:", {
+                CI: t.B,
+                Nombres: t.C,
+                Apellidos: t.D,
+                Correo: t.E,
+                Telefono: t.F,
+              })
+ */
+              return {
+                "CI (*)": t.B || "",
+                "Nombres (*)": t.C || "",
+                "Apellidos (*)": t.D || "",
+                "Correo Electrónico (*)": t.E || "",
+                "Teléfono (*)": t.F || "",
+              }
+            })
+            .filter((t) => t !== null)
+
+          const mappedRelaciones = relaciones
+            .map((r) => {
+              // Ignorar filas vacías o que solo tienen el número
+              if (Object.keys(r).length <= 1) return null
+
+              const hasData = r.B || r.C || r.D
+              if (!hasData) return null
+
+              return {
+                "CI Competidor (*)": r.B || "",
+                "CI Tutor (*)": r.C || "",
+                "Nivel Responsabilidad (*)": r.D || "Principal",
+                "Relación con Competidor (*)": r.E || "",
+                "Responsable de Pago": r.F || "No",
+                "Área Específica": r.G || "",
+              }
+            })
+            .filter((r) => r !== null)
+
+          console.log("Competidores mapeados:", mappedCompetidores.length)
+          console.log("Tutores mapeados:", mappedTutores.length)
+          console.log("Relaciones mapeadas:", mappedRelaciones.length)
+
+          // Devolver los datos procesados
+          resolve({
+            competidores: mappedCompetidores,
+            tutores: mappedTutores,
+            relaciones: mappedRelaciones,
+          })
+        } catch (error) {
+          console.error("Error al procesar el archivo Excel:", error)
+          reject(new Error("Error al procesar el archivo Excel: " + (error.message || "Error desconocido")))
+        }
+      }
+
+      reader.onerror = (error) => {
+        reject(new Error("Error al leer el archivo: " + error))
+      }
+
+      reader.readAsArrayBuffer(file)
+    })
+  } catch (error) {
+    console.error("Error al procesar el archivo Excel:", error)
+    throw new Error("Error al procesar el archivo Excel: " + (error.message || "Error desconocido"))
+  }
 }

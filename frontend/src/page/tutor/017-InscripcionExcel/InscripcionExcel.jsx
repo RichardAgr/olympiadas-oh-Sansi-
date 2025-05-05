@@ -1,7 +1,7 @@
 import saveAs from "file-saver"
 import { useState } from "react"
 import {Download,Info} from "lucide-react"
-import { generateExcelTemplate } from "../../../components/plantillaExcel/Excel"
+import { generateExcelTemplate,procesarArchivoExcel } from "../../../components/plantillaExcel/Excel"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
 import "./inscripcionExcel.css"
 
@@ -23,7 +23,7 @@ const InscripcionMasiva = () => {
 
       const blob = await generateExcelTemplate()
 
-      saveAs(blob, "Plantilla_Inscripcion_Masiva_Olimpiadas.xlsx")
+      saveAs(blob, "Plantilla_Inscripcion_Excel.xlsx")
     } catch (error) {
       console.error("Error al descargar la plantilla:", error)
       setError("Error al descargar la plantilla: " + error.message)
@@ -31,8 +31,36 @@ const InscripcionMasiva = () => {
       setIsLoading(false)
     }
   }
+
+
   const handleFileUpload = async (uploadedFile) => {
-    console.log("Se cargo el excel")
+    setFile(uploadedFile)
+    setError(null)
+    setIsLoading(true)
+
+    try {
+      console.log("Iniciando carga de archivo:",uploadedFile.name)
+      //procesar excel
+      const data = await procesarArchivoExcel(uploadedFile)
+
+      console.log("Datos procesados:", {
+        competidores: data.competidores?.length || 0,
+        tutores: data.tutores?.length || 0,
+        relaciones: data.relaciones?.length || 0,
+      })
+
+      if (!data.competidores || !data.tutores || !data.relaciones) {
+        throw new Error("Los datos procesados no tienen la estructura esperada")
+      }
+      setExcelData(data)
+
+      //validar los datos del excel
+    } catch (error) {
+      console.log("Error en el handleFileUpload: ",error)
+      setError("Error al procesar el archivo Excel: " + (err.message || "Asegúrate de que el formato sea correcto."))
+    }finally{
+      setIsLoading(false)
+    }
   }
 
   const renderStepContent = () => {

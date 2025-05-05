@@ -2,10 +2,11 @@ import { useState, useRef } from "react"
 import {FileSpreadsheet,Upload} from "lucide-react"
 import "./fileUpLoader.css"
 
-const FileUpLoader = ({onFileUpLoader, isLoading}) => {
+const FileUpLoader = ({onFileUpload, isLoading}) => {
 
     const [isDragging, setIsDragging] = useState(false)
     const [fileName, setFileName] = useState("")
+    const [upLoadError,setUpLoadError] = useState(null)
     const fileInputRef = useRef(null)
 
     const handleDragOver = (e) => {
@@ -39,14 +40,21 @@ const FileUpLoader = ({onFileUpLoader, isLoading}) => {
     }
 
     const processFile = (file) => {
+      setUpLoadError(null)
         // Verificar que sea un archivo Excel
         if (file.name && !file.name.match(/\.(xlsx|xls)$/)) {
-          alert("Por favor, sube un archivo Excel válido (.xlsx o .xls)")
+          setUpLoadError("Por favor, sube un archivo Excel válido (.xlsx o .xls)")
+          return
+        }
+
+        if(file.size > 10 * 1024 * 1024){
+          setUpLoadError("El archivo es demasiado grande. El tamaño máximo permitido es 10MB.")
           return
         }
         
         setFileName(file.name || "Archivo_Excel.xlsx")
-        onFileUpLoader(file)
+        console.log("Procesando archivo:", file.name, "Tamaño:", file.size)
+        onFileUpload(file)
     }
 
   return (
