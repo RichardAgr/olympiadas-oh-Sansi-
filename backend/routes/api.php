@@ -47,6 +47,7 @@ Route::get('/tutores/{id}/competidores-filtrados', [TutorController::class, 'com
 Route::put('/tutor/{tutor_id}/competidor/{competidor_id}', [TutorController::class, 'actualizarDatosCompetidor']);
 Route::post('/tutor/{tutor_id}/inscribir', [TutorController::class, 'inscribirCompetidor']);
 Route::post('/tutores/{tutor_id}/competidor', [TutorController::class, 'inscribirCompetidor']);
+Route::post('/boleta/generar', [BoletaController::class, 'generarBoleta']);
 
 
 Route::get('/competidores', [CompetidorController::class, 'index']);
