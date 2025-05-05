@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Tutor;
 use App\Models\Competidor;
 use App\Models\TutorCompetidor;
+use App\Models\Colegio;
+use App\Models\Curso;
+use App\Models\NivelCategoria; 
 use App\Models\CompetidorCompetencia;
 use App\Models\Area;;
 use App\Http\Resources\CompetidoresTutorResource;
@@ -340,5 +343,136 @@ class TutorController extends Controller{
             ], 500);
         }
     }
+    
+    public function inscribirCompetidor(Request $request, $tutor_id)
+    {
+        $validator = Validator::make($request->all(), [
+            'competidor.nombres' => 'required|string',
+            'competidor.apellidos' => 'required|string',
+            'competidor.ci' => 'required|string|unique:competidor,ci',
+            'competidor.fecha_nacimiento' => 'required|date',
+            'competidor.colegio' => 'required|string',
+            'competidor.curso' => 'required|string',
+            'competidor.area' => 'required|string',
+            'competidor.categoria' => 'required|string',
+            'tutores' => 'required|array|min:1',
+            'tutores.*.nombres' => 'required|string',
+            'tutores.*.apellidos' => 'required|string',
+            'tutores.*.correo_electronico' => 'required|email',
+            'tutores.*.telefono' => 'required|string',
+            'tutores.*.ci' => 'required|string',
+            'tutores.*.relacion' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Colegio
+            $colegio = Colegio::firstOrCreate(
+                ['nombre' => $request->competidor['colegio']],
+                ['ubicacion_id' => 1, 'telefono' => '00000000']
+            );
+
+            // Curso
+            $curso = Curso::firstOrCreate(
+                ['nombre' => $request->competidor['curso']],
+                ['grado_id' => 1, 'estado' => 1]
+            );
+
+            // Crear competidor
+            $competidor = Competidor::create([
+                'nombres' => $request->competidor['nombres'],
+                'apellidos' => $request->competidor['apellidos'],
+                'ci' => $request->competidor['ci'],
+                'fecha_nacimiento' => $request->competidor['fecha_nacimiento'],
+                'colegio_id' => $colegio->colegio_id,
+                'curso_id' => $curso->curso_id,
+                'ubicacion_id' => 1,
+                'estado' => 'Pendiente'
+            ]);
+
+            // Tutor principal
+            DB::table('tutor_competidor')->insert([
+                'tutor_id' => $tutor_id,
+                'competidor_id' => $competidor->competidor_id,
+                'nivel_responsabilidad' => 'Titular',
+                'relacion_competidor' => 'Padre'
+            ]);
+
+            // Área
+            $area = Area::whereRaw('LOWER(nombre) = ?', [strtolower($request->competidor['area'])])->first();
+            if (!$area) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Área inválida: ' . $request->competidor['area'],
+                    'field' => 'area'
+                ], 422);
+            }
+
+            // Categoría
+            $categoria = NivelCategoria::whereRaw('LOWER(nombre) = ?', [strtolower($request->competidor['categoria'])])->first();
+            if (!$categoria) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Categoría inválida: ' . $request->competidor['categoria'],
+                    'field' => 'categoria'
+                ], 422);
+            }
+
+            // Insertar en tabla pivote
+            DB::table('competidor_competencia')->insert([
+                'competidor_id' => $competidor->competidor_id,
+                'area_id' => $area->area_id,
+                'nivel_categoria_id' => $categoria->nivel_categoria_id,
+                'competencia_id' => 1, // <-- hardcoded for now
+                'fecha_inscripcion' => now()
+            ]);
+
+            // Tutores adicionales
+            foreach ($request->tutores as $tutorData) {
+                $newTutor = Tutor::firstOrCreate(
+                    ['ci' => $tutorData['ci']],
+                    [
+                        'nombres' => $tutorData['nombres'],
+                        'apellidos' => $tutorData['apellidos'],
+                        'correo_electronico' => $tutorData['correo_electronico'],
+                        'telefono' => $tutorData['telefono'],
+                        'relacion' => $tutorData['relacion'],
+                        'estado' => 1
+                    ]
+                );
+
+                if ($newTutor->tutor_id != $tutor_id) {
+                    DB::table('tutor_competidor')->updateOrInsert(
+                        [
+                            'tutor_id' => $newTutor->tutor_id,
+                            'competidor_id' => $competidor->competidor_id
+                        ],
+                        [
+                            'nivel_responsabilidad' => 'Tutor principal',
+                            'relacion_competidor' => $tutorData['relacion']
+                        ]
+                    );
+                }
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Competidor registered successfully.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error during registration.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 }

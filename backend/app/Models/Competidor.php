@@ -21,6 +21,8 @@ class Competidor extends Model
         'ci',
         'fecha_nacimiento',
         'estado',
+        'departamento',
+        'provincia'
     ];
 
     protected $casts = [
