@@ -2,6 +2,7 @@ import saveAs from "file-saver"
 import { useState } from "react"
 import {Download,Info} from "lucide-react"
 import { generateExcelTemplate,procesarArchivoExcel } from "../../../components/plantillaExcel/Excel"
+import { validarDatosExcel } from "../../../components/plantillaExcel/ValidadorExcel"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
 import "./inscripcionExcel.css"
 
@@ -14,6 +15,7 @@ const InscripcionMasiva = () => {
   const [error, setError] = useState(null)
   const [excelData, setExcelData] = useState(null)
   const [step, setStep] = useState(1)
+  const [validationResults,setValidationResults] = useState(null)
 
 
   const handleDescargarPlantilla = async () => {
@@ -55,6 +57,10 @@ const InscripcionMasiva = () => {
       setExcelData(data)
 
       //validar los datos del excel
+      const resultados = validarDatosExcel(data)
+      console.log("Resultados de validación:", resultados)
+      setValidationResults(resultados)
+      setStep(2)
     } catch (error) {
       console.log("Error en el handleFileUpload: ",error)
       setError("Error al procesar el archivo Excel: " + (err.message || "Asegúrate de que el formato sea correcto."))
