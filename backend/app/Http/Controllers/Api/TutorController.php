@@ -264,8 +264,7 @@ class TutorController extends Controller{
             'curso' => 'required|string',
             'departamento' => 'required|string',
             'provincia' => 'required|string',
-            'areasInscritas' => 'required|array'
-
+            'areasInscritas' => 'required|array|min:1'
         ]);
 
         if ($validator->fails()) {
@@ -276,7 +275,6 @@ class TutorController extends Controller{
         }
 
         try {
-            // Confirm the tutor is linked to this competidor
             $asignacion = DB::table('tutor_competidor')
                 ->where('tutor_id', $tutor_id)
                 ->where('competidor_id', $competidor_id)
@@ -297,42 +295,55 @@ class TutorController extends Controller{
                 ], 404);
             }
 
-            // Actualizar datos simples
+            // 📌 Actualizar datos básicos
             $competidor->nombres = $request->nombres;
             $competidor->apellidos = $request->apellidos;
             $competidor->ci = $request->ci;
             $competidor->fecha_nacimiento = $request->fechaNacimiento;
-            $competidor->departamento = $request->departamento;
-            $competidor->provincia = $request->provincia;
-            $competidor->save();
 
-            // Actualizar colegio
+            // 📚 Colegio y Curso
             $colegio = Colegio::firstOrCreate(['nombre' => $request->colegio]);
             $competidor->colegio_id = $colegio->colegio_id;
 
-            // Actualizar curso
             $curso = Curso::firstOrCreate(['nombre' => $request->curso]);
             $competidor->curso_id = $curso->curso_id;
 
             $competidor->save();
 
-            // Actualizar áreas inscritas
-            $areaNombres = array_map('trim', explode(',', $request->areasInscritas));
-            $areaIDs = Area::whereIn('nombre', $areaNombres)->pluck('area_id')->toArray();
+            // 🌎 Actualizar o crear ubicación del colegio
+            if ($colegio->ubicacion) {
+                $colegio->ubicacion->departamento = $request->departamento;
+                $colegio->ubicacion->provincia = $request->provincia;
+                $colegio->ubicacion->save();
+            } else {
+                $ubicacion = new \App\Models\Ubicacion();
+                $ubicacion->departamento = $request->departamento;
+                $ubicacion->provincia = $request->provincia;
+                $ubicacion->save();
+                $colegio->ubicacion_id = $ubicacion->ubicacion_id;
+                $colegio->save();
+            }
 
-            // Sincronizar en tabla pivote competidor_competencia
+            // 🧠 Convertir nombres de áreas a IDs
+            $areaIDs = Area::whereIn('nombre', $request->areasInscritas)->pluck('area_id')->toArray();
+
+            // 🔄 Limpiar e insertar áreas nuevamente
             DB::table('competidor_competencia')->where('competidor_id', $competidor_id)->delete();
 
             foreach ($areaIDs as $areaID) {
                 DB::table('competidor_competencia')->insert([
                     'competidor_id' => $competidor_id,
-                    'area_id' => $areaID
+                    'area_id' => $areaID,
+                    'competencia_id' => 1, // puedes hacer esto dinámico
+                    'nivel_categoria_id' => 1,
+                    'fecha_inscripcion' => now()
                 ]);
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Datos del competidor actualizados correctamente.'
+                'message' => 'Datos del competidor actualizados correctamente.',
+                'competidor_id' => $competidor->competidor_id
             ]);
 
         } catch (\Exception $e) {
@@ -343,6 +354,7 @@ class TutorController extends Controller{
             ], 500);
         }
     }
+
     
     public function inscribirCompetidor(Request $request, $tutor_id)
     {
@@ -473,6 +485,5 @@ class TutorController extends Controller{
             ], 500);
         }
     }
-
 
 }
