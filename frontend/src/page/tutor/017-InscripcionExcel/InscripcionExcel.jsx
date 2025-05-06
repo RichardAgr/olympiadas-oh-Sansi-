@@ -3,6 +3,7 @@ import { useState } from "react"
 import {Download,Info} from "lucide-react"
 import { generateExcelTemplate,procesarArchivoExcel } from "../../../components/plantillaExcel/Excel"
 import { validarDatosExcel } from "../../../components/plantillaExcel/ValidadorExcel"
+import ExcelPreview from "../../../components/excelPreview/ExcelPreview"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
 import "./inscripcionExcel.css"
 
@@ -105,6 +106,45 @@ const InscripcionMasiva = () => {
                 <li>Guarda el archivo y súbelo en esta página.</li>
                 <li>Verifica que no haya errores antes de continuar.</li>
               </ol>
+            </div>
+          </div>
+        )
+        case 2:
+        return (
+          <div className="stepContent">
+            <h2>Revisión de Datos</h2>
+
+            {validationResults && !validationResults.esValido && (
+              <div className="errorContainer">
+                <h3>Se encontraron errores en los datos:</h3>
+                <ul>
+                  {validationResults.errores.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {validationResults && validationResults.esValido && (
+              <div className="successContainer">
+                <h3>Datos validados correctamente</h3>
+                <p>Los datos cumplen con todos los requisitos para la inscripción.</p>
+              </div>
+            )}
+
+            <ExcelPreview data={excelData} />
+
+            <div className="buttonsContainer">
+              <button className="secondaryButton" onClick={() => setStep(1)}>
+                Volver
+              </button>
+              <button
+                className="primaryButton"
+                /* onClick={handleGenerarBoleta} */
+                disabled={isLoading || (validationResults && !validationResults.esValido)}
+              >
+                {isLoading ? "Generando..." : "Generar Boleta de Pago"}
+              </button>
             </div>
           </div>
         )
