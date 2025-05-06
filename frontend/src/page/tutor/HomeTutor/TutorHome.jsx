@@ -42,6 +42,10 @@ function TutorHome () {
     console.log("Subir comprobante")
   }
 
+  const viewRecibe = () => {
+    navigate(`/homeTutor/${id}/tutor/VerRecibos`)
+  }
+
   if (loading) return <div className="loading">Cargando...</div>
   if (error) return <div className="error">{error}</div>
   if (!tutor) return <div className="error">No se encontró el tutor</div>
@@ -117,6 +121,14 @@ function TutorHome () {
           <span className="upload-icon"><Upload/></span>
           Subir
         </button>
+      </div>
+    </div>
+    <div className="subir-comprobante-card"onClick={viewRecibe}>
+      <h3>Ver Recibos:</h3>
+      <div className="upload-container">
+       <p>
+        Los recibos que se muestran son los que se tienen que llevar para hacer la cancelacion de la inscripcion.
+       </p>
       </div>
     </div>
       </div>
