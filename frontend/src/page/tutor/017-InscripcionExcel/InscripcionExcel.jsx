@@ -3,6 +3,7 @@ import { useState } from "react"
 import {Download,Info} from "lucide-react"
 import { generateExcelTemplate,procesarArchivoExcel } from "../../../components/plantillaExcel/Excel"
 import { validarDatosExcel } from "../../../components/plantillaExcel/ValidadorExcel"
+import { generarBoleta } from "../../../components/generarBoleta/GenerarBoleta"
 import ExcelPreview from "../../../components/excelPreview/ExcelPreview"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
 import "./inscripcionExcel.css"
@@ -17,6 +18,7 @@ const InscripcionMasiva = () => {
   const [excelData, setExcelData] = useState(null)
   const [step, setStep] = useState(1)
   const [validationResults,setValidationResults] = useState(null)
+  const [boletaGenerada, setBoletaGenerada] = useState(null)
 
 
   const handleDescargarPlantilla = async () => {
@@ -66,6 +68,52 @@ const InscripcionMasiva = () => {
       console.log("Error en el handleFileUpload: ",error)
       setError("Error al procesar el archivo Excel: " + (err.message || "Asegúrate de que el formato sea correcto."))
     }finally{
+      setIsLoading(false)
+    }
+  }
+
+  const handleGenerarBoleta=()=>{
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      console.log("Datos para generar boleta:", excelData)
+
+      if (!excelData || !excelData.competidores || !excelData.tutores || !excelData.relaciones) {
+        throw new Error(
+          "Datos incompletos. Asegúrate de que el archivo Excel tenga todas las hojas necesarias con datos.",
+        )
+      }
+
+      // Verificar que haya al menos un competidor, un tutor y un relacion tutor-competidor
+      if (excelData.competidores.length === 0) {
+        throw new Error("No hay competidores en los datos cargados.")
+      }
+
+      if (excelData.tutores.length === 0) {
+        throw new Error("No hay tutores en los datos cargados.")
+      }
+
+      if (excelData.relaciones.length === 0) {
+        throw new Error("No hay relaciones entre competidores y tutores en los datos cargados.")
+      }
+
+      // Verificar que al menos una relación tenga responsable de Pago ( = "Sí")
+      const tieneResponsablePago = excelData.relaciones.some((r) => r["Responsable de Pago"] === "Sí")
+      if (!tieneResponsablePago) {
+        throw new Error(
+          "No se encontró ningún tutor marcado como responsable de pago. Asegúrate de marcar al menos un tutor como 'Responsable de Pago' con el valor 'Sí'.",
+        )
+      }
+
+      // Usar los datos del Excel
+      const boleta = generarBoleta(excelData)
+      setBoletaGenerada(boleta)
+      setStep(3)
+    } catch (err) {
+      console.error("Error al generar boleta:", err)
+      setError("Error al generar la boleta de pago: " + (err.message || "Error desconocido"))
+    } finally {
       setIsLoading(false)
     }
   }
@@ -140,7 +188,7 @@ const InscripcionMasiva = () => {
               </button>
               <button
                 className="primaryButton"
-                /* onClick={handleGenerarBoleta} */
+                onClick={handleGenerarBoleta}
                 disabled={isLoading || (validationResults && !validationResults.esValido)}
               >
                 {isLoading ? "Generando..." : "Generar Boleta de Pago"}
@@ -148,6 +196,7 @@ const InscripcionMasiva = () => {
             </div>
           </div>
         )
+        
       default:
         return null
     }
