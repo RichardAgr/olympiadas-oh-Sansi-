@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import "./InscribirManual.css";
 import SegundoPaso from "./SegundoPaso";
 import TercerPaso from "./TercerPaso";
 
 function InscribirManual() {
+  const {id}=useParams()
   const [formData, setFormData] = useState({
     nombres: "",
     apellidos: "",
@@ -11,7 +13,7 @@ function InscribirManual() {
     fecha_nacimiento: "",
     colegio: "",
     curso: "",
-    nivel: "Secundaria",
+    nivel: "",
     departamento: "",
     provincia: "",
     area: "",
@@ -53,9 +55,10 @@ function InscribirManual() {
     setCurrentStep(3);
   };
 
-  const handleFinalSubmit = (tutorId) => {
+  const handleFinalSubmit = () => {
+
     const datosCompletos = {
-      tutor_id: tutorId,
+      tutor_id: id,
       competidor: {
         ...formData,
       },
@@ -238,6 +241,7 @@ function InscribirManual() {
 
       {currentStep === 3 && (
         <TercerPaso
+          step={setCurrentStep}
           onBack={handleBack}
           onSubmit={handleFinalSubmit}
         />

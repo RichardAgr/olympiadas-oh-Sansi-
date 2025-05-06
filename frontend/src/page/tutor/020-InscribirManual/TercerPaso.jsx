@@ -4,9 +4,10 @@ import { CheckCircle } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import "./TercerPaso.css";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate} from "react-router-dom";
 
-function TercerPaso({ onBack, onSubmit }) {
+function TercerPaso({ onBack, onSubmit,step}) {
+  const navigate = useNavigate()
   const [cantidadTutores, setCantidadTutores] = useState(1);
   const [tutores, setTutores] = useState([
     { nombres: "", apellidos: "", correo: "", telefono: "", ci: "", relacion: "" },
@@ -14,7 +15,7 @@ function TercerPaso({ onBack, onSubmit }) {
   ]);
   const [errors, setErrors] = useState([{}, {}]);
   const [exito, setExito] = useState(false);
-  const { idTutor } = useParams();
+  const { id} = useParams();
 
   const handleTutorChange = (index, e) => {
     const { name, value } = e.target;
@@ -34,6 +35,10 @@ function TercerPaso({ onBack, onSubmit }) {
     return err;
   };
 
+  const changeStep=()=>{
+    step(1);
+  }
+
   const handleSubmit = () => {
     const errores = tutores.slice(0, cantidadTutores).map(validateTutor);
     setErrors(errores);
@@ -41,7 +46,7 @@ function TercerPaso({ onBack, onSubmit }) {
     const tieneErrores = errores.some(err => Object.keys(err).length > 0);
     if (!tieneErrores) {
       onSubmit({
-        tutor_id: idTutor,
+        tutor_id: id,
         tutores: tutores.slice(0, cantidadTutores),
       });
       setExito(true);
@@ -238,6 +243,9 @@ function TercerPaso({ onBack, onSubmit }) {
       <h2>¡Competidor inscrito con éxito!</h2>
       <button className="descargar-button" onClick={generarBoletaPDF}>
         Descargar Boleta
+      </button>
+      <button className="descargar-button"onClick={changeStep}>
+        Nueva inscripcion
       </button>
     </div>
   );
