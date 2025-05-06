@@ -1,9 +1,10 @@
 import saveAs from "file-saver"
 import { useState } from "react"
-import {Download,Info} from "lucide-react"
+import {Download,Info,} from "lucide-react"
 import { generateExcelTemplate,procesarArchivoExcel } from "../../../components/plantillaExcel/Excel"
 import { validarDatosExcel } from "../../../components/plantillaExcel/ValidadorExcel"
 import { generarBoleta } from "../../../components/generarBoleta/GenerarBoleta"
+import { generarBoletaPDF } from "../../../components/generarBoleta/GenerarBoletaPDF"
 import ExcelPreview from "../../../components/excelPreview/ExcelPreview"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
 import BoletaView from "../../../components/BoletaView/BoletaView"
@@ -116,6 +117,43 @@ const InscripcionMasiva = () => {
     } catch (err) {
       console.error("Error al generar boleta:", err)
       setError("Error al generar la boleta de pago: " + (err.message || "Error desconocido"))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleDescargarBoleta = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      if (!boletaGenerada) {
+        throw new Error("No hay boleta generada para descargar")
+      }
+
+      // Asegurarse de que todos los campos necesarios existan
+      const boletaData = {
+        numero: boletaGenerada.numero || "7000569",
+        tutor: boletaGenerada.tutor || "TUTOR NO ESPECIFICADO",
+        fechaEmision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
+        montoTotal: typeof boletaGenerada.montoTotal !== "Sin costo" ? boletaGenerada.montoTotal : 0,
+        competidores: Array.isArray(boletaGenerada.competidores)
+          ? boletaGenerada.competidores.map((comp) => ({
+              nombre: comp.nombre || "Sin nombre",
+              area:comp.area || "Sin área",
+              nivel: comp.nivel || "Sin categoría",
+              monto: comp.monto || 0,
+            }))
+          : [],
+      }
+
+      const blob = await generarBoletaPDF(boletaData)
+
+      // Descargar usando file-saver
+      saveAs(blob, `Boleta_${boletaData.numero}.pdf`)
+    } catch (error) {
+      console.error("Error al descargar la boleta:", error)
+      setError("Error al descargar la boleta: " + error.message)
     } finally {
       setIsLoading(false)
     }
@@ -296,6 +334,44 @@ const InscripcionMasiva = () => {
             </div>
           </div>
         )
+        case 4:
+        return (
+          <div className="stepContent">
+            <h2>Confirmación</h2>
+
+            {error && <div className="errorMessage">{error}</div>}
+
+            <div className="confirmationContainer">
+              <div className="confirmationIcon">
+              {/* poner icono */}
+              </div>
+              <h3>¡Inscripción completada con éxito!</h3>
+              <p>
+                La inscripción masiva ha sido procesada correctamente. Se ha generado la boleta de pago para los
+                competidores inscritos.
+              </p>
+              <p>
+                <strong>Número de Boleta:</strong> {boletaGenerada?.numero}
+              </p>
+              <p>
+                <strong>Total Competidores:</strong>{" "}
+                {boletaGenerada?.totalCompetidores || excelData?.competidores.length || 0}
+              </p>
+              <p>
+                <strong>Monto Total:</strong> Bs. {boletaGenerada?.montoTotal || 0}
+              </p>
+            </div>
+
+            <div className="buttonsContainer">
+              <button className="secondaryButton" onClick={() => setStep(3)}>
+                Volver
+              </button>
+              <button className="successButton" onClick={() => setStep(1)}>
+                Nueva Inscripción
+              </button>
+            </div>
+          </div>
+        )
       default:
         return null
     }
@@ -346,7 +422,7 @@ const InscripcionMasiva = () => {
               : [],
           }}
           onClose={handleCloseBoletaViewer}
-          /* onDescargar={handleDescargarBoleta} */
+          onDescargar={handleDescargarBoleta}
         />
       )}
     </div>
