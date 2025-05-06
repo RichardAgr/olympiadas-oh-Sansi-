@@ -6,6 +6,7 @@ import { validarDatosExcel } from "../../../components/plantillaExcel/ValidadorE
 import { generarBoleta } from "../../../components/generarBoleta/GenerarBoleta"
 import ExcelPreview from "../../../components/excelPreview/ExcelPreview"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
+import BoletaView from "../../../components/BoletaView/BoletaView"
 import "./inscripcionExcel.css"
 
 //simulamos la carga del excel poner datos simulados aca
@@ -19,6 +20,7 @@ const InscripcionMasiva = () => {
   const [step, setStep] = useState(1)
   const [validationResults,setValidationResults] = useState(null)
   const [boletaGenerada, setBoletaGenerada] = useState(null)
+  const [showBoletaViewer, setShowBoletaViewer] = useState(false)
 
 
   const handleDescargarPlantilla = async () => {
@@ -108,6 +110,7 @@ const InscripcionMasiva = () => {
 
       // Usar los datos del Excel
       const boleta = generarBoleta(excelData)
+      console.log("Esta es la boleta",boleta)
       setBoletaGenerada(boleta)
       setStep(3)
     } catch (err) {
@@ -116,6 +119,18 @@ const InscripcionMasiva = () => {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleVerBoleta = () => {
+    setShowBoletaViewer(true)
+  }
+
+  const handleCloseBoletaViewer = () => {
+    setShowBoletaViewer(false)
+  }
+
+  const handleContinuar = () => {
+    setStep(4)
   }
 
   const renderStepContent = () => {
@@ -196,7 +211,91 @@ const InscripcionMasiva = () => {
             </div>
           </div>
         )
-        
+        case 3:
+        return (
+          <div className="stepContent">
+            <h2>Comprobante de Pago</h2>
+
+            {error && <div className="errorMessage">{error}</div>}
+
+            <div className="successContainer">
+              <h3>¡Boleta generada exitosamente!</h3>
+              <p>Se ha generado la boleta de pago para los competidores inscritos.</p>
+            </div>
+
+            <div className="boletaPreviewContainer">
+              <h3>Vista previa de la boleta</h3>
+              <div className="boletaDocumentPreview">
+                <div className="boletaHeaderSection">
+                  <div className="universidadInfo">
+                    <p className="universidadNombre">UNIVERSIDAD MAYOR DE SAN SIMÓN</p>
+                    <p>DIRECCIÓN ADMINISTRATIVA Y FINANCIERA</p>
+                  </div>
+                  <div className="boletaNumero">
+                    <p>Nro.</p>
+                    <p className="numeroValue">{boletaGenerada?.numero || "7000569"}</p>
+                  </div>
+                </div>
+
+                <h2 className="boletaTitle">BOLETA DE PAGO</h2>
+
+                <div className="boletaInfoSection">
+                  <div className="infoRow">
+                    <div className="infoLabel">Nombre:</div>
+                    <div className="infoValue">{boletaGenerada?.tutor || "Sin tutor"}</div>
+                  </div>
+                  <div className="infoRow">
+                    <div className="infoLabel">Monto Total (Bs):</div>
+                    <div className="infoValue">{boletaGenerada?.montoTotal || 0}</div>
+                  </div>
+                </div>
+
+                <table className="boletaTable">
+                  <thead>
+                    <tr>
+                      <th>Nro</th>
+                      <th>Nombre Competidor</th>
+                      <th>Area</th>
+                      <th>Categoría</th>
+                      <th>Monto</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(boletaGenerada?.competidores).map((competidor, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{competidor.nombre || "Sin nombre"}</td>
+                        <td>{competidor.area || "Sin área"}</td>
+                        <td>{competidor.nivel || "Sin categoría"}</td>
+                        <td>{competidor.monto || 0}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <div className="boletaFooterSection">
+                  <p>Fecha de emisión: {boletaGenerada?.fechaEmision || new Date().toLocaleDateString()}</p>
+                  <p>Estado: Pendiente</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="buttonsContainer">
+              <button className="secondaryButton" onClick={() => setStep(2)}>
+                Volver
+              </button>
+              <button className="secondaryButton" onClick={handleVerBoleta}>
+                Ver Boleta Completa
+              </button>
+              {/* <button className="primaryButton"  onClick={handleDescargarBoleta} disabled={isLoading}>
+                {isLoading ? "Descargando..." : "Descargar Boleta PDF"}
+              </button> */}
+              <button className="successButton" onClick={handleContinuar}>
+                Continuar
+              </button>
+            </div>
+          </div>
+        )
       default:
         return null
     }
@@ -229,10 +328,10 @@ const InscripcionMasiva = () => {
       </div>
 
       <div className="contentContainer">{renderStepContent()}</div>
-{/*       {showBoletaViewer && boletaGenerada && (
-        <BoletaViewer
+      {showBoletaViewer && boletaGenerada && (
+        <BoletaView
           boleta={{
-            numero: boletaGenerada.numero || "B-2025-0123",
+            numero: boletaGenerada.numero || "7000569",
             tutor: boletaGenerada.tutor || "JOFRE TICONA PLATA",
             fecha_emision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
             monto_total: boletaGenerada.montoTotal || 0,
@@ -240,15 +339,16 @@ const InscripcionMasiva = () => {
             competidores: Array.isArray(boletaGenerada.competidores)
               ? boletaGenerada.competidores.map((comp) => ({
                   nombre: comp.nombre || "Sin nombre",
+                  area: comp.area || "Sin área",
                   nivel: comp.nivel || "Sin categoría",
                   monto: comp.monto || 0,
                 }))
               : [],
           }}
           onClose={handleCloseBoletaViewer}
-          onDescargar={handleDescargarBoleta}
+          /* onDescargar={handleDescargarBoleta} */
         />
-      )} */}
+      )}
     </div>
   )
 }

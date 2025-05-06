@@ -277,10 +277,6 @@
     color: #666;
   }
   
-  .boletaInfoValue {
-    flex: 1;
-  }
-  
   .confirmationContainer {
     text-align: center;
     padding: 30px 0;
