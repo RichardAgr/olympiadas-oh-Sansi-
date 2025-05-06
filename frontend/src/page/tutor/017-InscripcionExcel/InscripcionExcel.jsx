@@ -146,7 +146,6 @@ const InscripcionMasiva = () => {
             }))
           : [],
       }
-
       const blob = await generarBoletaPDF(boletaData)
 
       // Descargar usando file-saver

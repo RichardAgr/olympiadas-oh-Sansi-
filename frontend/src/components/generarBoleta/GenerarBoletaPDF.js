@@ -1,9 +1,8 @@
 import { jsPDF } from "jspdf"
-import "jspdf-autotable"
+import autoTable from "jspdf-autotable"
 
 export async function generarBoletaPDF(boleta) {
   try {
-    // Si no hay datos de boleta
     const boletaData = boleta || {aviso:"No hay datos"}
 
     console.log("Datos de boleta recibidos para generar PDF:", {
@@ -16,7 +15,7 @@ export async function generarBoletaPDF(boleta) {
     const numero = boletaData.numero || "7000569"
     const tutor = boletaData.tutor || "TUTOR NO ESPECIFICADO"
     const fechaEmision = boletaData.fechaEmision || boletaData.fecha_emision || new Date().toLocaleDateString()
-    // Asegurarse de que montoTotal sea un número
+
     const montoTotal =
       typeof boletaData.montoTotal !== "undefined"
         ? boletaData.montoTotal
@@ -37,7 +36,9 @@ export async function generarBoletaPDF(boleta) {
     doc.text("DIRECCIÓN ADMINISTRATIVA Y FINANCIERA", 15, 20)
 
     doc.setFontSize(14)
-    doc.text(`Nro. ${numero}`, 150, 15, { align: "right" })
+    doc.setTextColor(255, 0, 0)
+    doc.text(`Nro. ${numero}`, 190, 15, { align: "right" })
+    doc.setTextColor(0, 0, 0) 
 
     // Título
     doc.setFontSize(16)
@@ -47,18 +48,17 @@ export async function generarBoletaPDF(boleta) {
 
     // Información de la boleta
     doc.setFontSize(12)
-    doc.text("Periodo:", 15, 50)
-    doc.text("1-2025", 50, 50)
 
-    doc.text("Nombre:", 15, 57)
-    doc.text(tutor, 50, 57)
+    // Ajustamos las coordenadas Y para los elementos siguientes
+    doc.text("Nombre:", 15, 50)
+    doc.text(tutor, 50, 50)
 
-    doc.text("Monto Total (Bs):", 15, 64)
-    doc.text(montoTotal.toString(), 50, 64)
+    doc.text("Monto Total (Bs):", 15, 57)
+    doc.text(montoTotal.toString(), 50, 57)
 
-    // Tabla de competidores
-    doc.autoTable({
-      startY: 75,
+    // Tabla de competidores (ajustamos la posición inicial)
+    autoTable(doc, {
+      startY: 65,
       head: [["Nro", "Nombre Competidor","Area", "Categoría", "Monto"]],
       body: competidores.map((comp, index) => [
         index + 1,
@@ -71,7 +71,6 @@ export async function generarBoletaPDF(boleta) {
       headStyles: { fillColor: [58, 124, 165] },
     })
 
-    // Pie de página
     const finalY = doc.lastAutoTable.finalY + 10
     doc.text(`Fecha de emisión: ${fechaEmision}`, 15, finalY)
     doc.text("Estado: Pendiente", 150, finalY, { align: "right" })
