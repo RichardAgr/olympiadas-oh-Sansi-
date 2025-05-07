@@ -3,7 +3,6 @@ import { useState, useEffect } from "react"
 import {UserRoundPen,FileSpreadsheet,Upload} from "lucide-react"
 import axios from "axios"
 import './tutorHome.css'
-import { useNavigate } from "react-router-dom";
 
 
 function TutorHome () {
