@@ -1,5 +1,5 @@
 .panel-container {
-     font-family: Arial, comfortaa;
+     font-family:  comfortaa,Arial;
      padding: 38px;
      background-color: #F7F7F7;
    }
@@ -38,11 +38,13 @@
      border-radius: 12px;
      border: 2px solid black;
      min-height: 200px;
+     display: flex;
      flex-direction: column;
-     justify-content: flex-start;
+     justify-content: center;
+     align-items: center;
      gap: 4px;
    }
-   .button-box {
+   .button-boxR {
      background-color: white;
      padding: 20px;
      border-radius: 12px;
@@ -88,11 +90,11 @@
      line-height: 1;
    }
    
-   .button-box {
+   .button-boxR {
      text-align: left;
    }
    
-   .button-box button {
+   .button-boxR .buttonR {
      width: 100%;
      padding: 12px;
      font-size: 20px;
@@ -106,7 +108,7 @@
      font-weight: bold;
    }
    
-   .button-box p {
+   .button-boxR p {
      margin-top: 10px;
      font-size: 18px;
      color: #555;

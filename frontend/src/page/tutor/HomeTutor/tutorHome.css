@@ -1,3 +1,5 @@
+
+
 .tutor-home-container {
     display: flex;
     padding: 20px;
@@ -13,9 +15,9 @@
     gap: 20px;
   }
   
-  .right-column {
+  .right-columnTutor {
     width: 400px;
-    margin-top: 60px;
+    margin-top: 76px;
     display: flex;
     flex-direction: column;
     gap: 20px;

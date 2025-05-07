@@ -99,7 +99,7 @@ function TutorHome () {
 
 
       </div>
-      <div className="right-column">
+      <div className="right-columnTutor">
       <div className="inscribir-competidores-card">
       <h3>Inscribir Competidores:</h3>
       <div className="buttons-container">

@@ -12,9 +12,6 @@ const NotificacionModal = ({ notificacion, onClose }) => {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>
-          ✕
-        </button>
 
         <div className="modal-header">
           <div className="modal-title">{nombreDestinatario}</div>

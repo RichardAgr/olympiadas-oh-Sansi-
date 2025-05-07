@@ -85,9 +85,6 @@ const BoletaView = ({ boleta, onClose, onDescargar }) => {
         </div>
 
         <div className="boletaViewerFooter">
-          <button className="secondaryButton" onClick={onClose}>
-            Cerrar
-          </button>
           <button className="primaryButton" onClick={handleDescargar} disabled={isLoading}>
             {isLoading ? "Descargando..." : "Descargar PDF"}
           </button>
