@@ -4,10 +4,10 @@ import { CheckCircle } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import "./TercerPaso.css";
-import { useParams,useNavigate} from "react-router-dom";
+import { useParams} from "react-router-dom";
+import axios from "axios";
 
-function TercerPaso({ onBack, onSubmit,step}) {
-  const navigate = useNavigate()
+function TercerPaso({ onBack, onSubmit,onReset}) {
   const [cantidadTutores, setCantidadTutores] = useState(1);
   const [tutores, setTutores] = useState([
     { nombres: "", apellidos: "", correo: "", telefono: "", ci: "", relacion: "" },
@@ -34,10 +34,6 @@ function TercerPaso({ onBack, onSubmit,step}) {
     if (!tutor.relacion) err.relacion = "Seleccione una relación.";
     return err;
   };
-
-  const changeStep=()=>{
-    step(1);
-  }
 
   const handleSubmit = () => {
     const errores = tutores.slice(0, cantidadTutores).map(validateTutor);
@@ -119,21 +115,20 @@ function TercerPaso({ onBack, onSubmit,step}) {
       const pdfBlob = doc.output("blob");
       const formData = new FormData();
       formData.append("file", pdfBlob, `boleta_${boletaData.numero}.pdf`);
-
-      // Aquí se conectará al backend cuando esté listo
-      const response = await fetch(`http://localhost:8000/api/guardar-boleta/${idTutor}`, { 
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-      if (!response.ok) {
-        console.error("Error al guardar en el servidor:", result.message || result);
-      } else {
-        console.log("Boleta guardada en servidor:", result.url || result);
-      }
+    
+      const response = await axios.post(
+        `http://localhost:8000/api/guardar-boleta/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+    
+      console.log("Boleta guardada en servidor:", response.data.url || response.data);
     } catch (error) {
-      console.error("Fallo en la subida de PDF:", error);
+      console.error("Fallo en la subida de PDF:", error.response?.data || error.message);
     }
   };
 
@@ -244,7 +239,7 @@ function TercerPaso({ onBack, onSubmit,step}) {
       <button className="descargar-button" onClick={generarBoletaPDF}>
         Descargar Boleta
       </button>
-      <button className="descargar-button"onClick={changeStep}>
+      <button className="descargar-button"onClick={onReset}>
         Nueva inscripcion
       </button>
     </div>
