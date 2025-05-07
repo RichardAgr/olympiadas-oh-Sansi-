@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react"
 import {UserRoundPen,FileSpreadsheet,Upload} from "lucide-react"
-import { getTutorById} from "../../../../public/riki/homeTutor/datosTutor";
 import axios from "axios"
 import './tutorHome.css'
+import { useNavigate } from "react-router-dom";
 
 
 function TutorHome () {
@@ -16,8 +16,8 @@ function TutorHome () {
   useEffect(() => {
     const fetchTutorData = async () => {
       try {
-        const response = await getTutorById(id)
-        setTutor(response)
+        const response = await axios.get(`http://127.0.0.1:8000/api/tutor/perfil/${id}`)
+        setTutor(response.data)
         setLoading(false)
       } catch (err) {
         console.error("Error al obtener datos del tutor:", err)
@@ -32,6 +32,7 @@ function TutorHome () {
   const handleManualInscription = () => {
     console.log("Inscripción manual iniciada")
     // Aquí iría la lógica para abrir un formulario de inscripción manual
+    navigate(`/homeTutor/${id}/tutor/InscribirManual/`);
   }
 
   const handleExcelUpload = () => {

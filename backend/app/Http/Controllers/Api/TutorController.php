@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Tutor;
 use App\Models\Competidor;
 use App\Models\TutorCompetidor;
+use App\Models\Colegio;
+use App\Models\Curso;
+use App\Models\Ubicacion;
 use App\Models\CompetidorCompetencia;
 use App\Models\Area;;
 use App\Http\Resources\CompetidoresTutorResource;
@@ -194,4 +197,183 @@ class TutorController extends Controller{
             ], 500);
         }
     }
+    public function VerMiPerfil($id)
+{
+    try {
+        $tutor = Tutor::find($id);
+
+        if (!$tutor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tutor no encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'nombres' => $tutor->nombres,
+            'apellidos' => $tutor->apellidos,
+            'correo_electronico' => $tutor->correo_electronico,
+            'telefono' => $tutor->telefono,
+            'ci' => $tutor->ci,
+        ]);
+
+    } catch (\Exception $e) {
+        // En caso de error, capturamos la excepción
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener el perfil',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+public function ActualizarMiPerfil(Request $request, $id)
+{
+    try {
+        $tutor = Tutor::find($id);
+
+        if (!$tutor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tutor no encontrado'
+            ], 404);
+        }
+
+        // Validar los datos de entrada
+        $validator = Validator::make($request->all(), [
+            'nombres' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'correo_electronico' => 'required|email|max:255',
+            'telefono' => 'required|string|max:20',
+            'ci' => 'required|string|max:20',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Actualizar los datos del tutor
+        $tutor->nombres = $request->nombres;
+        $tutor->apellidos = $request->apellidos;
+        $tutor->correo_electronico = $request->correo_electronico;
+        $tutor->telefono = $request->telefono;
+        $tutor->ci = $request->ci;
+        $tutor->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Perfil actualizado correctamente',
+            'data' => [
+                'tutor_id' => $tutor->tutor_id,
+                'nombres' => $tutor->nombres,
+                'apellidos' => $tutor->apellidos,
+                'correo_electronico' => $tutor->correo_electronico,
+                'telefono' => $tutor->telefono,
+                'ci' => $tutor->ci,
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al actualizar el perfil',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+public function competidoresFiltrados($id, Request $request){
+    try {
+        $tutor = Tutor::find($id);
+        if (!$tutor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tutor no encontrado'
+            ], 404);
+        }
+
+        $query = DB::table('competidor')
+            ->join('tutor_competidor', 'competidor.competidor_id', '=', 'tutor_competidor.competidor_id')
+            ->leftJoin('competidor_competencia', 'competidor.competidor_id', '=', 'competidor_competencia.competidor_id')
+            ->leftJoin('area', 'competidor_competencia.area_id', '=', 'area.area_id')
+            ->leftJoin('curso', 'competidor.curso_id', '=', 'curso.curso_id')
+            ->leftJoin('nivel_categoria', 'competidor_competencia.nivel_categoria_id', '=', 'nivel_categoria.nivel_categoria_id')
+            ->where('tutor_competidor.tutor_id', $id)
+            ->select(
+                'competidor.competidor_id',
+                DB::raw("CONCAT(competidor.nombres, ' ', competidor.apellidos) as nombre_completo"),
+                'area.nombre as area',
+                'nivel_categoria.nombre as categoria',
+                'curso.nombre as curso',
+                'competidor.estado'
+            );
+
+        if ($request->has('estado')) {
+            $query->where('competidor.estado', $request->estado);
+        }
+
+        if ($request->has('nombre')) {
+            $query->where(DB::raw("CONCAT(competidor.nombres, ' ', competidor.apellidos)"), 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->has('area')) {
+            $query->where('area.nombre', $request->area);
+        }
+
+        $competidores = $query->get();
+
+        return response()->json([
+            'data' => $competidores
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener los competidores filtrados',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+public function verPerfilTutor($id)
+     {
+         try {
+             $tutor = Tutor::find($id);
+     
+             if (!$tutor) {
+                 return response()->json([
+                     'success' => false,
+                     'message' => 'Tutor no encontrado'
+                 ], 404);
+             }
+     
+             $competidoresCount = TutorCompetidor::where('tutor_id', $tutor->tutor_id)->count();
+     
+             $areasCount = DB::table('competidor_competencia')
+                 ->join('tutor_competidor', 'competidor_competencia.competidor_id', '=', 'tutor_competidor.competidor_id')
+                 ->where('tutor_competidor.tutor_id', $tutor->tutor_id)
+                 ->distinct()
+                 ->count('competidor_competencia.area_id');
+     
+             return response()->json([
+                 'tutor_id' => $tutor->tutor_id,
+                 'ci' => $tutor->ci,
+                 'nombres' => $tutor->nombres,
+                 'apellidos' => $tutor->apellidos,
+                 'correo_electronico' => $tutor->correo_electronico,
+                 'telefono' => $tutor->telefono,
+                 'estado' => (bool) $tutor->estado, 
+                 'fecha_registro' => optional($tutor->created_at)->format('Y-m-d'),
+                 'competidores_asignados' => $competidoresCount,
+                 'areas_asignadas' => $areasCount
+             ], 200);
+         } catch (\Exception $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Error al obtener el perfil del tutor',
+                 'error' => $e->getMessage()
+             ], 500);
+         }
+     }
 }
