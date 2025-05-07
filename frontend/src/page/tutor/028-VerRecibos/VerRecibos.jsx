@@ -97,7 +97,7 @@ const VerRecibos = () => {
 
   return (
     <div className="boletasList">
-      <h1>Boletas de Pago</h1>
+      <h1>Recibos para de Pago</h1>
 
       {error && <div className="errorMessage">{error}</div>}
 

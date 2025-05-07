@@ -39,7 +39,7 @@ function TutorHome () {
   }
 
   const handleUploadClick = () => {
-    console.log("Subir comprobante")
+    navigate(`/homeTutor/${id}/tutor/SubirComprobante`)
   }
 
   const viewRecibe = () => {
