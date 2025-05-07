@@ -6,7 +6,6 @@
     margin: 50px auto;
     width: 90%;          /* El 90% del ancho disponible */
     max-width: 1400px;    /* Limite máximo de 1400px */
-    font-family: 'Poppins', sans-serif;
     padding: 0 20px; /* Agregado para evitar que se recorte el contenido en pantallas pequeñas */
   }
   
@@ -21,12 +20,12 @@
   /* Formulario */
   .inscribir-manual-form {
     background-color: #d0e6fd;
-    padding: 40px 60px;
-    border-radius: 16px;
-    width: 100%;        /* Cambiado a 100% */
-    max-width: 1400px;  /* Limite máximo para que no exceda el tamaño */
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
+  padding: 40px 60px;
+  border-radius: 16px;
+  width: 100% !important;            /* <-- cambia esto */
+  max-width: 800px !important;       /* <-- limita el ancho */
+  margin: 0 auto !important;         /* <-- esto centra horizontalmente */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   }
   
   /* Estilos dentro del form */
