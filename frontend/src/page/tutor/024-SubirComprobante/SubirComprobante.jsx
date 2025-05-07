@@ -1,4 +1,5 @@
 import { useState } from "react"
+import "./SubirComprobante"
 
 function SubirComporbante() {
   const [files, setFiles] = useState([])
