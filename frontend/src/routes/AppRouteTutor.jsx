@@ -10,6 +10,8 @@ import Configuracion from "../page/tutor/027-EditarInformacionPersonalTutor/Conf
 import Login from "../page/home/login";
 import SubirComprobante from "../page/tutor/024-SubirComprobante/SubirComprobante";
 import InscribirManual from "../page/tutor/020-InscribirManual/InscribirManual";
+import InscripcionExcel from "../page/tutor/017-InscripcionExcel/InscripcionExcel";
+import VerRecibos from "../page/tutor/028-VerRecibos/VerRecibos";
 
 function AppRouteTutor() {
   return (
@@ -26,6 +28,8 @@ function AppRouteTutor() {
         <Route path="login" element={<Login/>}/>
         <Route path="SubirComprobante" element={<SubirComprobante/>}/>
         <Route path="InscribirManual" element={<InscribirManual/>}/>
+        <Route path="InscripcionExcel" element={<InscripcionExcel/>}/>
+        <Route path="VerRecibos" element={<VerRecibos/>}/>
         {/* Puedes agregar más rutas aquí según sea necesario */}
       </Route>
     </Routes>

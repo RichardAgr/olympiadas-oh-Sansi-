@@ -1,13 +1,12 @@
 /* Contenedor principal */
 .tercer-paso-container {
     background-color: #d0e6fd;
-    padding: 40px 60px;
-    border-radius: 16px;
-    width: 95%;
-    max-width: 1200px;
-    margin: 0 auto;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    font-family: 'Poppins', sans-serif;
+  padding: 40px 60px;
+  border-radius: 16px;
+  width: 100% !important;            /* <-- cambia esto */
+  max-width: 800px !important;       /* <-- limita el ancho */
+  margin: 0 auto !important;         /* <-- esto centra horizontalmente */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Título */
@@ -79,12 +78,15 @@
     margin-top: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     width: 100%;
+    max-width: 750px;                  /* <-- Esto asegurará que la tarjeta no sea más ancha que el contenedor */
+    margin-left: auto;                 /* <-- Esto asegura que se centre */
+    margin-right: auto;                /* <-- Esto asegura que se centre */
 }
 
 /* Radio buttons */
 .tercer-paso-container .radio-group {
     display: flex;
-    gap: 10px;
+    gap: 1px;
     margin-top: 8px;
     flex-wrap: wrap;
 }
@@ -94,7 +96,7 @@
     align-items: center;
     gap: 5px; /* reduce el espacio aquí */
     font-size: 15px;
-    padding: 2px 6px; /* menos padding horizontal */
+    padding: 0px; /* menos padding horizontal */
 }
 
 .tercer-paso-container .radio-group input[type="radio"] {

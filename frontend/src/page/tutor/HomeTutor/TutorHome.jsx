@@ -1,17 +1,16 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react"
 import {UserRoundPen,FileSpreadsheet,Upload} from "lucide-react"
 import axios from "axios"
 import './tutorHome.css'
-import { useNavigate } from "react-router-dom";
 
 
 function TutorHome () {
+  const navigate = useNavigate()
   const {id}= useParams();
   const [tutor, setTutor] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTutorData = async () => {
@@ -36,12 +35,15 @@ function TutorHome () {
   }
 
   const handleExcelUpload = () => {
-    // Simular clic en input file oculto
-    console.log("Escribir por exel")
+    navigate(`/homeTutor/${id}/tutor/InscripcionExcel`)
   }
 
   const handleUploadClick = () => {
     console.log("Subir comprobante")
+  }
+
+  const viewRecibe = () => {
+    navigate(`/homeTutor/${id}/tutor/VerRecibos`)
   }
 
   if (loading) return <div className="loading">Cargando...</div>
@@ -97,7 +99,7 @@ function TutorHome () {
 
 
       </div>
-      <div className="right-column">
+      <div className="right-columnTutor">
       <div className="inscribir-competidores-card">
       <h3>Inscribir Competidores:</h3>
       <div className="buttons-container">
@@ -119,6 +121,14 @@ function TutorHome () {
           <span className="upload-icon"><Upload/></span>
           Subir
         </button>
+      </div>
+    </div>
+    <div className="subir-comprobante-card"onClick={viewRecibe}>
+      <h3>Ver Recibos:</h3>
+      <div className="upload-container">
+       <p>
+        Los recibos que se muestran son los que se tienen que llevar para hacer la cancelacion de la inscripcion.
+       </p>
       </div>
     </div>
       </div>

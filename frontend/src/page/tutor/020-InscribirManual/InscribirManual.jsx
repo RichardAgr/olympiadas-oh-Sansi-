@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import "./InscribirManual.css";
 import SegundoPaso from "./SegundoPaso";
 import TercerPaso from "./TercerPaso";
 
 function InscribirManual() {
+  const {id}=useParams()
   const [formData, setFormData] = useState({
     nombres: "",
     apellidos: "",
@@ -11,7 +13,7 @@ function InscribirManual() {
     fecha_nacimiento: "",
     colegio: "",
     curso: "",
-    nivel: "Secundaria",
+    nivel: "",
     departamento: "",
     provincia: "",
     area: "",
@@ -36,7 +38,17 @@ function InscribirManual() {
     if (formData.ci.trim().length < 7) newErrors.ci = "Debe tener al menos 7 caracteres.";
     if (formData.colegio.trim().length < 5) newErrors.colegio = "Debe tener al menos 5 caracteres.";
     if (formData.provincia.trim().length < 4) newErrors.provincia = "Debe tener al menos 4 caracteres.";
+    if (!formData.curso) newErrors.curso = "Debe seleccionar un curso.";
+    if (!formData.nivel) newErrors.nivel = "Debe seleccionar un nivel educativo.";
+    if (!formData.departamento) newErrors.departamento = "Debe seleccionar un departamento.";
 
+    const selectedYear = new Date(formData.fecha_nacimiento).getFullYear();
+    const currentYear = new Date().getFullYear();
+    if (!formData.fecha_nacimiento) {
+      newErrors.fecha_nacimiento = "Debe ingresar una fecha de nacimiento.";
+    } else if (selectedYear > currentYear - 5) {
+      newErrors.fecha_nacimiento = `Fecha de naimiento no valida.`;
+    }
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
@@ -53,15 +65,21 @@ function InscribirManual() {
     setCurrentStep(3);
   };
 
-  const handleFinalSubmit = (tutorId) => {
+  const handleFinalSubmit = () => {
+
     const datosCompletos = {
-      tutor_id: tutorId,
+      tutor_id: id,
       competidor: {
         ...formData,
       },
     };
     console.log("Datos enviados:", datosCompletos);
     // Aquí puedes enviar datosCompletos al backend
+  };
+  const resetFormulario = () => {
+    setCurrentStep(1);
+    setFormData({ nombres: "", apellidos: "", ci: "", fecha_nacimiento: "", colegio: "", curso: "", nivel: "",
+      departamento: "", provincia: "", area: "", categoria: "", rango: "", });
   };
 
   return (
@@ -129,6 +147,7 @@ function InscribirManual() {
               value={formData.fecha_nacimiento}
               onChange={handleChange}
             />
+            {errors.fecha_nacimiento && <div className="error-message">{errors.fecha_nacimiento}</div>}
           </div>
 
           <div className="form-group">
@@ -154,6 +173,7 @@ function InscribirManual() {
               <option value="5">5to</option>
               <option value="6">6to</option>
             </select>
+            {errors.curso && <div className="error-message">{errors.curso}</div>}
           </div>
 
           <div className="form-group">
@@ -182,6 +202,7 @@ function InscribirManual() {
                 <label htmlFor="secundaria">Secundaria</label>
               </div>
             </div>
+            {errors.nivel && <div className="error-message">{errors.nivel}</div>}
           </div>
 
           <div className="form-group">
@@ -202,6 +223,7 @@ function InscribirManual() {
               <option value="Santa Cruz">Santa Cruz</option>
               <option value="Tarija">Tarija</option>
             </select>
+            {errors.departamento && <div className="error-message">{errors.departamento}</div>}
           </div>
 
           <div className="form-group">
@@ -238,8 +260,10 @@ function InscribirManual() {
 
       {currentStep === 3 && (
         <TercerPaso
+          step={setCurrentStep}
           onBack={handleBack}
           onSubmit={handleFinalSubmit}
+          onReset={resetFormulario}
         />
       )}
     </div>
