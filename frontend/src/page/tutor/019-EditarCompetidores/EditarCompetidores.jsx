@@ -217,6 +217,7 @@ function EditarCompetidores() {
           <input
             type="text"
             id="nombres"
+            className="imputEdit"
             value={competidor.nombres}
             onChange={handleChange}
             required
@@ -231,6 +232,7 @@ function EditarCompetidores() {
           <input
             type="text"
             id="apellidos"
+            className="imputEdit"
             value={competidor.apellidos}
             onChange={handleChange}
             required
@@ -245,6 +247,7 @@ function EditarCompetidores() {
           <input
             type="text"
             id="ci"
+            className="imputEdit"
             value={competidor.ci}
             onChange={(e) => {
               // Validación para aceptar solo números
@@ -263,6 +266,7 @@ function EditarCompetidores() {
             type="date"
             id="fecha_nacimiento"
             name="fecha_nacimiento"
+            className="imputEdit"
             value={formatDateForInput(competidor.fecha_nacimiento)}
             onChange={handleChange}
             required
@@ -286,6 +290,7 @@ function EditarCompetidores() {
           <label htmlFor="departamento">Departamento:</label>
           <select
             id="departamento"
+            className="imputEdit"
             value={competidor.departamento}
             onChange={handleChange}
             required
@@ -311,6 +316,7 @@ function EditarCompetidores() {
           <input
             type="text"
             id="provincia"
+            className="imputEdit"
             value={competidor.provincia}
             onChange={handleChange}
             required
