@@ -1,0 +1,153 @@
+.file-view-section {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100%;
+  }
+  
+  .file-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .file-name {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    font-weight: 500;
+  }
+  
+  .file-size {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+  }
+  
+  .delete-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #ff5252;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .delete-button:hover {
+    background-color: #ff1744;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .preview-section {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    flex: 1;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .preview-image {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+  }
+  
+  .pdf-preview {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+  }
+  
+  .pdf-iframe {
+    width: 100%;
+    height: 300px;
+    border: none;
+  }
+  
+  .pdf-placeholder {
+    text-align: center;
+    color: #7f8c8d;
+    padding: 2rem;
+  }
+  
+  .pdf-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+  
+  .uploaded-url-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f0f9ff;
+    border-radius: 8px;
+    border: 1px solid #cce5ff;
+  }
+  
+  .url-title {
+    margin-bottom: 0.5rem;
+    color: #0c63e4;
+    font-weight: 500;
+  }
+  
+  .url-display {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .url-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #f8f9fa;
+    color: #495057;
+  }
+  
+  .copy-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .copy-button:hover {
+    background-color: #0b5ed7;
+  }
+  
+  @media (max-width: 768px) {
+    .url-display {
+      flex-direction: column;
+    }
+  
+    .copy-button {
+      width: 100%;
+    }
+  }
+  

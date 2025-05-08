@@ -1,100 +1,57 @@
 import { useState } from "react"
-import "./SubirComprobante"
+import { CheckCircle, AlertCircle, AlertTriangle } from 'lucide-react'
+import FileUp from "../../../components/FileUp/FileUp"
+import FileViewer from "../../../components/FileViewer/FileViewer"
+import "./subirComprobante.css"
 
-function SubirComporbante() {
-  const [files, setFiles] = useState([])
-  const [currentFile, setCurrentFile] = useState(null)
+export default function App() {
+  const [file, setFile] = useState(null)
   const [extractedData, setExtractedData] = useState(null)
-  const [isUploading, setIsUploading] = useState(false)
-  const [uploadedFileUrl, setUploadedFileUrl] = useState(null)
+  const [filePreviewUrl, setFilePreviewUrl] = useState(null)
   const [showAlert, setShowAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState("")
   const [alertType, setAlertType] = useState("") // success, error, warning
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadedFileUrl, setUploadedFileUrl] = useState(null)
 
-  const handleFileUpload = (newFiles) => {
-    const updatedFiles = [...files, ...newFiles]
-    setFiles(updatedFiles)
+  const showAlertMessage = (message, type) => {
+    setAlertMessage(message)
+    setAlertType(type)
+    setShowAlert(true)
 
-    // Establecer el archivo cargado
-    const lastFile = newFiles[newFiles.length - 1]
-    setCurrentFile(lastFile)
-
-    // Simular la extracion del dato
-    simulateDataExtraction(lastFile)
-  }
-
-  const simulateDataExtraction = (file) => {
-    // proceso de carga
+    // Ocultar la alerta después de 2 segundos
     setTimeout(() => {
-      const isImage = file.type.startsWith("image/")
-      const isPdf = file.type === "application/pdf"
-
-      let mockData = {
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: `${(file.size / 1024).toFixed(2)} KB`,
-        uploadDate: new Date().toLocaleString(),
-      }
-
-      if (isImage) {
-        mockData = {
-          ...mockData,
-          dimensions: "1920 x 1080 px",
-          text: ["INVOICE #10234", "Date: 05/07/2023", "Customer: John Doe", "Amount: $1,250.00", "Status: PAID"],
-          entities: {
-            invoiceNumber: "10234",
-            date: "05/07/2023",
-            customer: "John Doe",
-            amount: "$1,250.00",
-            status: "PAID",
-          },
-        }
-      } else if (isPdf) {
-        mockData = {
-          ...mockData,
-          pages: 3,
-          text: [
-            "CONTRACT AGREEMENT",
-            "Between Company A and Company B",
-            "Effective Date: January 15, 2023",
-            "Term: 12 months",
-            "Services: Software Development",
-          ],
-          entities: {
-            documentType: "Contract",
-            parties: ["Company A", "Company B"],
-            effectiveDate: "January 15, 2023",
-            term: "12 months",
-            services: "Software Development",
-          },
-        }
-      }
-
-      setExtractedData(mockData)
-      showAlertMessage("Datos extraídos correctamente", "success")
-    }, 1000)
+      setShowAlert(false)
+    }, 2000)
   }
 
-  const handleSelectFile = (file) => {
-    setCurrentFile(file)
-    simulateDataExtraction(file)
-  }
+  const handleFileUpload = (newFile) => {
+    if (!newFile) return
 
-  const handleDeleteFile = (fileToDelete) => {
-    const updatedFiles = files.filter((file) => file !== fileToDelete)
-    setFiles(updatedFiles)
+    const isValidType = newFile.type.startsWith("image/") || newFile.type === "application/pdf"
 
-    if (currentFile === fileToDelete) {
-      setCurrentFile(updatedFiles.length > 0 ? updatedFiles[0] : null)
-      setExtractedData(null)
-      setUploadedFileUrl(null)
+    if (isValidType) {
+      setFile(newFile)
+      showAlertMessage("Archivo subido correctamente", "success")
+      simulateDataExtraction(newFile)
+    } else {
+      showAlertMessage("Formato de archivo no válido. Por favor, sube solo imágenes o PDFs", "error")
     }
+  }
 
-    showAlertMessage("Archivo eliminado", "warning")
+  const handleDeleteFile = () => {
+    // Liberar URL del objeto si existe
+    if (file && filePreviewUrl) {
+      URL.revokeObjectURL(filePreviewUrl)
+    }
+    setFile(null)
+    setExtractedData(null)
+    setUploadedFileUrl(null)
+    setFilePreviewUrl(null)
   }
 
   const handleSaveData = async () => {
-    if (!currentFile) {
+    if (!file) {
       showAlertMessage("No hay archivo para guardar", "warning")
       return
     }
@@ -103,10 +60,10 @@ function SubirComporbante() {
       setIsUploading(true)
 
       // Subir el archivo a la nube y obtener la URL
-      const uploadedUrl = await uploadFileToCloud(currentFile)
+      const uploadedUrl = await uploadFileToCloud(file)
 
       setUploadedFileUrl(uploadedUrl)
-      showAlertMessage("Archivo guardado correctamente en la nube", "success")
+      showAlertMessage("¡Cambios guardados!", "success")
 
       // Aquí podrías guardar también los datos extraídos junto con la URL
       console.log("Datos guardados:", {
@@ -121,138 +78,85 @@ function SubirComporbante() {
     }
   }
 
-  const uploadFileToCloud = async (file) => {
-    // Método para subir a Cloudinary directamente desde el cliente
-    const cloudName = "tu_cloud_name" // Reemplaza con tu cloud_name de Cloudinary
-    const uploadPreset = "tu_upload_preset" // Reemplaza con tu upload_preset (debe ser unsigned)
-
-    const formData = new FormData()
-    formData.append("file", file)
-    formData.append("upload_preset", uploadPreset)
-
-    try {
-      // Para este ejemplo, simulamos una carga con un retraso
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      // En un entorno real, descomentar este código:
-      /*
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
-        method: "POST",
-        body: formData
-      });
-      
-      if (!response.ok) {
-        throw new Error("Error al subir el archivo");
-      }
-      
-      const data = await response.json();
-      return data.secure_url;
-      */
-
-      // Para este ejemplo, simulamos una URL de archivo subido
-      return `https://ejemplo.com/archivos/${file.name}?t=${Date.now()}`
-    } catch (error) {
-      console.error("Error al subir a Cloudinary:", error)
-      throw error
-    }
+  const handleCancel = () => {
+    showAlertMessage("Operación cancelada", "warning")
+    handleDeleteFile()
   }
 
-  const showAlertMessage = (message, type) => {
-    setAlertMessage(message)
-    setAlertType(type)
-    setShowAlert(true)
+  const uploadFileToCloud = async (file) => {
+    // Simulamos una carga con un retraso
+    await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    // Ocultar la alerta después de 2 segundos
+    // Para este ejemplo, simulamos una URL de archivo subido
+    return `https://ejemplo.com/archivos/${file.name}?t=${Date.now()}`
+  }
+
+  const simulateDataExtraction = (file) => {
+    // Simular un tiempo de procesamiento
     setTimeout(() => {
-      setShowAlert(false)
-    }, 2000)
+      // Simular un error aleatorio en la extracción (20% de probabilidad)
+      const hasError = Math.random() < 0.2
+
+      if (hasError) {
+        showAlertMessage("No se pudieron extraer los datos correctamente. Intente con otro archivo.", "error")
+        return
+      }
+
+      const mockData = {
+        numeroComprobante: "0000123",
+        nombreCompleto: "ERIKA MAITE SARABIA MALDONADO",
+        montoPagado: "180",
+        fechaPago: "15/04/2023",
+      }
+
+      setExtractedData(mockData)
+      // Crear URL para la vista previa del archivo
+      const url = URL.createObjectURL(file)
+      setFilePreviewUrl(url)
+      showAlertMessage("Datos extraídos correctamente", "success")
+    }, 1500)
   }
 
   return (
     <div className="app-container">
-      <header>
-        <h1>Visualizador de Archivos</h1>
-        <p>Sube imágenes o PDFs para visualizarlos y extraer información</p>
-      </header>
+      <div className="app-header">
+        <div className="app-title">Visualizador de Archivos</div>
+        <div className="app-subtitle">Sube una imagen o PDF para visualizarlo y extraer información</div>
+      </div>
 
-      {showAlert && (
-        <div className="alert-overlay">
+      {showAlert && 
+          <div className="alert-overlay">
           <div className={`alert alert-${alertType}`}>
             <div className="alert-icon">
-              {alertType === "success" && "✅"}
-              {alertType === "error" && "❌"}
-              {alertType === "warning" && "⚠️"}
+              {alertType === "success" && <CheckCircle className="icon-success" />}
+              {alertType === "error" && <AlertCircle className="icon-error" />}
+              {alertType === "warning" && <AlertTriangle className="icon-warning" />}
             </div>
             <div className="alert-message">{alertMessage}</div>
           </div>
         </div>
-      )}
+      }
 
-      <main>
-        <div className="upload-section">
-          <h1>carga del archivo drang en drop</h1>
-          {/* <FileUpload onFileUpload={handleFileUpload} /> */}
-        </div>
-
-        <div className="content-section">
-          <div className="files-list">
-            <h2>Archivos Subidos</h2>
-            <div className="files-grid">
-              {files.map((file, index) => (
-                <div
-                  key={index}
-                  className={`file-item ${currentFile === file ? "active" : ""}`}
-                  onClick={() => handleSelectFile(file)}
-                >
-                  <div className="file-icon">{file.type.startsWith("image/") ? "🖼️" : "📄"}</div>
-                  <div className="file-name">{file.name}</div>
-                  <button
-                    className="file-delete-btn"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleDeleteFile(file)
-                    }}
-                  >
-                    ✖
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="preview-section">
-            <h1>carga de archivos</h1>
-            {/* {currentFile && <FilePreview file={currentFile} />} */}
-
-            {uploadedFileUrl && (
-              <div className="uploaded-url-container">
-                <h4>URL del archivo subido:</h4>
-                <div className="url-display">
-                  <input type="text" value={uploadedFileUrl} readOnly className="url-input" />
-                  <button
-                    className="copy-button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(uploadedFileUrl)
-                      showAlertMessage("URL copiada al portapapeles", "success")
-                    }}
-                  >
-                    Copiar
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {extractedData && (
-          <div className="data-section">
-            {/* <DataDisplay data={extractedData} onSave={handleSaveData} isUploading={isUploading} /> */}
-            <h1>mostrar acrivos</h1>
-          </div>
+      <div className="app-main">
+        {!file ? (
+          <FileUp onFileUpload={handleFileUpload} />
+        ) : (
+          <FileViewer
+            file={file}
+            filePreviewUrl={filePreviewUrl}
+            extractedData={extractedData}
+            uploadedFileUrl={uploadedFileUrl}
+            isUploading={isUploading}
+            onDeleteFile={handleDeleteFile}
+            onSaveData={handleSaveData}
+            onCancel={handleCancel}
+            onCopyUrl={(url) => {
+              navigator.clipboard.writeText(url)
+              showAlertMessage("URL copiada al portapapeles", "success")
+            }}
+          />
         )}
-      </main>
+      </div>
     </div>
   )
 }
-
-export default SubirComporbante
