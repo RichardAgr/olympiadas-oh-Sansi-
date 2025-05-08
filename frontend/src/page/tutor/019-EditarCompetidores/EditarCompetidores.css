@@ -1,0 +1,366 @@
+.read-only-field {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.area-tag {
+  background-color: #e0e0e0;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #333;
+}
+/* Estilos generales */
+.editar-competidor-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 25px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.editar-competidor-container h1 {
+  font-size: 34px;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Mensajes de estado */
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border: 1px solid #c3e6cb;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border: 1px solid #f5c6cb;
+}
+
+/* Formulario */
+.competidor-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="date"]:focus,
+.form-group select:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* Campos de solo lectura (estilo similar al mockup) */
+.read-only-field {
+  padding: 10px 12px;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #555;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+/* Tags de áreas */
+.area-tag {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 13px;
+  margin-right: 6px;
+  display: inline-block;
+}
+
+/* Botones */
+.form-actions {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.cancel-button,
+.save-button {
+  padding: 10px 20px;
+  border-radius: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-button {
+  background-color: #f1f1f1;
+  color: #555;
+  border: 1px solid #ddd;
+}
+
+.cancel-button:hover {
+  background-color: #e5e5e5;
+}
+
+.save-button {
+  background-color: #0146b7;
+  color: white;
+  border: 1px solid #0146b7;
+}
+
+.save-button:hover {
+  background-color: #013a9c;
+}
+
+.save-button:disabled {
+  background-color: #cccccc;
+  border-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .competidor-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions {
+    grid-column: span 1;
+    justify-content: center;
+  }
+}
+/* Estilos para el fondo del modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+/* Estilo base para todos los modales */
+.modal {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  position: relative;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Encabezado del modal */
+.modal-header {
+  margin-bottom: 1.8rem;
+  position: relative;
+}
+
+.modal h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 0 2rem;
+}
+
+/* Botón de cerrar (X) */
+.cerrar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #c30e0e;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.cerrar:hover {
+  background: #a00c0c;
+  transform: scale(1.1);
+}
+
+/* Acciones del modal */
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.modal-button {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  min-width: 130px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.no-button {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #d0d0d0;
+}
+
+.no-button:hover {
+  background-color: #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.yes-button {
+  background-color: #0146b7;
+  color: white;
+  border: 1px solid #0146b7;
+}
+
+.yes-button:hover {
+  background-color: #2b07ad;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(17, 6, 146, 0.3);
+}
+
+/* Modal de éxito */
+.success-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem;
+}
+
+.success-icon {
+  font-size: 3.5rem;
+  color: #040276;
+  margin: 1.5rem 0;
+  animation: bounce 0.6s;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-20px); }
+  60% { transform: translateY(-10px); }
+}
+
+.success-modal h2 {
+  color: #040276;
+  margin-bottom: 1rem;
+}
+.success-icon-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f2ff;
+  margin: 1.5rem 0;
+  border: 2px solid #e0e4ff;
+}
+
+.success-icon {
+  color: #110692;
+  width: 48px;  /* Controla el tamaño del ícono */
+  height: 48px;
+  stroke-width: 2.5px;  /* Grosor del trazo */
+  animation: checkmarkDraw 0.6s ease-out both;
+}
+
+@keyframes checkmarkDraw {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-10deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.error-message2 {
+  color: #721c24;           
+  font-size: 0.85em;       
+  margin: 5px 0 0 0;       
+  padding: 5px 8px;         
+  background-color: #f8d7da; 
+  border: 1px solid #f5c6cb; 
+  border-radius: 3px;        
+  display: inline-block;     
+  width: auto;             
+  animation: fadeIn 0.2s ease-out; 
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}

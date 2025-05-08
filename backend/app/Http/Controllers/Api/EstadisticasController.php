@@ -41,7 +41,7 @@ class EstadisticasController extends Controller{
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener las estadísticas',
+                'message' => 'Error al obtener las estadísticas de responsable de gestion',
                 'error' => $e->getMessage()
             ], 500);
         }

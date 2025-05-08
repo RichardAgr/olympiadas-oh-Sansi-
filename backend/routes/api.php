@@ -43,21 +43,36 @@ Route::get('/pagos', [BoletaController::class, 'index']);
 Route::get('/tutores/{tutorId}/competidores', [TutorController::class, 'competidoresTutor']);
 Route::get('/tutoresInformacion', [TutorController::class, 'obtenerInformacionTutores']);
 Route::put('/tutores/{id}/estado', [TutorController::class, 'actualizarEstadoTutor']);
+
 Route::get('/tutores/{id}/competidores-filtrados', [TutorController::class, 'competidoresFiltrados']);
-Route::put('/tutor/{tutor_id}/competidor/{competidor_id}', [TutorController::class, 'actualizarDatosCompetidor']);
 Route::post('/tutor/{tutor_id}/inscribir', [TutorController::class, 'inscribirCompetidor']);
 Route::post('/tutores/{tutor_id}/competidor', [TutorController::class, 'inscribirCompetidor']);
 Route::post('/boleta/generar', [BoletaController::class, 'generarBoleta']);
+
+Route::get('/tutores/{idTutor}/competidoresTutor', [TutorController::class, 'competidoresFiltrados']);
 
 
 Route::get('/competidores', [CompetidorController::class, 'index']);
 Route::get('/informacionCompetidores/{id}/competidor', [CompetidorController::class, 'getDetallesCompetidor']);
 Route::put('/competidor/{id}/estado', [CompetidorController::class, 'actualizarEstadoCompetidor']);
 Route::get('/detallesCompetidor', [CompetidorController::class, 'obtenerDetallesCompetidor']);
+
 Route::get('/competidor/{id}', [CompetidorController::class, 'getDetallesCompetidor']);
 Route::put('/competidor/{id}', [CompetidorController::class, 'update']);
+
+Route::put('/tutor/competidor/{competidor_id}', [TutorController::class, 'actualizarDatosCompetidor']);
+Route::get('/tutor/{id}/boletas', [BoletaController::class, 'boletasPorTutor']);
+
+
 
 Route::post('/notificaciones', [NotificacionController::class, 'crearNotificacion']);
 
 Route::get('/estadisticasRespoGestion', [EstadisticasController::class, 'obtenerEstadisticasGenerales']);
 
+
+// Rutas para el Tutor
+Route::get('/tutor/perfil/{id}', [TutorController::class, 'verPerfilTutor']);
+Route::get('/VerMiPerfil/{idTutor}/Tutor', [TutorController::class, 'VerMiPerfil']);
+Route::put('/tutor/ActualizarMiPerfil/{id}', [TutorController::class, 'ActualizarMiPerfil']);
+Route::get('/tutor/VerNotificaciones/{id}/Notificaciones',[NotificacionController::class, 'VerNotificacionesTutor']);
+Route ::post('/tutor/{id_tutor}/cambiarEstadoNotificacion/{id_notificacion}', [NotificacionController::class, 'cambiarEstadoNotificacion']);

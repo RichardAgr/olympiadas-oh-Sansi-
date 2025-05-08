@@ -1,0 +1,195 @@
+/* Estilos generales */
+.boletas-container {
+    font-family: 'Comfortaa', cursive;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    color: #333;
+  }
+  
+  .boletas-header {
+    margin-bottom: 30px;
+  }
+  
+  .boletas-header h1 {
+    font-size: 50px;
+    color: #2c3e50;
+    margin-bottom: 30px;
+  }
+  
+  .tutor-info {
+    font-size: 26px;
+    color: #555;
+  }
+  
+  /* Estilos de la tabla */
+  .table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .boletas-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 14px;
+  }
+  
+  .boletas-table th, 
+  .boletas-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .boletas-table th {
+    background-color: #f5f5f5;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .boletas-table tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .ver-comprobante-btn {
+    background-color: #131cd4;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Comfortaa', cursive;
+    font-size: 13px;
+    transition: background-color 0.2s;
+  }
+  
+  .ver-comprobante-btn:hover {
+    background-color: #3367d6;
+  }
+  
+  /* Modal - Versión simplificada */
+  .receipt-image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .receipt-image-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    position: relative;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+  }
+
+  .close-receipt {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: rgb(203, 71, 71);
+    border: none;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  .receipt-img {
+    max-width: 100%;
+    max-height: 70vh;
+    display: block;
+    margin: 1rem auto 0;
+  }
+  
+  /* Loading y error */
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+  }
+  
+  .spinner {
+    animation: spin 1s linear infinite;
+    color: #3498db;
+  }
+  
+  .error-container {
+    text-align: center;
+    padding: 30px;
+  }
+  
+  .error-icon {
+    color: #e74c3c;
+    margin-bottom: 15px;
+  }
+  
+  .error-container h2 {
+    color: #e74c3c;
+    margin-bottom: 10px;
+  }
+  
+  /* Animaciones */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes zoomIn {
+    from { 
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to { 
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .boletas-header h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    
+    .tutor-info {
+      font-size: 20px;
+    }
+    
+    .boletas-table {
+      font-size: 13px;
+    }
+    
+    .boletas-table th, 
+    .boletas-table td {
+      padding: 8px 10px;
+    }
+    
+    .ver-comprobante-btn {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+    
+    .image-modal-header h3 {
+      font-size: 1.2rem;
+    }
+    
+    .image-modal-content {
+      width: 100%;
+      height: 100%;
+    }
+  }

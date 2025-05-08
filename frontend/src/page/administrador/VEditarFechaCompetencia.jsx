@@ -59,7 +59,6 @@ const VEditarFechaCompetencia = () => {
         const res = await fetch(`http://localhost:8000/api/areas/${areaId}`); // 👈 with "areas" (plural)
 
         const data = await res.json();
-        console.log("🌐 Área response:", data);
         setAreaNombre(data.nombre);
       } catch (err) {
         console.error("Error fetching area:", err);
@@ -95,7 +94,6 @@ const VEditarFechaCompetencia = () => {
       });
 
       const result = await res.json();
-      console.log("✅ Guardado:", result);
       alert("Fecha de competencia guardada con éxito ✅");
       navigate("/admin/Evento");
     } catch (error) {
