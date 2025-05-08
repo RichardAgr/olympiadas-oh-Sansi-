@@ -334,7 +334,7 @@ class TutorController extends Controller{
                 DB::table('competidor_competencia')->insert([
                     'competidor_id' => $competidor_id,
                     'area_id' => $areaID,
-                    'competencia_id' => 1, // puedes hacer esto dinámico
+                    'competencia_id' => 1, 
                     'nivel_categoria_id' => 1,
                     'fecha_inscripcion' => now()
                 ]);
