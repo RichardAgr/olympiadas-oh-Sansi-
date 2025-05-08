@@ -1,8 +1,8 @@
 import { useState, useRef } from "react"
-import { Upload } from 'lucide-react'
+import { ImageIcon,Loader } from 'lucide-react'
 import "./fileUp.css"
 
-export default function FileUpload({ onFileUpload }) {
+export default function FileUpload({ onFileUpload, isProcessing }) {
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef(null)
 
@@ -37,27 +37,36 @@ export default function FileUpload({ onFileUpload }) {
   return (
     <div className="upload-section">
       <div
-        className={`file-upload ${isDragging ? "dragging" : ""}`}
+        className={`file-upload ${isDragging ? "dragging" : ""} ${isProcessing ? "processing" : ""}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <div className="upload-icon">
-          <Upload size={64} strokeWidth={1.5} />
-        </div>
-        <div className="upload-title">Arrastra y suelta un archivo aquí</div>
-        <div className="upload-separator">o</div>
-        <button className="upload-button" onClick={handleButtonClick}>
-          Seleccionar Archivo
-        </button>
-        <div className="file-types">Imágenes (JPG, PNG, GIF) o PDFs</div>
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileInputChange}
-          accept="image/*,application/pdf"
-          style={{ display: "none" }}
-        />
+        {isProcessing ? (
+          <div className="processing-overlay">
+            <Loader className="processing-icon" size={48} />
+            <div className="processing-text">Procesando imagen...</div>
+          </div>
+        ) : (
+          <>
+            <div className="upload-icon">
+              <ImageIcon size={64} strokeWidth={1.5} />
+            </div>
+            <div className="upload-title">Arrastra y suelta una imagen aquí</div>
+            <div className="upload-separator">o</div>
+            <button className="upload-button" onClick={handleButtonClick}>
+              Seleccionar Imagen
+            </button>
+            <div className="file-types">Imágenes (JPG, PNG, GIF, WebP)</div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileInputChange}
+              accept="image/*"
+              style={{ display: "none" }}
+            />
+          </>
+        )}
       </div>
     </div>
   )

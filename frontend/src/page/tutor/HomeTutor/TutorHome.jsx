@@ -118,7 +118,7 @@ function TutorHome () {
       <h3>Subir Comprobante de Pago:</h3>
       <div className="upload-container">
         <button className="upload-btn" onClick={handleUploadClick}>
-          <span className="upload-icon"><Upload/></span>
+          <span className="upload-iconHome"><Upload/></span>
           Subir
         </button>
       </div>
