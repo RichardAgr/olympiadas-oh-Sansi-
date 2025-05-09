@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\CompetidorController;
 use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\EstadisticasController;
 use App\Http\Controllers\Api\ocrController;
+use App\Http\Controllers\Api\UsuarioTutor\InscripcionController;
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
 Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
@@ -62,3 +63,4 @@ Route::put('/tutor/ActualizarMiPerfil/{id}', [TutorController::class, 'Actualiza
 Route::get('/tutor/VerNotificaciones/{id}',[NotificacionController::class, 'VerNotificacionesTutor']);
 Route ::post('/tutor/{id_tutor}/cambiarEstadoNotificacion/{id_notificacion}', [NotificacionController::class, 'cambiarEstadoNotificacion']);
 Route::post('/tutor/extraerOcr',[ocrController::class, 'extraerTexto']);
+Route::post('/tutor/inscripcionGrupal',[InscripcionController::class, 'inscripcionGrupal']);
