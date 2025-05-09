@@ -21,7 +21,6 @@ export default function CompetidoresPage() {
         if (res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`); 
         }
-        /* console.log(res.data.data) */
         const data = res.data.data
         setCompetitors(data)
         setFilteredCompetitors(data)

@@ -1,18 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600&display=swap');
 
-* {
+/* * {
   box-sizing: border-box;
-}
-html, body, #root {
+} */
+html, #root {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: 'Comfortaa', sans-serif;
 }
 
 .evento-grid-container {

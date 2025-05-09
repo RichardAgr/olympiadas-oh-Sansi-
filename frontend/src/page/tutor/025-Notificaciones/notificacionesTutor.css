@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap");
+
+.app-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+.app-container h1 {
+  font-size: 40px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #000;
+  text-align: left;
+}
+
+.error-message {
+  color: #e53935;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin-top: 10px;
+}
