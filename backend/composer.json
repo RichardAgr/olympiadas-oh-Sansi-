@@ -11,7 +11,8 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.0",
-        "laravel/tinker": "^2.8"
+        "laravel/tinker": "^2.8",
+        "thiagoalessio/tesseract_ocr": "^2.13"
     },
     "require-dev": {
         "spatie/laravel-ignition": "^2.0",

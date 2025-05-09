@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\CompetidorController;
 use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\EstadisticasController;
 use App\Http\Controllers\Api\BoletaPagoController;
+use App\Http\Controllers\Api\ocrController;
+
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
 Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
@@ -68,5 +70,5 @@ Route ::post('/tutor/{id_tutor}/cambiarEstadoNotificacion/{id_notificacion}', [N
 
 
 //OCR
-
-Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoController::class, 'procesarComprobante']);
+Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoController::class, 'procesarComprobante']
+Route::post('/tutor/extraerOcr',[ocrController::class, 'extraerTexto']);
