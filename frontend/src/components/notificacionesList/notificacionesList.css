@@ -1,0 +1,14 @@
+.notificaciones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .no-notificaciones {
+    padding: 20px;
+    text-align: center;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    color: #666;
+  }
+  

@@ -67,7 +67,6 @@ function EstadoTutores() {
           asunto: "Deshabilitación de tutor",
           motivo: descripcion
         };
-        console.log(notificacionData);
         await axios.post("http://127.0.0.1:8000/api/notificaciones", notificacionData); 
       }
 

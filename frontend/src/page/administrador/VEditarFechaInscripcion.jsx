@@ -48,7 +48,6 @@ const VEditarFechaInscripcion = () => {
       inicio: new Date(startDate).toISOString().split("T")[0],
       fin: new Date(endDate).toISOString().split("T")[0],
     };
-    console.log("Enviando a la API:", body);
 
     try {
       const res = await fetch("http://localhost:8000/api/evento/fechas", { //change to a global varaible
@@ -59,7 +58,6 @@ const VEditarFechaInscripcion = () => {
         body: JSON.stringify(body),
       });
       const result = await res.json();
-      console.log("✅ Guardado:", result);
       alert("Fecha de inscripción guardada con éxito ✅");
       navigate("/admin/Evento");
     } catch (error) {
