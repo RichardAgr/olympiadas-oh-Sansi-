@@ -78,4 +78,52 @@ class BoletaController extends Controller{
              ], 500);
          }
      }
+     
+     public function generarBoleta(Request $request, $tutor_id)
+    {
+        $validated = $request->validate([
+            'numero' => 'required|string|unique:boleta,numero_boleta',
+            'periodo' => 'required|string',
+            'area' => 'required|string',
+            'nombre' => 'required|string',
+            'montoTotal' => 'required|numeric|min:1',
+            'competidores' => 'required|array|min:1',
+            'competidores.*.nombre' => 'required|string',
+            'competidores.*.categoria' => 'required|string',
+            'competidores.*.monto' => 'required|numeric|min:0'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Create boleta
+            $boleta = Boleta::create([
+                'tutor_id' => $tutor_id,
+                'numero_boleta' => $request->numero,
+                'periodo' => $request->periodo,
+                'nombre_pagador' => $request->nombre,
+                'monto_total' => $request->montoTotal,
+                'estado' => 0,
+                'fecha_emision' => now()
+            ]);
+
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Boleta generada correctamente',
+                'boleta_id' => $boleta->boleta_id
+            ]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar la boleta.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

@@ -46,8 +46,14 @@ Route::get('/tutores/{tutorId}/competidores', [TutorController::class, 'competid
 Route::get('/tutoresInformacion', [TutorController::class, 'obtenerInformacionTutores']);
 Route::put('/tutores/{id}/estado', [TutorController::class, 'actualizarEstadoTutor']);
 
+//Inscribir manual
+Route::post('/tutor/{tutor_id}/inscribir-competidor', [TutorController::class, 'inscribirCompetidor']);
+Route::get('/tutor/competidor/datos-competencia', [TutorController::class, 'getOpcionesCompetencia']);
+Route::post('/tutor/{tutor_id}/registrar-tutores', [TutorController::class, 'registrarTutores']);
+Route::post('/tutor/{tutor_id}/boleta/generar', [BoletaController::class, 'generarBoleta']);
+
+
 Route::get('/tutores/{id}/competidores-filtrados', [TutorController::class, 'competidoresFiltrados']);
-Route::post('/tutor/{tutor_id}/inscribir', [TutorController::class, 'inscribirCompetidor']);
 Route::post('/tutores/{tutor_id}/competidor', [TutorController::class, 'inscribirCompetidor']);
 Route::post('/boleta/generar', [BoletaController::class, 'generarBoleta']);
 
