@@ -96,21 +96,55 @@ function EditarCompetidores() {
   const confirmSave = async () => {
     setShowConfirmationModal(false);
     setLoading(true);
-
+  
     try {
-      //await axios.put(`/api/competidores/${idCompetidor}`, competidor);
-      console.log(competidor);
+      // Formatear la fecha antes de enviarla
+      const formattedDate = formatDateForAPI(competidor.fecha_nacimiento);
+      
+      await axios.put(
+        `http://127.0.0.1:8000/api/tutor/editarCompetidor/${idCompetidor}`,
+        {
+          nombres: competidor.nombres,
+          apellidos: competidor.apellidos,
+          ci: competidor.ci,
+          fechaNacimiento: formattedDate, // Usar la fecha formateada
+          departamento: competidor.departamento,
+          provincia: competidor.provincia,
+        }
+      );
       setShowSuccessModal(true);
-
       setTimeout(() => {
         setShowSuccessModal(false);
         navigate(-1);
       }, 2000);
     } catch (err) {
-      setError(err.message || "Error al actualizar los datos");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Error al actualizar los datos"
+      );
     } finally {
       setLoading(false);
     }
+  };
+  
+  // Función para formatear la fecha para la API
+  const formatDateForAPI = (dateString) => {
+    if (!dateString) return "";
+    
+    // Si ya está en formato YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return dateString;
+    }
+  
+    // Para formato "dd/mm/yyyy" o "dd-mm-yyyy"
+    if (dateString.includes("/") || dateString.includes("-")) {
+      const [day, month, year] = dateString.split(/[/-]/);
+      return `${year.padStart(4, "20")}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+  
+    // Para otros formatos, devuelve una cadena vacía o maneja según sea necesario
+    return "";
   };
 
   const cancelSave = () => {
@@ -183,6 +217,7 @@ function EditarCompetidores() {
           <input
             type="text"
             id="nombres"
+            className="imputEdit"
             value={competidor.nombres}
             onChange={handleChange}
             required
@@ -197,6 +232,7 @@ function EditarCompetidores() {
           <input
             type="text"
             id="apellidos"
+            className="imputEdit"
             value={competidor.apellidos}
             onChange={handleChange}
             required
@@ -211,6 +247,7 @@ function EditarCompetidores() {
           <input
             type="text"
             id="ci"
+            className="imputEdit"
             value={competidor.ci}
             onChange={(e) => {
               // Validación para aceptar solo números
@@ -229,6 +266,7 @@ function EditarCompetidores() {
             type="date"
             id="fecha_nacimiento"
             name="fecha_nacimiento"
+            className="imputEdit"
             value={formatDateForInput(competidor.fecha_nacimiento)}
             onChange={handleChange}
             required
@@ -252,6 +290,7 @@ function EditarCompetidores() {
           <label htmlFor="departamento">Departamento:</label>
           <select
             id="departamento"
+            className="imputEdit"
             value={competidor.departamento}
             onChange={handleChange}
             required
@@ -277,6 +316,7 @@ function EditarCompetidores() {
           <input
             type="text"
             id="provincia"
+            className="imputEdit"
             value={competidor.provincia}
             onChange={handleChange}
             required
