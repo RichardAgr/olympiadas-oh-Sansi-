@@ -17,7 +17,6 @@ use App\Http\Controllers\Api\OcrPagoController;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutoCompetidorController;
 
 
-
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
 Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
 Route::get('/evento/fechas', [EventoController::class, 'index']);
@@ -69,6 +68,8 @@ Route::put('/tutor/ActualizarMiPerfil/{id}', [TutorController::class, 'Actualiza
 Route::get('/tutor/VerNotificaciones/{id}/Notificaciones',[NotificacionController::class, 'VerNotificacionesTutor']);
 Route ::post('/tutor/{id_tutor}/cambiarEstadoNotificacion/{id_notificacion}', [NotificacionController::class, 'cambiarEstadoNotificacion']);
 Route ::put('/tutor/editarCompetidor/{id_competidor}', [UsuarioTutoCompetidorController::class, 'editarCompetidor']);
+Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoController::class, 'procesarComprobante']);
 
 //OCR
 Route::post('/processReceipt', [OcrPagoController::class, 'processReceipt']);
+
