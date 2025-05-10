@@ -1,4 +1,4 @@
-export async function extractDataFromImage(file) {
+/* export async function extractDataFromImage(file) {
     return new Promise((resolve, reject) => {
       try {
         // Crear una URL para la imagen
@@ -50,7 +50,50 @@ export async function extractDataFromImage(file) {
         reject(new Error("Error al procesar la imagen: " + error.message))
       }
     })
+  } */
+import axios from "axios";
+   const api = axios.create({
+  baseURL: 'http://127.0.0.1:8000/api', // Reemplaza con tu URL
+  timeout: 90000, // 30 segundos timeout
+});
+export async function extractDataFromImage(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const response = await api.post('/processReceipt', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      // Opcional: barra de progreso
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        /* console.log(`Progreso: ${percentCompleted}%`); */
+      }
+    });
+    // Mapeo de datos (ajusta según tu API)
+    return {
+      data: {
+        numeroComprobante: response.data.numero_comprobante || "No detectado",
+        nombreCompleto: response.data.nombre_pagador || "No detectado",
+        montoPagado: response.data.monto_total || "0.00",
+        confianza: response.data.confianza || "95%",
+        fechaPago: response.data.fecha_pago || "No detectada",
+      },
+      previewUrl: URL.createObjectURL(file)
+    };
+
+  } catch (error) {
+    console.error('Error en extractDataFromImage:', error);
+    throw new Error(
+      error.response?.data?.error || 
+      error.message || 
+      "Error al procesar la imagen"
+    );
   }
+}
   
   // Función para validar una imagen antes de procesarla
   export function validateImage(file) {

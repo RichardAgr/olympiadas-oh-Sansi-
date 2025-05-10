@@ -98,10 +98,6 @@ export default function App() {
       console.log("Datos guardados:", {
         ...extractedData,
         imageUrl: uploadedUrl,
-        publicId: cloudinaryResponse.public_id,
-        width: cloudinaryResponse.width,
-        height: cloudinaryResponse.height,
-        format: cloudinaryResponse.format,
       })
     } catch (error) {
       console.error("Error al subir la imagen:", error)

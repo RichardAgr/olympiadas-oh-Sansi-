@@ -57,7 +57,7 @@ export default function FileUpload({ onFileUpload, isProcessing }) {
             <button className="upload-button" onClick={handleButtonClick}>
               Seleccionar Imagen
             </button>
-            <div className="file-types">Imágenes (JPG, PNG, GIF, WebP)</div>
+            <div className="file-types">Imágenes (JPG, PNG, WebP)</div>
             <input
               type="file"
               ref={fileInputRef}

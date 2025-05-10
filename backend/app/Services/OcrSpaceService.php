@@ -114,6 +114,7 @@ class OcrSpaceService
         'nombre_pagador' => '',
         'monto_total' => '',
         'fecha_pago' => '',
+        'confianza' => $this->calculateConfidence($text)
 /*         'texto_resumen' => substr($text, 0, 200).(strlen($text) > 200 ? '...' : '') */
     ];
 
@@ -176,6 +177,19 @@ protected function normalizeDate($dateStr){
     }
     
     return $dateStr; // Devolver original si no podemos normalizar
+}
+
+protected function calculateConfidence($text)
+{
+    $confidence = 80; 
+    
+    if (preg_match('/Nro\.\s*\d+/i', $text)) $confidence += 5;
+    if (preg_match('/TOTAL\s*\d+\.\d{2}/i', $text)) $confidence += 5;
+    if (preg_match('/Fecha:\s*\d+/i', $text)) $confidence += 5;
+    if (preg_match('/Nombre:/i', $text)) $confidence += 5;
+    
+    // Limita a 100%
+    return min($confidence, 100) . '%';
 }
 
 
