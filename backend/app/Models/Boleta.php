@@ -10,7 +10,7 @@ class Boleta extends Model{
 
     protected $table = 'boleta';
     protected $primaryKey = 'boleta_id';
-    
+
     protected $fillable = [
         'tutor_id',
         'numero_boleta',
@@ -41,4 +41,9 @@ class Boleta extends Model{
     {
         return $this->hasMany(CompetidorCompetencia::class, 'boleta_id', 'boleta_id');
     }
+
+    public function competidorCompetencia()
+{
+    return $this->belongsTo(CompetidorCompetencia::class);
+}
 }
