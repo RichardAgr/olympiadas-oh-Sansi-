@@ -49,7 +49,7 @@ export default function FileViewer({
         </div>
 
 
-        {uploadedFileUrl && 
+        {/* {uploadedFileUrl && 
           <div className="uploaded-url-container">
           <div className="url-title">URL del archivo subido:</div>
           <div className="url-display">
@@ -60,7 +60,7 @@ export default function FileViewer({
             </button>
           </div>
         </div>
-        }
+        } */}
       </div>
 
       {extractedData && (

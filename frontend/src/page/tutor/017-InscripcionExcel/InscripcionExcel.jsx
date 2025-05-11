@@ -407,7 +407,7 @@ const InscripcionMasiva = () => {
         <BoletaView
           boleta={{
             numero: boletaGenerada.numero || "7000569",
-            tutor: boletaGenerada.tutor || "JOFRE TICONA PLATA",
+            tutor: boletaGenerada.tutor || "Sin nombre",
             fecha_emision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
             monto_total: boletaGenerada.montoTotal || 0,
             estado: "Pendiente",
