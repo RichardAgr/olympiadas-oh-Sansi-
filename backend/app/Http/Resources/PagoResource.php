@@ -19,7 +19,6 @@ class PagoResource extends JsonResource{
                 'nombres' => $this->tutor->nombres,
                 'apellidos' => $this->tutor->apellidos,
             ],
-            'fecha_emision' => $this->fecha_emision ? $this->fecha_emision->format('Y-m-d') : null,
             'fecha_pago' => $this->fecha_pago ? $this->fecha_pago->format('Y-m-d') : null,
             'monto_total' => (float) $this->monto_total,
             'estado' => $this->estado ? 'Pagado' : 'Pendiente',

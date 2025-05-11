@@ -43,7 +43,7 @@ export async function generarBoletaPDF(boleta) {
     // Título
     doc.setFontSize(16)
     doc.setFont("helvetica", "bold")
-    doc.text("BOLETA DE PAGO", 105, 35, { align: "center" })
+    doc.text("RECIBO DE PAGO", 105, 35, { align: "center" })
     doc.setFont("helvetica", "normal")
 
     // Información de la boleta
