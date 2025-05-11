@@ -3,9 +3,11 @@ import { useParams } from "react-router-dom";
 import "./InscribirManual.css";
 import SegundoPaso from "./SegundoPaso";
 import TercerPaso from "./TercerPaso";
+import axios from "axios";
 
 function InscribirManual() {
   const {id}=useParams()
+  const [competidorId, setCompetidorId] = useState(null);
   const [formData, setFormData] = useState({
     nombres: "",
     apellidos: "",
@@ -16,9 +18,9 @@ function InscribirManual() {
     nivel: "",
     departamento: "",
     provincia: "",
-    area: "",
-    categoria: "",
-    rango: "",
+    //area: "",
+    //categoria: "",
+    //rango: "",
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -51,6 +53,23 @@ function InscribirManual() {
     }
     setErrors(newErrors);
 
+    // Traducción básica de curso + nivel a grado_id (ajusta esto si tu backend usa otros ID)
+const calcularGradoId = (nivel, curso) => {
+  if (nivel === "Primaria") return Number(curso); // 1 a 6
+  if (nivel === "Secundaria") return 6 + Number(curso); // 7 a 12
+  return null;
+};
+
+const grado_id = calcularGradoId(formData.nivel, formData.curso);
+
+// Validación extra (por si acaso)
+if (!grado_id) {
+  alert("No se pudo determinar el grado escolar.");
+  return;
+}
+
+setFormData(prev => ({ ...prev, grado_id })); // 💡 Agregamos grado_id aquí
+
     if (Object.keys(newErrors).length === 0) {
       setCurrentStep(2);
     }
@@ -60,26 +79,10 @@ function InscribirManual() {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
-  const handlePaso2Next = (paso2Data) => {
+  const handlePaso2Next = (paso2Data, nuevoCompetidorId) => {
     setFormData((prev) => ({ ...prev, ...paso2Data }));
+    setCompetidorId(Number(nuevoCompetidorId));
     setCurrentStep(3);
-  };
-
-  const handleFinalSubmit = () => {
-
-    const datosCompletos = {
-      tutor_id: id,
-      competidor: {
-        ...formData,
-      },
-    };
-    console.log("Datos enviados:", datosCompletos);
-    // Aquí puedes enviar datosCompletos al backend
-  };
-  const resetFormulario = () => {
-    setCurrentStep(1);
-    setFormData({ nombres: "", apellidos: "", ci: "", fecha_nacimiento: "", colegio: "", curso: "", nivel: "",
-      departamento: "", provincia: "", area: "", categoria: "", rango: "", });
   };
 
   return (
@@ -252,7 +255,7 @@ function InscribirManual() {
       {currentStep === 2 && (
         <SegundoPaso
           formData={formData}
-          setFormData={setFormData}
+          //setFormData={setFormData}
           onBack={handleBack}
           onNext={handlePaso2Next}
         />
@@ -260,11 +263,16 @@ function InscribirManual() {
 
       {currentStep === 3 && (
         <TercerPaso
-          step={setCurrentStep}
-          onBack={handleBack}
-          onSubmit={handleFinalSubmit}
-          onReset={resetFormulario}
-        />
+        step={setCurrentStep}
+        onBack={handleBack}
+        competidorId={competidorId} // Pasar competidorId aquí
+        onReset={() => {
+          setCurrentStep(1);
+          setFormData({});
+          setCompetidorId(null);
+        }}
+        
+      />
       )}
     </div>
   );
