@@ -67,9 +67,9 @@ class CompetidorController extends Controller{
         }
 
         // Si no se encuentra ninguna imagen, usar un valor por defecto
-        if (!$rutaImagen) {
+        /* if (!$rutaImagen) {
             $rutaImagen = 'https://i.ibb.co/svnPKS1b/boleta1.jpg';
-        }
+        } */
 
         $informacionCompetidor = [
             'id' => $competidor->competidor_id,

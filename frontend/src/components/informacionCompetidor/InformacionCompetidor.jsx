@@ -30,6 +30,7 @@ export default function InformacionCompetidor() {
 /*          if (!data.ok) {
             throw new Error("No se pudo cargar la información del competidor")
         }  */
+/*         console.log(data.data) */
         setCompetitor(data.data.informacion_competidor)
         setTutors(data.data.tutores)
         setSelectedStatus(data.data.informacion_competidor.estado)
@@ -107,7 +108,6 @@ export default function InformacionCompetidor() {
     .catch(error => {
         console.error('Error al crear notificación:', error);
     });
-
     setShowNotificationModal(false)
     setShowNotificationSent(true)
     setNotificationReason("")

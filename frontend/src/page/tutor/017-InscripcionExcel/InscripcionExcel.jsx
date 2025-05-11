@@ -116,7 +116,7 @@ const InscripcionMasiva = () => {
       setStep(3)
     } catch (err) {
       console.error("Error al generar boleta:", err)
-      setError("Error al generar la boleta de pago: " + (err.message || "Error desconocido"))
+      setError("Error al generar el recibo de pago: " + (err.message || "Error desconocido"))
     } finally {
       setIsLoading(false)
     }
@@ -243,7 +243,7 @@ const InscripcionMasiva = () => {
                 onClick={handleGenerarBoleta}
                 disabled={isLoading || (validationResults && !validationResults.esValido)}
               >
-                {isLoading ? "Generando..." : "Generar Boleta de Pago"}
+                {isLoading ? "Generando..." : "Generar Recibo de Pago"}
               </button>
             </div>
           </div>
@@ -257,7 +257,7 @@ const InscripcionMasiva = () => {
 
             <div className="successContainer">
               <h3>¡Boleta generada exitosamente!</h3>
-              <p>Se ha generado la boleta de pago para los competidores inscritos.</p>
+              <p>Se ha generado el recibo de pago para los competidores inscritos.</p>
             </div>
 
             <div className="boletaPreviewContainer">
@@ -274,7 +274,7 @@ const InscripcionMasiva = () => {
                   </div>
                 </div>
 
-                <h2 className="boletaTitle">BOLETA DE PAGO</h2>
+                <h2 className="boletaTitle">RECIBO DE PAGO</h2>
 
                 <div className="boletaInfoSection">
                   <div className="infoRow">
@@ -346,7 +346,7 @@ const InscripcionMasiva = () => {
               </div>
               <h3>¡Inscripción completada con éxito!</h3>
               <p>
-                La inscripción masiva ha sido procesada correctamente. Se ha generado la boleta de pago para los
+                La inscripción masiva ha sido procesada correctamente. Se ha generado la Recibo de pago para los
                 competidores inscritos.
               </p>
               <p>

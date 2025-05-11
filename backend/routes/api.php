@@ -72,4 +72,5 @@ Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoControl
 
 //OCR
 Route::post('/processReceipt', [OcrPagoController::class, 'processReceipt']);
+Route::post('/boletas/GuardarDatosOcr', [BoletaController::class, 'procesarBoletaOCR']);
 

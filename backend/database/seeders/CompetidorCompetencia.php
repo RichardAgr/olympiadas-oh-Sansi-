@@ -30,7 +30,6 @@ class CompetidorCompetencia extends Seeder{
                 'nombre_pagador' => DB::table('tutor')->where('tutor_id', $tutorId)->value('nombres') . ' ' . 
                                    DB::table('tutor')->where('tutor_id', $tutorId)->value('apellidos'),
                 'monto_total' => count($relaciones) * 150, // $150 por competidor
-                'fecha_emision' => $fechaEmision,
                 'fecha_pago' => $fechaPago,
                 'estado' => $fechaPago !== null,
                 'created_at' => now(),

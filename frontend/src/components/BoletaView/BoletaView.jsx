@@ -22,7 +22,7 @@ const BoletaView = ({ boleta, onClose, onDescargar }) => {
     <div className="boletaViewerOverlay">
       <div className="boletaViewer">
         <div className="boletaViewerHeader">
-          <h2>Boleta de Pago</h2>
+          <h2>Recibo de Pago</h2>
           <button className="closeButton" onClick={onClose}>
             ×
           </button>
@@ -41,7 +41,7 @@ const BoletaView = ({ boleta, onClose, onDescargar }) => {
               </div>
             </div>
 
-            <h2 className="boletaTitle">BOLETA DE PAGO</h2>
+            <h2 className="boletaTitle">RECIBO DE PAGO</h2>
 
             <div className="boletaInfoSection">
               <div className="infoRow">
@@ -78,7 +78,6 @@ const BoletaView = ({ boleta, onClose, onDescargar }) => {
             </table>
 
             <div className="boletaFooterSection">
-              <p>Fecha de emisión: {boleta.fecha_emision || boleta.fechaEmision || new Date().toLocaleDateString()}</p>
               <p>Estado: {boleta.estado || "Pendiente"}</p>
             </div>
           </div>
