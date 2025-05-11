@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\CompetidorController;
 use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\EstadisticasController;
 use App\Http\Controllers\Api\OcrPagoController;
+use App\Http\Controllers\Api\ReciboController;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutoCompetidorController;
 
 
