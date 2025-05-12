@@ -11,7 +11,7 @@ class Tutor extends Model
 
     protected $table = 'tutor';
     protected $primaryKey = 'tutor_id';
-    
+
     protected $fillable = [
         'ci',
         'nombres',

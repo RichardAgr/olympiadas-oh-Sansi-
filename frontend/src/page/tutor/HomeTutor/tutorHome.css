@@ -173,9 +173,6 @@
   }
   
   .upload-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 8px;
     padding: 10px 30px;
     background-color: #1a237e;
@@ -193,7 +190,9 @@
     transform: translateY(-2px);
   }
   
-  .upload-icon {
+  .upload-iconHome {
+    margin-top: -10px;
+    margin-right: 10px;
     font-size: 16px;
   }
   

@@ -6,9 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\ImagenBoleta;
 use App\Models\Boleta;
 use App\Models\Tutor;
+use App\Models\CompetidorCompetencia;
+use App\Models\TutorCompetidor;
+use App\Models\Competidor;
 use App\Http\Resources\PagoCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\CompetidorCompetencia;
+use App\Models\TutorCompetidor;
+use App\Models\Area;
+use App\Models\Competidor;
+use App\Models\NivelCategoria;
+use Illuminate\Support\Facades\Log;
 
 class BoletaController extends Controller{
     public function index()
@@ -18,8 +29,8 @@ class BoletaController extends Controller{
             $imagen = ImagenBoleta::where('boleta_id', $boleta->boleta_id)
                 ->orderBy('fecha_subida', 'desc')
                 ->first();
-            
-            // Asignar la imagen a la boleta
+
+            // Asig            nar la imagen a la boleta
             $boleta->imagen_manual = $imagen;
         }
 
@@ -30,15 +41,15 @@ class BoletaController extends Controller{
     public function boletasPorTutor($id){
          try {
              $tutor = Tutor::find($id);
- 
+
              if (!$tutor) {
-                 return response()->json([
+                  return response()->json([
                      'success' => false,
                      'message' => 'Tutor no encontrado'
                  ], 404);
              }
- 
-             // Obtener las boletas del tutor
+
+             // Obtener las boletas de l tutor
              $boletas = DB::table('boleta as b')
                  ->leftJoin('imagen_boleta as ib', 'b.boleta_id', '=', 'ib.boleta_id')
                  ->leftJoin('competidor_competencia as cc', 'b.boleta_id', '=', 'cc.boleta_id')
@@ -63,9 +74,9 @@ class BoletaController extends Controller{
                  )
                  ->orderBy('b.fecha_pago', 'desc')
                  ->get();
- 
+
              return response()->json([
-                 'tutor' => [
+                 'tutor'  => [
                      'nombre_completo' => $tutor->nombres . ' ' . $tutor->apellidos
                  ],
                  'boletas' => $boletas
@@ -78,49 +89,262 @@ class BoletaController extends Controller{
              ], 500);
          }
      }
-     
-     public function generarBoleta(Request $request, $tutor_id)
-    {
-        $validated = $request->validate([
-            'numero' => 'required|string|unique:boleta,numero_boleta',
-            'periodo' => 'required|string',
-            'area' => 'required|string',
-            'nombre' => 'required|string',
-            'montoTotal' => 'required|numeric|min:1',
-            'competidores' => 'required|array|min:1',
-            'competidores.*.nombre' => 'required|string',
-            'competidores.*.categoria' => 'required|string',
-            'competidores.*.monto' => 'required|numeric|min:0'
+
+     public function generarBoleta($competidorId)
+{
+    try {
+        // Obtener la última fila de la tabla competidor_competencia
+        $competidorCompetencia = CompetidorCompetencia::where('competidor_id', $competidorId)
+            ->latest('created_at')
+            ->first();
+
+        if (!$competidorCompetencia) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Competidor no encontrado en la competencia.'
+            ], 404);
+        }
+
+        // Obtener los datos del competidor
+        $competidor = Competidor::find($competidorId);
+
+        if (!$competidor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Competidor no encontrado.'
+            ], 404);
+        }
+
+        // Obtener los datos del área desde la tabla 'area'
+        $area = Area::find($competidorCompetencia->area_id);
+
+        if (!$area) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Área no encontrada.'
+            ], 404);
+        }
+
+        // Obtener los datos del tutor relacionado con el competidor
+        $tutorCompetidor = TutorCompetidor::where('competidor_id', $competidorId)
+            ->latest('created_at')
+            ->first();
+
+        if (!$tutorCompetidor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tutor no encontrado para este competidor.'
+            ], 404);
+        }
+
+        // Obtener los datos del tutor
+        $tutor = Tutor::find($tutorCompetidor->tutor_id);
+
+        if (!$tutor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tutor no encontrado.'
+            ], 404);
+        }
+
+        // Obtener la categoría del competidor
+        $nivelCategoria = NivelCategoria::find($competidorCompetencia->nivel_categoria_id);
+        $categoria = $nivelCategoria ? $nivelCategoria->nombre : 'No especificado';
+
+        // Obtener el periodo del competidor (a partir de la fecha de inscripción)
+        $periodo = $competidorCompetencia->fecha_inscripcion ?? 'No especificado';
+
+        // Si el periodo es una fecha válida, extraer solo el año
+        if ($periodo !== 'No especificado' && strtotime($periodo)) {
+            $periodo = date('Y', strtotime($periodo)); // Obtener solo el año
+        }
+
+        // Validar que todos los campos necesarios tengan valor
+        $nombrePagador = $tutor->nombres . ' ' . $tutor->apellidos;
+        $nombreCompetidor = $competidor->nombres . ' ' . $competidor->apellidos;
+        $areaNombre = $area->nombre ?? 'No especificado';
+        $montoTotal = $area->costo ?? 0; // Aseguramos que tenga un valor numérico
+
+        if (!$nombrePagador || !$nombreCompetidor || !$montoTotal || !$areaNombre) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Faltan datos esenciales para generar la boleta.'
+            ], 400);
+        }
+        // Cambiar la generación del número de boleta para que sea fijo
+$numeroBoleta = 'BOL' . str_pad($competidorId, 5, '0', STR_PAD_LEFT); // Usando el competidor_id como base
+
+        // Datos para generar la boleta
+        $boletaData = [
+            'numero_boleta' => $numeroBoleta,
+            'nombre_pagador' => $nombrePagador,
+            'monto_total' => $montoTotal,
+            //'periodo' => $periodo,
+            'area' => $areaNombre,
+            'nombre' => $nombreCompetidor,
+            'categoria' => $categoria,
+            'competidores' => [
+                [
+                    'nombre' => $nombreCompetidor,
+                    'categoria' => $categoria,
+                    'monto' => $montoTotal
+                ]
+            ]
+        ];
+
+        // Retornar los datos de la boleta generada como respuesta
+        return response()->json([
+            'success' => true,
+            'boleta' => $boletaData
         ]);
 
-        try {
-            DB::beginTransaction();
+    } catch (\Exception $e) {
+        // Log the error to see the exact issue
+        \Log::error('Error generando boleta: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al generar la boleta: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
-            // Create boleta
-            $boleta = Boleta::create([
-                'tutor_id' => $tutor_id,
-                'numero_boleta' => $request->numero,
-                'periodo' => $request->periodo,
-                'nombre_pagador' => $request->nombre,
-                'monto_total' => $request->montoTotal,
-                'estado' => 0,
-                'fecha_emision' => now()
+     public function procesarBoletaOCR(Request $request)
+    {
+        try {
+            // Validar los datos de entrada
+            $request->validate([
+                'fechaPago' => 'required|string',
+                'imageUrl' => 'required|url',
+                'montoPagado' => 'required|numeric',
+                'nombreCompleto' => 'required|string',
+                'numeroComprobante' => 'required|string',
             ]);
 
+            // Iniciar transacción para asegurar la integridad de los datos
+            DB::beginTransaction();
 
+            // 1. Buscar al tutor por nombre completo
+            $nombreCompleto = trim($request->nombreCompleto);
+            
+            // Intentar diferentes estrategias para encontrar al tutor
+            $tutor = $this->buscarTutor($nombreCompleto);
+
+            // Si no se encuentra el tutor, devolver error
+            if (!$tutor) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró un tutor con el nombre proporcionado: ' . $nombreCompleto,
+                    'data' => null
+                ], 404);
+            }
+
+            // 2. Verificar si ya existe una boleta con el mismo número
+            $boletaExistente = Boleta::where('numero_boleta', $request->numeroComprobante)->first();
+            if ($boletaExistente) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ya existe una boleta registrada con el número: ' . $request->numeroComprobante,
+                    'data' => null
+                ], 409);
+            }
+
+            // 3. Crear la boleta
+            $fechaPago = Carbon::createFromFormat('d-m-Y', $request->fechaPago);
+            
+            $boleta = new Boleta();
+            $boleta->tutor_id = $tutor->tutor_id;
+            $boleta->numero_boleta = $request->numeroComprobante;
+            $boleta->nombre_pagador = $request->nombreCompleto;
+            $boleta->monto_total = $request->montoPagado;
+            $boleta->fecha_pago = $fechaPago;
+            $boleta->estado = true;
+            $boleta->save();
+
+            // 4. Guardar la imagen de la boleta
+            $imagenBoleta = new ImagenBoleta();
+            $imagenBoleta->boleta_id = $boleta->boleta_id;
+            $imagenBoleta->ruta_imagen = $request->imageUrl;
+            $imagenBoleta->fecha_subida = now();
+            $imagenBoleta->estado = true;
+            $imagenBoleta->save();
+
+            // 5. Obtener los competidores relacionados con el tutor
+            $competidoresIds = TutorCompetidor::where('tutor_id', $tutor->tutor_id)
+                ->pluck('competidor_id')
+                ->toArray();
+
+            if (empty($competidoresIds)) {
+                Log::warning("El tutor ID {$tutor->tutor_id} no tiene competidores asociados");
+            } else {
+                // 6. Actualizar la boleta_id en los registros de competidor_competencia
+                $competidoresActualizados = CompetidorCompetencia::whereIn('competidor_id', $competidoresIds)
+                    ->whereNull('boleta_id') // Solo actualizar los que no tienen boleta asignada
+                    ->update(['boleta_id' => $boleta->boleta_id]);
+                
+                if ($competidoresActualizados == 0) {
+                    Log::info("No se encontraron inscripciones pendientes de pago para los competidores del tutor");
+                }
+            }
+
+            // Confirmar la transacción
             DB::commit();
+
+            // Obtener información de los competidores actualizados para la respuesta
+            $competidoresInfo = [];
+            if (!empty($competidoresIds)) {
+                $competidores = Competidor::whereIn('competidor_id', $competidoresIds)->get();
+                foreach ($competidores as $competidor) {
+                    $inscripciones = CompetidorCompetencia::where('competidor_id', $competidor->competidor_id)
+                        ->where('boleta_id', $boleta->boleta_id)
+                        ->count();
+                    
+                    $competidoresInfo[] = [
+                        'id' => $competidor->competidor_id,
+                        'nombre' => $competidor->nombres . ' ' . $competidor->apellidos,
+                        'ci' => $competidor->ci,
+                        'inscripciones_actualizadas' => $inscripciones
+                    ];
+                }
+            }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Boleta generada correctamente',
-                'boleta_id' => $boleta->boleta_id
-            ]);
+                'message' => 'Boleta procesada correctamente',
+                'data' => [
+                    'boleta' => [
+                        'id' => $boleta->boleta_id,
+                        'numero' => $boleta->numero_boleta,
+                        'monto' => $boleta->monto_total,
+                        'fecha_pago' => $boleta->fecha_pago->format('d-m-Y')
+                    ],
+                    'tutor' => [
+                        'id' => $tutor->tutor_id,
+                        'nombre' => $tutor->nombres . ' ' . $tutor->apellidos,
+                        'ci' => $tutor->ci
+                    ],
+                    'competidores' => $competidoresInfo,
+                    'imagen' => [
+                        'id' => $imagenBoleta->imagen_id,
+                        'url' => $imagenBoleta->ruta_imagen
+                    ]
+                ]
+            ], 200);
 
-        } catch (\Throwable $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error al generar la boleta.',
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al procesar boleta OCR: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al procesar la boleta',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -177,4 +401,95 @@ class BoletaController extends Controller{
         }
     }
 
+    /**
+     * Busca un tutor utilizando diferentes estrategias basadas en el nombre completo
+     * Adaptado para el formato "Nombre Apellido1 Apellido2"
+     *
+     * @param string $nombreCompleto
+     * @return Tutor|null
+     */
+    private function buscarTutor($nombreCompleto)
+    {
+        // Estrategia 1: Buscar por nombre completo exacto (concatenando nombres y apellidos)
+        $tutor = Tutor::whereRaw("CONCAT(nombres, ' ', apellidos) = ?", [$nombreCompleto])
+            ->where('estado', true)
+            ->first();
+
+        if ($tutor) {
+            Log::info("Tutor encontrado por coincidencia exacta: {$nombreCompleto}");
+            return $tutor;
+        }
+
+        // Estrategia 2: Dividir el nombre según el formato "Nombre Apellido1 Apellido2"
+        $partes = explode(' ', $nombreCompleto);
+        
+        if (count($partes) >= 2) {
+            // El primer elemento es el nombre, el resto son apellidos
+            $nombre = $partes[0];
+            $apellidos = implode(' ', array_slice($partes, 1));
+            
+            $tutor = Tutor::where('nombres', $nombre)
+                ->where('apellidos', $apellidos)
+                ->where('estado', true)
+                ->first();
+                
+            if ($tutor) {
+                Log::info("Tutor encontrado por nombre '{$nombre}' y apellidos '{$apellidos}'");
+                return $tutor;
+            }
+            
+            // Estrategia 3: Buscar con LIKE para manejar posibles variaciones
+            $tutor = Tutor::where('nombres', 'LIKE', "{$nombre}%")
+                ->where('apellidos', 'LIKE', "{$apellidos}%")
+                ->where('estado', true)
+                ->first();
+                
+            if ($tutor) {
+                Log::info("Tutor encontrado por coincidencia parcial: nombre '{$nombre}%' y apellidos '{$apellidos}%'");
+                return $tutor;
+            }
+            
+            // Estrategia 4: Buscar con LIKE en ambas direcciones (más flexible)
+            $tutor = Tutor::where(function($query) use ($nombre, $apellidos) {
+                    $query->where('nombres', 'LIKE', "%{$nombre}%")
+                          ->where('apellidos', 'LIKE', "%{$apellidos}%");
+                })
+                ->where('estado', true)
+                ->first();
+                
+            if ($tutor) {
+                Log::info("Tutor encontrado por coincidencia flexible: nombre '%{$nombre}%' y apellidos '%{$apellidos}%'");
+                return $tutor;
+            }
+        }
+        
+        // Estrategia 5: Buscar por CI si el nombre parece un número de documento
+        if (preg_match('/^\d+$/', $nombreCompleto)) {
+            $tutor = Tutor::where('ci', $nombreCompleto)
+                ->where('estado', true)
+                ->first();
+                
+            if ($tutor) {
+                Log::info("Tutor encontrado por CI: {$nombreCompleto}");
+                return $tutor;
+            }
+        }
+        
+        // Estrategia 6: Última opción - buscar cualquier coincidencia parcial en nombres o apellidos
+        $tutor = Tutor::where(function($query) use ($nombreCompleto) {
+                $query->where('nombres', 'LIKE', "%{$nombreCompleto}%")
+                      ->orWhere('apellidos', 'LIKE', "%{$nombreCompleto}%")
+                      ->orWhere('ci', 'LIKE', "%{$nombreCompleto}%");
+            })
+            ->where('estado', true)
+            ->first();
+            
+        if ($tutor) {
+            Log::info("Tutor encontrado por coincidencia general: '%{$nombreCompleto}%'");
+        } else {
+            Log::warning("No se encontró ningún tutor para: {$nombreCompleto}");
+        }
+        
+        return $tutor;
+    }
 }

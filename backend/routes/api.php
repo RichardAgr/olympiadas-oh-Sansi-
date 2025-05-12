@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\TutorController;
 use App\Http\Controllers\Api\CompetidorController;
 use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\EstadisticasController;
+use App\Http\Controllers\Api\OcrPagoController;
+use App\Http\Controllers\Api\ReciboController;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutoCompetidorController;
 
 
@@ -53,10 +55,10 @@ Route::post('/tutor/{tutor_id}/registrar-tutores', [TutorController::class, 'reg
 Route::post('/tutor/{tutor_id}/boleta/generar', [BoletaController::class, 'generarBoleta']);
 Route::get('/tutor/{tutor_id}/boleta/generar', [BoletaController::class, 'generarBoletaDesdeQuery']);
 
-
 Route::get('/tutores/{id}/competidores-filtrados', [TutorController::class, 'competidoresFiltrados']);
 Route::post('/tutores/{tutor_id}/competidor', [TutorController::class, 'inscribirCompetidor']);
-Route::post('/boleta/generar', [BoletaController::class, 'generarBoleta']);
+//Route::post('/boleta/generar', [BoletaController::class, 'generarBoleta']);
+Route::post('/boleta/generar/{competidorId}', [BoletaController::class, 'generarBoleta']);
 
 Route::get('/tutores/{idTutor}/competidoresTutor', [TutorController::class, 'competidoresFiltrados']);
 
@@ -86,3 +88,9 @@ Route::put('/tutor/ActualizarMiPerfil/{id}', [TutorController::class, 'Actualiza
 Route::get('/tutor/VerNotificaciones/{id}/Notificaciones',[NotificacionController::class, 'VerNotificacionesTutor']);
 Route ::post('/tutor/{id_tutor}/cambiarEstadoNotificacion/{id_notificacion}', [NotificacionController::class, 'cambiarEstadoNotificacion']);
 Route ::put('/tutor/editarCompetidor/{id_competidor}', [UsuarioTutoCompetidorController::class, 'editarCompetidor']);
+Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoController::class, 'procesarComprobante']);
+
+//OCR
+Route::post('/processReceipt', [OcrPagoController::class, 'processReceipt']);
+Route::post('/boletas/GuardarDatosOcr', [BoletaController::class, 'procesarBoletaOCR']);
+
