@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\EstadisticasController;
 use App\Http\Controllers\Api\OcrPagoController;
 use App\Http\Controllers\Api\ReciboController;
-use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutoCompetidorController;
+use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCompetidorController;
 
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
@@ -92,4 +92,7 @@ Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoControl
 //OCR
 Route::post('/processReceipt', [OcrPagoController::class, 'processReceipt']);
 Route::post('/boletas/GuardarDatosOcr', [BoletaController::class, 'procesarBoletaOCR']);
+
+//recibo
+Route::post('/guardarDatos/recibos', [ReciboController::class, 'registrarRecibo']);
 

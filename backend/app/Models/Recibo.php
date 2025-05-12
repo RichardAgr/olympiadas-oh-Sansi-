@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Recibo extends Model{
     use HasFactory;
 
-    protected $table = 'recibo';
+    protected $table = 'RECIBO';
     protected $primaryKey = 'recibo_id';
     public $timestamps = false;
 
@@ -21,4 +21,21 @@ class Recibo extends Model{
         'estado'
     ];
 
+    // Relación con Tutor
+    public function tutor()
+    {
+        return $this->belongsTo(Tutor::class, 'tutor_id', 'tutor_id');
+    }
+
+    // Relación con Boleta
+    public function boletas()
+    {
+        return $this->hasMany(Boleta::class, 'recibo_id', 'recibo_id');
+    }
+
+    // Relación con ReciboDetalle
+    public function detalles()
+    {
+        return $this->hasMany(ReciboDetalle::class, 'recibo_id', 'recibo_id');
+    }
 }

@@ -14,12 +14,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\CompetidorCompetencia;
-use App\Models\TutorCompetidor;
 use App\Models\Area;
-use App\Models\Competidor;
 use App\Models\NivelCategoria;
-use Illuminate\Support\Facades\Log;
+
 
 class BoletaController extends Controller{
     public function index()

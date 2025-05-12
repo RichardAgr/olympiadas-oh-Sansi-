@@ -1,28 +1,74 @@
 import saveAs from "file-saver"
 import { useState } from "react"
-import {Download,Info,} from "lucide-react"
-import { generateExcelTemplate,procesarArchivoExcel } from "../../../components/plantillaExcel/Excel"
+import { Download, Info, UploadCloud, Loader2} from "lucide-react"
+import { generateExcelTemplate, procesarArchivoExcel } from "../../../components/plantillaExcel/Excel"
 import { validarDatosExcel } from "../../../components/plantillaExcel/ValidadorExcel"
 import { generarBoleta } from "../../../components/generarBoleta/GenerarBoleta"
 import { generarBoletaPDF } from "../../../components/generarBoleta/GenerarBoletaPDF"
 import ExcelPreview from "../../../components/excelPreview/ExcelPreview"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
 import BoletaView from "../../../components/BoletaView/BoletaView"
+import {useParams} from "react-router-dom"
 import "./inscripcionExcel.css"
+import axios from "axios"
 
 //simulamos la carga del excel poner datos simulados aca
 
+const uploadToCloudinary = async (file, onProgress = () => {}) => {
+  try {
+    const uploadPreset = "veltrixImg" // Tu upload preset
+    const cloudName = "dq5zw44wg" // Tu cloud name
+
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("upload_preset", uploadPreset)
+    formData.append("resource_type", "auto") // Importante: esto permite a Cloudinary detectar automáticamente el tipo de archivo
+
+    // Usar axios para la subida
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+      formData,
+      {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
+            onProgress(progress)
+          }
+        },
+      },
+    )
+
+    return response.data
+  } catch (error) {
+    console.error("Error al subir a Cloudinary:", error)
+    throw error
+  }
+}
 
 const InscripcionMasiva = () => {
+  const {id} = useParams()
   const [isLoading, setIsLoading] = useState(false)
-  const [file,setFile]=useState(null)
+  const [file, setFile] = useState(null)
   const [error, setError] = useState(null)
   const [excelData, setExcelData] = useState(null)
   const [step, setStep] = useState(1)
-  const [validationResults,setValidationResults] = useState(null)
+  const [validationResults, setValidationResults] = useState(null)
   const [boletaGenerada, setBoletaGenerada] = useState(null)
   const [showBoletaViewer, setShowBoletaViewer] = useState(false)
+  const [pdfUploaded, setPdfUploaded] = useState(false)
+    const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
 
+  const guardarRecibo = async (reciboData) => {
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/api/guardarDatos/recibos', reciboData);
+    console.log('Recibo guardado en API:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error al guardar el recibo en la API:', error);
+    throw error;
+  }
+};
 
   const handleDescargarPlantilla = async () => {
     try {
@@ -40,14 +86,13 @@ const InscripcionMasiva = () => {
     }
   }
 
-
   const handleFileUpload = async (uploadedFile) => {
     setFile(uploadedFile)
     setError(null)
     setIsLoading(true)
 
     try {
-      console.log("Iniciando carga de archivo:",uploadedFile.name)
+      console.log("Iniciando carga de archivo:", uploadedFile.name)
       //procesar excel
       const data = await procesarArchivoExcel(uploadedFile)
 
@@ -68,19 +113,19 @@ const InscripcionMasiva = () => {
       setValidationResults(resultados)
       setStep(2)
     } catch (error) {
-      console.log("Error en el handleFileUpload: ",error)
-      setError("Error al procesar el archivo Excel: " + (err.message || "Asegúrate de que el formato sea correcto."))
-    }finally{
+      console.log("Error en el handleFileUpload: ", error)
+      setError("Error al procesar el archivo Excel: " + (error.message || "Asegúrate de que el formato sea correcto."))
+    } finally {
       setIsLoading(false)
     }
   }
 
-  const handleGenerarBoleta=()=>{
+  const handleGenerarBoleta = () => {
     setIsLoading(true)
     setError(null)
 
     try {
-      console.log("Datos para generar boleta:", excelData)
+      console.log("Datos para generar el recibo:", excelData)
 
       if (!excelData || !excelData.competidores || !excelData.tutores || !excelData.relaciones) {
         throw new Error(
@@ -111,24 +156,25 @@ const InscripcionMasiva = () => {
 
       // Usar los datos del Excel
       const boleta = generarBoleta(excelData)
-      console.log("Esta es la boleta",boleta)
+      console.log("Esta es la recibo", boleta)
       setBoletaGenerada(boleta)
       setStep(3)
     } catch (err) {
-      console.error("Error al generar boleta:", err)
+      console.error("Error al generar el recibo:", err)
       setError("Error al generar el recibo de pago: " + (err.message || "Error desconocido"))
     } finally {
       setIsLoading(false)
     }
   }
 
+  // Modificar el handleDescargarBoleta para subir a Cloudinary cuando se descarga
   const handleDescargarBoleta = async () => {
     try {
       setIsLoading(true)
       setError(null)
 
       if (!boletaGenerada) {
-        throw new Error("No hay boleta generada para descargar")
+        throw new Error("No hay recibo generado para descargar")
       }
 
       // Asegurarse de que todos los campos necesarios existan
@@ -140,19 +186,41 @@ const InscripcionMasiva = () => {
         competidores: Array.isArray(boletaGenerada.competidores)
           ? boletaGenerada.competidores.map((comp) => ({
               nombre: comp.nombre || "Sin nombre",
-              area:comp.area || "Sin área",
+              area: comp.area || "Sin área",
               nivel: comp.nivel || "Sin categoría",
               monto: comp.monto || 0,
             }))
           : [],
       }
+
       const blob = await generarBoletaPDF(boletaData)
 
+      // Subir a Cloudinary antes de descargar
+      const file = new File([blob], `Recibo_${boletaData.numero}.pdf`, { type: "application/pdf" })
+      const uploadResult = await uploadToCloudinary(file, (progress) => {
+        console.log(`Subiendo PDF a Cloudinary: ${progress}%`)
+      })
+
+      const completeUploadData ={
+        tutor_id:id,
+        numero_recibo: boletaData.numero,
+        monto_total: boletaData.montoTotal,
+        fecha_emision: boletaData.fechaEmision,
+        ruta_pdf: uploadResult.secure_url,
+        estado: "Pendiente",
+      }
+      // Registrar los datos solicitados
+      console.log("Datos del recibo  guardada:", completeUploadData)
+      const respuestaAPI = await guardarRecibo(completeUploadData)
+      console.log("Respuesta api:", respuestaAPI)
+      // Marcar que el PDF ya fue subido
+      setPdfUploaded(true)
+
       // Descargar usando file-saver
-      saveAs(blob, `Boleta_${boletaData.numero}.pdf`)
+      saveAs(blob, `Recibo_${boletaData.numero}.pdf`)
     } catch (error) {
-      console.error("Error al descargar la boleta:", error)
-      setError("Error al descargar la boleta: " + error.message)
+      console.error("Error al descargar el recibo :", error)
+      setError("Error al descargar el recibo: " + error.message)
     } finally {
       setIsLoading(false)
     }
@@ -166,8 +234,108 @@ const InscripcionMasiva = () => {
     setShowBoletaViewer(false)
   }
 
-  const handleContinuar = () => {
-    setStep(4)
+  const handleContinuar = async () => {
+    try {
+      if (boletaGenerada && !pdfUploaded) {
+        setIsUploading(true);
+        setUploadProgress(0);
+
+        const boletaData = {
+          numero: boletaGenerada.numero || "7000569",
+          tutor: boletaGenerada.tutor || "TUTOR NO ESPECIFICADO",
+          fechaEmision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
+          montoTotal: typeof boletaGenerada.montoTotal !== "Sin costo" ? boletaGenerada.montoTotal : 0,
+          competidores: Array.isArray(boletaGenerada.competidores)
+            ? boletaGenerada.competidores.map((comp) => ({
+                nombre: comp.nombre || "Sin nombre",
+                area: comp.area || "Sin área",
+                nivel: comp.nivel || "Sin categoría",
+                monto: comp.monto || 0,
+              }))
+            : [],
+        }
+
+        const blob = await generarBoletaPDF(boletaData);
+        const file = new File([blob], `Recibo_${boletaData.numero}.pdf`, { type: "application/pdf" });
+
+        const uploadResult = await uploadToCloudinary(file, (progress) => {
+          setUploadProgress(progress);
+        });
+
+        // Datos completos para mostrar y registrar
+        const completeUploadData = {
+          tutor_id : id,
+          numero_recibo: boletaData.numero,
+          monto_total: boletaData.montoTotal,
+          fecha_emision: boletaData.fechaEmision,
+          ruta_pdf: uploadResult.secure_url,
+          estado: "Pendiente",
+        };
+        const respuestaAPI = await guardarRecibo(completeUploadData);
+        console.log("Respuesta api:", respuestaAPI);
+        console.log("Datos completos de el recibo:", completeUploadData);
+        setPdfUploaded(true);
+      }
+    } catch (error) {
+      console.error("Error al subir el recibo a Cloudinary:", error);
+      setError("Error al subir el PDF: " + error.message);
+    } finally {
+      setIsUploading(false);
+      setStep(4);
+    }
+  }
+
+
+  const handleNuevaInscripcion = async () => {
+    try {
+      // Solo subir el PDF si no se ha subido ya
+      if (boletaGenerada && !pdfUploaded) {
+        setIsLoading(true)
+
+        const boletaData = {
+          numero: boletaGenerada.numero || "7000569",
+          tutor: boletaGenerada.tutor || "TUTOR NO ESPECIFICADO",
+          fechaEmision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
+          montoTotal: typeof boletaGenerada.montoTotal !== "Sin costo" ? boletaGenerada.montoTotal : 0,
+          competidores: Array.isArray(boletaGenerada.competidores)
+            ? boletaGenerada.competidores.map((comp) => ({
+                nombre: comp.nombre || "Sin nombre",
+                area: comp.area || "Sin área",
+                nivel: comp.nivel || "Sin categoría",
+                monto: comp.monto || 0,
+              }))
+            : [],
+        }
+
+        const blob = await generarBoletaPDF(boletaData)
+        const file = new File([blob], `Recibo_${boletaData.numero}.pdf`, { type: "application/pdf" })
+
+        // Subir silenciosamente
+        const uploadResult = await uploadToCloudinary(file)
+        const completeUploadData ={
+          tutor_id:id,
+          numero_recibo: boletaData.numero,
+          monto_total: boletaData.montoTotal,
+          fecha_emision: boletaData.fechaEmision,
+          ruta_pdf: uploadResult.secure_url,
+          estado: "Pendiente",
+        }
+        console.log("Datos de del recibo guardada al iniciar nueva inscripción:", completeUploadData)
+
+        const respuestaAPI = await guardarRecibo(completeUploadData)
+        console.log("Respuesta api:", respuestaAPI)
+      }
+    } catch (error) {
+      console.error("Error al subir la recibo a Cloudinary:", error)
+    } finally {
+      setIsLoading(false)
+      setStep(1)
+      setFile(null)
+      setExcelData(null)
+      setValidationResults(null)
+      setBoletaGenerada(null)
+      setPdfUploaded(false)
+    }
   }
 
   const renderStepContent = () => {
@@ -182,7 +350,7 @@ const InscripcionMasiva = () => {
                   "Descargando..."
                 ) : (
                   <>
-                    <Download/>
+                    <Download />
                     Descargar plantilla
                   </>
                 )}
@@ -195,7 +363,7 @@ const InscripcionMasiva = () => {
 
             <div className="instructionsContainer">
               <h3>
-                <Info/>
+                <Info />
                 Instrucciones
               </h3>
               <ol>
@@ -209,7 +377,7 @@ const InscripcionMasiva = () => {
             </div>
           </div>
         )
-        case 2:
+      case 2:
         return (
           <div className="stepContent">
             <h2>Revisión de Datos</h2>
@@ -248,7 +416,7 @@ const InscripcionMasiva = () => {
             </div>
           </div>
         )
-        case 3:
+      case 3:
         return (
           <div className="stepContent">
             <h2>Comprobante de Pago</h2>
@@ -256,12 +424,12 @@ const InscripcionMasiva = () => {
             {error && <div className="errorMessage">{error}</div>}
 
             <div className="successContainer">
-              <h3>¡Boleta generada exitosamente!</h3>
+              <h3>¡Recibo generada exitosamente!</h3>
               <p>Se ha generado el recibo de pago para los competidores inscritos.</p>
             </div>
 
             <div className="boletaPreviewContainer">
-              <h3>Vista previa de la boleta</h3>
+              <h3>Vista previa de la recibo</h3>
               <div className="boletaDocumentPreview">
                 <div className="boletaHeaderSection">
                   <div className="universidadInfo">
@@ -270,7 +438,7 @@ const InscripcionMasiva = () => {
                   </div>
                   <div className="boletaNumero">
                     <p>Nro.</p>
-                    <p className="numeroValue">{boletaGenerada?.numero || "7000569"}</p>
+                    <p className="numeroValue">{boletaGenerada?.numero|| "7000569"}</p>
                   </div>
                 </div>
 
@@ -322,18 +490,28 @@ const InscripcionMasiva = () => {
                 Volver
               </button>
               <button className="secondaryButton" onClick={handleVerBoleta}>
-                Ver Boleta Completa
+                Ver Recibo Completo
               </button>
               {/* <button className="primaryButton"  onClick={handleDescargarBoleta} disabled={isLoading}>
                 {isLoading ? "Descargando..." : "Descargar Boleta PDF"}
               </button> */}
-              <button className="successButton" onClick={handleContinuar}>
-                Continuar
+              <button className="successButton" onClick={handleContinuar} disabled={isUploading}>
+                {isUploading ? (
+                    <>
+                       <Loader2 className="animate-spinX" style={{ marginRight: '8px' }} />
+                       Subiendo ({uploadProgress}%)
+                     </>
+                   ) : (
+                     <>
+                       <UploadCloud style={{ marginRight: '8px' }} />
+                       Continuar
+                     </>
+                   )}
               </button>
             </div>
           </div>
         )
-        case 4:
+      case 4:
         return (
           <div className="stepContent">
             <h2>Confirmación</h2>
@@ -341,16 +519,14 @@ const InscripcionMasiva = () => {
             {error && <div className="errorMessage">{error}</div>}
 
             <div className="confirmationContainer">
-              <div className="confirmationIcon">
-              {/* poner icono */}
-              </div>
+              <div className="confirmationIcon">{/* poner icono */}</div>
               <h3>¡Inscripción completada con éxito!</h3>
               <p>
                 La inscripción masiva ha sido procesada correctamente. Se ha generado la Recibo de pago para los
                 competidores inscritos.
               </p>
               <p>
-                <strong>Número de Boleta:</strong> {boletaGenerada?.numero}
+                <strong>Número de Recibo:</strong> {boletaGenerada?.numero}
               </p>
               <p>
                 <strong>Total Competidores:</strong>{" "}
@@ -365,7 +541,7 @@ const InscripcionMasiva = () => {
               <button className="secondaryButton" onClick={() => setStep(3)}>
                 Volver
               </button>
-              <button className="successButton" onClick={() => setStep(1)}>
+              <button className="successButton" onClick={handleNuevaInscripcion}>
                 Nueva Inscripción
               </button>
             </div>

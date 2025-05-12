@@ -36,9 +36,7 @@ export const generarBoleta = (data) => {
     const montoTotal = totalInscripciones * 15 // 15 Bs por inscripción (Esto a que cambiar)
   
     // Generar número de boleta(A que poner de )
-    const numeroBoleta = `${Math.floor(Math.random() * 1000000)
-      .toString()
-      .padStart(4, "0")}`
+    const numeroBoleta = `${Math.floor(1000000 + Math.random() * 9000000)}`.slice(0, 7)
   
     const nombreTutor = `${tutorPrincipal.nombres || tutorPrincipal["Nombres (*)"]} ${tutorPrincipal.apellidos || tutorPrincipal["Apellidos (*)"]}`
   

@@ -11,9 +11,6 @@ return new class extends Migration{
             $table->id('recibo_detalle_id');
             $table->unsignedBigInteger('recibo_id');
             $table->unsignedBigInteger('competidor_id');
-            $table->unsignedBigInteger('area_id');
-            $table->unsignedBigInteger('nivel_categoria_id');
-            $table->decimal('monto', 10, 2);
             $table->string('estado', 20);
             $table->timestamps();
 
@@ -25,16 +22,6 @@ return new class extends Migration{
             $table->foreign('competidor_id')
                   ->references('competidor_id')
                   ->on('competidor')
-                  ->onDelete('cascade');
-
-            $table->foreign('area_id')
-                  ->references('area_id')
-                  ->on('area')
-                  ->onDelete('cascade');
-
-            $table->foreign('nivel_categoria_id')
-                  ->references('nivel_categoria_id')
-                  ->on('nivel_categoria')
                   ->onDelete('cascade');
 
             $table->index(['recibo_id', 'competidor_id']);
