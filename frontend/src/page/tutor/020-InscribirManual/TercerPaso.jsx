@@ -9,7 +9,7 @@ import axios from "axios";
 
 function TercerPaso({ competidorId, onBack, onSubmit, onReset}) {
   // Ahora puedes usar el competidorId aquí
-  console.log("ID del competidor en el tercer paso:", competidorId);
+  /* console.log("ID del competidor en el tercer paso:", competidorId); */
   const [cantidadTutores, setCantidadTutores] = useState(1);
   const [tutores, setTutores] = useState([
     { nombres: "", apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" },
@@ -58,7 +58,7 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset}) {
           { tutores: tutoresFinal,  competidor_id: competidorId }
         
         );
-        console.log("Tutores registrados:", response.data);
+/*         console.log("Tutores registrados:", response.data); */
         setExito(true);
       } catch (error) {
         console.error("Error al registrar tutores:", error.response?.data || error.message);
