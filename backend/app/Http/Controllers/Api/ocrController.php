@@ -1,63 +1,55 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\VisionService;
+use Google\Cloud\Vision\V1\ImageAnnotatorClient;
 use Illuminate\Http\Request;
-use thiagoalessio\TesseractOCR\TesseractOCR;
-use Illuminate\Support\Facades\Storage;
 
-class OcrController extends Controller
-{
-    public function extraerTexto(Request $request)
-{
-    if (!$request->hasFile('boleta')) {
-        return response()->json(['error' => 'No se ha enviado ninguna imagen'], 400);
-    }
+class OcrController extends Controller{
+    public function extractText(Request $request)
+    {
+        try {
+            // Validar la solicitud
+            $request->validate([
+                'image' => 'required|image|max:5000', // máximo 5MB
+            ]);
 
-    $request->validate([
-        'boleta' => 'required|file|mimes:jpeg,jpg,png,bmp,tiff,webp|max:5120'
-    ]);
+            // Obtener la imagen
+            $image = $request->file('image');
+            $imageContent = file_get_contents($image->getPathname());
 
-    $file = $request->file('boleta');
+            // Configurar la ruta de las credenciales
+            putenv('GOOGLE_APPLICATION_CREDENTIALS=' . env('GOOGLE_APPLICATION_CREDENTIALS'));
 
-    try {
-        $path = $file->storeAs('ocr_temp', uniqid() . '.' . $file->getClientOriginalExtension(), 'local');
-        $localPath = storage_path("app/{$path}");
+            // Inicializar el cliente de Vision
+            $imageAnnotator = new ImageAnnotatorClient();
 
-        $ocr = new TesseractOCR($localPath);
-        $ocr->executable('C:\Program Files\Tesseract-OCR\tesseract.exe')
-            ->lang('spa')
-            ->psm(6);
+            // Realizar la detección de texto
+            $response = $imageAnnotator->textDetection($imageContent);
+            $texts = $response->getTextAnnotations();
 
-        $texto = $ocr->run();
+            // Cerrar el cliente
+            $imageAnnotator->close();
 
-        Storage::disk('local')->delete($path);
+            // Extraer el texto completo (el primer elemento contiene todo el texto)
+            $extractedText = '';
+            if (count($texts) > 0) {
+                $extractedText = $texts[0]->getDescription();
+            }
 
-        // Extraer campos con expresiones regulares
-        preg_match('/Nombre[:\s]+(.+)/i', $texto, $matchNombre);
-        preg_match('/Nro\.?\s*(\d+)/i', $texto, $matchNro); 
-        preg_match('/Total[:\s]+([\d,.]+)/i', $texto, $matchTotal);
+            // Devolver el texto extraído
+            return response()->json([
+                'success' => true,
+                'text' => $extractedText
+            ]);
 
-        $nombre = isset($matchNombre[1]) ? preg_replace('/^[—–\-]+\s*/u', '', $matchNombre[1]) : 'No encontrado';
-        $nro = $matchNro[1] ?? 'No encontrado';
-        $total = $matchTotal[1] ?? 'No encontrado';
-
-        return response()->json([
-            'success' => true,
-            'nombre' => trim($nombre),
-            'nro' => $nro,
-            'total' => $total,
-            'texto_completo' => $texto // opcional para depuración
-        ]);
-    } catch (\Exception $e) {
-        if (isset($path)) {
-            Storage::disk('local')->delete($path);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'error' => 'Error al procesar la imagen: ' . $e->getMessage()
-        ], 500);
-    }
     }
 }

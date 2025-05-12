@@ -73,6 +73,6 @@ Route::post('/tutor/inscripcionGrupal',[InscripcionController::class, 'inscripci
 
 
 //OCR
-Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoController::class, 'procesarComprobante']
+Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoController::class, 'procesarComprobante']);
 Route::post('/tutor/extraerOcr',[ocrController::class, 'extraerTexto']);
 

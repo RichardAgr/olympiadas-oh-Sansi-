@@ -6,32 +6,271 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Support\Facades\DB;
 
 class InscripcionController extends Controller
 {
     public function inscripcionGrupal(Request $request)
 {
+    // Validar el archivo
     $request->validate([
         'archivo' => 'required|mimes:xlsx,xls'
     ]);
 
-    $archivo = $request->file('archivo');
-    $spreadsheet = IOFactory::load($archivo->getRealPath());
+    // Iniciar transacción
+    DB::beginTransaction();
 
-    // Obtener datos de tutores una sola vez
-    $tutores = $this->obtenerDatosTutor($spreadsheet);
-    // Obtener datos de competidores
-    list($competidores, $errores) = $this->obtenerDatosCompetidores($spreadsheet);
+    try {
+        $archivo = $request->file('archivo');
+        $spreadsheet = IOFactory::load($archivo->getRealPath());
 
-    return response()->json([
-        'success' => empty($errores),
-        'total_competidores' => count($competidores),
-        'competidores' => $competidores,
-        'tutores' => $tutores,
-        'message' => empty($errores) 
-            ? 'Archivo procesado correctamente' 
-            : 'Se procesó el archivo con algunos errores'
-    ]);
+        // Obtener datos
+        $tutores = $this->obtenerDatosTutor($spreadsheet);
+        list($competidores, $errores) = $this->obtenerDatosCompetidores($spreadsheet);
+        $relacion = $this->obtenerDatosRelacion($spreadsheet);
+
+        // Validar que haya datos mínimos
+        if (empty($competidores) || empty($tutores) || empty($relacion)) {
+            throw new \Exception("El archivo no contiene los datos mínimos requeridos");
+        }
+
+        // Relacionar datos
+        $relacion_tutor_competidor = $this->relacionarCompetidoresConTutores($competidores, $tutores, $relacion);
+
+        // Guardar en BD
+        $guardadoExitoso = $this->guardarCompetidoresTutores($relacion_tutor_competidor);
+
+        if (!$guardadoExitoso) {
+            throw new \Exception("Error al guardar los datos en la base de datos");
+        }
+
+        // Confirmar transacción si todo sale bien
+        DB::commit();
+
+        return response()->json([
+            'success' => empty($errores),
+            'total_competidores' => count($competidores),
+            'competidores' => $competidores,
+            'tutores' => $tutores,
+            'relacion' => $relacion,
+            'relacion_tutor_competidor' => $relacion_tutor_competidor,
+            'message' => empty($errores) 
+                ? 'Archivo procesado correctamente' 
+                : 'Se procesó el archivo con algunos errores',
+            'errores' => $errores
+        ]);
+
+    } catch (\Exception $e) {
+        // Revertir transacción en caso de error
+        DB::rollBack();
+
+        \Log::error('Error en inscripcionGrupal: ' . $e->getMessage(), [
+            'exception' => $e,
+            'trace' => $e->getTraceAsString(),
+            'request' => $request->all()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al procesar el archivo: ' . $e->getMessage(),
+            'error_details' => config('app.debug') ? $e->getTraceAsString() : null
+        ], 500);
+    }
+}
+private function relacionarCompetidoresConTutores($competidores, $tutores, $relaciones)
+{
+    // Convertir a collections para mejor manejo
+    $competidores = collect($competidores);
+    $tutores = collect($tutores);
+    $relaciones = collect($relaciones);
+
+    // Primero agrupamos las relaciones por CI de tutor
+    $relacionesPorTutor = $relaciones->groupBy('ci_tutor');
+
+    // Construimos la estructura final
+    $relacion_tutor_competidor = $tutores->map(function ($tutor) use ($relacionesPorTutor, $competidores) {
+        $relacionesDelTutor = $relacionesPorTutor->get($tutor['ci'], collect());
+        
+        $competidoresRelacionados = $relacionesDelTutor->map(function ($relacion) use ($competidores) {
+            $competidor = $competidores->firstWhere('cl', $relacion['ci_competidor']);
+            return $competidor ? array_merge($competidor, [
+                'nivel_responsabilidad' => $relacion['nivel_responsabilidad'],
+                'relacion_competidor' => $relacion['relacion_competidor'],
+                'responsable_de_pago' => $relacion['responsable_de_pago'],
+                'area_especifica' => $relacion['area_especifica']
+            ]) : null;
+        })->filter()->values()->toArray();
+
+        return [
+            'tutor' => array_merge($tutor, [
+                'nivel_responsabilidad' => $relacionesDelTutor->first()['nivel_responsabilidad'] ?? null,
+                'relacion_competidor' => $relacionesDelTutor->first()['relacion_competidor'] ?? null,
+                'responsable_de_pago' => $relacionesDelTutor->first()['responsable_de_pago'] ?? null,
+                'area_especifica' => $relacionesDelTutor->first()['area_especifica'] ?? null,
+                'competidores_Relacionados' => $competidoresRelacionados
+            ])
+        ];
+    })->values()->toArray();
+
+    return $relacion_tutor_competidor;
+}
+private function guardarCompetidoresTutores($relacion_tutor_competidor)
+{
+    // Iniciamos la transacción
+    DB::beginTransaction();
+
+    try {
+        foreach ($relacion_tutor_competidor as $entrada) {
+            $tutorData = $entrada['tutor'];
+            $competidoresRelacionados = $tutorData['competidores_Relacionados'];
+
+            // Guardar el tutor
+            $tutor = \App\Models\Tutor::firstOrCreate(
+                ['ci' => $tutorData['ci']],
+                [
+                    'nombres' => $tutorData['nombres'],
+                    'apellidos' => $tutorData['apellidos'],
+                    'correo_electronico' => $tutorData['correo_electronico'],
+                    'telefono' => $tutorData['telefono'],
+                    'estado' => '1',
+                ]
+            );
+
+            foreach ($competidoresRelacionados as $competidorData) {
+                // Procesamiento del nivel educativo
+                preg_match('/primaria|secundaria/i', $competidorData['curso'], $matches);
+                $nombreNivel = isset($matches[0]) ? ucfirst(strtolower($matches[0])) : null;
+                
+                if ($nombreNivel) {
+                    $nivelEducativo = \App\Models\NivelEducativo::firstOrCreate(
+                        ['nombre' => $nombreNivel]
+                    );
+                } else {
+                    throw new \Exception("No se pudo determinar el nivel educativo para el curso: ".$competidorData['curso']);
+                }
+
+                // Procesamiento en transacción
+                $ubicacion = \App\Models\Ubicacion::firstOrCreate(
+                    ['departamento' => $competidorData['departamento'], 'provincia' => $competidorData['provincia']]
+                );
+
+                $grado = \App\Models\Grado::firstOrCreate(
+                    ['nombre' => $competidorData['grado'], 'nivel_educativo' => $nivelEducativo->id],
+                    [
+                        'abreviatura' => $competidorData['abreviatura'],
+                        'orden' => $competidorData['orden'],
+                        'estado' => '1'
+                    ]
+                );
+
+                $curso = \App\Models\Curso::firstOrCreate(
+                    ['nombre' => $competidorData['curso'], 'grado' => $grado->id],
+                    ['estado' => '1']
+                );
+
+                $colegio = \App\Models\Colegio::firstOrCreate(
+                    ['nombre' => $competidorData['colegio']],
+                    ['telefono' => '', 'ubicacion' => $ubicacion->id]
+                );
+
+                $competidor = \App\Models\Competidor::firstOrCreate(
+                    ['ci' => $competidorData['ci']],
+                    [
+                        'nombres' => $competidorData['nombres'],
+                        'apellidos' => $competidorData['apellidos'],
+                        'fecha_nacimiento' => $competidorData['fecha_nacimiento'],
+                        'estado' => 'Pendiente',
+                        'colegio' => $colegio->id,
+                        'curso' => $curso->id,
+                        'ubicacion' => $ubicacion->id
+                    ]
+                );
+
+                // Verificación de datos para competencias
+                $area = \App\Models\Area::where('nombre', $competidorData['area'])->first();
+                $nivelCategoria = \App\Models\NivelCategoria::where('nombre', $competidorData['categoria/nivel'])->first();
+                $competencia = \App\Models\Competencia::where('nombre', $competidorData['competencia'])->first();
+
+                if (!$area || !$nivelCategoria || !$competencia) {
+                    throw new \Exception("Datos incompletos para competidor_competencia: CI:".$competidorData['ci']);
+                }
+
+                \App\Models\CompetidorCompetencia::create([
+                    'competidor_id' => $competidor->id,
+                    'competencia_id' => $competencia->id,
+                    'area_id' => $area->id,
+                    'nivel_categoria_id' => $nivelCategoria->id,
+                    'boleta_id' => null,
+                ]);
+
+                // Relación tutor-competidor
+                \App\Models\CompetidorTutor::firstOrCreate(
+                    [
+                        'ci_tutor' => $tutor->ci,
+                        'ci_competidor' => $competidor->ci,
+                    ],
+                    [
+                        'nivel_responsabilidad' => $competidorData['nivel_responsabilidad'] ?? null,
+                        'relacion_competidor' => $competidorData['relacion_competidor'] ?? null,
+                        'responsable_de_pago' => $competidorData['responsable_de_pago'] ?? null,
+                        'area_especifica' => $competidorData['area_especifica'] ?? null,
+                    ]
+                );
+            }
+        }
+
+        // Si todo sale bien, confirmamos la transacción
+        DB::commit();
+        return true;
+
+    } catch (\Exception $e) {
+        // Si hay algún error, hacemos rollback
+        DB::rollBack();
+        
+        // Registramos el error en los logs
+        \Log::error('Error en guardarCompetidoresTutores: '.$e->getMessage(), [
+            'exception' => $e,
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return false;
+    }
+}
+
+private function obtenerDatosRelacion($spreadsheet)
+{
+    $worksheet = $spreadsheet->getSheetByName('Relación Competidor-Tutor'); 
+    $datos = $worksheet->toArray();
+
+    // Eliminar las dos filas de encabezado (más seguro usar array_slice)
+    $datos= array_slice($datos, 2);
+    
+    $relacion = [];
+    $errores = [];
+
+    foreach ($datos as $fila => $datos_relacion) {
+        if (empty(array_filter($datos_relacion))) {
+            continue;
+        }
+         // Validar que todos los campos obligatorios estén presentes
+        if (empty($datos_relacion[0]) || empty($datos_relacion[1]) || empty($datos_relacion[2]) || 
+            empty($datos_relacion[3]) || empty($datos_relacion[4]) || empty($datos_relacion[5])) {
+            continue; // Omitir tutor si algún dato obligatorio falta
+        }
+
+        $relacion[] = [
+             'numero' => $datos_relacion[0] ?? null,
+            'ci_competidor' => $datos_relacion[1] ?? null,
+            'ci_tutor' => $datos_relacion[2],
+            'nivel_responsabilidad' => $datos_relacion[3],
+            'relacion_competidor' => $datos_relacion[4],
+            'responsable_de_pago' => $datos_relacion[5],
+            'area_especifica' => $datos_relacion[6] ?? null,
+        ];
+    }
+
+
+    return $relacion;
 }
 private function obtenerDatosCompetidores($spreadsheet) {
     $worksheet = $spreadsheet->getSheetByName('Competidores');
