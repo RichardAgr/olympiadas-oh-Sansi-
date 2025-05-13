@@ -29,7 +29,6 @@ function TutorHome () {
   }, [id])
 
   const handleManualInscription = () => {
-    console.log("Inscripción manual iniciada")
     // Aquí iría la lógica para abrir un formulario de inscripción manual
     navigate(`/homeTutor/${id}/tutor/InscribirManual/`);
   }

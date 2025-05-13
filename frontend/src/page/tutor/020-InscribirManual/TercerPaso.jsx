@@ -46,10 +46,6 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset}) {
     setErrors(errores);
 
     const tieneErrores = errores.some(err => Object.keys(err).length > 0);
-    console.log({
-      competidor_id: competidorId,
-      tutores: tutoresFinal
-    });
     if (!tieneErrores) {
       try {
         const response = await axios.post(

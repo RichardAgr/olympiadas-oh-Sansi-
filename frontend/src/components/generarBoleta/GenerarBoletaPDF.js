@@ -4,12 +4,12 @@ import autoTable from "jspdf-autotable"
 export async function generarBoletaPDF(boleta) {
   try {
     const boletaData = boleta || {aviso:"No hay datos"}
-
+/* 
     console.log("Datos de boleta recibidos para generar PDF:", {
       numero: boletaData.numero,
       tutor: boletaData.tutor,
       competidores: boletaData.competidores?.length || 0,
-    })
+    }) */
 
     // Asegurarse de que todas las propiedades necesarias existan
     const numero = boletaData.numero || "7000569"

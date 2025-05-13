@@ -5,9 +5,9 @@ export const generarBoleta = (data) => {
       relaciones: data.relaciones.length,
     })
   
-    console.log("Muestra de competidor:", data.competidores[0])
+/*     console.log("Muestra de competidor:", data.competidores[0])
     console.log("Muestra de tutor:", data.tutores[0])
-    console.log("Muestra de relación:", data.relaciones[0])
+    console.log("Muestra de relación:", data.relaciones[0]) */
   
     // Obtener el tutor principal 
     const tutorPrincipalRelacion = data.relaciones.find((r) => {
@@ -79,12 +79,12 @@ export const generarBoleta = (data) => {
       }
     })
   
-    console.log("Boleta generada:", {
+/*     console.log("Boleta generada:", {
       numero: boleta.numero,
       tutor: boleta.tutor,
       totalCompetidores: boleta.totalCompetidores,
       totalInscripciones: boleta.competidores.length,
-    })
+    }) */
   
     return boleta
   }

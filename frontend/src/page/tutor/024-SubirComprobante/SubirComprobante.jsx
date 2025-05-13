@@ -94,11 +94,6 @@ export default function App() {
         handleDeleteFile() // Esto limpia el estado y vuelve a la pantalla inicial
       }, 1500)
 
-      // Aquí podrías guardar también los datos extraídos junto con la URL
-      console.log("Datos guardados:", {
-        ...extractedData,
-        imageUrl: uploadedUrl,
-      })
     } catch (error) {
       console.error("Error al subir la imagen:", error)
       showAlertMessage("Error al guardar la imagen en la nube: " + error.message, "error")

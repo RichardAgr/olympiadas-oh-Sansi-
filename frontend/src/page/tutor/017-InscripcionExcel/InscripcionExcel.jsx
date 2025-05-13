@@ -62,7 +62,7 @@ const InscripcionMasiva = () => {
   const guardarRecibo = async (reciboData) => {
   try {
     const response = await axios.post('http://127.0.0.1:8000/api/guardarDatos/recibos', reciboData);
-    console.log('Recibo guardado en API:', response.data);
+   /*  console.log('Recibo guardado en API:', response.data); */
     return response.data;
   } catch (error) {
     console.error('Error al guardar el recibo en la API:', error);
@@ -92,15 +92,14 @@ const InscripcionMasiva = () => {
     setIsLoading(true)
 
     try {
-      console.log("Iniciando carga de archivo:", uploadedFile.name)
       //procesar excel
       const data = await procesarArchivoExcel(uploadedFile)
 
-      console.log("Datos procesados:", {
+/*       console.log("Datos procesados:", {
         competidores: data.competidores?.length || 0,
         tutores: data.tutores?.length || 0,
         relaciones: data.relaciones?.length || 0,
-      })
+      }) */
 
       if (!data.competidores || !data.tutores || !data.relaciones) {
         throw new Error("Los datos procesados no tienen la estructura esperada")
@@ -109,7 +108,7 @@ const InscripcionMasiva = () => {
 
       //validar los datos del excel
       const resultados = validarDatosExcel(data)
-      console.log("Resultados de validación:", resultados)
+/*       console.log("Resultados de validación:", resultados) */
       setValidationResults(resultados)
       setStep(2)
     } catch (error) {
@@ -125,7 +124,6 @@ const InscripcionMasiva = () => {
     setError(null)
 
     try {
-      console.log("Datos para generar el recibo:", excelData)
 
       if (!excelData || !excelData.competidores || !excelData.tutores || !excelData.relaciones) {
         throw new Error(
@@ -156,7 +154,6 @@ const InscripcionMasiva = () => {
 
       // Usar los datos del Excel
       const boleta = generarBoleta(excelData)
-      console.log("Esta es la recibo", boleta)
       setBoletaGenerada(boleta)
       setStep(3)
     } catch (err) {
@@ -168,63 +165,43 @@ const InscripcionMasiva = () => {
   }
 
   // Modificar el handleDescargarBoleta para subir a Cloudinary cuando se descarga
-  const handleDescargarBoleta = async () => {
-    try {
-      setIsLoading(true)
-      setError(null)
+const handleDescargarBoleta = async () => {
+  try {
+    setIsLoading(true);
+    setError(null);
 
-      if (!boletaGenerada) {
-        throw new Error("No hay recibo generado para descargar")
-      }
-
-      // Asegurarse de que todos los campos necesarios existan
-      const boletaData = {
-        numero: boletaGenerada.numero || "7000569",
-        tutor: boletaGenerada.tutor || "TUTOR NO ESPECIFICADO",
-        fechaEmision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
-        montoTotal: typeof boletaGenerada.montoTotal !== "Sin costo" ? boletaGenerada.montoTotal : 0,
-        competidores: Array.isArray(boletaGenerada.competidores)
-          ? boletaGenerada.competidores.map((comp) => ({
-              nombre: comp.nombre || "Sin nombre",
-              area: comp.area || "Sin área",
-              nivel: comp.nivel || "Sin categoría",
-              monto: comp.monto || 0,
-            }))
-          : [],
-      }
-
-      const blob = await generarBoletaPDF(boletaData)
-
-      // Subir a Cloudinary antes de descargar
-      const file = new File([blob], `Recibo_${boletaData.numero}.pdf`, { type: "application/pdf" })
-      const uploadResult = await uploadToCloudinary(file, (progress) => {
-        console.log(`Subiendo PDF a Cloudinary: ${progress}%`)
-      })
-
-      const completeUploadData ={
-        tutor_id:id,
-        numero_recibo: boletaData.numero,
-        monto_total: boletaData.montoTotal,
-        fecha_emision: boletaData.fechaEmision,
-        ruta_pdf: uploadResult.secure_url,
-        estado: "Pendiente",
-      }
-      // Registrar los datos solicitados
-      console.log("Datos del recibo  guardada:", completeUploadData)
-      const respuestaAPI = await guardarRecibo(completeUploadData)
-      console.log("Respuesta api:", respuestaAPI)
-      // Marcar que el PDF ya fue subido
-      setPdfUploaded(true)
-
-      // Descargar usando file-saver
-      saveAs(blob, `Recibo_${boletaData.numero}.pdf`)
-    } catch (error) {
-      console.error("Error al descargar el recibo :", error)
-      setError("Error al descargar el recibo: " + error.message)
-    } finally {
-      setIsLoading(false)
+    if (!boletaGenerada) {
+      throw new Error("No hay recibo generado para descargar");
     }
+
+    // Asegurarse de que todos los campos necesarios existan
+    const boletaData = {
+      numero: boletaGenerada.numero || "7000569",
+      tutor: boletaGenerada.tutor || "TUTOR NO ESPECIFICADO",
+      fechaEmision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
+      montoTotal: typeof boletaGenerada.montoTotal !== "Sin costo" ? boletaGenerada.montoTotal : 0,
+      competidores: Array.isArray(boletaGenerada.competidores)
+        ? boletaGenerada.competidores.map((comp) => ({
+            nombre: comp.nombre || "Sin nombre",
+            area: comp.area || "Sin área",
+            nivel: comp.nivel || "Sin categoría",
+            monto: comp.monto || 0,
+          }))
+        : [],
+    };
+
+    const blob = await generarBoletaPDF(boletaData);
+
+    // Solo descargar el PDF 
+    saveAs(blob, `Recibo_${boletaData.numero}.pdf`);
+
+  } catch (error) {
+    console.error("Error al descargar el recibo:", error);
+    setError("Error al descargar el recibo: " + error.message);
+  } finally {
+    setIsLoading(false);
   }
+};
 
   const handleVerBoleta = () => {
     setShowBoletaViewer(true)
@@ -272,8 +249,7 @@ const InscripcionMasiva = () => {
           estado: "Pendiente",
         };
         const respuestaAPI = await guardarRecibo(completeUploadData);
-        console.log("Respuesta api:", respuestaAPI);
-        console.log("Datos completos de el recibo:", completeUploadData);
+/*         console.log("Respuesta api:", respuestaAPI); */
         setPdfUploaded(true);
       }
     } catch (error) {
@@ -286,57 +262,45 @@ const InscripcionMasiva = () => {
   }
 
 
-  const handleNuevaInscripcion = async () => {
-    try {
-      // Solo subir el PDF si no se ha subido ya
-      if (boletaGenerada && !pdfUploaded) {
-        setIsLoading(true)
+const handleNuevaInscripcion = async () => {
+  try {
+    setIsLoading(true)
+    setError(null)
 
-        const boletaData = {
-          numero: boletaGenerada.numero || "7000569",
-          tutor: boletaGenerada.tutor || "TUTOR NO ESPECIFICADO",
-          fechaEmision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
-          montoTotal: typeof boletaGenerada.montoTotal !== "Sin costo" ? boletaGenerada.montoTotal : 0,
-          competidores: Array.isArray(boletaGenerada.competidores)
-            ? boletaGenerada.competidores.map((comp) => ({
-                nombre: comp.nombre || "Sin nombre",
-                area: comp.area || "Sin área",
-                nivel: comp.nivel || "Sin categoría",
-                monto: comp.monto || 0,
-              }))
-            : [],
-        }
-
-        const blob = await generarBoletaPDF(boletaData)
-        const file = new File([blob], `Recibo_${boletaData.numero}.pdf`, { type: "application/pdf" })
-
-        // Subir silenciosamente
-        const uploadResult = await uploadToCloudinary(file)
-        const completeUploadData ={
-          tutor_id:id,
-          numero_recibo: boletaData.numero,
-          monto_total: boletaData.montoTotal,
-          fecha_emision: boletaData.fechaEmision,
-          ruta_pdf: uploadResult.secure_url,
-          estado: "Pendiente",
-        }
-        console.log("Datos de del recibo guardada al iniciar nueva inscripción:", completeUploadData)
-
-        const respuestaAPI = await guardarRecibo(completeUploadData)
-        console.log("Respuesta api:", respuestaAPI)
-      }
-    } catch (error) {
-      console.error("Error al subir la recibo a Cloudinary:", error)
-    } finally {
-      setIsLoading(false)
-      setStep(1)
-      setFile(null)
-      setExcelData(null)
-      setValidationResults(null)
-      setBoletaGenerada(null)
-      setPdfUploaded(false)
+    if (!file) {
+      throw new Error("No hay archivo Excel para enviar");
     }
+
+    if (!boletaGenerada?.numero) {
+      throw new Error("No se ha generado número de recibo");
+    }
+    // Solo subir el Excel si existe archivo y número de recibo
+    if (file && boletaGenerada?.numero) {
+      const formData = new FormData();
+      formData.append('numero_recibo', boletaGenerada.numero);
+      formData.append('archivo_excel', file);
+
+      const response = await axios.post('http://127.0.0.1:8000/api/guardarDatos/excel',formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+    }
+  } catch (error) {
+    console.error('Error al enviar el Excel:', error);
+    setError("Error al enviar los datos: " + error.message);
+  } finally {
+    setIsLoading(false);
+    setStep(1);
+    setFile(null);
+    setExcelData(null);
+    setValidationResults(null);
+    setBoletaGenerada(null);
+    setPdfUploaded(false);
   }
+};
 
   const renderStepContent = () => {
     switch (step) {
@@ -538,11 +502,11 @@ const InscripcionMasiva = () => {
             </div>
 
             <div className="buttonsContainer">
-              <button className="secondaryButton" onClick={() => setStep(3)}>
+              {/* <button className="secondaryButton" onClick={() => setStep(3)}>
                 Volver
-              </button>
+              </button> */}
               <button className="successButton" onClick={handleNuevaInscripcion}>
-                Nueva Inscripción
+                Subir Excel
               </button>
             </div>
           </div>

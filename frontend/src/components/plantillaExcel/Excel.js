@@ -781,7 +781,7 @@ export async function procesarArchivoExcel(file) {
       throw new Error("No se proporcionó ningún archivo")
     }
 
-    console.log("Archivo recibido:", file.name, "Tamaño:", file.size)
+/*     console.log("Archivo recibido:", file.name, "Tamaño:", file.size) */
 
     // Leer el archivo
     return new Promise((resolve, reject) => {
@@ -799,7 +799,7 @@ export async function procesarArchivoExcel(file) {
             cellText: false,
           })
 
-          console.log("Hojas encontradas:", workbook.SheetNames)
+/*           console.log("Hojas encontradas:", workbook.SheetNames) */
 
           // Verificar que el archivo tenga las hojas necesarias
           const requiredSheets = ["Competidores", "Tutores", "Relación Competidor-Tutor"]
@@ -923,9 +923,9 @@ export async function procesarArchivoExcel(file) {
             })
             .filter((r) => r !== null)
 
-          console.log("Competidores mapeados:", mappedCompetidores.length)
+/*           console.log("Competidores mapeados:", mappedCompetidores.length)
           console.log("Tutores mapeados:", mappedTutores.length)
-          console.log("Relaciones mapeadas:", mappedRelaciones.length)
+          console.log("Relaciones mapeadas:", mappedRelaciones.length) */
 
           // Devolver los datos procesados
           resolve({

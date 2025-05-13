@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\EstadisticasController;
 use App\Http\Controllers\Api\OcrPagoController;
 use App\Http\Controllers\Api\ReciboController;
+use App\Http\Controllers\Api\DatosExcel;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCompetidorController;
 
 
@@ -96,3 +97,5 @@ Route::post('/boletas/GuardarDatosOcr', [BoletaController::class, 'procesarBolet
 //recibo
 Route::post('/guardarDatos/recibos', [ReciboController::class, 'registrarRecibo']);
 
+//excel
+Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
