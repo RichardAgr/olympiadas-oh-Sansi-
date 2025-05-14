@@ -85,9 +85,14 @@ function configurarHojaInstrucciones(hoja,data) {
     name: "Arial",
     size: 16,
     bold: true,
-    color: { argb: "C6EFCE" },
+    color: { argb: "000000" },
   }
   tituloCell.alignment = { horizontal: "center", vertical: "middle" }
+  tituloCell.fill = {
+  type: "pattern",
+  pattern: "solid",
+  fgColor: { argb: "C6EFCE" }, // Fondo verde suave
+}
   hoja.getRow(1).height = 30
 
   // Instrucciones generales
@@ -321,6 +326,7 @@ function configurarHojaCompetidores(hoja,data) {
     bold: true,
     color: { argb: "000000" },
   }
+  instrCell.alignment = { horizontal: "center", vertical: "middle" }
   instrCell.fill = {
     type: "pattern",
     pattern: "solid",
@@ -386,6 +392,7 @@ function configurarHojaTutores(hoja) {
     bold: true,
     color: { argb: "000000" },
   }
+  instrCell.alignment = { horizontal: "center", vertical: "middle" }
   instrCell.fill = {
     type: "pattern",
     pattern: "solid",
@@ -506,6 +513,7 @@ function configurarHojaRelacionCompetidorTutor(hoja,data) {
     bold: true,
     color: { argb: "000000" },
   }
+  instrCell.alignment = { horizontal: "center", vertical: "middle" }
   instrCell.fill = {
     type: "pattern",
     pattern: "solid",
