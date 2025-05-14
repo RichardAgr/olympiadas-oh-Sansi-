@@ -2,7 +2,8 @@ import ExcelJS from "exceljs"
 import * as XLSX from "xlsx"
 import axios from "axios"
 
-export const  cargarDatos = async ()=> {
+
+async function cargarDatosAPI() {
   try {
     console.log("Intentando cargar datos desde la API...")
     // Usamos un timeout para evitar que la petición se quede colgada
@@ -15,11 +16,14 @@ export const  cargarDatos = async ()=> {
 
     clearTimeout(timeoutId)
 
+    console.log("Respuesta de la API:", response.status)
+
     if (response.data && response.data.success) {
+      console.log("Datos obtenidos correctamente de la API")
       return response.data
     } else {
       console.error("Error en la respuesta de la API:", response.data?.message || "Respuesta inválida")
-      throw new Error("Error en la respuesta de la API", response.status)
+      throw new Error("Error en la respuesta de la API")
     }
   } catch (error) {
     console.error("Error al cargar datos desde la API:", error.message)
@@ -29,8 +33,17 @@ export const  cargarDatos = async ()=> {
 
 export async function generateExcelTemplate() {
   try {
+    // Intentar cargar datos desde la API
+    let apiData = null
+    try {
+      apiData = await cargarDatosAPI()
+      console.log("Datos cargados desde la API correctamente",apiData)
+    } catch (error) {
+      console.warn("No se pudieron cargar datos desde la API, usando datos predeterminados:", error.message)
+    }
+
     const workbook = new ExcelJS.Workbook()
-    const data = await cargarDatos()
+
     // Metadatos del libro
     workbook.creator = "Sistema Olimpiadas"
     workbook.lastModifiedBy = "Sistema Olimpiadas"
@@ -43,12 +56,75 @@ export async function generateExcelTemplate() {
     const hojaTutores = workbook.addWorksheet("Tutores")
     const hojaRelacionCompetidorTutor = workbook.addWorksheet("Relación Competidor-Tutor")
 
+    // Crear hojas auxiliares para listas desplegables, luego se van a ocultar
+    const hojaAreas = workbook.addWorksheet("Areas")
+    const hojaNiveles = workbook.addWorksheet("Niveles")
+
+    // Crear hojas auxiliares para los desplegables dependientes
+    // Una hoja por cada área para almacenar sus niveles
+    const hojaAstro = workbook.addWorksheet("Astro_Niveles")
+    const hojaBiologia = workbook.addWorksheet("Biologia_Niveles")
+    const hojaFisica = workbook.addWorksheet("Fisica_Niveles")
+    const hojaInformatica = workbook.addWorksheet("Informatica_Niveles")
+    const hojaMatematicas = workbook.addWorksheet("Matematicas_Niveles")
+    const hojaQuimica = workbook.addWorksheet("Quimica_Niveles")
+    const hojaRobotica = workbook.addWorksheet("Robotica_Niveles")
+
+    // Ocultar hojas auxiliares
+/*     hojaAstro.state = "hidden"
+    hojaBiologia.state = "hidden"
+    hojaFisica.state = "hidden"
+    hojaInformatica.state = "hidden"
+    hojaMatematicas.state = "hidden"
+    hojaQuimica.state = "hidden"
+    hojaRobotica.state = "hidden" */
 
     // Configurar hojas
-     configurarHojaInstrucciones(hojaInstrucciones,data.data)
-    configurarHojaCompetidores(hojaCompetidores,data.data)
+    configurarHojaInstrucciones(hojaInstrucciones, apiData)
+
+    // Si tenemos datos de la API, usarlos para llenar las hojas
+    if (apiData && apiData.success) {
+      const areas = extraerAreas(apiData.data)
+      const niveles = extraerNiveles(apiData.data)
+
+      llenarHojaAreas(hojaAreas, areas)
+      llenarHojaNiveles(hojaNiveles, niveles)
+
+      // Llenar las hojas de niveles por área usando los datos de la API
+      llenarHojasNivelesPorArea(
+        apiData.data,
+        hojaAstro,
+        hojaBiologia,
+        hojaFisica,
+        hojaInformatica,
+        hojaMatematicas,
+        hojaQuimica,
+        hojaRobotica,
+      )
+    } else {
+      console.log("No se tienen datos")
+      // Usar datos predeterminados si no hay datos de la API
+/*       llenarHojaAreas(hojaAreas)
+      llenarHojaNiveles(hojaNiveles)
+ */
+      // Llenar las hojas de niveles por área con datos predeterminados
+/*       llenarHojaNivelesAstro(hojaAstro)
+      llenarHojaNivelesBiologia(hojaBiologia)
+      llenarHojaNivelesFisica(hojaFisica)
+      llenarHojaNivelesInformatica(hojaInformatica)
+      llenarHojaNivelesMatematicas(hojaMatematicas)
+      llenarHojaNivelesQuimica(hojaQuimica)
+      llenarHojaNivelesRobotica(hojaRobotica) */
+    }
+
+    configurarHojaCompetidores(hojaCompetidores)
     configurarHojaTutores(hojaTutores)
-    configurarHojaRelacionCompetidorTutor(hojaRelacionCompetidorTutor,data.data)
+    configurarHojaRelacionCompetidorTutor(hojaRelacionCompetidorTutor)
+
+    // Agregar ejemplos de datos
+    agregarEjemplosCompetidores(hojaCompetidores)
+    agregarEjemplosTutores(hojaTutores)
+    agregarEjemplosRelacionCompetidorTutor(hojaRelacionCompetidorTutor)
 
     // Convertir el libro a un buffer
     const buffer = await workbook.xlsx.writeBuffer()
@@ -65,19 +141,175 @@ export async function generateExcelTemplate() {
   }
 }
 
-function transformarDatosParaTabla(data) {
-  return data.flatMap(area => {
-    return area.categorias.map(categoria => {
-      return [
-        area.nombre.toUpperCase(), 
-        categoria.nombre, 
-        categoria.rango_grado      
-      ];
-    });
-  });
+// Función para extraer áreas de los datos de la API
+function extraerAreas(data) {
+  const areas = []
+  data.forEach((area, index) => {
+    areas.push([area.area_id, area.nombre, area.costo])
+  })
+  return areas
 }
 
-function configurarHojaInstrucciones(hoja,data) {
+// Función para extraer niveles de los datos de la API
+function extraerNiveles(data) {
+  const niveles = []
+
+  data.forEach((area) => {
+    area.categorias.forEach((categoria) => {
+      niveles.push([categoria.nivel_categoria_id, area.area_id, categoria.nombre, categoria.rango_grado])
+    })
+  })
+
+  return niveles
+}
+
+// Función para llenar las hojas de niveles por área usando datos de la API
+function llenarHojasNivelesPorArea(
+  data,
+  hojaAstro,
+  hojaBiologia,
+  hojaFisica,
+  hojaInformatica,
+  hojaMatematicas,
+  hojaQuimica,
+  hojaRobotica,
+) {
+  // Inicializar las hojas con encabezados
+  hojaAstro.getCell("A1").value = "Niveles"
+  hojaBiologia.getCell("A1").value = "Niveles"
+  hojaFisica.getCell("A1").value = "Niveles"
+  hojaInformatica.getCell("A1").value = "Niveles"
+  hojaMatematicas.getCell("A1").value = "Niveles"
+  hojaQuimica.getCell("A1").value = "Niveles"
+  hojaRobotica.getCell("A1").value = "Niveles"
+
+  // Mapear áreas a sus hojas correspondientes
+  const areaMap = {
+    "ASTRONOMÍA - ASTROFÍSICA": hojaAstro,
+    BIOLOGÍA: hojaBiologia,
+    FÍSICA: hojaFisica,
+    INFORMÁTICA: hojaInformatica,
+    MATEMÁTICAS: hojaMatematicas,
+    QUÍMICA: hojaQuimica,
+    ROBÓTICA: hojaRobotica,
+  }
+
+  // Objeto para almacenar los niveles por área
+  const nivelesPorArea = {}
+
+  // Extraer niveles por área
+  data.forEach((area) => {
+    const nombreArea = area.nombre
+    if (!nivelesPorArea[nombreArea]) {
+      nivelesPorArea[nombreArea] = []
+    }
+
+    area.categorias.forEach((categoria) => {
+      nivelesPorArea[nombreArea].push(categoria.nombre)
+    })
+  })
+
+  // Llenar cada hoja con sus niveles correspondientes
+  for (const [area, niveles] of Object.entries(nivelesPorArea)) {
+    const hoja = areaMap[area]
+    if (hoja) {
+      niveles.forEach((nivel, index) => {
+        hoja.getCell(`A${index + 2}`).value = nivel
+      })
+    }
+  }
+}
+
+// Modificar la función llenarHojaAreas para aceptar datos de la API
+function llenarHojaAreas(hoja, areasData = null) {
+  hoja.getCell("A1").value = "ID"
+  hoja.getCell("B1").value = "Nombre"
+  hoja.getCell("C1").value = "Costo"
+
+  // Si no hay datos de la API, usar datos predeterminados
+  if (!areasData) {
+    areasData = [
+      [1, "ASTRONOMÍA - ASTROFÍSICA", 15],
+      [2, "BIOLOGÍA", 15],
+      [3, "FÍSICA", 15],
+      [4, "INFORMÁTICA", 15],
+      [5, "MATEMÁTICAS", 15],
+      [6, "QUÍMICA", 15],
+      [7, "ROBÓTICA", 15],
+    ]
+  }
+
+  areasData.forEach((area, index) => {
+    const row = hoja.getRow(index + 2)
+    row.getCell(1).value = area[0]
+    row.getCell(2).value = area[1]
+    row.getCell(3).value = area[2]
+  })
+}
+
+// Modificar la función llenarHojaNiveles para aceptar datos de la API
+function llenarHojaNiveles(hoja, nivelesData = null) {
+  hoja.getCell("A1").value = "ID"
+  hoja.getCell("B1").value = "Area_ID"
+  hoja.getCell("C1").value = "Nombre"
+  hoja.getCell("D1").value = "Grados"
+
+  // Si no hay datos de la API, usar datos predeterminados
+  if (!nivelesData) {
+    nivelesData = [
+      [1, 1, "3P", "3ro Primaria"],
+      [2, 1, "4P", "4to Primaria"],
+      [3, 1, "5P", "5to Primaria"],
+      [4, 1, "6P", "6to Primaria"],
+      [5, 1, "1S", "1ro Secundaria"],
+      [6, 1, "2S", "2do Secundaria"],
+      [7, 1, "3S", "3ro Secundaria"],
+      [8, 1, "4S", "4to Secundaria"],
+      [9, 1, "5S", "5to Secundaria"],
+      [10, 1, "6S", "6to Secundaria"],
+      [11, 2, "2S", "2do Secundaria"],
+      [12, 2, "3S", "3ro Secundaria"],
+      [13, 2, "4S", "4to Secundaria"],
+      [14, 2, "5S", "5to Secundaria"],
+      [15, 2, "6S", "6to Secundaria"],
+      [16, 3, "4S", "4to Secundaria"],
+      [17, 3, "5S", "5to Secundaria"],
+      [18, 3, "6S", "6to Secundaria"],
+      [19, 4, "Guacamayo", "5to a 6to Primaria"],
+      [20, 4, "Guanaco", "1ro a 3ro Secundaria"],
+      [21, 4, "Londra", "1ro a 3ro Secundaria"],
+      [22, 4, "Jucumari", "4to a 6to Secundaria"],
+      [23, 4, "Bufeo", "1ro a 3ro Secundaria"],
+      [24, 4, "Puma", "4to a 6to Secundaria"],
+      [25, 5, "Primer Nivel", "1ro Secundaria"],
+      [26, 5, "Segundo Nivel", "2do Secundaria"],
+      [27, 5, "Tercer Nivel", "3ro Secundaria"],
+      [28, 5, "Cuarto Nivel", "4to Secundaria"],
+      [29, 5, "Quinto Nivel", "5to Secundaria"],
+      [30, 5, "Sexto Nivel", "6to Secundaria"],
+      [31, 6, "2S", "2do Secundaria"],
+      [32, 6, "3S", "3ro Secundaria"],
+      [33, 6, "4S", "4to Secundaria"],
+      [34, 6, "5S", "5to Secundaria"],
+      [35, 6, "6S", "6to Secundaria"],
+      [36, 7, "Builders P", "5to a 6to Primaria"],
+      [37, 7, "Builders S", "1ro a 6to Secundaria"],
+      [38, 7, "Lego P", "5to a 6to Primaria"],
+      [39, 7, "Lego S", "1ro a 6to Secundaria"],
+    ]
+  }
+
+  nivelesData.forEach((nivel, index) => {
+    const row = hoja.getRow(index + 2)
+    row.getCell(1).value = nivel[0]
+    row.getCell(2).value = nivel[1]
+    row.getCell(3).value = nivel[2]
+    row.getCell(4).value = nivel[3]
+  })
+}
+
+// Modificar la función configurarHojaInstrucciones para incluir datos de la API
+function configurarHojaInstrucciones(hoja, apiData = null) {
   hoja.mergeCells("A1:H1")
   const tituloCell = hoja.getCell("A1")
   tituloCell.value = "INSTRUCCIONES PARA LA INSCRIPCIÓN MASIVA DE COMPETIDORES"
@@ -85,7 +317,7 @@ function configurarHojaInstrucciones(hoja,data) {
     name: "Arial",
     size: 16,
     bold: true,
-    color: { argb: "C6EFCE" },
+    color: { argb: "000000" },
   }
   tituloCell.alignment = { horizontal: "center", vertical: "middle" }
   hoja.getRow(1).height = 30
@@ -142,23 +374,51 @@ function configurarHojaInstrucciones(hoja,data) {
   })
   row++
 
-  // Datos de ejemplo para la tabla de áreas y categorías backend123
-  const areasCategoriasData = transformarDatosParaTabla(data);
-    areasCategoriasData.forEach((rowData, rowIndex) => {
-       for (let col = 0; col < 3; col++) {
-         const cell = hoja.getCell(row + rowIndex, col + 1);
-         cell.value = rowData[col];
-         cell.border = {
-           top: { style: "thin" },
-           left: { style: "thin" },
-           bottom: { style: "thin" },
-           right: { style: "thin" }
-         };
-       }
-     });
+  // Datos para la tabla de áreas y categorías
+  let areasCategoriasData
 
+  if (apiData && apiData.success) {
+    // Usar datos de la API
+    areasCategoriasData = extraerAreasYCategorias(apiData.data)
+  } else {
+    // Usar datos predeterminados
+    areasCategoriasData = [
+      ["ASTRONOMÍA - ASTROFÍSICA", "3P", "3ro Primaria"],
+      ["ASTRONOMÍA - ASTROFÍSICA", "4P", "4to Primaria"],
+      ["ASTRONOMÍA - ASTROFÍSICA", "5P", "5to Primaria"],
+      ["ASTRONOMÍA - ASTROFÍSICA", "6P", "6to Primaria"],
+      ["ASTRONOMÍA - ASTROFÍSICA", "1S-6S", "1ro a 6to Secundaria"],
+      ["BIOLOGÍA", "2S-6S", "2do a 6to Secundaria"],
+      ["FÍSICA", "4S-6S", "4to a 6to Secundaria"],
+      ["INFORMÁTICA", "Guacamayo", "5to a 6to Primaria"],
+      ["INFORMÁTICA", "Guanaco/Londra/Bufeo", "1ro a 3ro Secundaria"],
+      ["INFORMÁTICA", "Jucumari/Puma", "4to a 6to Secundaria"],
+      ["MATEMÁTICAS", "Primer a Sexto Nivel", "1ro a 6to Secundaria"],
+      ["QUÍMICA", "2S-6S", "2do a 6to Secundaria"],
+      ["ROBÓTICA", "Builders P", "5to a 6to Primaria"],
+      ["ROBÓTICA", "Builders S", "1ro a 6to Secundaria"],
+      ["ROBÓTICA", "Lego P", "5to a 6to Primaria"],
+      ["ROBÓTICA", "Lego S", "1ro a 6to Secundaria"],
+    ]
+  }
+
+  areasCategoriasData.forEach((data) => {
+    for (let i = 0; i < 3; i++) {
+      const cell = hoja.getCell(row, i + 1)
+      cell.value = data[i]
+      cell.border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" },
+      }
+    }
+    row++
+  })
+
+  // Resto de la función sin cambios...
   // Explicación de la estructura de múltiples tutores
-  row +=  areasCategoriasData.length + 2;
+  row += 2
   hoja.mergeCells(`A${row}:H${row}`)
   hoja.getCell(`A${row}`).value = "Estructura de Múltiples Tutores:"
   hoja.getCell(`A${row}`).font = { bold: true, size: 12 }
@@ -201,27 +461,38 @@ function configurarHojaInstrucciones(hoja,data) {
 
   hoja.columns.forEach((column) => {
     column.width = 25
-    column.width = 20
-    column.width = 30
   })
 }
 
-function configurarHojaCompetidores(hoja,data) {
+// Función para extraer áreas y categorías para la hoja de instrucciones
+function extraerAreasYCategorias(data) {
+  const areasCategoriasData = []
+
+  data.forEach((area) => {
+    area.categorias.forEach((categoria) => {
+      areasCategoriasData.push([area.nombre, categoria.nombre, categoria.rango_grado])
+    })
+  })
+
+  return areasCategoriasData
+}
+
+function configurarHojaCompetidores(hoja) {
   // Definir encabezados
   const headers = [
     { header: "N°", key: "numero", width: 5 },
     { header: "CI (*)", key: "ci", width: 15 },
     { header: "Nombres (*)", key: "nombres", width: 20 },
     { header: "Apellidos (*)", key: "apellidos", width: 20 },
-    { header: "Fecha Nacimiento (*)", key: "fecha_nacimiento", width: 30 },
+    { header: "Fecha Nacimiento (*)", key: "fecha_nacimiento", width: 25 },
     { header: "Colegio (*)", key: "colegio", width: 25 },
     { header: "Curso (*)", key: "curso", width: 20 },
     { header: "Departamento (*)", key: "departamento", width: 20 },
     { header: "Provincia (*)", key: "provincia", width: 20 },
-    { header: "Área 1 (*)", key: "area1", width: 25 },
-    { header: "Categoría/Nivel 1 (*)", key: "nivel1", width: 30 },
-    { header: "Área 2", key: "area2", width: 25 },
-    { header: "Categoría/Nivel 2", key: "nivel2", width: 30 },
+    { header: "Área 1 (*)", key: "area1", width: 20 },
+    { header: "Categoría/Nivel 1 (*)", key: "nivel1", width: 20 },
+    { header: "Área 2", key: "area2", width: 20 },
+    { header: "Categoría/Nivel 2", key: "nivel2", width: 20 },
   ]
 
   hoja.columns = headers
@@ -274,27 +545,55 @@ function configurarHojaCompetidores(hoja,data) {
     }
   }
 
-  const areas = data.map((item) => item.nombre);
   // Listas desplegables para áreas
   for (let i = 2; i <= 31; i++) {
+    // Área 1 (obligatoria)
     hoja.getCell(`J${i}`).dataValidation = {
       type: "list",
       allowBlank: false,
-      formulae: [`"${areas.join(",")}"`],
+      formulae: ["=Areas!$B$2:$B$8"],
       showErrorMessage: true,
       errorStyle: "error",
       errorTitle: "Área Inválida",
       error: "Seleccione un área de la lista",
     }
 
+    // Área 2 (opcional)
     hoja.getCell(`L${i}`).dataValidation = {
       type: "list",
       allowBlank: true,
-      formulae: [`"${areas.join(",")}"`],
+      formulae: ["=Areas!$B$2:$B$8"],
       showErrorMessage: true,
       errorStyle: "error",
       errorTitle: "Área Inválida",
       error: "Seleccione un área de la lista",
+    }
+
+    // Configurar validaciones para niveles dependientes del área seleccionada
+    // Para Nivel 1
+    hoja.getCell(`K${i}`).dataValidation = {
+      type: "list",
+      allowBlank: false,
+      formulae: [
+        `=IF(J${i}="ASTRONOMÍA - ASTROFÍSICA",Astro_Niveles!$A$2:$A$11,IF(J${i}="BIOLOGÍA",Biologia_Niveles!$A$2:$A$6,IF(J${i}="FÍSICA",Fisica_Niveles!$A$2:$A$4,IF(J${i}="INFORMÁTICA",Informatica_Niveles!$A$2:$A$7,IF(J${i}="MATEMÁTICAS",Matematicas_Niveles!$A$2:$A$7,IF(J${i}="QUÍMICA",Quimica_Niveles!$A$2:$A$6,IF(J${i}="ROBÓTICA",Robotica_Niveles!$A$2:$A$5,"")))))))`,
+      ],
+      showErrorMessage: true,
+      errorStyle: "error",
+      errorTitle: "Nivel Inválido",
+      error: "Seleccione un nivel válido para el área seleccionada",
+    }
+
+    // Para Nivel 2 - Similar al anterior, pero opcional
+    hoja.getCell(`M${i}`).dataValidation = {
+      type: "list",
+      allowBlank: true,
+      formulae: [
+        `=IF(L${i}="ASTRONOMÍA - ASTROFÍSICA",Astro_Niveles!$A$2:$A$11,IF(L${i}="BIOLOGÍA",Biologia_Niveles!$A$2:$A$6,IF(L${i}="FÍSICA",Fisica_Niveles!$A$2:$A$4,IF(L${i}="INFORMÁTICA",Informatica_Niveles!$A$2:$A$7,IF(L${i}="MATEMÁTICAS",Matematicas_Niveles!$A$2:$A$7,IF(L${i}="QUÍMICA",Quimica_Niveles!$A$2:$A$6,IF(L${i}="ROBÓTICA",Robotica_Niveles!$A$2:$A$5,"")))))))`,
+      ],
+      showErrorMessage: true,
+      errorStyle: "error",
+      errorTitle: "Nivel Inválido",
+      error: "Seleccione un nivel válido para el área seleccionada",
     }
   }
 
@@ -324,7 +623,7 @@ function configurarHojaCompetidores(hoja,data) {
   instrCell.fill = {
     type: "pattern",
     pattern: "solid",
-    fgColor: { argb: "C6EFCE" },
+    fgColor: { argb: "FFFF00" },
   }
 
   //altura de la fila de instrucciones
@@ -368,8 +667,6 @@ function configurarHojaTutores(hoja) {
     }
   })
 
-  
-
   // Agregar numeración
   for (let i = 2; i <= 31; i++) {
     hoja.getCell(`A${i}`).value = { formula: `=${i - 1}` }
@@ -389,22 +686,22 @@ function configurarHojaTutores(hoja) {
   instrCell.fill = {
     type: "pattern",
     pattern: "solid",
-    fgColor: { argb: "C6EFCE" },
+    fgColor: { argb: "FFFF00" },
   }
 
   // Ajustar la altura de la fila
   hoja.getRow(1).height = 25
 }
 
-function configurarHojaRelacionCompetidorTutor(hoja,data) {
+function configurarHojaRelacionCompetidorTutor(hoja) {
   // Definir encabezados
   const headers = [
     { header: "ID", key: "id", width: 5 },
-    { header: "CI Competidor (*)", key: "ci_competidor", width: 30},
+    { header: "CI Competidor (*)", key: "ci_competidor", width: 15 },
     { header: "CI Tutor (*)", key: "ci_tutor", width: 15 },
-    { header: "Nivel Responsabilidad (*)", key: "nivel_responsabilidad", width: 35 },
-    { header: "Relación con Competidor (*)", key: "relacion", width: 35 },
-    { header: "Responsable de Pago", key: "responsable_pago", width: 35 },
+    { header: "Nivel Responsabilidad (*)", key: "nivel_responsabilidad", width: 20 },
+    { header: "Relación con Competidor (*)", key: "relacion", width: 25 },
+    { header: "Responsable de Pago", key: "responsable_pago", width: 18 },
     { header: "Área Específica", key: "area_especifica", width: 20 },
   ]
 
@@ -433,6 +730,8 @@ function configurarHojaRelacionCompetidorTutor(hoja,data) {
       right: { style: "thin" },
     }
   })
+
+  // Agregar validaciones
 
   // Validación para nivel de responsabilidad
   for (let i = 2; i <= 31; i++) {
@@ -474,13 +773,11 @@ function configurarHojaRelacionCompetidorTutor(hoja,data) {
   }
 
   // Validación para área específica
-  const areas = data.map((item) => item.nombre);
-
-  for (let i = 2; i <= 311; i++) {
+  for (let i = 2; i <= 31; i++) {
     hoja.getCell(`G${i}`).dataValidation = {
       type: "list",
       allowBlank: true,
-      formulae: [`"${areas.join(",")}"`],
+      formulae: ["=Areas!$B$2:$B$8"],
       showErrorMessage: true,
       errorStyle: "error",
       errorTitle: "Área Inválida",
@@ -509,13 +806,195 @@ function configurarHojaRelacionCompetidorTutor(hoja,data) {
   instrCell.fill = {
     type: "pattern",
     pattern: "solid",
-    fgColor: { argb: "C6EFCE" },
+    fgColor: { argb: "FFFF00" },
   }
 
   // Ajustar la altura de la fila de instrucciones
   hoja.getRow(1).height = 25
 }
 
+function agregarEjemplosCompetidores(hoja) {
+  // Ejemplos de competidores
+  const competidores = [
+    {
+      ci: "1426836",
+      nombres: "FRESIA1 GRETY",
+      apellidos: "TICONA PLATA",
+      fecha_nacimiento: new Date(2010, 5, 6), // 06/06/2007
+      colegio: "UNIDAD EDUCATIVA NUEVA ESPERANZA",
+      curso: "6to Secundaria",
+      departamento: "Cochabamba",
+      provincia: "CERCADO",
+      area1: "QUÍMICA",
+      nivel1: "6S",
+      area2: "MATEMÁTICAS",
+      nivel2: "Sexto Nivel",
+    },
+    {
+      ci: "1558247",
+      nombres: "DAYRA1",
+      apellidos: "DAMIAN GRAGEDA",
+      fecha_nacimiento: new Date(2014, 5, 30), // 30/06/2014
+      colegio: "SANTO DOMINGO SAVIO A",
+      curso: "5to primaria",
+      departamento: "Cochabamba",
+      provincia: "Cercado",
+      area1: "ROBÓTICA",
+      nivel1: "Lego P",
+      area2: "",
+      nivel2: "",
+    },
+    {
+      ci: "1678901",
+      nombres: "Juan1",
+      apellidos: "Perez Gomez",
+      fecha_nacimiento: new Date(2010, 2, 15), // 15/03/2010
+      colegio: "COLEGIO SAN AGUSTÍN",
+      curso: "2do Secundaria",
+      departamento: "Cochabamba",
+      provincia: "Quillacollo",
+      area1: "BIOLOGÍA",
+      nivel1: "2S",
+      area2: "ASTRONOMÍA - ASTROFÍSICA",
+      nivel2: "2S",
+    },
+  ]
+
+  // Agregar los ejemplos a la hoja
+  competidores.forEach((competidor, index) => {
+    const rowIndex = index + 3
+    const row = hoja.getRow(rowIndex)
+
+    row.getCell(2).value = competidor.ci
+    row.getCell(3).value = competidor.nombres
+    row.getCell(4).value = competidor.apellidos
+    row.getCell(5).value = competidor.fecha_nacimiento
+    row.getCell(6).value = competidor.colegio
+    row.getCell(7).value = competidor.curso
+    row.getCell(8).value = competidor.departamento
+    row.getCell(9).value = competidor.provincia
+    row.getCell(10).value = competidor.area1
+    row.getCell(11).value = competidor.nivel1
+    row.getCell(12).value = competidor.area2
+    row.getCell(13).value = competidor.nivel2
+  })
+}
+
+function agregarEjemplosTutores(hoja) {
+  // Ejemplos de tutores
+  const tutores = [
+    {
+      id: 1,
+      ci: "548763",
+      nombres: "Jofre",
+      apellidos: "Ticona Plata",
+      correo: "jofre.ticona@gmail.com",
+      telefono: "76543210",
+    },
+    {
+      id: 2,
+      ci: "456789",
+      nombres: "Daysi",
+      apellidos: "Gregeda Gonzales",
+      correo: "daysigragedagonzales@gmail.com",
+      telefono: "76464453",
+    },
+    {
+      id: 3,
+      ci: "345678",
+      nombres: "Carlos",
+      apellidos: "Mendoza Lopez",
+      correo: "carlos.mendoza@colegio.edu.bo",
+      telefono: "70123456",
+    },
+    {
+      id: 4,
+      ci: "789012",
+      nombres: "Maria",
+      apellidos: "Vargas Rojas",
+      correo: "maria.vargas@gmail.com",
+      telefono: "71234567",
+    },
+  ]
+
+  // Agregar los ejemplos a la hoja
+  tutores.forEach((tutor, index) => {
+    const rowIndex = index + 3 // +3 porque hay 2 filas de encabezado
+    const row = hoja.getRow(rowIndex)
+
+    row.getCell(1).value = tutor.id
+    row.getCell(2).value = tutor.ci
+    row.getCell(3).value = tutor.nombres
+    row.getCell(4).value = tutor.apellidos
+    row.getCell(5).value = tutor.correo
+    row.getCell(6).value = tutor.telefono
+  })
+}
+
+function agregarEjemplosRelacionCompetidorTutor(hoja) {
+  // Ejemplos de relaciones competidor-tutor
+  const relaciones = [
+    {
+      id: 1,
+      ci_competidor: "1426836", // FRESIA
+      ci_tutor: "548763", // JOFRE
+      nivel_responsabilidad: "Principal",
+      relacion: "Familiar",
+      responsable_pago: "Sí",
+      area_especifica: "",
+    },
+    {
+      id: 2,
+      ci_competidor: "1426836", // FRESIA
+      ci_tutor: "345678", // CARLOS
+      nivel_responsabilidad: "Secundario",
+      relacion: "Profesor",
+      responsable_pago: "No",
+      area_especifica: "QUÍMICA",
+    },
+    {
+      id: 3,
+      ci_competidor: "1426836", // FRESIA
+      ci_tutor: "789012", // MARÍA
+      nivel_responsabilidad: "Secundario",
+      relacion: "Otro",
+      responsable_pago: "No",
+      area_especifica: "MATEMÁTICAS",
+    },
+    {
+      id: 4,
+      ci_competidor: "1558247", // DAYRA
+      ci_tutor: "456789", // DAYSI
+      nivel_responsabilidad: "Principal",
+      relacion: "Padre",
+      responsable_pago: "Sí",
+      area_especifica: "",
+    },
+    {
+      id: 5,
+      ci_competidor: "1678901", // JUAN
+      ci_tutor: "345678", // CARLOS
+      nivel_responsabilidad: "Principal",
+      relacion: "Profesor",
+      responsable_pago: "Sí",
+      area_especifica: "",
+    },
+  ]
+
+  // Agregar los ejemplos a la hoja
+  relaciones.forEach((relacion, index) => {
+    const rowIndex = index + 3 // +3 porque hay 2 filas de encabezado
+    const row = hoja.getRow(rowIndex)
+
+    row.getCell(1).value = relacion.id
+    row.getCell(2).value = relacion.ci_competidor
+    row.getCell(3).value = relacion.ci_tutor
+    row.getCell(4).value = relacion.nivel_responsabilidad
+    row.getCell(5).value = relacion.relacion
+    row.getCell(6).value = relacion.responsable_pago
+    row.getCell(7).value = relacion.area_especifica
+  })
+}
 
 //procesa archivo excel
 export async function procesarArchivoExcel(file) {
@@ -524,7 +1003,7 @@ export async function procesarArchivoExcel(file) {
       throw new Error("No se proporcionó ningún archivo")
     }
 
-/*     console.log("Archivo recibido:", file.name, "Tamaño:", file.size) */
+    /*     console.log("Archivo recibido:", file.name, "Tamaño:", file.size) */
 
     // Leer el archivo
     return new Promise((resolve, reject) => {
@@ -542,7 +1021,7 @@ export async function procesarArchivoExcel(file) {
             cellText: false,
           })
 
-/*           console.log("Hojas encontradas:", workbook.SheetNames) */
+          /*           console.log("Hojas encontradas:", workbook.SheetNames) */
 
           // Verificar que el archivo tenga las hojas necesarias
           const requiredSheets = ["Competidores", "Tutores", "Relación Competidor-Tutor"]
@@ -666,7 +1145,7 @@ export async function procesarArchivoExcel(file) {
             })
             .filter((r) => r !== null)
 
-/*           console.log("Competidores mapeados:", mappedCompetidores.length)
+          /*           console.log("Competidores mapeados:", mappedCompetidores.length)
           console.log("Tutores mapeados:", mappedTutores.length)
           console.log("Relaciones mapeadas:", mappedRelaciones.length) */
 

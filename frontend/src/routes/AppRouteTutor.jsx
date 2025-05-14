@@ -12,6 +12,8 @@ import SubirComprobante from "../page/tutor/024-SubirComprobante/SubirComprobant
 import InscribirManual from "../page/tutor/020-InscribirManual/InscribirManual";
 import InscripcionExcel from "../page/tutor/017-InscripcionExcel/InscripcionExcel";
 import VerRecibos from "../page/tutor/028-VerRecibos/VerRecibos";
+import VerRecibos2 from "../page/tutor/VerRecibos2";
+
 
 function AppRouteTutor() {
   return (
@@ -30,6 +32,7 @@ function AppRouteTutor() {
         <Route path="InscribirManual" element={<InscribirManual/>}/>
         <Route path="InscripcionExcel" element={<InscripcionExcel/>}/>
         <Route path="VerRecibos" element={<VerRecibos/>}/>
+        <Route path="VerRecibos2" element={<VerRecibos2/>}/>
         {/* Puedes agregar más rutas aquí según sea necesario */}
       </Route>
     </Routes>

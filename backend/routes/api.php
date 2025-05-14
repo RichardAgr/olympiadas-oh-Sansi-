@@ -25,12 +25,6 @@ Route::get('/evento/fechas', [EventoController::class, 'index']);
 Route::post('/evento/fechas', [EventoController::class, 'store']);
 Route::delete('/evento/fechas', [EventoController::class, 'destroy']);
 
-
-// Ruta para obtener el usuario autenticado (si usas auth)
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 // Rutas RESTful para las áreas de competencia
 Route::apiResource('areas', AreaController::class);
 
@@ -99,3 +93,4 @@ Route::post('/guardarDatos/recibos', [ReciboController::class, 'registrarRecibo'
 
 //excel
 Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
+Route::get('/areasCategoriasGrados', [AreaController::class, 'getAreasWithCategoriasGrados']);
