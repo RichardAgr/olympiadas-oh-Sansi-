@@ -66,7 +66,6 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
       } catch (error) {
         console.error("Error al registrar al competidor:", error);
         if (error.response) {
-          console.log("Respuesta del servidor:", error.response.data);
           alert("Error del servidor: " + JSON.stringify(error.response.data));
         } else {
           alert("Error al registrar al competidor.");

@@ -53,7 +53,7 @@ const FileUpLoader = ({onFileUpload, isLoading}) => {
         }
         
         setFileName(file.name || "Archivo_Excel.xlsx")
-        console.log("Procesando archivo:", file.name, "Tamaño:", file.size)
+/*         console.log("Procesando archivo:", file.name, "Tamaño:", file.size) */
         onFileUpload(file)
     }
 

@@ -12,6 +12,7 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.8",
+        "phpoffice/phpspreadsheet": "^4.2",
         "thiagoalessio/tesseract_ocr": "^2.13"
     },
     "require-dev": {

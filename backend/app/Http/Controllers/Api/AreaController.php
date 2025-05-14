@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use App\Models\Area;
 
 class AreaController extends Controller
@@ -130,6 +133,71 @@ class AreaController extends Controller
             'message' => 'Área eliminada exitosamente'
         ]);
     }
+
+    public function getAreasWithCategoriasGrados()
+    {
+        try {
+            // Obtener todas las áreas con sus categorías y relaciones de grados
+            $areas = Area::with([
+                'nivelCategoria',
+                'nivelCategoria.gradoInicial',
+                'nivelCategoria.gradoFinal',
+                'nivelCategoria.gradoInicial.nivelEducativo',
+                'nivelCategoria.gradoFinal.nivelEducativo'
+            ])
+            ->where('estado', true)
+            ->get();
+
+            $result = [];
+
+            foreach ($areas as $area) {
+                $categorias = [];
+
+                // Procesar cada categoría del área
+                foreach ($area->nivelCategoria as $categoria) {
+                    $gradoInicialNombre = $categoria->gradoInicial->nombre;
+                    $gradoFinalNombre = $categoria->gradoFinal->nombre;
+                    
+                    // Crear el rango_grado
+                    $rangoGrado = $gradoInicialNombre;
+                    if ($categoria->grado_id_inicial !== $categoria->grado_id_final) {
+                        $rangoGrado .= ' a ' . $gradoFinalNombre;
+                    }
+                    
+                    $categoriaData = [
+                        'nivel_categoria_id' => $categoria->nivel_categoria_id,
+                        'nombre' => $categoria->nombre,
+                        'rango_grado' => $rangoGrado
+                    ];
+
+                    $categorias[] = $categoriaData;
+                }
+
+                // Solo agregar áreas que tengan categorías
+                if (count($categorias) > 0) {
+                    $result[] = [
+                        'area_id' => $area->area_id,
+                        'nombre' => $area->nombre,
+                        'costo' => $area->costo,
+                        'categorias' => $categorias
+                    ];
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $result,
+                'message' => 'Áreas con categorías y grados obtenidas correctamente'
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error al obtener áreas con categorías y grados: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener las áreas con categorías y grados',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
-
-

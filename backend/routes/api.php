@@ -15,7 +15,8 @@ use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\EstadisticasController;
 use App\Http\Controllers\Api\OcrPagoController;
 use App\Http\Controllers\Api\ReciboController;
-use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutoCompetidorController;
+use App\Http\Controllers\Api\DatosExcel;
+use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCompetidorController;
 
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
@@ -23,12 +24,6 @@ Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtener
 Route::get('/evento/fechas', [EventoController::class, 'index']);
 Route::post('/evento/fechas', [EventoController::class, 'store']);
 Route::delete('/evento/fechas', [EventoController::class, 'destroy']);
-
-
-// Ruta para obtener el usuario autenticado (si usas auth)
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 // Rutas RESTful para las áreas de competencia
 Route::apiResource('areas', AreaController::class);
@@ -91,5 +86,12 @@ Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoControl
 
 //OCR
 Route::post('/processReceipt', [OcrPagoController::class, 'processReceipt']);
-Route::post('/boletas/GuardarDatosOcr', [BoletaController::class, 'procesarBoletaOCR']);
+Route::post('/boletas/pagoInscripcion', [BoletaController::class, 'procesarPagoOCR']);
 
+//recibo
+Route::post('/guardarDatos/recibos', [ReciboController::class, 'registrarRecibo']);
+Route::get('/recibos/tutor/{tutorId}', [ReciboController::class, 'obtenerRecibosPorTutor']);
+
+//excel
+Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
+Route::get('/areasCategoriasGrados', [AreaController::class, 'getAreasWithCategoriasGrados']);
