@@ -90,6 +90,7 @@ Route::post('/boletas/pagoInscripcion', [BoletaController::class, 'procesarPagoO
 
 //recibo
 Route::post('/guardarDatos/recibos', [ReciboController::class, 'registrarRecibo']);
+Route::get('/recibos/tutor/{tutorId}', [ReciboController::class, 'obtenerRecibosPorTutor']);
 
 //excel
 Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);

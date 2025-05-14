@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Recibo;
+use App\Models\Tutor;
 
 class ReciboController extends Controller{
      public function registrarRecibo(Request $request)
@@ -75,6 +76,65 @@ class ReciboController extends Controller{
             return response()->json([
                 'success' => false,
                 'message' => 'Error al registrar el recibo',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function obtenerRecibosPorTutor($tutorId)
+    {
+        try {
+            $tutor = Tutor::find($tutorId);
+            
+            if (!$tutor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró el tutor con ID: ' . $tutorId
+                ], 404);
+            }
+
+            // Obtener los recibos del tutor con los datos del tutor
+            $recibos = Recibo::select(
+                    'RECIBO.recibo_id',
+                    'RECIBO.numero_recibo',
+                    'RECIBO.monto_total',
+                    'RECIBO.fecha_emision',
+                    'RECIBO.estado',
+                    'RECIBO.ruta_pdf',
+                    'tutor.nombres',
+                    'tutor.apellidos',
+                    DB::raw("CONCAT(tutor.nombres, ' ', tutor.apellidos) as nombre_completo")
+                )
+                ->join('tutor', 'RECIBO.tutor_id', '=', 'tutor.tutor_id')
+                ->where('RECIBO.tutor_id', $tutorId)
+                ->orderBy('RECIBO.fecha_emision', 'desc')
+                ->get();
+
+            // Formatear los datos para la respuesta
+            $recibosFormateados = $recibos->map(function ($recibo) {
+                return [
+                    'recibo_id' => $recibo->recibo_id,
+                    'numero_recibo' => $recibo->numero_recibo,
+                    'nombre_completo' => $recibo->nombre_completo,
+                    'fecha_emision' => $recibo->fecha_emision,
+                    'monto_total' => $recibo->monto_total,
+                    'estado' => $recibo->estado,
+                    'url_pdf' => $recibo->ruta_pdf
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $recibosFormateados,
+                'total' => count($recibosFormateados)
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error al obtener recibos por tutor: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los recibos',
                 'error' => $e->getMessage()
             ], 500);
         }
