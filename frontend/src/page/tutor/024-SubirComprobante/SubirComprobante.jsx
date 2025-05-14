@@ -4,9 +4,12 @@ import FileUp from "../../../components/FileUp/FileUp"
 import FileViewer from "../../../components/FileViewer/FileViewer"
 import { extractDataFromImage,validateImage } from "../../../components/ImageProcessor/ImageProcessor"
 import { uploadToCloudinary } from "../../../components/ImageProcessor/cloudinaty"
+import {useParams} from "react-router-dom"
+import axios from "axios"
 import "./subirComprobante.css"
 
 export default function App() {
+  const {id} = useParams()
   const [file, setFile] = useState(null)
   const [extractedData, setExtractedData] = useState(null)
   const [filePreviewUrl, setFilePreviewUrl] = useState(null)
@@ -86,6 +89,26 @@ export default function App() {
         setUploadProgress(progress)
       })
       const uploadedUrl = await cloudinaryResponse.secure_url
+
+      const postData = {
+      tutor_id: id,
+      fechaPago: new Date().toLocaleDateString('es-ES'), 
+      imageUrl: uploadedUrl,
+      montoPagado: extractedData?.montoPagado || "", 
+      nombreCompleto: extractedData?.nombreCompleto || "",
+      numeroComprobante: extractedData?.numeroComprobante || "",
+    };
+
+      console.log(postData)
+    const response = await axios.post('http://127.0.0.1:8000/api/boletas/pagoInscripcion',postData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('Respuesta de la API:', response.data);
 
       setUploadedFileUrl(uploadedUrl)
       showAlertMessage("¡Cambios guardados!", "success")

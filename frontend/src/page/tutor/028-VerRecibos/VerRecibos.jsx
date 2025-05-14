@@ -22,11 +22,6 @@ const VerRecibos = () => {
           fecha_emision: "01/05/2025",
           monto_total: 45,
           estado: "Pagada",
-          competidores: [
-            { nombre: "FRESIA GRETY TICONA PLATA", area: "QUÍMICA", nivel: "6S", monto: 15 },
-            { nombre: "FRESIA GRETY TICONA PLATA", area: "MATEMÁTICAS", nivel: "Sexto Nivel", monto: 15 },
-            { nombre: "JUAN CARLOS PÉREZ GÓMEZ", area: "BIOLOGÍA", nivel: "2S", monto: 15 },
-          ],
         },
         {
           id: 2,
@@ -35,7 +30,6 @@ const VerRecibos = () => {
           fecha_emision: "01/05/2025",
           monto_total: 15,
           estado: "Pendiente",
-          competidores: [{ nombre: "DAYRA DAMIAN GRAGEDA", area: "ROBÓTICA", nivel: "Lego P", monto: 15 }],
         },
         {
           id: 3,
@@ -44,7 +38,6 @@ const VerRecibos = () => {
           fecha_emision: "01/05/2025",
           monto_total: 15,
           estado: "Pagada",
-          competidores: [{ nombre: "JUAN PÉREZ GÓMEZ", area: "ASTRONOMÍA - ASTROFÍSICA", nivel: "2S", monto: 15 }],
         },
       ]
 
@@ -122,9 +115,6 @@ const VerRecibos = () => {
                   </p>
                   <p>
                     <strong>Fecha:</strong> {boleta.fecha_emision}
-                  </p>
-                  <p>
-                    <strong>Competidores:</strong> {boleta.competidores.length}
                   </p>
                   <p>
                     <strong>Monto Total:</strong> Bs. {boleta.monto_total}

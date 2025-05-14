@@ -208,9 +208,7 @@ $numeroBoleta = 'BOL' . str_pad($competidorId, 5, '0', STR_PAD_LEFT); // Usando 
     }
 }
 
-public function procesarPagoOCR(Request $request)
-    {
-        // Validar los datos de entrada
+public function procesarPagoOCR(Request $request){
         $validator = Validator::make($request->all(), [
             'tutor_id' => 'required|integer|exists:tutor,tutor_id',
             'fechaPago' => 'required|string',
@@ -229,7 +227,6 @@ public function procesarPagoOCR(Request $request)
         }
 
         try {
-            // Iniciar transacción para asegurar la integridad de los datos
             DB::beginTransaction();
 
             // 1. Verificar si existe el recibo con el número proporcionado
@@ -264,7 +261,6 @@ public function procesarPagoOCR(Request $request)
             $imagenBoleta->estado = true;
             $imagenBoleta->save();
 
-            // 4. Marcar el recibo como pagado
             $recibo->estado = 'PAGADO';
             $recibo->save();
 
@@ -298,7 +294,7 @@ public function procesarPagoOCR(Request $request)
      private function actualizarInscripcionesCompetidores($reciboId, $boletaId)
     {
         try {
-            // Obtener todos los detalles del recibo
+
             $detallesRecibo = ReciboDetalle::where('recibo_id', $reciboId)->get();
             
             if ($detallesRecibo->isEmpty()) {
@@ -335,7 +331,7 @@ public function procesarPagoOCR(Request $request)
             
         } catch (\Exception $e) {
             Log::error("Error al actualizar inscripciones: " . $e->getMessage());
-            throw $e; // Re-lanzar la excepción para que sea capturada por el método principal
+            throw $e; 
         }
     }
 }
