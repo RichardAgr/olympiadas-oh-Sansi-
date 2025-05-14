@@ -45,10 +45,6 @@ function TutorHome () {
     navigate(`/homeTutor/${id}/tutor/VerRecibos`)
   }
 
-    const viewRecibe2 = () => {
-    navigate(`/homeTutor/${id}/tutor/VerRecibos2`)
-  }
-
   if (loading) return <div className="loading">Cargando...</div>
   if (error) return <div className="error">{error}</div>
   if (!tutor) return <div className="error">No se encontró el tutor</div>
@@ -132,11 +128,6 @@ function TutorHome () {
        <p>
         Los recibos que se muestran son los que se tienen que llevar para hacer la cancelacion de la inscripcion.
        </p>
-      </div>
-    </div>
-    <div className="subir-comprobante-card"onClick={viewRecibe2}>
-      <h3>Preuebas:</h3>
-      <div className="upload-container">
       </div>
     </div>
       </div>
