@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
+import {useParams} from "react-router-dom"
 import axios from "axios"
 import "./verRecibos.css"
 
 const VerRecibos = () => {
+  const {id} = useParams()
   const [boletas, setBoletas] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedBoleta, setSelectedBoleta] = useState(null)
@@ -13,7 +15,7 @@ const VerRecibos = () => {
     const fetchBoletas = async () => {
       try {
         setIsLoading(true)
-        const response = await axios.get("http://127.0.0.1:8000/api/recibos/tutor/1")
+        const response = await axios.get(`http://127.0.0.1:8000/api/recibos/tutor/${id}`)
         
         if (response.data && response.data.success) {
           const boletasFormateadas = response.data.data.map(recibo => ({
