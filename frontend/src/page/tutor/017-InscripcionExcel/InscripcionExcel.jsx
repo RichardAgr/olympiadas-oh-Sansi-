@@ -1,6 +1,6 @@
 import saveAs from "file-saver"
 import { useState } from "react"
-import { Download, Info, UploadCloud, Loader2} from "lucide-react"
+import { Download, Info, UploadCloud, Loader2 } from "lucide-react"
 import { generateExcelTemplate, procesarArchivoExcel } from "../../../components/plantillaExcel/Excel"
 import { validarDatosExcel } from "../../../components/plantillaExcel/ValidadorExcel"
 import { generarBoleta } from "../../../components/generarBoleta/GenerarBoleta"
@@ -8,7 +8,7 @@ import { generarBoletaPDF } from "../../../components/generarBoleta/GenerarBolet
 import ExcelPreview from "../../../components/excelPreview/ExcelPreview"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
 import BoletaView from "../../../components/BoletaView/BoletaView"
-import {useParams} from "react-router-dom"
+import { useParams } from "react-router-dom"
 import "./inscripcionExcel.css"
 import axios from "axios"
 
@@ -25,18 +25,14 @@ const uploadToCloudinary = async (file, onProgress = () => {}) => {
     formData.append("resource_type", "auto") // Importante: esto permite a Cloudinary detectar automáticamente el tipo de archivo
 
     // Usar axios para la subida
-    const response = await axios.post(
-      `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
-      formData,
-      {
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
-            onProgress(progress)
-          }
-        },
+    const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total) {
+          const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
+          onProgress(progress)
+        }
       },
-    )
+    })
 
     return response.data
   } catch (error) {
@@ -46,7 +42,7 @@ const uploadToCloudinary = async (file, onProgress = () => {}) => {
 }
 
 const InscripcionMasiva = () => {
-  const {id} = useParams()
+  const { id } = useParams()
   const [isLoading, setIsLoading] = useState(false)
   const [file, setFile] = useState(null)
   const [error, setError] = useState(null)
@@ -56,19 +52,19 @@ const InscripcionMasiva = () => {
   const [boletaGenerada, setBoletaGenerada] = useState(null)
   const [showBoletaViewer, setShowBoletaViewer] = useState(false)
   const [pdfUploaded, setPdfUploaded] = useState(false)
-    const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [isUploading, setIsUploading] = useState(false)
 
   const guardarRecibo = async (reciboData) => {
-  try {
-    const response = await axios.post('http://127.0.0.1:8000/api/guardarDatos/recibos', reciboData);
-   /*  console.log('Recibo guardado en API:', response.data); */
-    return response.data;
-  } catch (error) {
-    console.error('Error al guardar el recibo en la API:', error);
-    throw error;
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/api/guardarDatos/recibos", reciboData)
+      /*  console.log('Recibo guardado en API:', response.data); */
+      return response.data
+    } catch (error) {
+      console.error("Error al guardar el recibo en la API:", error)
+      throw error
+    }
   }
-};
 
   const handleDescargarPlantilla = async () => {
     try {
@@ -95,7 +91,7 @@ const InscripcionMasiva = () => {
       //procesar excel
       const data = await procesarArchivoExcel(uploadedFile)
 
-/*       console.log("Datos procesados:", {
+      /*       console.log("Datos procesados:", {
         competidores: data.competidores?.length || 0,
         tutores: data.tutores?.length || 0,
         relaciones: data.relaciones?.length || 0,
@@ -107,8 +103,14 @@ const InscripcionMasiva = () => {
       setExcelData(data)
 
       //validar los datos del excel
-      const resultados = validarDatosExcel(data)
-/*       console.log("Resultados de validación:", resultados) */
+      const resultados = await validarDatosExcel(data)
+      // Ensure resultados has the expected structure
+      if (!resultados || typeof resultados !== "object") {
+        throw new Error("Error en la validación: formato de resultados incorrecto")
+      }
+      if (!Array.isArray(resultados.errores)) {
+        resultados.errores = resultados.errores ? [resultados.errores] : []
+      }
       setValidationResults(resultados)
       setStep(2)
     } catch (error) {
@@ -124,7 +126,6 @@ const InscripcionMasiva = () => {
     setError(null)
 
     try {
-
       if (!excelData || !excelData.competidores || !excelData.tutores || !excelData.relaciones) {
         throw new Error(
           "Datos incompletos. Asegúrate de que el archivo Excel tenga todas las hojas necesarias con datos.",
@@ -165,43 +166,42 @@ const InscripcionMasiva = () => {
   }
 
   // Modificar el handleDescargarBoleta para subir a Cloudinary cuando se descarga
-const handleDescargarBoleta = async () => {
-  try {
-    setIsLoading(true);
-    setError(null);
+  const handleDescargarBoleta = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
 
-    if (!boletaGenerada) {
-      throw new Error("No hay recibo generado para descargar");
+      if (!boletaGenerada) {
+        throw new Error("No hay recibo generado para descargar")
+      }
+
+      // Asegurarse de que todos los campos necesarios existan
+      const boletaData = {
+        numero: boletaGenerada.numero || "7000569",
+        tutor: boletaGenerada.tutor || "TUTOR NO ESPECIFICADO",
+        fechaEmision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
+        montoTotal: typeof boletaGenerada.montoTotal !== "Sin costo" ? boletaGenerada.montoTotal : 0,
+        competidores: Array.isArray(boletaGenerada.competidores)
+          ? boletaGenerada.competidores.map((comp) => ({
+              nombre: comp.nombre || "Sin nombre",
+              area: comp.area || "Sin área",
+              nivel: comp.nivel || "Sin categoría",
+              monto: comp.monto || 0,
+            }))
+          : [],
+      }
+
+      const blob = await generarBoletaPDF(boletaData)
+
+      // Solo descargar el PDF
+      saveAs(blob, `Recibo_${boletaData.numero}.pdf`)
+    } catch (error) {
+      console.error("Error al descargar el recibo:", error)
+      setError("Error al descargar el recibo: " + error.message)
+    } finally {
+      setIsLoading(false)
     }
-
-    // Asegurarse de que todos los campos necesarios existan
-    const boletaData = {
-      numero: boletaGenerada.numero || "7000569",
-      tutor: boletaGenerada.tutor || "TUTOR NO ESPECIFICADO",
-      fechaEmision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
-      montoTotal: typeof boletaGenerada.montoTotal !== "Sin costo" ? boletaGenerada.montoTotal : 0,
-      competidores: Array.isArray(boletaGenerada.competidores)
-        ? boletaGenerada.competidores.map((comp) => ({
-            nombre: comp.nombre || "Sin nombre",
-            area: comp.area || "Sin área",
-            nivel: comp.nivel || "Sin categoría",
-            monto: comp.monto || 0,
-          }))
-        : [],
-    };
-
-    const blob = await generarBoletaPDF(boletaData);
-
-    // Solo descargar el PDF 
-    saveAs(blob, `Recibo_${boletaData.numero}.pdf`);
-
-  } catch (error) {
-    console.error("Error al descargar el recibo:", error);
-    setError("Error al descargar el recibo: " + error.message);
-  } finally {
-    setIsLoading(false);
   }
-};
 
   const handleVerBoleta = () => {
     setShowBoletaViewer(true)
@@ -214,8 +214,8 @@ const handleDescargarBoleta = async () => {
   const handleContinuar = async () => {
     try {
       if (boletaGenerada && !pdfUploaded) {
-        setIsUploading(true);
-        setUploadProgress(0);
+        setIsUploading(true)
+        setUploadProgress(0)
 
         const boletaData = {
           numero: boletaGenerada.numero || "7000569",
@@ -232,75 +232,72 @@ const handleDescargarBoleta = async () => {
             : [],
         }
 
-        const blob = await generarBoletaPDF(boletaData);
-        const file = new File([blob], `Recibo_${boletaData.numero}.pdf`, { type: "application/pdf" });
+        const blob = await generarBoletaPDF(boletaData)
+        const file = new File([blob], `Recibo_${boletaData.numero}.pdf`, { type: "application/pdf" })
 
         const uploadResult = await uploadToCloudinary(file, (progress) => {
-          setUploadProgress(progress);
-        });
+          setUploadProgress(progress)
+        })
 
         // Datos completos para mostrar y registrar
         const completeUploadData = {
-          tutor_id : id,
+          tutor_id: id,
           numero_recibo: boletaData.numero,
           monto_total: boletaData.montoTotal,
           fecha_emision: boletaData.fechaEmision,
           ruta_pdf: uploadResult.secure_url,
           estado: "Pendiente",
-        };
-        const respuestaAPI = await guardarRecibo(completeUploadData);
-/*         console.log("Respuesta api:", respuestaAPI); */
-        setPdfUploaded(true);
+        }
+        const respuestaAPI = await guardarRecibo(completeUploadData)
+        /*         console.log("Respuesta api:", respuestaAPI); */
+        setPdfUploaded(true)
       }
     } catch (error) {
-      console.error("Error al subir el recibo a Cloudinary:", error);
-      setError("Error al subir el PDF: " + error.message);
+      console.error("Error al subir el recibo a Cloudinary:", error)
+      setError("Error al subir el PDF: " + error.message)
     } finally {
-      setIsUploading(false);
-      setStep(4);
+      setIsUploading(false)
+      setStep(4)
     }
   }
 
+  const handleNuevaInscripcion = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
 
-const handleNuevaInscripcion = async () => {
-  try {
-    setIsLoading(true)
-    setError(null)
+      if (!file) {
+        throw new Error("No hay archivo Excel para enviar")
+      }
 
-    if (!file) {
-      throw new Error("No hay archivo Excel para enviar");
-    }
+      if (!boletaGenerada?.numero) {
+        throw new Error("No se ha generado número de recibo")
+      }
+      // Solo subir el Excel si existe archivo y número de recibo
+      if (file && boletaGenerada?.numero) {
+        const formData = new FormData()
+        formData.append("numero_recibo", boletaGenerada.numero)
+        formData.append("archivo_excel", file)
 
-    if (!boletaGenerada?.numero) {
-      throw new Error("No se ha generado número de recibo");
-    }
-    // Solo subir el Excel si existe archivo y número de recibo
-    if (file && boletaGenerada?.numero) {
-      const formData = new FormData();
-      formData.append('numero_recibo', boletaGenerada.numero);
-      formData.append('archivo_excel', file);
-
-      const response = await axios.post('http://127.0.0.1:8000/api/guardarDatos/excel',formData,
-        {
+        const response = await axios.post("http://127.0.0.1:8000/api/guardarDatos/excel", formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
+            "Content-Type": "multipart/form-data",
+          },
+        })
+      }
+    } catch (error) {
+      console.error("Error al enviar el Excel:", error)
+      setError("Error al enviar los datos: " + error.message)
+    } finally {
+      setIsLoading(false)
+      setStep(1)
+      setFile(null)
+      setExcelData(null)
+      setValidationResults(null)
+      setBoletaGenerada(null)
+      setPdfUploaded(false)
     }
-  } catch (error) {
-    console.error('Error al enviar el Excel:', error);
-    setError("Error al enviar los datos: " + error.message);
-  } finally {
-    setIsLoading(false);
-    setStep(1);
-    setFile(null);
-    setExcelData(null);
-    setValidationResults(null);
-    setBoletaGenerada(null);
-    setPdfUploaded(false);
   }
-};
 
   const renderStepContent = () => {
     switch (step) {
@@ -350,9 +347,9 @@ const handleNuevaInscripcion = async () => {
               <div className="errorContainer">
                 <h3>Se encontraron errores en los datos:</h3>
                 <ul>
-                  {validationResults.errores.map((error, index) => (
-                    <li key={index}>{error}</li>
-                  ))}
+                  {validationResults.errores?.map((error, index) => <li key={index}>{error}</li>) || (
+                    <li>Error desconocido</li>
+                  )}
                 </ul>
               </div>
             )}
@@ -402,7 +399,7 @@ const handleNuevaInscripcion = async () => {
                   </div>
                   <div className="boletaNumero">
                     <p>Nro.</p>
-                    <p className="numeroValue">{boletaGenerada?.numero|| "7000569"}</p>
+                    <p className="numeroValue">{boletaGenerada?.numero || "7000569"}</p>
                   </div>
                 </div>
 
@@ -430,7 +427,7 @@ const handleNuevaInscripcion = async () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {(boletaGenerada?.competidores).map((competidor, index) => (
+                    {boletaGenerada?.competidores?.map((competidor, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
                         <td>{competidor.nombre || "Sin nombre"}</td>
@@ -438,7 +435,11 @@ const handleNuevaInscripcion = async () => {
                         <td>{competidor.nivel || "Sin categoría"}</td>
                         <td>{competidor.monto || 0}</td>
                       </tr>
-                    ))}
+                    )) || (
+                      <tr>
+                        <td colSpan="5">No hay competidores para mostrar</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
 
@@ -461,16 +462,16 @@ const handleNuevaInscripcion = async () => {
               </button> */}
               <button className="successButton" onClick={handleContinuar} disabled={isUploading}>
                 {isUploading ? (
-                    <>
-                       <Loader2 className="animate-spinX" style={{ marginRight: '8px' }} />
-                       Subiendo ({uploadProgress}%)
-                     </>
-                   ) : (
-                     <>
-                       <UploadCloud style={{ marginRight: '8px' }} />
-                       Continuar
-                     </>
-                   )}
+                  <>
+                    <Loader2 className="animate-spinX" style={{ marginRight: "8px" }} />
+                    Subiendo ({uploadProgress}%)
+                  </>
+                ) : (
+                  <>
+                    <UploadCloud style={{ marginRight: "8px" }} />
+                    Continuar
+                  </>
+                )}
               </button>
             </div>
           </div>
