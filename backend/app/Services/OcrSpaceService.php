@@ -114,8 +114,8 @@ class OcrSpaceService
         'nombre_pagador' => '',
         'monto_total' => '',
         'fecha_pago' => '',
-        'confianza' => $this->calculateConfidence($text)
-/*         'texto_resumen' => substr($text, 0, 200).(strlen($text) > 200 ? '...' : '') */
+        'confianza' => $this->calculateConfidence($text),
+        'texto_resumen' => $text/* substr($text, 0, 200).(strlen($text) > 200 ? '...' : '')  */
     ];
 
     // Número de comprobante
