@@ -72,17 +72,17 @@ function HomeRespGest() {
           </div>
 
           {/* Botón: Habilitar/Deshabilitar Tutores */}
-          <div className="button-box">
+          <div className="button-boxR">
             <Link to={"/respGest/EstadoTutores"}>
-              <button>Habilitar/Deshabilitar Tutores</button>
+              <button className="buttonR">Habilitar/Deshabilitar Tutores</button>
             </Link>
             <p>Administre el estado de los tutores</p>
           </div>
 
           {/* Botón: Habilitar/Deshabilitar Competidores */}
-          <div className="button-box">
+          <div className="button-boxR">
             <Link to={"/respGest/EstadoCompetidores"}>
-              <button>Habilitar/Deshabilitar Competidores</button>
+              <button className="buttonR">Habilitar/Deshabilitar Competidores</button>
             </Link>
             <p>Administre el estado de los Competidores.</p>
           </div>
@@ -94,7 +94,6 @@ function HomeRespGest() {
           <div className="info-box">
             <h2>Competencias Activas</h2>
             <p className="big-number">{competenciasActivas}</p>
-            <p className="small-text">Próxima: {proximaCompetencia}</p>
           </div>
 
           {/* Total competidores habilitados */}
@@ -104,9 +103,9 @@ function HomeRespGest() {
           </div>
 
           {/* Botón: Detalle de Competidores */}
-          <div className="button-box">
+          <div className="button-boxR">
             <Link to={"/respGest/DetalleCompetidoresInscritos"}>
-              <button>Detalle de Competidores</button>
+              <button className="buttonR">Detalle de Competidores</button>
             </Link>
             <p>Visualiza detalles de competidores inscritos en competencia</p>
           </div>

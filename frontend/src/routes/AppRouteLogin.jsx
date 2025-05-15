@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import AppRouter from "./AppRouter";
 import AppRouteRespGest from "./AppRouteRespGest";
 import Login from "../page/home/login";
-
+import AppRouteTutor from "./AppRouteTutor";
 function AppRouteLogin() {
   return (
     <Routes>
@@ -10,6 +10,8 @@ function AppRouteLogin() {
       <Route path="login" element={<Login />} />
       <Route path="admin/*" element={<AppRouter />} />
       <Route path="respGest/*" element={<AppRouteRespGest />} />
+      <Route path="homeTutor/:id/tutor/*" element={<AppRouteTutor />} />
+      {/* Otras rutas de login */}
     </Routes>
   );
 }

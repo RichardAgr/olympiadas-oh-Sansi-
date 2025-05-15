@@ -9,10 +9,10 @@ class Boleta  extends Migration{
         Schema::create('boleta', function (Blueprint $table) {
             $table->id('boleta_id');
             $table->unsignedBigInteger('tutor_id');
+            $table->unsignedBigInteger('recibo_id')->nullable();
             $table->string('numero_boleta', 50);
             $table->string('nombre_pagador', 100);
             $table->decimal('monto_total', 10, 2);
-            $table->date('fecha_emision');
             $table->date('fecha_pago')->nullable();
             $table->boolean('estado');
             $table->timestamps();
@@ -21,10 +21,16 @@ class Boleta  extends Migration{
                   ->references('tutor_id')
                   ->on('tutor')
                   ->onDelete('cascade');
+
+            $table->foreign('recibo_id') 
+              ->references('recibo_id')
+              ->on('recibo')
+              ->onDelete('set null');
             
             $table->index('tutor_id');
+            $table->index('recibo_id');
             $table->index('numero_boleta');
-            $table->index(['fecha_emision', 'fecha_pago']);
+            $table->index( 'fecha_pago');
             
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_general_ci';

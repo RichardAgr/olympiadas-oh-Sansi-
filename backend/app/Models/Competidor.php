@@ -21,6 +21,8 @@ class Competidor extends Model
         'ci',
         'fecha_nacimiento',
         'estado',
+        'departamento',
+        'provincia'
     ];
 
     protected $casts = [
@@ -66,8 +68,8 @@ class Competidor extends Model
     }
 
     public function competidorCompetencias()
-{
-    return $this->hasMany(CompetidorCompetencia::class, 'competidor_id', 'competidor_id');
-}
+    {
+        return $this->hasMany(CompetidorCompetencia::class, 'competidor_id', 'competidor_id');
+    }
 
 }
