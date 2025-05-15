@@ -78,15 +78,36 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
   }
 
   const validateTutor = (tutor) => {
-    const err = {}
-    if (tutor.nombres.trim().length < 3) err.nombres = "Mínimo 3 caracteres."
-    if (tutor.apellidos.trim().length < 6) err.apellidos = "Mínimo 6 caracteres."
-    if (!/\S+@\S+\.\S+/.test(tutor.correo_electronico)) err.correo = "Correo inválido."
-    if (tutor.telefono.trim().length < 7) err.telefono = "Mínimo 7 dígitos."
-    if (tutor.ci.trim().length < 7) err.ci = "Mínimo 7 caracteres."
-    if (!tutor.relacion) err.relacion = "Seleccione una relación."
-    return err
-  }
+    const err = {};
+    const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+    const soloNumerosRegex = /^[0-9]+$/;
+  
+    if (tutor.nombres.trim().length < 3 || !soloLetrasRegex.test(tutor.nombres)) {
+      err.nombres = "Nombre no válido.";
+    }
+  
+    if (tutor.apellidos.trim().length < 4 || !soloLetrasRegex.test(tutor.apellidos)) {
+      err.apellidos = "Apellido no válido.";
+    }
+  
+    if (!/\S+@\S+\.\S+/.test(tutor.correo_electronico)) {
+      err.correo = "Correo no válido.";
+    }
+  
+    if (tutor.telefono.trim().length < 7 || !soloNumerosRegex.test(tutor.telefono)) {
+      err.telefono = "Teléfono no válido.";
+    }
+  
+    if (tutor.ci.trim().length < 7) {
+      err.ci = "CI no válido.";
+    }
+  
+    if (!tutor.relacion) {
+      err.relacion = "Seleccione una relación.";
+    }
+  
+    return err;
+  };
 
   const handleSubmit = async () => {
     const errores = tutores.slice(0, cantidadTutores).map(validateTutor)
@@ -112,6 +133,9 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
   const generarPDFBlob = async (data) => {
     const boletaInfo = data || (boletaData ? { ...boletaData } : await obtenerDatosBoleta())
 
+    // Normalizar el número de boleta a 7 dígitos
+  boletaInfo.numero_boleta = boletaInfo.numero_boleta.replace(/\D/g, "").padStart(7, "0");
+
     // Asegurarse de que boletaData tiene los datos necesarios
     if (!boletaInfo || !boletaInfo.numero_boleta || !boletaInfo.nombre_pagador || !boletaInfo.monto_total) {
       console.error("Datos incompletos para generar la boleta:", boletaInfo)
@@ -130,7 +154,7 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
 
     doc.setFontSize(16)
     doc.setTextColor(0, 0, 0)
-    doc.text("BOLETA DE PAGO", 105, 30, { align: "center" })
+    doc.text("RECIBO DE PAGO", 105, 30, { align: "center" })
 
     doc.text("Área :", 14, 52)
     doc.text(boletaInfo.area || "No especificado", 45, 52)
