@@ -84,7 +84,6 @@ export default function App() {
     try {
       setIsUploading(true)
       setUploadProgress(0)
-      // Subir el archivo a la nube y obtener la URL (cloudinary)
       const cloudinaryResponse = await uploadToCloudinary(file, (progress) => {
         setUploadProgress(progress)
       })
@@ -92,7 +91,7 @@ export default function App() {
 
       const postData = {
       tutor_id: id,
-      fechaPago: new Date().toLocaleDateString('es-ES'), 
+      fechaPago: extractedData?.fechaPago || "", 
       imageUrl: uploadedUrl,
       montoPagado: extractedData?.montoPagado || "", 
       nombreCompleto: extractedData?.nombreCompleto || "",
@@ -114,7 +113,7 @@ export default function App() {
       showAlertMessage("¡Cambios guardados!", "success")
 
       setTimeout(() => {
-        handleDeleteFile() // Esto limpia el estado y vuelve a la pantalla inicial
+        handleDeleteFile()
       }, 1500)
 
     } catch (error) {
