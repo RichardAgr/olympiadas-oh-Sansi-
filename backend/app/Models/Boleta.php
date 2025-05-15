@@ -16,13 +16,11 @@ class Boleta extends Model{
         'numero_boleta',
         'nombre_pagador',
         'monto_total',
-        'fecha_emision',
         'fecha_pago',
         'estado',
     ];
 
     protected $casts = [
-        'fecha_emision' => 'date',
         'fecha_pago' => 'date',
     ];
 

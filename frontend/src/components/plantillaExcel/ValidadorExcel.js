@@ -1,6 +1,22 @@
-export const validarDatosExcel = (data) => {
+import axios from "axios";
+
+export const cargarAreasPermitidas = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/areasCategoriasGrados");
+    if (response.data && response.data.success) {
+      return response.data.data.map(area => area.nombre);
+    }
+    throw new Error("Error al obtener áreas permitidas");
+  } catch (error) {
+    console.error("Error al cargar áreas:", error);
+    throw error;
+  }
+};
+
+export const validarDatosExcel = async (data) => {
     const errores = []
-  
+    let areasPermitidas = await cargarAreasPermitidas();
+    console.log(areasPermitidas)
     // Validar que haya competidores
     if (!data.competidores || data.competidores.length === 0) {
       errores.push("No se encontraron competidores en el archivo Excel.")
@@ -101,15 +117,7 @@ export const validarDatosExcel = (data) => {
       }
   
       // Validar áreas y niveles permitidos backend 123
-      const areasPermitidas = [
-        "ASTRONOMÍA - ASTROFÍSICA",
-        "BIOLOGÍA",
-        "FÍSICA",
-        "INFORMÁTICA",
-        "MATEMÁTICAS",
-        "QUÍMICA",
-        "ROBÓTICA",
-      ]
+
   
       if (area1 && !areasPermitidas.includes(area1)) {
         errores.push(`Competidor #${index + 1}: El área 1 "${area1}" no es válida.`)

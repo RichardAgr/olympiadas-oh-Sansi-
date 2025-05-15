@@ -13,6 +13,7 @@ import InscribirManual from "../page/tutor/020-InscribirManual/InscribirManual";
 import InscripcionExcel from "../page/tutor/017-InscripcionExcel/InscripcionExcel";
 import VerRecibos from "../page/tutor/028-VerRecibos/VerRecibos";
 
+
 function AppRouteTutor() {
   return (
     <Routes>

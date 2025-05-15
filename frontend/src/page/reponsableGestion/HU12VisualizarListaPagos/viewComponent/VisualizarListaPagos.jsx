@@ -21,7 +21,7 @@ export default function VisualizarListaPagos(){
                 if(res.status !== 200){
                     throw new Error(`HTTP error! status: ${res.status}`)
                 }
-                console.log(res.data.data.pagos)
+                /* console.log(res.data.data.pagos) */
                 setPayments(res.data.data.pagos)
                 setFilteredPayments(res.data.data.pagos)
                 setIsLoading(false)

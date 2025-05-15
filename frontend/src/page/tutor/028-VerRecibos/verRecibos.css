@@ -1,137 +1,227 @@
 .boletasList {
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-  
-  .loadingContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 50px 0;
-  }
-  
-  .spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    border-top: 4px solid var(--primary-color);
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
-  }
-  
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
-  .boletasGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-  }
-  
-  .boletaCard {
-    background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    border-top: 4px solid var(--primary-color);
-  }
-  
-  .boletaCard.pagada {
-    border-top-color: var(--success-color);
-  }
-  
-  .boletaCard.pendiente {
-    border-top-color: var(--accent-color);
-  }
-  
-  .boletaHeader {
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--gray);
-  }
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-  
-  .boletaHeader h3 {
-    margin: 0;
-  }
-  
-  .estadoBadge {
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-  
-  .estadoBadge.pagada {
-    background-color: #d4edda;
-    color: #155724;
-  }
-  
-  .estadoBadge.pendiente {
-    background-color: #fff3cd;
-    color: #856404;
-  }
-  
-  .boletaBody {
-    padding: 15px;
-  }
-  
-  .boletaBody p {
-    margin-bottom: 8px;
-  }
-  
-  .boletaBody p:last-child {
-    margin-bottom: 0;
-  }
-  
-  .boletaFooter {
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    border-top: 1px solid var(--gray);
-  }
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+}
 
-  button,
-  .button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
-    font-family: "Comfortaa", sans-serif;
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid var(--primary-color);
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  button:hover,
-  .button:hover {
-    background-color: var(--primary-dark);
+  100% {
+    transform: rotate(360deg);
   }
-  
-  button:disabled,
-  .button:disabled {
-    background-color: var(--dark-gray);
-    cursor: not-allowed;
-  }
-  
-  .button-secondary {
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-  }
-  
-  .button-secondary:hover {
-    background-color: #c8d4c5;
-  }
-  
+}
+
+.boletasGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.boletaCard {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border-top: 4px solid var(--primary-color);
+}
+
+.boletaCard.pagada {
+  border-top-color: var(--success-color);
+}
+
+.boletaCard.pendiente {
+  border-top-color: var(--accent-color);
+}
+
+.boletaHeader {
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--gray);
+}
+
+.boletaHeader h3 {
+  margin: 0;
+}
+
+.estadoBadge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.estadoBadge.pagada {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estadoBadge.pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.boletaBody {
+  padding: 15px;
+}
+
+.boletaBody p {
+  margin-bottom: 8px;
+}
+
+.boletaBody p:last-child {
+  margin-bottom: 0;
+}
+
+.boletaFooter {
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--gray);
+}
+
+button,
+.button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  font-family: "Comfortaa", sans-serif;
+}
+
+button:hover,
+.button:hover {
+  background-color: var(--primary-dark);
+}
+
+button:disabled,
+.button:disabled {
+  background-color: var(--dark-gray);
+  cursor: not-allowed;
+}
+
+.button-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+.button-secondary:hover {
+  background-color: #c8d4c5;
+}
+
+.errorMessage {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px 15px;
+  border-radius: var(--border-radius);
+  margin: 15px 0;
+}
+
+.noRecibos {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 30px;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  color: #6c757d;
+}
+
+/* Estilos para el visor de PDF */
+.pdfViewerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.pdfViewerContainer {
+  background-color: white;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pdfViewerHeader {
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--gray);
+}
+
+.pdfViewerHeader h2 {
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-color);
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.closeButton:hover {
+  background-color: var(--light-gray);
+}
+
+.pdfViewerContent {
+  flex: 1;
+  overflow: auto;
+  padding: 15px;
+}
+
+.pdfFrame {
+  border: 1px solid var(--gray);
+  border-radius: var(--border-radius);
+}
+
+.pdfViewerFooter {
+  padding: 15px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--gray);
+}

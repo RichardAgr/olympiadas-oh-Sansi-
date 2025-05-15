@@ -387,6 +387,8 @@
     cursor: pointer;
     color: #fff;
   }
+  
+  
 
   /* Estilos para la confirmación de notificación enviada */
 .notification-sent-overlay {

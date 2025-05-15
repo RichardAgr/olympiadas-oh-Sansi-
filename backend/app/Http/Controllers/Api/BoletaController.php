@@ -5,16 +5,21 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ImagenBoleta;
 use App\Models\Boleta;
+use App\Models\Recibo;
+use App\Models\ReciboDetalle;
 use App\Models\Tutor;
-use App\Http\Resources\PagoCollection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 use App\Models\CompetidorCompetencia;
 use App\Models\TutorCompetidor;
-use App\Models\Area;
 use App\Models\Competidor;
 use App\Models\NivelCategoria;
+use App\Http\Resources\PagoCollection;
+use App\Models\Area;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+
 
 class BoletaController extends Controller{
     public function index()
@@ -203,4 +208,130 @@ $numeroBoleta = 'BOL' . str_pad($competidorId, 5, '0', STR_PAD_LEFT); // Usando 
     }
 }
 
+public function procesarPagoOCR(Request $request){
+        $validator = Validator::make($request->all(), [
+            'tutor_id' => 'required|integer|exists:tutor,tutor_id',
+            'fechaPago' => 'required|string',
+            'imageUrl' => 'required|string',
+            'montoPagado' => 'required|string',
+            'nombreCompleto' => 'required|string|max:100',
+            'numeroComprobante' => 'required|string|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // 1. Verificar si existe el recibo con el número proporcionado
+            $recibo = Recibo::where('numero_recibo', $request->numeroComprobante)
+                           ->where('estado', '!=', 'PAGADO')
+                           ->first();
+
+            if (!$recibo) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró un recibo pendiente con el número: ' . $request->numeroComprobante
+                ], 404);
+            }
+
+            // 2. Crear registro en la tabla boleta
+            $boleta = new Boleta();
+            $boleta->tutor_id = $request->tutor_id;
+            $boleta->recibo_id = $recibo->recibo_id;
+            $boleta->numero_boleta = $request->numeroComprobante;
+            $boleta->nombre_pagador = $request->nombreCompleto;
+            $boleta->monto_total = floatval(str_replace(',', '.', $request->montoPagado));
+            $boleta->fecha_pago = Carbon::createFromFormat('d-m-Y', $request->fechaPago)->format('Y-m-d');
+            $boleta->estado = true;
+            $boleta->save();
+
+            // 3. Crear registro en la tabla imagen_boleta
+            $imagenBoleta = new ImagenBoleta();
+            $imagenBoleta->boleta_id = $boleta->boleta_id;
+            $imagenBoleta->ruta_imagen = $request->imageUrl;
+            $imagenBoleta->fecha_subida = now();
+            $imagenBoleta->estado = true;
+            $imagenBoleta->save();
+
+            $recibo->estado = 'PAGADO';
+            $recibo->save();
+
+            // 5. Relacionar la boleta con los competidores que tienen ese número de recibo
+            $this->actualizarInscripcionesCompetidores($recibo->recibo_id, $boleta->boleta_id);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pago procesado correctamente',
+                'data' => [
+                    'boleta_id' => $boleta->boleta_id,
+                    'recibo_id' => $recibo->recibo_id
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al procesar pago: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al procesar el pago',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+     private function actualizarInscripcionesCompetidores($reciboId, $boletaId)
+    {
+        try {
+
+            $detallesRecibo = ReciboDetalle::where('recibo_id', $reciboId)->get();
+            
+            if ($detallesRecibo->isEmpty()) {
+                Log::warning("No se encontraron detalles para el recibo ID: {$reciboId}");
+                return;
+            }
+
+            foreach ($detallesRecibo as $detalle) {
+                // Actualizar el estado del detalle del recibo
+                $detalle->estado = 'PAGADO';
+                $detalle->save();
+                
+                // Buscar todas las inscripciones del competidor que no tengan boleta asignada
+                $inscripciones = CompetidorCompetencia::where('competidor_id', $detalle->competidor_id)
+                                                     ->whereNull('boleta_id')
+                                                     ->get();
+                
+                if ($inscripciones->isEmpty()) {
+                    Log::info("No se encontraron inscripciones pendientes para el competidor ID: {$detalle->competidor_id}");
+                    continue;
+                }
+                
+                // Actualizar cada inscripción con el ID de la boleta
+                foreach ($inscripciones as $inscripcion) {
+                    $inscripcion->boleta_id = $boletaId;
+                    $inscripcion->recibo_detalle_id = $detalle->recibo_detalle_id;
+                    $inscripcion->save();
+                    
+                    Log::info("Inscripción ID: {$inscripcion->competidor_competencia_id} actualizada con boleta ID: {$boletaId}");
+                }
+            }
+            
+            Log::info("Todas las inscripciones relacionadas con el recibo ID: {$reciboId} han sido actualizadas");
+            
+        } catch (\Exception $e) {
+            Log::error("Error al actualizar inscripciones: " . $e->getMessage());
+            throw $e; 
+        }
+    }
 }

@@ -29,7 +29,6 @@ function TutorHome () {
   }, [id])
 
   const handleManualInscription = () => {
-    console.log("Inscripción manual iniciada")
     // Aquí iría la lógica para abrir un formulario de inscripción manual
     navigate(`/homeTutor/${id}/tutor/InscribirManual/`);
   }
@@ -39,7 +38,7 @@ function TutorHome () {
   }
 
   const handleUploadClick = () => {
-    console.log("Subir comprobante")
+    navigate(`/homeTutor/${id}/tutor/SubirComprobante`)
   }
 
   const viewRecibe = () => {
@@ -118,7 +117,7 @@ function TutorHome () {
       <h3>Subir Comprobante de Pago:</h3>
       <div className="upload-container">
         <button className="upload-btn" onClick={handleUploadClick}>
-          <span className="upload-icon"><Upload/></span>
+          <span className="upload-iconHome"><Upload/></span>
           Subir
         </button>
       </div>
