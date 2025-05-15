@@ -35,7 +35,7 @@ const uploadToCloudinary = async (file, onProgress = () => {}) => {
   }
 }
 
-function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
+function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
   // Ahora puedes usar el competidorId aquí
   /* console.log("ID del competidor en el tercer paso:", competidorId); */
   const [cantidadTutores, setCantidadTutores] = useState(1)
@@ -65,7 +65,7 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
       setBoletaData(data)
       return data
     } catch (error) {
-      console.error("Error al obtener datos de la boleta:", error)
+      console.error("Error al obtener datos de la recibo:", error)
       throw error
     }
   }
@@ -110,12 +110,13 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
   }
 
   const generarPDFBlob = async (data) => {
+    console.log(data)
     const boletaInfo = data || (boletaData ? { ...boletaData } : await obtenerDatosBoleta())
 
     // Asegurarse de que boletaData tiene los datos necesarios
     if (!boletaInfo || !boletaInfo.numero_boleta || !boletaInfo.nombre_pagador || !boletaInfo.monto_total) {
-      console.error("Datos incompletos para generar la boleta:", boletaInfo)
-      throw new Error("Datos incompletos para generar la boleta")
+      console.error("Datos incompletos para generar la recibo:", boletaInfo)
+      throw new Error("Datos incompletos para generar la recibo")
     }
 
     const doc = new jsPDF()
@@ -130,7 +131,7 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
 
     doc.setFontSize(16)
     doc.setTextColor(0, 0, 0)
-    doc.text("BOLETA DE PAGO", 105, 30, { align: "center" })
+    doc.text("RECIBO DE PAGO", 105, 30, { align: "center" })
 
     doc.text("Área :", 14, 52)
     doc.text(boletaInfo.area || "No especificado", 45, 52)
@@ -170,7 +171,7 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
       const pdfBlob = await generarPDFBlob()
 
       // Crear un archivo a partir del blob
-      const file = new File([pdfBlob], `boleta_${boletaData.numero_boleta}.pdf`, { type: "application/pdf" })
+      const file = new File([pdfBlob], `recibo_${boletaData.numero_boleta}.pdf`, { type: "application/pdf" })
 
       // Subir a Cloudinary
       const uploadResult = await uploadToCloudinary(file, (progress) => {
@@ -188,13 +189,13 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
       const url = window.URL.createObjectURL(pdfBlob)
       const link = document.createElement("a")
       link.href = url
-      link.setAttribute("download", `boleta_${boletaData.numero_boleta}.pdf`)
+      link.setAttribute("download", `recibo_${boletaData.numero_boleta}.pdf`)
       document.body.appendChild(link)
       link.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(link)
     } catch (error) {
-      console.error("Error al generar y subir la boleta:", error)
+      console.error("Error al generar y subir la recibo:", error)
 
       // Incluso si hay un error, intentar enviar los datos a la API con una URL predeterminada
       if (boletaData) {
@@ -213,16 +214,18 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
   const guardarURLEnBaseDeDatos = async (url) => {
     try {
       // Intentar enviar datos a la API especificada primero
-      await axios.post("http://127.0.0.1:8000/api/guardarDatos/recibos", {
+      const data ={
         tutor_id: id, 
+        competidor_ci: competidorCI,
         numero_recibo: boletaData.numero_boleta,
         monto_total: boletaData.monto_total,
         fecha_emision: new Date().toISOString().split("T")[0], 
         ruta_pdf: url,
         estado: "Pendiente",
-      })
+      }
+      await axios.post("http://127.0.0.1:8000/api/guardarDatos/recibosInscripcionManual",data ) 
 
-      console.log("Datos enviados correctamente a la API")
+      console.log("Datos enviados correctamente")
 
     } catch (error) {
       console.error("Error al guardar datos:", error)
@@ -241,7 +244,7 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
         const pdfBlob = await generarPDFBlob(boletaData) 
 
         // Crear un archivo a partir del blob
-        const file = new File([pdfBlob], `boleta_${boletaData.numero_boleta}.pdf`, { type: "application/pdf" })
+        const file = new File([pdfBlob], `recibo_${boletaData.numero_boleta}.pdf`, { type: "application/pdf" })
 
         // Subir a Cloudinary
         const uploadResult = await uploadToCloudinary(file, (progress) => {
@@ -255,7 +258,7 @@ function TercerPaso({ competidorId, onBack, onSubmit, onReset }) {
         // Guardar la URL en la base de datos y enviar datos a la API
         await guardarURLEnBaseDeDatos(uploadResult.secure_url)
       } catch (error) {
-        console.error("Error al subir automáticamente la boleta:", error)
+        console.error("Error al subir automáticamente la recibo:", error)
 
         // Incluso si hay un error, intentar enviar los datos a la API con una URL predeterminada
         if (boletaData) {
