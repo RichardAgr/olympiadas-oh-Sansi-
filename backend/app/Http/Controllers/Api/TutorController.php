@@ -194,4 +194,91 @@ class TutorController extends Controller{
             ], 500);
         }
     }
+    public function VerMiPerfil($id)
+{
+    try {
+        $tutor = Tutor::find($id);
+
+        if (!$tutor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tutor no encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'nombres' => $tutor->nombres,
+            'apellidos' => $tutor->apellidos,
+            'correo_electronico' => $tutor->correo_electronico,
+            'telefono' => $tutor->telefono,
+            'ci' => $tutor->ci,
+        ]);
+
+    } catch (\Exception $e) {
+        // En caso de error, capturamos la excepción
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener el perfil',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+public function ActualizarMiPerfil(Request $request, $id)
+{
+    try {
+        $tutor = Tutor::find($id);
+
+        if (!$tutor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tutor no encontrado'
+            ], 404);
+        }
+
+        // Validar los datos de entrada
+        $validator = Validator::make($request->all(), [
+            'nombres' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'correo_electronico' => 'required|email|max:255',
+            'telefono' => 'required|string|max:20',
+            'ci' => 'required|string|max:20',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Actualizar los datos del tutor
+        $tutor->nombres = $request->nombres;
+        $tutor->apellidos = $request->apellidos;
+        $tutor->correo_electronico = $request->correo_electronico;
+        $tutor->telefono = $request->telefono;
+        $tutor->ci = $request->ci;
+        $tutor->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Perfil actualizado correctamente',
+            'data' => [
+                'tutor_id' => $tutor->tutor_id,
+                'nombres' => $tutor->nombres,
+                'apellidos' => $tutor->apellidos,
+                'correo_electronico' => $tutor->correo_electronico,
+                'telefono' => $tutor->telefono,
+                'ci' => $tutor->ci,
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al actualizar el perfil',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+        
+}
 }
