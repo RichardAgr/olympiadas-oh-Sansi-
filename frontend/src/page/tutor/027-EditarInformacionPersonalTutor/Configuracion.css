@@ -202,3 +202,13 @@
     margin-top: 4px;
     display: block;
   }
+   .error {
+     background-color: #ffe5e5;      
+     border-left: 4px solid #ff4d4d;
+     color: #a94442;                
+     padding: 6px 10px;
+     margin-top: 5px;
+     font-size: 13px;
+     border-radius: 4px;
+   }
+   
