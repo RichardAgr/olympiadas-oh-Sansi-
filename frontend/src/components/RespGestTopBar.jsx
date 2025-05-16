@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { UserCircle, Bell } from "lucide-react";
+import "./estilos/estilosTopBar.css";
 
 const RespGestTopBar = () => {
   const [showRolesMenu, setShowRolesMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // 👉 responsive menu
   const timeoutRef = useRef(null);
   const location = useLocation();
+   const [userMenuOpen, setUserMenuOpen] = useState(false); 
+
 
   const handleMouseEnter = () => {
     clearTimeout(timeoutRef.current);
@@ -27,6 +30,9 @@ const RespGestTopBar = () => {
     location.pathname.includes("/respGest/ListIns") ||
     location.pathname.includes("/respGest/ListaTutores")||
     location.pathname.includes("/respGest/ValidarPagos");
+  const toggleUserMenu = () => {
+    setUserMenuOpen(!userMenuOpen)
+  }
 
   return (
     <nav className="topbar">
@@ -82,11 +88,16 @@ const RespGestTopBar = () => {
           </button>
         </li>
 
-        <li>
-          <div className="admin-badge">
+        <li className="user-menu" onClick={toggleUserMenu}>
+          <div className="menu-toggle">
             <UserCircle size={22} color="white" />
             <span>Tu</span>
           </div>
+          {userMenuOpen && (
+            <ul className="menu-dropdown">
+              <li><Link to={`/homePrincipal`}>Cerrar Sesion</Link></li>
+            </ul>
+          )}
         </li>
       </ul>
     </nav>

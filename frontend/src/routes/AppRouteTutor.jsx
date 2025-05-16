@@ -7,7 +7,7 @@ import BoletasView from "../page/tutor/023-VerBoletas/BoletasView";
 import NotificacionesTutor from "../page/tutor/025-Notificaciones/NotificacionesTutor";
 import MiPerfil from "../page/tutor/026-InformacionPersonalTutor/MiPerfil";
 import Configuracion from "../page/tutor/027-EditarInformacionPersonalTutor/Configuracion";
-import Login from "../page/home/login";
+import Login from "../page/Login/login";
 import SubirComprobante from "../page/tutor/024-SubirComprobante/SubirComprobante";
 import InscribirManual from "../page/tutor/020-InscribirManual/InscribirManual";
 import InscripcionExcel from "../page/tutor/017-InscripcionExcel/InscripcionExcel";
