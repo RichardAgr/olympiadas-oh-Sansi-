@@ -172,7 +172,9 @@ class BoletaController extends Controller{
             ], 400);
         }
         // Cambiar la generación del número de boleta para que sea fijo
-$numeroBoleta = 'BOL' . str_pad($competidorId, 5, '0', STR_PAD_LEFT); // Usando el competidor_id como base
+        $numeroBoleta = strval(rand(1000000, 9999999));
+
+
 
         // Datos para generar la boleta
         $boletaData = [
@@ -231,7 +233,7 @@ public function procesarPagoOCR(Request $request){
 
             // 1. Verificar si existe el recibo con el número proporcionado
             $recibo = Recibo::where('numero_recibo', $request->numeroComprobante)
-                           ->where('estado', '!=', 'PAGADO')
+                           ->where('estado', '!=', 'Pagado')
                            ->first();
 
             if (!$recibo) {
@@ -261,7 +263,7 @@ public function procesarPagoOCR(Request $request){
             $imagenBoleta->estado = true;
             $imagenBoleta->save();
 
-            $recibo->estado = 'PAGADO';
+            $recibo->estado = 'Pagado';
             $recibo->save();
 
             // 5. Relacionar la boleta con los competidores que tienen ese número de recibo
@@ -304,7 +306,7 @@ public function procesarPagoOCR(Request $request){
 
             foreach ($detallesRecibo as $detalle) {
                 // Actualizar el estado del detalle del recibo
-                $detalle->estado = 'PAGADO';
+                $detalle->estado = 'Pagado';
                 $detalle->save();
                 
                 // Buscar todas las inscripciones del competidor que no tengan boleta asignada

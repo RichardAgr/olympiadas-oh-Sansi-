@@ -266,6 +266,7 @@ setFormData(prev => ({ ...prev, grado_id })); // 💡 Agregamos grado_id aquí
         step={setCurrentStep}
         onBack={handleBack}
         competidorId={competidorId} // Pasar competidorId aquí
+        competidorCI={formData.ci}
         onReset={() => {
           setCurrentStep(1);
           setFormData({});

@@ -79,7 +79,7 @@ export async function extractDataFromImage(file) {
         numeroComprobante: response.data.numero_comprobante || "No detectado",
         nombreCompleto: response.data.nombre_pagador || "No detectado",
         montoPagado: response.data.monto_total || "0.00",
-        confianza: response.data.confianza || "95%",
+        confianza: response.data.confianza || "0%-NP",
         fechaPago: response.data.fecha_pago || "No detectada",
       },
       previewUrl: URL.createObjectURL(file)

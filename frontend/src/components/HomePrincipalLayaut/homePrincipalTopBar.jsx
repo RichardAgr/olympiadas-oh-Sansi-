@@ -3,9 +3,8 @@ import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { UserCircle, Bell } from "lucide-react";
 import "./estilosTopBar.css";
-import "../estilos/estilosTopBar.css";
 
-const TutorTopBar = () => {
+const homePrincipalTopBar = () => {
   const [showRolesMenu, setShowRolesMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // 👉 responsive menu
   const timeoutRef = useRef(null);
@@ -17,9 +16,7 @@ const TutorTopBar = () => {
   const navigate = useNavigate(); // Para manejar la navegación programáticamente
   const [userMenuOpen, setUserMenuOpen] = useState(false); 
 
-  const handleViewNotificacion = () => {
-    navigate(`/homeTutor/${id}/tutor/NotificacionesTutor`);
-  }
+  
 
   useEffect(() => {
     setShowRolesMenu(false);
@@ -47,52 +44,29 @@ const TutorTopBar = () => {
       <ul className={`topbar-menu ${menuOpen ? "show" : ""}`}>
         <li>
           <Link
-            to={`/homeTutor/${id}/tutor`}
-            className={location.pathname == (`/homeTutor/${id}/tutor`) ? "active" : ""}
+            to={`/homePrincipal`}
+            className={location.pathname == (`/homePrincipal`) ? "active" : ""}
           >
             Inicio
           </Link>
         </li>
 
         <li className="roles-dropdown">
-          <Link
-            to={`/homeTutor/${id}/tutor/ListaCompetidores`}
-            className={location.pathname.startsWith (`/homeTutor/${id}/tutor/ListaCompetidores`)   ? "active" : ""  }
-          >
             Competidores
-          </Link>
         </li>
         
         <li className="roles-dropdown">
-          <Link to={`/homeTutor/${id}/tutor/VerBoletas`}
-            className={location.pathname === `/homeTutor/${id}/tutor/VerBoletas`  ? "active" : ""}>
-          Boletas de Pagos 
+          <Link to={`/homePrincipal/login`}
+            className={location.pathname === `/homePrincipal/login`  ? "active" : ""}>
+          Login
           </Link>
         </li>
 
-        <li>
-          <button className="notification-button" aria-label="Notificaciones"
-            onClick={handleViewNotificacion}>
-            <Bell size={22} color="#0A2E8C" />
-          </button>
-        </li>
 
-        <li className="user-menu" onClick={toggleUserMenu}>
-          <div className="menu-toggle">
-            <UserCircle size={22} color="white" />
-            <span>Tu</span>
-          </div>
-          {userMenuOpen && (
-            <ul className="menu-dropdown">
-              <li><Link to={`/homeTutor/${id}/tutor/MiPerfil`}>Mi perfil</Link></li>
-              <li><Link to={`/homeTutor/${id}/tutor/Configuracion`}>Configuración</Link></li>
-              <li><Link to={`/homePrincipal`}>Cerrar Sesion</Link></li>
-            </ul>
-          )}
-        </li>
+       
       </ul>
     </nav>
   );
 };
 
-export default TutorTopBar;
+export default homePrincipalTopBar;
