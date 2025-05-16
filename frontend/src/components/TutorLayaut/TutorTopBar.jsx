@@ -3,6 +3,7 @@ import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { UserCircle, Bell } from "lucide-react";
 import "./estilosTopBar.css";
+import "../estilos/estilosTopBar.css";
 
 const TutorTopBar = () => {
   const [showRolesMenu, setShowRolesMenu] = useState(false);
@@ -76,16 +77,16 @@ const TutorTopBar = () => {
           </button>
         </li>
 
-        <li className="user-dropdown" onClick={toggleUserMenu}>
-          <div className="admin-badge">
+        <li className="user-menu" onClick={toggleUserMenu}>
+          <div className="menu-toggle">
             <UserCircle size={22} color="white" />
             <span>Tu</span>
           </div>
           {userMenuOpen && (
-            <ul className="dropdown-menu">
+            <ul className="menu-dropdown">
               <li><Link to={`/homeTutor/${id}/tutor/MiPerfil`}>Mi perfil</Link></li>
               <li><Link to={`/homeTutor/${id}/tutor/Configuracion`}>Configuración</Link></li>
-              <li><Link to={`/login`}>Cerrar Sesion</Link></li>
+              <li><Link to={`/homePrincipal`}>Cerrar Sesion</Link></li>
             </ul>
           )}
         </li>

@@ -1,24 +1,22 @@
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react"
 import {UserRoundPen,FileSpreadsheet,Upload} from "lucide-react"
-import { getTutorById} from "../../../../public/riki/homeTutor/datosTutor";
 import axios from "axios"
 import './tutorHome.css'
-import { useNavigate } from "react-router-dom";
 
 
 function TutorHome () {
+  const navigate = useNavigate()
   const {id}= useParams();
   const [tutor, setTutor] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTutorData = async () => {
       try {
-        const response = await getTutorById(id)
-        setTutor(response)
+        const response = await axios.get(`http://127.0.0.1:8000/api/tutor/perfil/${id}`)
+        setTutor(response.data)
         setLoading(false)
       } catch (err) {
         console.error("Error al obtener datos del tutor:", err)
@@ -31,18 +29,20 @@ function TutorHome () {
   }, [id])
 
   const handleManualInscription = () => {
-    console.log("Inscripción manual iniciada")
     // Aquí iría la lógica para abrir un formulario de inscripción manual
     navigate(`/homeTutor/${id}/tutor/InscribirManual/`);
   }
 
   const handleExcelUpload = () => {
-    // Simular clic en input file oculto
-    console.log("Escribir por exel")
+    navigate(`/homeTutor/${id}/tutor/InscripcionExcel`)
   }
 
   const handleUploadClick = () => {
-    console.log("Subir comprobante")
+    navigate(`/homeTutor/${id}/tutor/SubirComprobante`)
+  }
+
+  const viewRecibe = () => {
+    navigate(`/homeTutor/${id}/tutor/VerRecibos`)
   }
 
   if (loading) return <div className="loading">Cargando...</div>
@@ -98,7 +98,7 @@ function TutorHome () {
 
 
       </div>
-      <div className="right-column">
+      <div className="right-columnTutor">
       <div className="inscribir-competidores-card">
       <h3>Inscribir Competidores:</h3>
       <div className="buttons-container">
@@ -117,9 +117,17 @@ function TutorHome () {
       <h3>Subir Comprobante de Pago:</h3>
       <div className="upload-container">
         <button className="upload-btn" onClick={handleUploadClick}>
-          <span className="upload-icon"><Upload/></span>
+          <span className="upload-iconHome"><Upload/></span>
           Subir
         </button>
+      </div>
+    </div>
+    <div className="subir-comprobante-card"onClick={viewRecibe}>
+      <h3>Ver Recibos:</h3>
+      <div className="upload-container">
+       <p>
+        Los recibos que se muestran son los que se tienen que llevar para hacer la cancelacion de la inscripcion.
+       </p>
       </div>
     </div>
       </div>

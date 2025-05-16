@@ -1,102 +1,154 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
-import { CheckCircle } from "lucide-react";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import "./TercerPaso.css";
-import { useParams } from "react-router-dom";
+import { useState } from "react"
+import PropTypes from "prop-types"
+import { CheckCircle, Loader } from "lucide-react"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
+import "./TercerPaso.css"
+import { useParams } from "react-router-dom"
+import axios from "axios"
 
-function TercerPaso({ onBack, onSubmit }) {
-  const [cantidadTutores, setCantidadTutores] = useState(1);
+// Función para subir a Cloudinary
+const uploadToCloudinary = async (file, onProgress = () => {}) => {
+  try {
+    const uploadPreset = "veltrixImg" 
+    const cloudName = "dq5zw44wg" 
+
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("upload_preset", uploadPreset)
+    formData.append("resource_type", "auto") // Importante: esto permite a Cloudinary detectar automáticamente el tipo de archivo
+
+    // Usar axios para la subida
+    const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total) {
+          const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
+          onProgress(progress)
+        }
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    console.error("Error al subir a Cloudinary:", error)
+    throw error
+  }
+}
+
+function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
+  // Ahora puedes usar el competidorId aquí
+  /* console.log("ID del competidor en el tercer paso:", competidorId); */
+  const [cantidadTutores, setCantidadTutores] = useState(1)
   const [tutores, setTutores] = useState([
-    { nombres: "", apellidos: "", correo: "", telefono: "", ci: "", relacion: "" },
-    { nombres: "", apellidos: "", correo: "", telefono: "", ci: "", relacion: "" },
-  ]);
-  const [errors, setErrors] = useState([{}, {}]);
-  const [exito, setExito] = useState(false);
-  const { idTutor } = useParams();
+    { nombres: "", apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" },
+    { nombres: "", apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" },
+  ])
+  const tutoresFinal = tutores.slice(0, cantidadTutores).map((t, i) => ({
+    ...t,
+    nivel_responsabilidad: i === 0 ? "principal" : "secundario",
+  }))
+  const [errors, setErrors] = useState([{}, {}])
+  const [exito, setExito] = useState(false)
+  const { id } = useParams()
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [pdfUploaded, setPdfUploaded] = useState(false)
+  const [cloudinaryUrl, setCloudinaryUrl] = useState("")
+  const [boletaData, setBoletaData] = useState(null)
+
+  // Función para obtener los datos de la boleta
+  const obtenerDatosBoleta = async () => {
+    try {
+      const response = await axios.post(`http://127.0.0.1:8000/api/boleta/generar/${competidorId}`)
+      const data = response.data.boleta
+
+      setBoletaData(data)
+      return data
+    } catch (error) {
+      console.error("Error al obtener datos de la recibo:", error)
+      throw error
+    }
+  }
 
   const handleTutorChange = (index, e) => {
-    const { name, value } = e.target;
-    const nuevosTutores = [...tutores];
-    nuevosTutores[index][name] = value;
-    setTutores(nuevosTutores);
-  };
+    const { name, value } = e.target
+    const nuevosTutores = [...tutores]
+    nuevosTutores[index][name] = value
+    setTutores(nuevosTutores)
+  }
 
   const validateTutor = (tutor) => {
-    const err = {};
-    if (tutor.nombres.trim().length < 3) err.nombres = "Mínimo 3 caracteres.";
-    if (tutor.apellidos.trim().length < 6) err.apellidos = "Mínimo 6 caracteres.";
-    if (!/\S+@\S+\.\S+/.test(tutor.correo)) err.correo = "Correo inválido.";
-    if (tutor.telefono.trim().length < 7) err.telefono = "Mínimo 7 dígitos.";
-    if (tutor.ci.trim().length < 7) err.ci = "Mínimo 7 caracteres.";
-    if (!tutor.relacion) err.relacion = "Seleccione una relación.";
-    return err;
-  };
+    const err = {}
+    if (tutor.nombres.trim().length < 3) err.nombres = "Mínimo 3 caracteres."
+    if (tutor.apellidos.trim().length < 6) err.apellidos = "Mínimo 6 caracteres."
+    if (!/\S+@\S+\.\S+/.test(tutor.correo_electronico)) err.correo = "Correo inválido."
+    if (tutor.telefono.trim().length < 7) err.telefono = "Mínimo 7 dígitos."
+    if (tutor.ci.trim().length < 7) err.ci = "Mínimo 7 caracteres."
+    if (!tutor.relacion) err.relacion = "Seleccione una relación."
+    return err
+  }
 
-  const handleSubmit = () => {
-    const errores = tutores.slice(0, cantidadTutores).map(validateTutor);
-    setErrors(errores);
+  const handleSubmit = async () => {
+    const errores = tutores.slice(0, cantidadTutores).map(validateTutor)
+    setErrors(errores)
 
-    const tieneErrores = errores.some(err => Object.keys(err).length > 0);
+    const tieneErrores = errores.some((err) => Object.keys(err).length > 0)
     if (!tieneErrores) {
-      onSubmit({
-        tutor_id: idTutor,
-        tutores: tutores.slice(0, cantidadTutores),
-      });
-      setExito(true);
+      try {
+        const response = await axios.post(
+          `http://localhost:8000/api/tutor/${id}/registrar-tutores`,
+          { tutores: tutoresFinal, competidor_id: competidorId },
+        )
+        setExito(true)
+
+        await obtenerDatosBoleta()
+      } catch (error) {
+        console.error("Error al registrar tutores:", error.response?.data || error.message)
+        console.log("Detalles de error:", error.response?.data?.errors)
+      }
     }
-  };
+  }
 
-  const generarBoletaPDF = async () => {
-    const boletaData = {
-      numero: "0000123",
-      periodo: "1-2025",
-      area: "Matemáticas",
-      nombre: "Erika Maite Sarabia Maldonado",
-      montoTotal: 15,
-      competidores: [
-        {
-          nombre: "Kevin Alejandro Jaimes Guaman",
-          categoria: "Guacamayo",
-          monto: 15.0,
-        },
-      ],
-    };
+  const generarPDFBlob = async (data) => {
+    console.log(data)
+    const boletaInfo = data || (boletaData ? { ...boletaData } : await obtenerDatosBoleta())
 
-    const doc = new jsPDF();
+    // Asegurarse de que boletaData tiene los datos necesarios
+    if (!boletaInfo || !boletaInfo.numero_boleta || !boletaInfo.nombre_pagador || !boletaInfo.monto_total) {
+      console.error("Datos incompletos para generar la recibo:", boletaInfo)
+      throw new Error("Datos incompletos para generar la recibo")
+    }
 
-    doc.setFontSize(10);
-    doc.text("UNIVERSIDAD MAYOR DE SAN SIMON", 14, 10);
-    doc.text("DIRECCION ADMINISTRATIVA Y FINANCIERA", 14, 15);
+    const doc = new jsPDF()
 
-    doc.setFontSize(12);
-    doc.setTextColor(255, 0, 0);
-    doc.text(`Nro. ${boletaData.numero}`, 160, 15);
+    doc.setFontSize(10)
+    doc.text("UNIVERSIDAD MAYOR DE SAN SIMON", 14, 10)
+    doc.text("DIRECCION ADMINISTRATIVA Y FINANCIERA", 14, 15)
 
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
-    doc.text("BOLETA DE PAGO", 105, 30, { align: "center" });
+    doc.setFontSize(12)
+    doc.setTextColor(255, 0, 0)
+    doc.text(`Nro. ${boletaInfo.numero_boleta}`, 160, 15)
 
-    doc.setFontSize(12);
-    doc.text("Periodo :", 14, 45);
-    doc.text(boletaData.periodo, 45, 45);
+    doc.setFontSize(16)
+    doc.setTextColor(0, 0, 0)
+    doc.text("RECIBO DE PAGO", 105, 30, { align: "center" })
 
-    doc.text("Área :", 14, 52);
-    doc.text(boletaData.area, 45, 52);
+    doc.text("Área :", 14, 52)
+    doc.text(boletaInfo.area || "No especificado", 45, 52)
 
-    doc.text("Nombre :", 14, 59);
-    doc.text(boletaData.nombre, 45, 59);
+    doc.text("Nombre :", 14, 59)
+    doc.text(boletaInfo.nombre_pagador || "No especificado", 45, 59) // Nombre del tutor
 
-    doc.text("Monto Total (Bs) :", 14, 66);
-    doc.text(boletaData.montoTotal.toString(), 60, 66);
+    doc.text("Monto Total (Bs) :", 14, 66)
+    doc.text(boletaInfo.monto_total.toString() || "0", 60, 66)
 
-    const bodyData = boletaData.competidores.map((c, i) => [
+    // Preparar los datos de los competidores para la tabla
+    const bodyData = boletaInfo.competidores.map((c, i) => [
       `${i + 1}.`,
-      c.nombre,
-      c.categoria,
-      c.monto.toFixed(2),
-    ]);
+      c.nombre, // Nombre del competidor
+      c.categoria || "No especificada", // Si la categoría es nula o vacía, mostrar un valor por defecto
+      c.monto.toFixed(2), // Monto con 2 decimales
+    ])
 
     autoTable(doc, {
       startY: 75,
@@ -104,37 +156,139 @@ function TercerPaso({ onBack, onSubmit }) {
       body: bodyData,
       styles: { fontSize: 10, cellPadding: 3 },
       headStyles: { fillColor: [255, 255, 255], textColor: 0 },
-    });
+    })
 
-    // Guarda localmente
-    doc.save("boleta_pago.pdf");
+    // Devolver el PDF como blob
+    return doc.output("blob")
+  }
 
-    // Prepara la solicitud para el backend, aunque aún no esté conectado
+  const generarBoletaPDF = async () => {
     try {
-      const pdfBlob = doc.output("blob");
-      const formData = new FormData();
-      formData.append("file", pdfBlob, `boleta_${boletaData.numero}.pdf`);
+      setIsUploading(true)
+      setUploadProgress(0)
 
-      // Aquí se conectará al backend cuando esté listo
-      const response = await fetch(`http://localhost:8000/api/guardar-boleta/${idTutor}`, { 
-        method: "POST",
-        body: formData,
-      });
+      // Generar el PDF como blob
+      const pdfBlob = await generarPDFBlob()
 
-      const result = await response.json();
-      if (!response.ok) {
-        console.error("Error al guardar en el servidor:", result.message || result);
-      } else {
-        console.log("Boleta guardada en servidor:", result.url || result);
-      }
+      // Crear un archivo a partir del blob
+      const file = new File([pdfBlob], `recibo_${boletaData.numero_boleta}.pdf`, { type: "application/pdf" })
+
+      // Subir a Cloudinary
+      const uploadResult = await uploadToCloudinary(file, (progress) => {
+        setUploadProgress(progress)
+      })
+
+      // Guardar la URL de Cloudinary
+      setCloudinaryUrl(uploadResult.secure_url)
+      setPdfUploaded(true)
+
+      // Guardar la URL en la base de datos y enviar datos a la API
+      await guardarURLEnBaseDeDatos(uploadResult.secure_url)
+
+      // Descargar el PDF para el usuario
+      const url = window.URL.createObjectURL(pdfBlob)
+      const link = document.createElement("a")
+      link.href = url
+      link.setAttribute("download", `recibo_${boletaData.numero_boleta}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(link)
     } catch (error) {
-      console.error("Fallo en la subida de PDF:", error);
+      console.error("Error al generar y subir la recibo:", error)
+
+      // Incluso si hay un error, intentar enviar los datos a la API con una URL predeterminada
+      if (boletaData) {
+        try {
+          await guardarURLEnBaseDeDatos("https://res.cloudinary.com/dq5zw44wg/raw/upload/error_pdf.pdf")
+        } catch (apiError) {
+          console.error("Error al enviar datos a la API:", apiError)
+        }
+      }
+    } finally {
+      setIsUploading(false)
     }
-  };
+  }
+
+  // Función para guardar la URL en la base de datos
+  const guardarURLEnBaseDeDatos = async (url) => {
+    try {
+      // Intentar enviar datos a la API especificada primero
+      const data ={
+        tutor_id: id, 
+        competidor_ci: competidorCI,
+        numero_recibo: boletaData.numero_boleta,
+        monto_total: boletaData.monto_total,
+        fecha_emision: new Date().toISOString().split("T")[0], 
+        ruta_pdf: url,
+        estado: "Pendiente",
+      }
+      await axios.post("http://127.0.0.1:8000/api/guardarDatos/recibosInscripcionManual",data ) 
+
+      console.log("Datos enviados correctamente")
+
+    } catch (error) {
+      console.error("Error al guardar datos:", error)
+      throw error 
+    }
+  }
+
+  const handleNuevaInscripcion = async () => {
+    // Si el PDF no se ha subido aún, subirlo automáticamente
+    if (!pdfUploaded && boletaData) {
+      try {
+        setIsUploading(true)
+        setUploadProgress(0)
+
+
+        const pdfBlob = await generarPDFBlob(boletaData) 
+
+        // Crear un archivo a partir del blob
+        const file = new File([pdfBlob], `recibo_${boletaData.numero_boleta}.pdf`, { type: "application/pdf" })
+
+        // Subir a Cloudinary
+        const uploadResult = await uploadToCloudinary(file, (progress) => {
+          setUploadProgress(progress)
+        })
+
+        // Guardar la URL de Cloudinary
+        setCloudinaryUrl(uploadResult.secure_url)
+        setPdfUploaded(true)
+
+        // Guardar la URL en la base de datos y enviar datos a la API
+        await guardarURLEnBaseDeDatos(uploadResult.secure_url)
+      } catch (error) {
+        console.error("Error al subir automáticamente la recibo:", error)
+
+        // Incluso si hay un error, intentar enviar los datos a la API con una URL predeterminada
+        if (boletaData) {
+          try {
+            await guardarURLEnBaseDeDatos("https://res.cloudinary.com/dq5zw44wg/raw/upload/error_pdf.pdf")
+          } catch (apiError) {
+            console.error("Error al enviar datos a la API:", apiError)
+          }
+        }
+      } finally {
+        setIsUploading(false)
+        // Continuar con la nueva inscripción
+        onReset()
+      }
+    } else if (pdfUploaded && cloudinaryUrl) {
+      try {
+        await guardarURLEnBaseDeDatos(cloudinaryUrl)
+      } catch (error) {
+        console.error("Error al enviar datos a la API:", error)
+      } finally {
+        onReset()
+      }
+    } else {
+      onReset()
+    }
+  }
 
   const renderTutorCard = (index) => {
-    const tutor = tutores[index];
-    const err = errors[index] || {};
+    const tutor = tutores[index]
+    const err = errors[index] || {}
 
     return (
       <div className="tutor-card" key={index}>
@@ -171,12 +325,12 @@ function TercerPaso({ onBack, onSubmit }) {
           <div className="form-control-wrapper">
             <input
               type="email"
-              name="correo"
-              value={tutor.correo}
+              name="correo_electronico"
+              value={tutor.correo_electronico}
               onChange={(e) => handleTutorChange(index, e)}
               className={err.correo ? "input-error" : ""}
             />
-            {err.correo && <div className="error-message">{err.correo}</div>}
+            {err.correo_electronico && <div className="error-message">{err.correo_electronico}</div>}
           </div>
         </div>
 
@@ -216,10 +370,14 @@ function TercerPaso({ onBack, onSubmit }) {
                 <label key={rel}>
                   <input
                     type="radio"
-                    name="relacion"
+                    name={`relacion-${index}`}
                     value={rel}
                     checked={tutor.relacion === rel}
-                    onChange={(e) => handleTutorChange(index, e)}
+                    onChange={(e) =>
+                      handleTutorChange(index, {
+                        target: { name: "relacion", value: e.target.value },
+                      })
+                    }
                   />
                   {rel}
                 </label>
@@ -229,18 +387,37 @@ function TercerPaso({ onBack, onSubmit }) {
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderExito = () => (
     <div className="exito-container">
       <CheckCircle size={80} color="#3b82f6" strokeWidth={2} />
       <h2>¡Competidor inscrito con éxito!</h2>
-      <button className="descargar-button" onClick={generarBoletaPDF}>
-        Descargar Boleta
-      </button>
+
+      {isUploading ? (
+        <div className="upload-progress">
+          <Loader className="animate-spin" size={24} />
+          <p>Subiendo PDF a Cloudinary: {uploadProgress}%</p>
+        </div>
+      ) : (
+        <>
+          <button className="descargar-button" onClick={generarBoletaPDF} disabled={isUploading}>
+            {pdfUploaded ? "Descargar Recibo" : "Generar y Descargar Recibo"}
+          </button>
+          <button className="descargar-button" onClick={handleNuevaInscripcion} disabled={isUploading}>
+            Nueva inscripción
+          </button>
+        </>
+      )}
+
+      {pdfUploaded && (
+        <div className="pdf-uploaded-info">
+          <p>PDF subido correctamente a Cloudinary</p>
+        </div>
+      )}
     </div>
-  );
+  )
 
   return (
     <div className="tercer-paso-container">
@@ -275,12 +452,14 @@ function TercerPaso({ onBack, onSubmit }) {
         </>
       )}
     </div>
-  );
+  )
 }
 
 TercerPaso.propTypes = {
+  competidorId: PropTypes.number.isRequired,
   onBack: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-};
+  onReset: PropTypes.func.isRequired,
+}
 
-export default TercerPaso;
+export default TercerPaso

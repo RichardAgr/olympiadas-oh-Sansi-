@@ -1,22 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './MiPerfil.css';
 import perfilDefault from '../../../assets/perfil-default.png';
 import correoIcon from '../../../assets/email.png'; 
 import telefonoIcon from '../../../assets/telefono.png'; 
 import ciIcon from '../../../assets/ci.png';
+import axios from 'axios';
+import './MiPerfil.css';
 
 function MiPerfil() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [datosTutor, setDatosTutor] = useState(null);
-
+  
   useEffect(() => {
-    fetch('/datosTutor.json')
-      .then(res => res.json())
-      .then(data => setDatosTutor(data))
-      .catch(error => console.error('Error cargando datos del tutor:', error));
-  }, []);
+    try {
+      const getDataTutor = async ()=>{
+        const response = await axios.get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Tutor`)
+        setDatosTutor(response.data)
+      }
+      getDataTutor()
+    } catch (error) {
+      console.log('Error cargando datos del tutor:', error)
+    }
+  }, [id]);
+
 
   if (!datosTutor) {
     return <p>Cargando datos del tutor...</p>;
@@ -30,11 +37,11 @@ function MiPerfil() {
         <div className="info-personal">
           <div className="campo">
             <label>Nombre :</label>
-            <div className="valor">{datosTutor.nombre}</div>
+            <div className="valor">{datosTutor.nombres}</div>
           </div>
           <div className="campo">
             <label>Apellido :</label>
-            <div className="valor">{datosTutor.apellido}</div>
+            <div className="valor">{datosTutor.apellidos}</div>
           </div>
         </div>
       </div>
@@ -43,7 +50,7 @@ function MiPerfil() {
           <label>Correo :</label>
           <div className="valor">
             <img src={correoIcon} alt="Correo" className="icono" />
-            {datosTutor.correo}
+            {datosTutor.correo_electronico}
           </div>
         </div>
         <div className="campo">
@@ -57,7 +64,7 @@ function MiPerfil() {
           <label>Número de Carnet :</label>
           <div className="valor">
             <img src={ciIcon} alt="Carnet de Identidad" className="icono" />
-            {datosTutor.carnet}
+            {datosTutor.ci}
           </div>
         </div>
       </div>

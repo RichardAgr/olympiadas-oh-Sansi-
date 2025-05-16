@@ -1,0 +1,43 @@
+.menu-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  background-color:#061A8B;
+  color: white;
+  border-radius: 20px;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  min-width: 160px;
+  z-index: 1000;
+}
+
+.menu-dropdown li {
+  padding: 0.5rem 1rem;
+}
+
+.menu-dropdown li a {
+  color: #333;
+  text-decoration: none;
+  display: block;
+}
+
+.menu-dropdown li:hover {
+  background-color: #f0f0f0;
+}

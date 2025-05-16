@@ -1,7 +1,7 @@
 import { useParams} from 'react-router-dom';
 import { useState, useEffect } from "react"
-import { getNotificacionesByUsuario} from '../../../../public/riki/HU25/notificacion';
 import NotificacionesList from '../../../components/notificacionesList/NotificacionesList';
+import axios from  "axios"
 import "./notificacionesTutor.css"
 
 function NotificacionesTutor() {
@@ -13,11 +13,11 @@ function NotificacionesTutor() {
     const fetchNotificaciones = async () => {
       try {
         setLoading(true)
-        const data = await getNotificacionesByUsuario(id)
-        setNotificaciones(data[id] || [])
+        const response = await axios.get(`http://127.0.0.1:8000/api/tutor/VerNotificaciones/${id}/Notificaciones`)
+        setNotificaciones(response.data.data || [])
       } catch (err) {
-        setError("Error al cargar las notificaciones")
-        console.error(err)
+        setError(`Error al cargar las notificaciones:${err.message}`)
+        console.error(err.message)
       } finally {
         setLoading(false)
       }
@@ -35,7 +35,7 @@ function NotificacionesTutor() {
         <p className="error-message">{error}</p>
       ) : (
         
-        <NotificacionesList notificaciones={notificaciones} setNotificaciones={setNotificaciones} />
+        <NotificacionesList idTutor={id} notificaciones={notificaciones} setNotificaciones={setNotificaciones} />
       )}
     </div>
   ); 

@@ -28,6 +28,11 @@ const HomeAdmin = () => {
           <img src={areaRegIcon} alt="Ver Áreas Registradas" />
           <span>Ver Áreas Registradas</span>
         </Link>
+
+        <Link to="configurar/datosCompetencia" className="card">
+          <img src="https://ohsansi.umss.edu.bo/user/themes/quark/images/logo.png" alt="Logo oh sansi" />
+          <span>Configurar Datos de la Competencia</span>
+        </Link>
       </div>
 
 

@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import "./InscribirManual.css";
 import SegundoPaso from "./SegundoPaso";
 import TercerPaso from "./TercerPaso";
+import axios from "axios";
 
 function InscribirManual() {
+  const {id}=useParams()
+  const [competidorId, setCompetidorId] = useState(null);
   const [formData, setFormData] = useState({
     nombres: "",
     apellidos: "",
@@ -11,12 +15,12 @@ function InscribirManual() {
     fecha_nacimiento: "",
     colegio: "",
     curso: "",
-    nivel: "Secundaria",
+    nivel: "",
     departamento: "",
     provincia: "",
-    area: "",
-    categoria: "",
-    rango: "",
+    //area: "",
+    //categoria: "",
+    //rango: "",
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -36,8 +40,35 @@ function InscribirManual() {
     if (formData.ci.trim().length < 7) newErrors.ci = "Debe tener al menos 7 caracteres.";
     if (formData.colegio.trim().length < 5) newErrors.colegio = "Debe tener al menos 5 caracteres.";
     if (formData.provincia.trim().length < 4) newErrors.provincia = "Debe tener al menos 4 caracteres.";
+    if (!formData.curso) newErrors.curso = "Debe seleccionar un curso.";
+    if (!formData.nivel) newErrors.nivel = "Debe seleccionar un nivel educativo.";
+    if (!formData.departamento) newErrors.departamento = "Debe seleccionar un departamento.";
 
+    const selectedYear = new Date(formData.fecha_nacimiento).getFullYear();
+    const currentYear = new Date().getFullYear();
+    if (!formData.fecha_nacimiento) {
+      newErrors.fecha_nacimiento = "Debe ingresar una fecha de nacimiento.";
+    } else if (selectedYear > currentYear - 5) {
+      newErrors.fecha_nacimiento = `Fecha de naimiento no valida.`;
+    }
     setErrors(newErrors);
+
+    // Traducción básica de curso + nivel a grado_id (ajusta esto si tu backend usa otros ID)
+const calcularGradoId = (nivel, curso) => {
+  if (nivel === "Primaria") return Number(curso); // 1 a 6
+  if (nivel === "Secundaria") return 6 + Number(curso); // 7 a 12
+  return null;
+};
+
+const grado_id = calcularGradoId(formData.nivel, formData.curso);
+
+// Validación extra (por si acaso)
+if (!grado_id) {
+  alert("No se pudo determinar el grado escolar.");
+  return;
+}
+
+setFormData(prev => ({ ...prev, grado_id })); // 💡 Agregamos grado_id aquí
 
     if (Object.keys(newErrors).length === 0) {
       setCurrentStep(2);
@@ -48,20 +79,10 @@ function InscribirManual() {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
-  const handlePaso2Next = (paso2Data) => {
+  const handlePaso2Next = (paso2Data, nuevoCompetidorId) => {
     setFormData((prev) => ({ ...prev, ...paso2Data }));
+    setCompetidorId(Number(nuevoCompetidorId));
     setCurrentStep(3);
-  };
-
-  const handleFinalSubmit = (tutorId) => {
-    const datosCompletos = {
-      tutor_id: tutorId,
-      competidor: {
-        ...formData,
-      },
-    };
-    console.log("Datos enviados:", datosCompletos);
-    // Aquí puedes enviar datosCompletos al backend
   };
 
   return (
@@ -129,6 +150,7 @@ function InscribirManual() {
               value={formData.fecha_nacimiento}
               onChange={handleChange}
             />
+            {errors.fecha_nacimiento && <div className="error-message">{errors.fecha_nacimiento}</div>}
           </div>
 
           <div className="form-group">
@@ -154,6 +176,7 @@ function InscribirManual() {
               <option value="5">5to</option>
               <option value="6">6to</option>
             </select>
+            {errors.curso && <div className="error-message">{errors.curso}</div>}
           </div>
 
           <div className="form-group">
@@ -182,6 +205,7 @@ function InscribirManual() {
                 <label htmlFor="secundaria">Secundaria</label>
               </div>
             </div>
+            {errors.nivel && <div className="error-message">{errors.nivel}</div>}
           </div>
 
           <div className="form-group">
@@ -202,6 +226,7 @@ function InscribirManual() {
               <option value="Santa Cruz">Santa Cruz</option>
               <option value="Tarija">Tarija</option>
             </select>
+            {errors.departamento && <div className="error-message">{errors.departamento}</div>}
           </div>
 
           <div className="form-group">
@@ -230,7 +255,7 @@ function InscribirManual() {
       {currentStep === 2 && (
         <SegundoPaso
           formData={formData}
-          setFormData={setFormData}
+          //setFormData={setFormData}
           onBack={handleBack}
           onNext={handlePaso2Next}
         />
@@ -238,9 +263,17 @@ function InscribirManual() {
 
       {currentStep === 3 && (
         <TercerPaso
-          onBack={handleBack}
-          onSubmit={handleFinalSubmit}
-        />
+        step={setCurrentStep}
+        onBack={handleBack}
+        competidorId={competidorId} // Pasar competidorId aquí
+        competidorCI={formData.ci}
+        onReset={() => {
+          setCurrentStep(1);
+          setFormData({});
+          setCompetidorId(null);
+        }}
+        
+      />
       )}
     </div>
   );

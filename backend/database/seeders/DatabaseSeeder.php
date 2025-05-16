@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder{
             Boleta::class,
             CompetidorCompetencia::class, 
             Cronograma::class,
-            ImagenBoleta::class,
+           ImagenBoleta::class,
             Notificacion::class,
         ]);
     }

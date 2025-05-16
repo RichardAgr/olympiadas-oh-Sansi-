@@ -19,17 +19,19 @@ const ListComp = () => {
     const fetchCompetidores = async () => {
       try {
         setCargando(true);
-        const response = await axios.get("/JOSE/lista-inscritos.json");
-        
-        // Filtrar competidores por tutor_id
-        const competidoresDelTutor = response.data.filter(comp => comp.tutor_id.toString() === id);
-        
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/tutores/${id}/competidoresTutor`
+        );
+        const competidoresDelTutor = response.data.data;
+
         if (competidoresDelTutor.length > 0) {
           setCompetidores(competidoresDelTutor);
           setTutorExiste(true);
-          
+
           // Obtener áreas únicas de los competidores
-          const areasUnicas = [...new Set(competidoresDelTutor.map(comp => comp.area))];
+          const areasUnicas = [
+            ...new Set(competidoresDelTutor.map((comp) => comp.area)),
+          ];
           setAreasDisponibles(["Todas las áreas", ...areasUnicas]);
         } else {
           setTutorExiste(false);
@@ -143,7 +145,8 @@ const ListComp = () => {
 
       {filteredCompetidores.length === 0 ? (
         <div className="no-results-message">
-          No se encontraron competidores que coincidan con los criterios de búsqueda.
+          No se encontraron competidores que coincidan con los criterios de
+          búsqueda.
         </div>
       ) : (
         <table className="competitors-table">
@@ -159,7 +162,9 @@ const ListComp = () => {
           </thead>
           <tbody>
             {filteredCompetidores.map((comp) => (
-              <tr key={comp.competidor_id}>
+              <tr
+                key={`${comp.competidor_id}-${comp.area.replace(/\s+/g, "-")}`}
+              >
                 <td>{comp.nombre_completo}</td>
                 <td>{comp.area}</td>
                 <td>{comp.categoria}</td>

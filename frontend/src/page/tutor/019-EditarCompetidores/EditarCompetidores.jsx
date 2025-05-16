@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./EditarCompetidores.css";
-import { CheckCheck } from 'lucide-react';
+import { CheckCheck } from "lucide-react";
 
 function EditarCompetidores() {
   const { id: tutorId, idCompetidor } = useParams();
@@ -18,6 +18,7 @@ function EditarCompetidores() {
     provincia: "",
     areasInscritas: "",
   });
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -26,10 +27,10 @@ function EditarCompetidores() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/JOSE/competidores.json");
-        const competidorEncontrado = response.data.find(
-          (c) => c.competidor_id === parseInt(idCompetidor) && c.tutor_id.toString() === tutorId
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/informacionCompetidores/${idCompetidor}/competidor`
         );
+        const competidorEncontrado = response.data.informacion_competidor;
 
         if (!competidorEncontrado) {
           throw new Error("Competidor no encontrado");
@@ -45,28 +46,105 @@ function EditarCompetidores() {
     fetchData();
   }, [idCompetidor, tutorId]);
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (competidor.nombres.trim().length < 3)
+      newErrors.nombres = "Debe tener al menos 3 caracteres.";
+    if (competidor.apellidos.trim().length < 6)
+      newErrors.apellidos = "Debe tener al menos 6 caracteres.";
+    if (competidor.ci.trim().length < 7)
+      newErrors.ci = "Debe tener al menos 7 caracteres.";
+    if (competidor.departamento.trim().length < 4)
+      newErrors.departamento = "Debe tener al menos 4 caracteres.";
+    if (competidor.provincia.trim().length < 4)
+      newErrors.provincia = "Debe tener al menos 4 caracteres.";
+
+    // Validación de fecha de nacimiento
+    if (!competidor.fecha_nacimiento) {
+      newErrors.fecha_nacimiento = "La fecha de nacimiento es requerida";
+    } else {
+      const birthDate = new Date(competidor.fecha_nacimiento);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+
+      if (age < 5 || age > 18) {
+        newErrors.fecha_nacimiento = "La edad debe estar entre 5 y 18 años";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowConfirmationModal(true);
+
+    if (validateForm()) {
+      setShowConfirmationModal(true);
+    }
   };
 
   const confirmSave = async () => {
     setShowConfirmationModal(false);
     setLoading(true);
-
+  
     try {
-      //await axios.put(`/api/competidores/${idCompetidor}`, competidor);
+      // Formatear la fecha antes de enviarla
+      const formattedDate = formatDateForAPI(competidor.fecha_nacimiento);
+      
+      await axios.put(
+        `http://127.0.0.1:8000/api/tutor/editarCompetidor/${idCompetidor}`,
+        {
+          nombres: competidor.nombres,
+          apellidos: competidor.apellidos,
+          ci: competidor.ci,
+          fechaNacimiento: formattedDate, // Usar la fecha formateada
+          departamento: competidor.departamento,
+          provincia: competidor.provincia,
+        }
+      );
       setShowSuccessModal(true);
-
       setTimeout(() => {
         setShowSuccessModal(false);
-        navigate(`/homeTutor/${tutorId}/tutor/ListaCompetidores`);
+        navigate(-1);
       }, 2000);
     } catch (err) {
-      setError(err.message || "Error al actualizar los datos");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Error al actualizar los datos"
+      );
     } finally {
       setLoading(false);
     }
+  };
+  
+  // Función para formatear la fecha para la API
+  const formatDateForAPI = (dateString) => {
+    if (!dateString) return "";
+    
+    // Si ya está en formato YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return dateString;
+    }
+  
+    // Para formato "dd/mm/yyyy" o "dd-mm-yyyy"
+    if (dateString.includes("/") || dateString.includes("-")) {
+      const [day, month, year] = dateString.split(/[/-]/);
+      return `${year.padStart(4, "20")}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+  
+    // Para otros formatos, devuelve una cadena vacía o maneja según sea necesario
+    return "";
   };
 
   const cancelSave = () => {
@@ -74,15 +152,59 @@ function EditarCompetidores() {
   };
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
-    setCompetidor((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
+  const { id, value } = e.target;
+
+  // Filtrar números solo si el campo es nombre, apellidos o provincia
+  let newValue = value;
+  if (id === "nombres" || id === "apellidos" || id === "provincia") {
+    newValue = value.replace(/[0-9]/g, "");
+  }
+
+  setCompetidor((prev) => ({
+    ...prev,
+    [id]: newValue,
+  }));
+
+  if (errors[id]) {
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[id];
+      return newErrors;
+    });
+  }
+};
+
 
   const handleCancel = () => {
-    navigate(`/homeTutor/${tutorId}/tutor/ListaCompetidores`);
+    navigate(-1);
+  };
+
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return dateString;
+    }
+
+    // Para formato "dd/mm/yyyy" o "dd-mm-yyyy"
+    if (dateString.includes("/") || dateString.includes("-")) {
+      const [day, month, year] = dateString.split(/[/-]/);
+      return `${year.padStart(4, "20")}-${month.padStart(
+        2,
+        "0"
+      )}-${day.padStart(2, "0")}`;
+    }
+
+    // Para formato "ddmmyy" (como "06/06/07")
+    if (dateString.length === 8 && dateString.includes("/")) {
+      const [day, month, year] = dateString.split("/");
+      return `20${year.padStart(2, "0")}-${month.padStart(
+        2,
+        "0"
+      )}-${day.padStart(2, "0")}`;
+    }
+
+    return "";
   };
 
   if (loading && !competidor.nombres) {
@@ -90,7 +212,7 @@ function EditarCompetidores() {
   }
 
   if (error) {
-    return <div className="error-message">Error: {error}</div>;
+    return <div className="error-message2">Error: {error}</div>;
   }
 
   return (
@@ -103,10 +225,14 @@ function EditarCompetidores() {
           <input
             type="text"
             id="nombres"
+            className="imputEdit"
             value={competidor.nombres}
             onChange={handleChange}
             required
           />
+          {errors.nombres && (
+            <span className="error-message2">{errors.nombres}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -114,10 +240,14 @@ function EditarCompetidores() {
           <input
             type="text"
             id="apellidos"
+            className="imputEdit"
             value={competidor.apellidos}
             onChange={handleChange}
             required
           />
+          {errors.apellidos && (
+            <span className="error-message2">{errors.apellidos}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -125,21 +255,33 @@ function EditarCompetidores() {
           <input
             type="text"
             id="ci"
+            className="imputEdit"
             value={competidor.ci}
-            onChange={handleChange}
+            onChange={(e) => {
+              // Validación para aceptar solo números
+              if (/^\d*$/.test(e.target.value)) {
+                handleChange(e);
+              }
+            }}
             required
           />
+          {errors.ci && <span className="error-message2">{errors.ci}</span>}
         </div>
 
         <div className="form-group">
           <label htmlFor="fechaNacimiento">Fecha de Nacimiento:</label>
           <input
             type="date"
-            id="fechaNacimiento"
-            value={competidor.fechaNacimiento}
+            id="fecha_nacimiento"
+            name="fecha_nacimiento"
+            className="imputEdit"
+            value={formatDateForInput(competidor.fecha_nacimiento)}
             onChange={handleChange}
             required
           />
+          {errors.fecha_nacimiento && (
+            <span className="error-message2">{errors.fecha_nacimiento}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -154,13 +296,27 @@ function EditarCompetidores() {
 
         <div className="form-group">
           <label htmlFor="departamento">Departamento:</label>
-          <input
-            type="text"
+          <select
             id="departamento"
+            className="imputEdit"
             value={competidor.departamento}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">Seleccione un departamento</option>
+            <option value="Beni">Beni</option>
+            <option value="Chuquisaca">Chuquisaca</option>
+            <option value="Cochabamba">Cochabamba</option>
+            <option value="La Paz">La Paz</option>
+            <option value="Oruro">Oruro</option>
+            <option value="Pando">Pando</option>
+            <option value="Potosí">Potosí</option>
+            <option value="Santa Cruz">Santa Cruz</option>
+            <option value="Tarija">Tarija</option>
+          </select>
+          {errors.departamento && (
+            <span className="error-message2">{errors.departamento}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -168,33 +324,33 @@ function EditarCompetidores() {
           <input
             type="text"
             id="provincia"
+            className="imputEdit"
             value={competidor.provincia}
             onChange={handleChange}
             required
           />
+          {errors.provincia && (
+            <span className="error-message2">{errors.provincia}</span>
+          )}
         </div>
 
         <div className="form-group">
           <label>Áreas Inscritas:</label>
           <div className="read-only-field">
-            {competidor.areasInscritas.split(",").map((area) => (
-              <span key={area} className="area-tag">
-                {area.trim()}
-              </span>
-            ))}
+            <span className="area-tag">{competidor.area}</span>
           </div>
         </div>
 
-        <div className="form-actions">
+        <div className="form-actions9">
           <button
             type="button"
-            className="cancel-button"
+            className="cancel-button9"
             onClick={handleCancel}
             disabled={loading}
           >
             Cancelar
           </button>
-          <button type="submit" className="save-button" disabled={loading}>
+          <button type="submit" className="save-button9" disabled={loading}>
             {loading ? "Guardando..." : "Guardar"}
           </button>
         </div>

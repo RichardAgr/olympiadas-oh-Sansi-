@@ -22,7 +22,7 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 25px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Comfortaa", sans-serif;
   color: #333;
   background-color: #fff;
   border-radius: 8px;
@@ -75,23 +75,47 @@
   font-size: 14px;
 }
 
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
+/* Estilos básicos para inputs con clase imputEdit */
+.imputEdit {
+  width: 94%;
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
-  transition: border-color 0.3s;
+  font-family: "Comfortaa", sans-serif;
+  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
-.form-group input[type="text"]:focus,
-.form-group input[type="date"]:focus,
-.form-group select:focus {
+/* Estilo al enfocar el input */
+.imputEdit:focus {
   border-color: #3498db;
   outline: none;
+  box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
 }
+
+/* Estilo para inputs deshabilitados */
+.imputEdit:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+/* Estilo para el texto de placeholder */
+.imputEdit::placeholder {
+  color: #999;
+}
+
+/* Estilo básico para selects */
+select.imputEdit {
+  background-color: white;
+  cursor: pointer;
+}
+
+/* Estilo básico para inputs de fecha */
+input[type="date"].imputEdit {
+  padding: 9px;
+}
+
 
 /* Campos de solo lectura (estilo similar al mockup) */
 .read-only-field {
@@ -118,7 +142,7 @@
 }
 
 /* Botones */
-.form-actions {
+.form-actions9 {
   grid-column: span 2;
   display: flex;
   justify-content: flex-end;
@@ -126,10 +150,16 @@
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid #eee;
+  position: relative;
+  top: -53px;
+  left: -56px;
+  right: 0;
+  bottom: 0;
+
 }
 
-.cancel-button,
-.save-button {
+.cancel-button9,
+.save-button9 {
   padding: 10px 20px;
   border-radius: 14px;
   font-weight: bold;
@@ -137,27 +167,27 @@
   transition: all 0.2s;
 }
 
-.cancel-button {
+.cancel-button9 {
   background-color: #f1f1f1;
   color: #555;
   border: 1px solid #ddd;
 }
 
-.cancel-button:hover {
+.cancel-button9:hover {
   background-color: #e5e5e5;
 }
 
-.save-button {
+.save-button9 {
   background-color: #0146b7;
   color: white;
   border: 1px solid #0146b7;
 }
 
-.save-button:hover {
+.save-button9:hover {
   background-color: #013a9c;
 }
 
-.save-button:disabled {
+.save-button9:disabled {
   background-color: #cccccc;
   border-color: #cccccc;
   cursor: not-allowed;
@@ -346,4 +376,21 @@
   100% {
     transform: scale(1);
   }
+}
+.error-message2 {
+  color: #721c24;           
+  font-size: 0.85em;       
+  margin: 5px 0 0 0;       
+  padding: 5px 8px;         
+  background-color: #f8d7da; 
+  border: 1px solid #f5c6cb; 
+  border-radius: 3px;        
+  display: inline-block;     
+  width: auto;             
+  animation: fadeIn 0.2s ease-out; 
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
 }

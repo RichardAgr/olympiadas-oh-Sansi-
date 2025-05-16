@@ -21,6 +21,7 @@ export default function InformacionCompetidor() {
   const [notificationError, setNotificationError] = useState("")
   const [showReceipt, setShowReceipt] = useState(false)
   const [showNotificationSent, setShowNotificationSent] = useState(false)
+  const [showNoReceiptAlert, setShowNoReceiptAlert] = useState(false)
 
   useEffect(() => {
     const fetchCompetitorDetail = async () => {
@@ -30,6 +31,7 @@ export default function InformacionCompetidor() {
 /*          if (!data.ok) {
             throw new Error("No se pudo cargar la información del competidor")
         }  */
+/*         console.log(data.data) */
         setCompetitor(data.data.informacion_competidor)
         setTutors(data.data.tutores)
         setSelectedStatus(data.data.informacion_competidor.estado)
@@ -107,7 +109,6 @@ export default function InformacionCompetidor() {
     .catch(error => {
         console.error('Error al crear notificación:', error);
     });
-
     setShowNotificationModal(false)
     setShowNotificationSent(true)
     setNotificationReason("")
@@ -130,7 +131,11 @@ export default function InformacionCompetidor() {
   }
 
   const handleShowReceipt = () => {
+    if (competitor.ruta_imagen) {
     setShowReceipt(true)
+  } else {
+    setShowNoReceiptAlert(true)
+  }
   }
 
   const handleCloseNotificationSent = () => {
@@ -339,6 +344,24 @@ export default function InformacionCompetidor() {
           </div>
         </div>
         )}
+        {showNoReceiptAlert && (
+  <div className="receipt-image-modal">
+    <div className="receipt-image-container" style={{ maxWidth: '400px', textAlign: 'center' }}>
+      <button 
+        className="close-receipt" 
+        onClick={() => setShowNoReceiptAlert(false)}
+        style={{ position: 'absolute', right: '10px', top: '10px' }}
+      >
+        <X size={20} />
+      </button>
+      <h3 style={{ color: '#ff6b6b', marginBottom: '20px' }}>Aviso</h3>
+      <div style={{ fontSize: '16px', marginBottom: '20px' }}>
+        <Bell size={48} style={{ color: '#ff6b6b', marginBottom: '10px' }} />
+        <p>El competidor aún no tiene su comprobante de pago.</p>
+      </div>
+    </div>
+  </div>
+)}
 
       {/* Alerta de éxito personalizada */}
       {showSuccessAlert && (
@@ -372,3 +395,4 @@ export default function InformacionCompetidor() {
     </div>
   )
 }
+
