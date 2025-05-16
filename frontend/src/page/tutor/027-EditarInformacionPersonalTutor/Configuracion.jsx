@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Configuracion.css';
 import perfilDefault from '../../../assets/perfil-default.png';
 import correoIcon from '../../../assets/email.png';
@@ -12,12 +12,11 @@ import axios from 'axios';
 function Configuracion() {
   const navigate = useNavigate();
 
-  // Estado para los datos del tutor
   const [datosTutor, setDatosTutor] = useState({});
+  const [errores, setErrores] = useState({});
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [exito, setExito] = useState(false);
 
-  // Cargar datos desde el archivo JSON usando Axios
   useEffect(() => {
     axios.get('/datosTutor.json')
       .then(response => {
@@ -29,7 +28,21 @@ function Configuracion() {
   }, []);
 
   const handleChange = (e) => {
-    setDatosTutor({ ...datosTutor, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    let error = '';
+
+    if ((name === 'nombre' || name === 'apellido') && !/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/.test(value)) {
+      error = 'Solo se permiten letras';
+    } else if ((name === 'nombre' || name === 'apellido') && value.length > 30) {
+      error = 'Máximo 30 caracteres';
+    } else if ((name === 'telefono' || name === 'carnet') && !/^\d*$/.test(value)) {
+      error = 'Solo se permiten números';
+    } else if ((name === 'telefono' || name === 'carnet') && value.length > 10) {
+      error = 'Máximo 10 dígitos';
+    }
+
+    setDatosTutor({ ...datosTutor, [name]: value });
+    setErrores({ ...errores, [name]: error });
   };
 
   const confirmarGuardado = () => {
@@ -65,6 +78,7 @@ function Configuracion() {
                 onChange={handleChange}
               />
             </div>
+            {errores.nombre && <p className="error">{errores.nombre}</p>}
           </div>
 
           <div className="campo">
@@ -77,6 +91,7 @@ function Configuracion() {
                 onChange={handleChange}
               />
             </div>
+            {errores.apellido && <p className="error">{errores.apellido}</p>}
           </div>
         </div>
       </div>
@@ -107,6 +122,7 @@ function Configuracion() {
               onChange={handleChange}
             />
           </div>
+          {errores.telefono && <p className="error">{errores.telefono}</p>}
         </div>
 
         <div className="campo">
@@ -120,13 +136,14 @@ function Configuracion() {
               onChange={handleChange}
             />
           </div>
+          {errores.carnet && <p className="error">{errores.carnet}</p>}
         </div>
       </div>
 
       {/* Botones */}
       <div className="botones-centrados">
         <button className="btn-guardar" onClick={confirmarGuardado}>Guardar</button>
-        <button className="btn-cancelar" onClick={confirmarGuardado}>Cancelar</button>
+        <button className="btn-cancelar" onClick={volverHome}>Cancelar</button>
       </div>
 
       {/* Modal de confirmación */}
@@ -153,7 +170,6 @@ function Configuracion() {
               <img src={ConfirmacionIcon} alt="Confirmación" className="icono-modal" />
             </div>
             <p>Cambios guardados con éxito</p>
-            {/* Al hacer clic en este botón, se redirige a la página del TutorHome */}
             <button className="btn-guardar" onClick={volverHome}>Volver al Home</button>
           </div>
         </div>

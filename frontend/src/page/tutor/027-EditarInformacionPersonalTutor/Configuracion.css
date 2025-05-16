@@ -190,8 +190,18 @@
    }
    
    .btn-guardar:hover {
-     background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+     background-color: #0056b3; 
    }
    .modal p {
      margin-bottom: 20px; 
    }
+   .error {
+     background-color: #ffe5e5;      
+     border-left: 4px solid #ff4d4d;
+     color: #a94442;                
+     padding: 6px 10px;
+     margin-top: 5px;
+     font-size: 13px;
+     border-radius: 4px;
+   }
+   
