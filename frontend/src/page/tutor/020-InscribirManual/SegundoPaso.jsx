@@ -14,6 +14,13 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
   const { id } = useParams(); // ID del tutor
   const gradoId = Number(formData.grado_id);
 
+    useEffect(() => {
+       // Reinicia la selección cuando cambia el área
+      setSelectedCategoria(null);
+       setSelectedRango('');
+    }, [selectedAreaId]);
+
+
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -102,30 +109,28 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
           </div>
         </div>
 
-        {/* Categoría */}
+      {/* Categoría */}
 <div className="form-group">
   <label>Categoría: </label>
   <div className="grid-options">
     {categorias
-      .filter(categoria =>
-        gradoId >= categoria.grado_id_inicial &&
-        gradoId <= categoria.grado_id_final
-      )
+      .filter(categoria => categoria.area_id === selectedAreaId) // 🔁 Mostrar todas de esa área
       .map(categoria => {
-        const habilitada = categoria.area_id === selectedAreaId;
+        const dentroDelRango = gradoId >= categoria.grado_id_inicial && gradoId <= categoria.grado_id_final;
 
         return (
           <button
             key={categoria.nivel_categoria_id}
             className={`option-button ${selectedCategoria?.nivel_categoria_id === categoria.nivel_categoria_id ? 'selected' : ''}`}
             onClick={() => {
-              if (habilitada) {
+              if (dentroDelRango) {
                 setSelectedCategoria(categoria);
                 const rango = generarRango(categoria.grado_id_inicial, categoria.grado_id_final);
                 setSelectedRango(rango);
               }
             }}
-            disabled={!habilitada}
+            disabled={!dentroDelRango}
+            title={!dentroDelRango ? 'Tu grado no corresponde a esta categoría' : ''}
           >
             {categoria.nombre}
           </button>
@@ -134,28 +139,34 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
   </div>
 </div>
 
-        {/* Rango */}
-        <div className="form-group">
-          <label>Rango: </label>
-          <div className="grid-options">
-            {categorias
-              .filter(categoria => categoria.area_id === selectedAreaId)
-              .map(categoria => {
-                const esSeleccionado =
-                  selectedCategoria?.nivel_categoria_id === categoria.nivel_categoria_id;
 
-                return (
-                  <button
-                    key={`rango-${categoria.nivel_categoria_id}`}
-                    className={`option-button ${esSeleccionado ? 'selected-rango' : ''}`}
-                    disabled
-                  >
-                    {generarRango(categoria.grado_id_inicial, categoria.grado_id_final)}
-                  </button>
-                );
-              })}
-          </div>
-        </div>
+{/* Rango */}
+<div className="form-group">
+  <label>Rango: </label>
+  <div className="grid-options">
+    {categorias
+      .filter(categoria => categoria.area_id === selectedAreaId)
+      .map(categoria => {
+        const esSeleccionado =
+          selectedCategoria?.nivel_categoria_id === categoria.nivel_categoria_id;
+
+        const dentroDelRango = gradoId >= categoria.grado_id_inicial && gradoId <= categoria.grado_id_final;
+        const rangoTexto = generarRango(categoria.grado_id_inicial, categoria.grado_id_final);
+
+        return (
+          <button
+            key={`rango-${categoria.nivel_categoria_id}`}
+            className={`option-button ${esSeleccionado ? 'selected-rango' : ''} ${!dentroDelRango ? 'disabled-rango' : ''}`}
+            disabled
+            title={!dentroDelRango ? 'Tu grado no corresponde a esta categoría' : ''}
+          >
+            {rangoTexto}
+          </button>
+        );
+      })}
+  </div>
+</div>
+
 
         {/* Botones */}
         <div className="submit-button-container">
