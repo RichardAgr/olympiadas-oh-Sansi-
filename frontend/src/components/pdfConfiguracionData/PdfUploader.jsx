@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import { Upload, Save, Eye, Trash, FileText, X, CheckCircle, AlertCircle } from 'lucide-react'
 import "./pdfUploader.css"
 
-export default function PdfUploader({ title, iconName, storageKey }) {
+export default function PdfUploader({ title}) {
   const [file, setFile] = useState(null)
   const [pdfBlobUrl, setPdfBlobUrl] = useState(null)
   const [isSaved, setIsSaved] = useState(false)
@@ -11,32 +11,6 @@ export default function PdfUploader({ title, iconName, storageKey }) {
   const [notification, setNotification] = useState({ show: false, message: "", type: "" })
   const fileInputRef = useRef(null)
   const modalRef = useRef(null)
-
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === "Escape" && isModalOpen) {
-        setIsModalOpen(false)
-      }
-    }
-
-    const handleClickOutside = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target) && isModalOpen) {
-        setIsModalOpen(false)
-      }
-    }
-
-    if (isModalOpen) {
-      document.addEventListener("keydown", handleEscape)
-      document.addEventListener("mousedown", handleClickOutside)
-      document.body.style.overflow = "hidden" // Prevenir scroll cuando el modal está abierto
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape)
-      document.removeEventListener("mousedown", handleClickOutside)
-      document.body.style.overflow = "auto" // Restaurar scroll cuando el modal se cierra
-    }
-  }, [isModalOpen])
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files?.[0]
@@ -94,7 +68,6 @@ export default function PdfUploader({ title, iconName, storageKey }) {
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type })
 
-    // Auto-hide notification after 5 seconds
     setTimeout(() => {
       setNotification({ ...notification, show: false })
     }, 5000)
@@ -102,7 +75,6 @@ export default function PdfUploader({ title, iconName, storageKey }) {
 
   return (
     <div className="pdf-uploader-container">
-      {/* Notification */}
       {notification.show && (
         <div className={`notification ${notification.type}`}>
           <div className="notification-icon">
@@ -156,7 +128,6 @@ export default function PdfUploader({ title, iconName, storageKey }) {
         )}
       </div>
 
-      {/* Modal centrado en la pantalla */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-containerPDF" ref={modalRef}>

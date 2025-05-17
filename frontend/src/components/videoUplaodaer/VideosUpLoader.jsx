@@ -1,14 +1,13 @@
-import { useState, useEffect } from "react"
-import { Save, Eye, Trash, Video, Link } from "lucide-react"
-/* import Modal from "@/components/modal"
-import Notification from "@/components/notification" */
-/* import { getIconComponent } from "@/lib/icon-helper" */
+import { useState, useRef, useEffect } from "react"
+import { Save, Eye, Trash, Video, Link, X, CheckCircle, AlertCircle } from "lucide-react"
 import "../pdfConfiguracionData/pdfUploader.css"
 
-export default function VideoUploader({ title, iconName, storageKey }) {
+export default function VideoUploader({ title}) {
   const [videoUrl, setVideoUrl] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [notification, setNotification] = useState({ show: false, message: "", type: "" })
+  const modalRef = useRef(null)
+
 
   const handleUrlChange = (e) => {
     setVideoUrl(e.target.value)
@@ -47,7 +46,6 @@ export default function VideoUploader({ title, iconName, storageKey }) {
     if (!url) return ""
 
     try {
-      // Extraer el ID del video de YouTube
       let videoId = ""
 
       if (url.includes("youtube.com/watch")) {
@@ -69,17 +67,31 @@ export default function VideoUploader({ title, iconName, storageKey }) {
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type })
-  }
-
-  const hideNotification = () => {
-    setNotification({ ...notification, show: false })
+    setTimeout(() => {
+      setNotification({ ...notification, show: false })
+    }, 5000)
   }
 
   return (
-    <>
+    <div className="video-uploader-container">
+      {/* Notification */}
+      {notification.show && (
+        <div className={`notification ${notification.type}`}>
+          <div className="notification-icon">
+            {notification.type === "success" ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+          </div>
+          <div className="notification-message">{notification.message}</div>
+          <button className="notification-close" onClick={() => setNotification({ ...notification, show: false })}>
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
       <div className="card">
         <div className="card-header">
-          <div className="card-icon"><Video size={24} /></div>
+          <div className="card-icon">
+            <Video size={24} />
+          </div>
           <h3 className="card-title">{title}</h3>
         </div>
 
@@ -116,26 +128,30 @@ export default function VideoUploader({ title, iconName, storageKey }) {
         )}
       </div>
 
-{/*       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Reproduciendo video">
-        <div className="video-player">
-          <iframe
-            width="100%"
-            height="100%"
-            src={getYouTubeEmbedUrl(videoUrl)}
-            title="YouTube video player"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
+      {/* Modal centrado en la pantalla */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-containerPDF" ref={modalRef}>
+            <div className="modal-header">
+              <h3 className="modal-titlePDF">Reproduciendo video</h3>
+              <button className="modal-closePDF" onClick={() => setIsModalOpen(false)}>
+                <X size={24} />
+              </button>
+            </div>
+            <div className="modal-contentPDF">
+              <iframe
+                width="100%"
+                height="100%"
+                src={getYouTubeEmbedUrl(videoUrl)}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="video-player"
+              ></iframe>
+            </div>
+          </div>
         </div>
-      </Modal>
-
-      <Notification
-        message={notification.message}
-        type={notification.type}
-        isVisible={notification.show}
-        onClose={hideNotification}
-      /> */}
-    </>
+      )}
+    </div>
   )
 }
