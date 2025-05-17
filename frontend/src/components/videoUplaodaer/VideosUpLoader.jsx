@@ -69,7 +69,7 @@ export default function VideoUploader({ title}) {
     setNotification({ show: true, message, type })
     setTimeout(() => {
       setNotification({ ...notification, show: false })
-    }, 5000)
+    }, 900)
   }
 
   return (

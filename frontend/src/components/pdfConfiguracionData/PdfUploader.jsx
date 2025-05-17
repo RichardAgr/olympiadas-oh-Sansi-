@@ -70,7 +70,7 @@ export default function PdfUploader({ title}) {
 
     setTimeout(() => {
       setNotification({ ...notification, show: false })
-    }, 5000)
+    }, 900)
   }
 
   return (
