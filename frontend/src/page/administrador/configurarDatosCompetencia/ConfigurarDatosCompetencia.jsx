@@ -2,11 +2,40 @@ import { useState, useEffect } from "react"
 import { GraduationCap, Megaphone, Video,  FileSpreadsheet } from "lucide-react"
  import PdfUploader from "../../../components/pdfConfiguracionData/pdfUploader"
 import VideoUploader from "../../../components/videoUplaodaer/VideosUpLoader"
-
+import axios from "axios";
 import "./ConfigurarDatosCompetencia.css"
 
 export default function ConfigurarDatosCompetencia() {
+  const [areas, setAreas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/areasCategoriasGrados");
+        if (response.data.success) {
+          setAreas(response.data.data);
+        }
+      } catch (err) {
+        setError("Error al cargar las áreas");
+        console.error("Error fetching areas:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAreas();
+  }, []);
+
+  if (loading) {
+    return <div className="ContainerConfigData">Cargando áreas...</div>;
+  }
+
+  if (error) {
+    return <div className="ContainerConfigData">{error}</div>;
+  }
+  
   return (
     <div className="ContainerConfigData">
       <div className="page-headerConfigData">
@@ -19,9 +48,12 @@ export default function ConfigurarDatosCompetencia() {
           <GraduationCap className="section-icon" /> Áreas Académicas
         </h2>
         <div className="cards-container">
-{/*           <PdfUploader title="Matemática" iconName="Square2StackIcon" storageKey="matematica-pdf" />
-          <PdfUploader title="Biología" iconName="Dna" storageKey="biologia-pdf" />*/}
-          <PdfUploader title="Física" iconName="Atom" storageKey="fisica-pdf" />
+              {areas.map((area) => (
+                  <PdfUploader 
+                        idArchivo={area.area_id} 
+                        title={area.nombre} 
+            />
+          ))}
         </div>
       </section>
 
@@ -30,7 +62,7 @@ export default function ConfigurarDatosCompetencia() {
           <Megaphone className="section-icon" /> Convocatoria
         </h2>
         <div className="cards-container">
-          <PdfUploader title="Convocatoria Oficial" iconName="FileText"/>
+          <PdfUploader  title="Convocatoria Oficial"/>
         </div>
       </section>
 

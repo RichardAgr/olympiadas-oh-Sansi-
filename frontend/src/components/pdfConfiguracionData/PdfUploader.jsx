@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from "react"
 import { Upload, Save, Eye, Trash, FileText, X, CheckCircle, AlertCircle } from 'lucide-react'
 import "./pdfUploader.css"
 
-export default function PdfUploader({ title}) {
+export default function PdfUploader({ idArchivo,title}) {
+  console.log(idArchivo)
   const [file, setFile] = useState(null)
   const [pdfBlobUrl, setPdfBlobUrl] = useState(null)
   const [isSaved, setIsSaved] = useState(false)
