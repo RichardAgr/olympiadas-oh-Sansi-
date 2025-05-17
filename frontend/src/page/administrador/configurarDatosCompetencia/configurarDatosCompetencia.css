@@ -18,7 +18,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  padding-top: calc(70px + 2rem);
+  padding-top: 50px;
 }
 
 .page-headerConfigData {
@@ -29,12 +29,12 @@
 
 .page-headerConfigData p{
     font-size: 1rem;
-    color: var(--primary-color);
+    color: var(--text-color);
 }
 
 .titulo-configData {
   font-size: 2.5rem;
-  color: var(--primary-color);
+  color: var(--text-color);
   margin-bottom: 0.5rem;
   position: relative;
   display: inline-block;
@@ -54,7 +54,7 @@
 
 .section-titleConfigData { 
   font-size: 1.8rem;
-  color: var(--primary-dark);
+  color: var(--text-color);
   margin: 2rem 0 1.5rem;
   padding-left: 1rem;
   border-left: 4px solid var(--primary-dark);

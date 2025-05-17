@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { GraduationCap, Megaphone, Video } from "lucide-react"
 /* import PdfUploader from "@/components/pdf-uploader"
 import VideoUploader from "@/components/video-uploader"
-import Navbar from "@/components/navbar" */
+*/
 import "./ConfigurarDatosCompetencia.css"
 
 export default function ConfigurarDatosCompetencia() {
@@ -42,9 +42,6 @@ export default function ConfigurarDatosCompetencia() {
 
   return (
     <div className="ContainerConfigData">
-      <h1>navbar</h1>
-     {/*  <Navbar activeSection={activeSection} scrollToSection={scrollToSection} /> */}
-
       <div className="page-headerConfigData">
         <h1 className="titulo-configData">Portal de Competencias Académicas</h1>
         <p>Sube y administra documentos y videos de las competencias</p>
