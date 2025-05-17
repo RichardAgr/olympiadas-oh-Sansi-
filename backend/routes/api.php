@@ -83,6 +83,7 @@ Route::get('/tutor/VerNotificaciones/{id}/Notificaciones',[NotificacionControlle
 Route ::post('/tutor/{id_tutor}/cambiarEstadoNotificacion/{id_notificacion}', [NotificacionController::class, 'cambiarEstadoNotificacion']);
 Route ::put('/tutor/editarCompetidor/{id_competidor}', [UsuarioTutoCompetidorController::class, 'editarCompetidor']);
 Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoController::class, 'procesarComprobante']);
+Route ::get('/datosTutor/{id_tutor}', [TutorController::class, 'datosTutor']);
 
 //OCR
 Route::post('/processReceipt', [OcrPagoController::class, 'processReceipt']);

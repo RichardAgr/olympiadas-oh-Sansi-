@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import { CheckCircle, Loader } from "lucide-react"
 import jsPDF from "jspdf"
@@ -38,18 +38,60 @@ const uploadToCloudinary = async (file, onProgress = () => {}) => {
 function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
   // Ahora puedes usar el competidorId aquí
   /* console.log("ID del competidor en el tercer paso:", competidorId); */
+  const [datosCargados, setDatosCargados] = useState(false)
   const [cantidadTutores, setCantidadTutores] = useState(1)
   const [tutores, setTutores] = useState([
     { nombres: "", apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" },
-    { nombres: "", apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" },
+    { nombres: "", apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" }
   ])
+  const { id } = useParams()
+ useEffect(() => {
+  let isMounted = true;
+
+  const fetchTutorData = async () => {
+    try {
+      if (datosCargados) return; // evita recarga innecesaria
+
+      const response = await axios.get(`http://127.0.0.1:8000/api/datosTutor/${id}`);
+      console.log("Respuesta Axios tutor:", response.data);
+
+      const tutorData = response.data.data; // ✅ CORREGIDO AQUÍ
+
+      if (isMounted) {
+        setTutores((prev) => {
+          const updated = [...prev];
+          updated[0] = {
+            ...updated[0],
+            nombres: tutorData.nombres || "",
+            apellidos: tutorData.apellidos || "",
+            correo_electronico: tutorData.correo_electronico || "",
+            telefono: tutorData.telefono || "",
+            ci: tutorData.ci || "",
+            relacion: "", 
+          };
+          return updated;
+        });
+        setDatosCargados(true); // ✅ marca como cargado
+      }
+    } catch (error) {
+      console.error("Error al cargar datos del tutor:", error);
+    }
+  };
+
+  fetchTutorData();
+
+  return () => {
+    isMounted = false;
+  };
+}, [id, datosCargados]);
+
+
   const tutoresFinal = tutores.slice(0, cantidadTutores).map((t, i) => ({
     ...t,
     nivel_responsabilidad: i === 0 ? "principal" : "secundario",
   }))
   const [errors, setErrors] = useState([{}, {}])
   const [exito, setExito] = useState(false)
-  const { id } = useParams()
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [pdfUploaded, setPdfUploaded] = useState(false)
@@ -72,6 +114,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
 
   const handleTutorChange = (index, e) => {
     const { name, value } = e.target
+      console.log(`Cambio tutor[${index}] campo '${name}':`, value);
     const nuevosTutores = [...tutores]
     nuevosTutores[index][name] = value
     setTutores(nuevosTutores)
@@ -91,6 +134,9 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
   const handleSubmit = async () => {
     const errores = tutores.slice(0, cantidadTutores).map(validateTutor)
     setErrors(errores)
+
+     console.log("Datos a enviar:", tutoresFinal);
+  console.log("Errores de validación:", errores);
 
     const tieneErrores = errores.some((err) => Object.keys(err).length > 0)
     if (!tieneErrores) {
@@ -288,6 +334,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
 
   const renderTutorCard = (index) => {
     const tutor = tutores[index]
+    console.log(`Renderizando tutor[${index}]:`, tutor);
     const err = errors[index] || {}
 
     return (
@@ -301,6 +348,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
               value={tutor.nombres}
               onChange={(e) => handleTutorChange(index, e)}
               className={err.nombres ? "input-error" : ""}
+              disabled={index === 0}
             />
             {err.nombres && <div className="error-message">{err.nombres}</div>}
           </div>
@@ -315,6 +363,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
               value={tutor.apellidos}
               onChange={(e) => handleTutorChange(index, e)}
               className={err.apellidos ? "input-error" : ""}
+              disabled={index === 0}
             />
             {err.apellidos && <div className="error-message">{err.apellidos}</div>}
           </div>
@@ -329,6 +378,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
               value={tutor.correo_electronico}
               onChange={(e) => handleTutorChange(index, e)}
               className={err.correo ? "input-error" : ""}
+              disabled={index === 0}
             />
             {err.correo_electronico && <div className="error-message">{err.correo_electronico}</div>}
           </div>
@@ -343,6 +393,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
               value={tutor.telefono}
               onChange={(e) => handleTutorChange(index, e)}
               className={err.telefono ? "input-error" : ""}
+              disabled={index === 0}
             />
             {err.telefono && <div className="error-message">{err.telefono}</div>}
           </div>
@@ -357,6 +408,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
               value={tutor.ci}
               onChange={(e) => handleTutorChange(index, e)}
               className={err.ci ? "input-error" : ""}
+              disabled={index === 0}
             />
             {err.ci && <div className="error-message">{err.ci}</div>}
           </div>
