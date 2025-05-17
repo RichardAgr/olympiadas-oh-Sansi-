@@ -1,44 +1,11 @@
 import { useState, useEffect } from "react"
-import { GraduationCap, Megaphone, Video } from "lucide-react"
-/* import PdfUploader from "@/components/pdf-uploader"
-import VideoUploader from "@/components/video-uploader"
-*/
+import { GraduationCap, Megaphone, Video,  FileSpreadsheet } from "lucide-react"
+ import PdfUploader from "../../../components/pdfConfiguracionData/pdfUploader"
+import VideoUploader from "../../../components/videoUplaodaer/VideosUpLoader"
+
 import "./ConfigurarDatosCompetencia.css"
 
 export default function ConfigurarDatosCompetencia() {
-  const [activeSection, setActiveSection] = useState("areas")
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 100
-
-      const areasSection = document.getElementById("areas-section")
-      const convocatoriaSection = document.getElementById("convocatoria-section")
-      const videosSection = document.getElementById("videos-section")
-
-      if (videosSection && scrollPosition >= videosSection.offsetTop) {
-        setActiveSection("videos")
-      } else if (convocatoriaSection && scrollPosition >= convocatoriaSection.offsetTop) {
-        setActiveSection("convocatoria")
-      } else if (areasSection) {
-        setActiveSection("areas")
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  // Función para desplazarse a una sección
-  const scrollToSection = (sectionId) => {
-    const section = document.getElementById(sectionId)
-    if (section) {
-      window.scrollTo({
-        top: section.offsetTop - 80,
-        behavior: "smooth",
-      })
-    }
-  }
 
   return (
     <div className="ContainerConfigData">
@@ -52,10 +19,9 @@ export default function ConfigurarDatosCompetencia() {
           <GraduationCap className="section-icon" /> Áreas Académicas
         </h2>
         <div className="cards-container">
-          <h1>areas</h1>
 {/*           <PdfUploader title="Matemática" iconName="Square2StackIcon" storageKey="matematica-pdf" />
-          <PdfUploader title="Biología" iconName="Dna" storageKey="biologia-pdf" />
-          <PdfUploader title="Física" iconName="Atom" storageKey="fisica-pdf" /> */}
+          <PdfUploader title="Biología" iconName="Dna" storageKey="biologia-pdf" />*/}
+          <PdfUploader title="Física" iconName="Atom" storageKey="fisica-pdf" />
         </div>
       </section>
 
@@ -64,8 +30,7 @@ export default function ConfigurarDatosCompetencia() {
           <Megaphone className="section-icon" /> Convocatoria
         </h2>
         <div className="cards-container">
-          <h2>convocatoria</h2>
-          {/* <PdfUploader title="Convocatoria Oficial" iconName="FileText" storageKey="convocatoria-pdf" /> */}
+          <PdfUploader title="Convocatoria Oficial" iconName="FileText"/>
         </div>
       </section>
 
@@ -74,10 +39,9 @@ export default function ConfigurarDatosCompetencia() {
           <Video className="section-icon" /> Videos Instructivos
         </h2>
         <div className="cards-container">
-          <h1>videos</h1>
-{/*           <VideoUploader title="Manual de Inscripción" iconName="BookOpen" storageKey="video-manual" />
+          <VideoUploader title="Manual de Inscripción" iconName="BookOpen" storageKey="video-manual" />
           <VideoUploader title="Tutorial de Excel" iconName="FileSpreadsheet" storageKey="video-excel" />
-          <VideoUploader title="Subir Boleta de Pago" iconName="Receipt" storageKey="video-boleta" /> */}
+          <VideoUploader title="Subir Boleta de Pago" iconName="Receipt" storageKey="video-boleta" />
         </div>
       </section>
     </div>
