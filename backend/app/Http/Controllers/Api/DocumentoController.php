@@ -178,4 +178,82 @@ public function getDocumento($type, $id){
             ], 500);
         }
     }
+
+    public function deleteDocumento($type, $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            if ($type === 'area') {
+                $documento = DocumentoArea::where('area_id', $id)->first();
+                
+                if (!$documento) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No se encontró documento para el área especificada'
+                    ], 404);
+                }
+                
+                $documentoInfo = [
+                    'documento_area_id' => $documento->documento_area_id,
+                    'area_id' => $documento->area_id,
+                    'url_pdf' => $documento->url_pdf,
+                    'fecha_creacion' => $documento->fecha_creacion,
+                    'estado' => $documento->estado
+                ];
+                
+                // Eliminar el documento
+                $documento->delete();
+                
+                DB::commit();
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Documento de área eliminado correctamente',
+                    'data' => $documentoInfo
+                ]);
+            } elseif ($type === 'convocatoria') {
+                $documento = DocumentoConvocatoria::where('competencia_id', $id)->first();
+                
+                if (!$documento) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No se encontró documento para la competencia especificada'
+                    ], 404);
+                }
+                
+                $documentoInfo = [
+                    'documento_convocatoria_id' => $documento->documento_convocatoria_id,
+                    'competencia_id' => $documento->competencia_id,
+                    'url_pdf' => $documento->url_pdf,
+                    'fecha_creacion' => $documento->fecha_creacion,
+                    'estado' => $documento->estado
+                ];
+                
+                $documento->delete();
+                
+                DB::commit();
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Documento de convocatoria eliminado correctamente',
+                    'data' => $documentoInfo
+                ]);
+            }
+
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Tipo de documento no válido'
+            ], 400);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error al eliminar documento: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el documento',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

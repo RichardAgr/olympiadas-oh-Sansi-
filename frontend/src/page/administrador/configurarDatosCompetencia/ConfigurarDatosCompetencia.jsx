@@ -50,6 +50,7 @@ export default function ConfigurarDatosCompetencia() {
         <div className="cards-container">
               {areas.map((area) => (
                   <PdfUploader 
+                  key={area.area_id}
                         idArchivo={area.area_id} 
                         title={area.nombre} 
                         type="area"

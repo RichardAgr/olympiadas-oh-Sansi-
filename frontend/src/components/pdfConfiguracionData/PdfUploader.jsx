@@ -147,32 +147,46 @@ export default function PdfUploader({ idArchivo, title, type }) {
     }
   }
 
-  const handleDelete = async () => {
+const handleDelete = async () => {
+  try {
     if (existingDocument) {
-      try {
-        // await axios.delete(`http://127.0.0.1:8000/api/documentos/${type}/${existingDocument.documento_area_id || existingDocument.documento_convocatoria_id}`);
-
-        setExistingDocument(null)
-        setError(true)
-        showNotification("Documento eliminado del estado local", "success")
-      } catch (error) {
-        console.error("Error al eliminar el documento:", error)
-        showNotification("Error al eliminar el documento", "error")
+      const response = await axios.delete(`http://127.0.0.1:8000/api/documentos/${type}/${idArchivo}`);
+      
+      if (response.data.success) {
+        setExistingDocument(null);
+        setError(true);
+        showNotification("Documento eliminado correctamente", "success");
+      } else {
+        showNotification(`Error: ${response.data.message || 'No se pudo eliminar el documento'}`, "error");
+        return;
       }
     }
 
-    // Limpiar el estado local
+    // Limpieza del estado local y memoria
     if (pdfBlobUrl) {
-      URL.revokeObjectURL(pdfBlobUrl)
-      setPdfBlobUrl(null)
+      URL.revokeObjectURL(pdfBlobUrl);
+      setPdfBlobUrl(null);
     }
-    setFile(null)
-    setFileName("")
+
+    setFile(null);
+    setFileName("");
+    setIsSaved(false);
+
+    // Limpiar input file si está presente
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""
+      fileInputRef.current.value = "";
     }
-    setIsSaved(false)
+
+    if (!existingDocument && fileName) {
+      showNotification("Archivo eliminado", "success");
+    }
+
+  } catch (error) {
+    console.error("Error al eliminar el documento:", error);
+    const errorMessage = error.response?.data?.message || "Error al eliminar el documento";
+    showNotification(errorMessage, "error");
   }
+}
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type })

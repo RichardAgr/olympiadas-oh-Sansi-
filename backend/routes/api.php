@@ -102,3 +102,4 @@ Route::get('/areasCategoriasGrados', [AreaController::class, 'getAreasWithCatego
 //DocumentosHome
 Route::post('/documentos/tipoPortal', [DocumentoController::class, 'guardarDocumentos']);
 Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
+Route::delete('/documentos/{type}/{id}', [DocumentoController::class, 'deleteDocumento']);
