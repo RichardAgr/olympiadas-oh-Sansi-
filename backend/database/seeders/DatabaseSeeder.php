@@ -8,22 +8,22 @@ class DatabaseSeeder extends Seeder{
     public function run(){
         $this->call([
             ResponsableGestion::class,   
-            //Boleta::class,
             NivelEducativo::class,      
-            Grado::class,                
-            //NivelCategoria::class,        
-            //Competencia::class,           
             //Ubicacion::class,            
-            //CompetidorCompetencia::class, 
+            //Competencia::class,           
             //Area::class,                  
             //Tutor::class,                
+            Grado::class,                
             //Colegio::class,           
             //Curso::class,                
-            //TutorCompetidor::class,      
-            //Notificacion::class,
+            //NivelCategoria::class,        
             //Competidor::class,              
-            //ImagenBoleta::class,
+            //TutorCompetidor::class,      
+            //Boleta::class,
+            //CompetidorCompetencia::class, 
             //Cronograma::class,
+            //ImagenBoleta::class,
+            //Notificacion::class,
         ]);
     }
 }
