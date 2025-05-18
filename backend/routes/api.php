@@ -16,7 +16,9 @@ use App\Http\Controllers\Api\EstadisticasController;
 use App\Http\Controllers\Api\OcrPagoController;
 use App\Http\Controllers\Api\ReciboController;
 use App\Http\Controllers\Api\DatosExcel;
+use App\Http\Controllers\Api\DocumentoController;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCompetidorController;
+use App\Http\Controllers\Api\VideoController;
 
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
@@ -83,6 +85,7 @@ Route::get('/tutor/VerNotificaciones/{id}/Notificaciones',[NotificacionControlle
 Route ::post('/tutor/{id_tutor}/cambiarEstadoNotificacion/{id_notificacion}', [NotificacionController::class, 'cambiarEstadoNotificacion']);
 Route ::put('/tutor/editarCompetidor/{id_competidor}', [UsuarioTutoCompetidorController::class, 'editarCompetidor']);
 Route::post('/comprobante/procesar', [App\Http\Controllers\Api\BoletaPagoController::class, 'procesarComprobante']);
+Route ::get('/datosTutor/{id_tutor}', [TutorController::class, 'datosTutor']);
 
 //OCR
 Route::post('/processReceipt', [OcrPagoController::class, 'processReceipt']);
@@ -96,3 +99,13 @@ Route::get('/recibos/tutor/{tutorId}', [ReciboController::class, 'obtenerRecibos
 //excel
 Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
 Route::get('/areasCategoriasGrados', [AreaController::class, 'getAreasWithCategoriasGrados']);
+
+//DocumentosHome
+Route::post('/documentos/tipoPortal', [DocumentoController::class, 'guardarDocumentos']);
+Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
+Route::delete('/documentos/{type}/{id}', [DocumentoController::class, 'deleteDocumento']);
+
+//videos
+Route::post('/Guardarvideos', [VideoController::class, 'crearVideo']);
+Route::get('/Mostrarvideos', [VideoController::class, 'mostrarDetalleVideo']);
+Route ::delete('/Eliminarvideos/{tipo_video}', [VideoController::class, 'eliminarVideo']);
