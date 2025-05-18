@@ -79,19 +79,9 @@ const RespGestTopBar = () => {
           </NavLink>
         </li>
 
-        <li>
-          <button
-            className="notification-button"
-            aria-label="Notificaciones"
-          >
-            <Bell size={22} color="#0A2E8C" />
-          </button>
-        </li>
-
         <li className="user-menu" onClick={toggleUserMenu}>
           <div className="menu-toggle">
             <UserCircle size={22} color="white" />
-            <span>Tu</span>
           </div>
           {userMenuOpen && (
             <ul className="menu-dropdown">

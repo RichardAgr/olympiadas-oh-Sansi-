@@ -196,6 +196,24 @@
   transform: translateY(-1px);
 }
 
+.btn-download {
+  background-color: #3182ce;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-download:hover {
+  background-color: #2c5282;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .icon-small {
   width: 16px;
   height: 16px;
@@ -245,7 +263,7 @@
   background-color: #fff;
   border-radius: 12px;
   width: 90%;
-  height: 900px;
+  height: 90vh;
   max-width: 950px;
   max-height: 90vh;
   overflow: hidden;
@@ -265,9 +283,16 @@
 }
 
 .modal-titlePDF {
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   margin: 0;
   color: var(--text-color);
+  flex: 1;
+}
+
+.modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .modal-closePDF {
@@ -285,25 +310,63 @@
 
 .modal-closePDF:hover {
   background-color: #409fde;
-  color:  #f7fafc;
+  color: #f7fafc;
   transform: scale(1.1);
 }
 
 .modal-contentPDF {
-  padding: 1.5rem;
-  overflow-y: auto;
   flex: 1;
-  height: 600px;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
 }
 
-.pdf-viewer,
-.video-player {
+.pdf-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pdf-viewer {
   width: 100%;
   height: 100%;
   border: none;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+}
+
+.pdf-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  gap: 1rem;
+}
+
+.pdf-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-style: italic;
+  color: #718096;
+}
+
+.pdf-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--danger-color);
+  text-align: center;
+  padding: 2rem;
+  gap: 1rem;
 }
 
 /* Estilos para notificaciones */
@@ -327,6 +390,11 @@
   border-left: 4px solid #e53e3e;
 }
 
+.notification.info {
+  background-color: #ebf8ff;
+  border-left: 4px solid #3182ce;
+}
+
 .notification-icon {
   margin-right: 0.75rem;
 }
@@ -337,6 +405,10 @@
 
 .notification.error .notification-icon {
   color: #e53e3e;
+}
+
+.notification.info .notification-icon {
+  color: #3182ce;
 }
 
 .notification-message {
@@ -414,4 +486,20 @@
   to {
     width: 50%;
   }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  font-style: italic;
+  color: #718096;
+}
+
+.error-message {
+  color: var(--danger-color);
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
 }

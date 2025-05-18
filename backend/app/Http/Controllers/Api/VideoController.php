@@ -16,7 +16,7 @@ class VideoController extends Controller
         $validated = $request->validate([
             'tipo_video' => 'required|in:manual,excel,boleta',
             'url_video' => 'required|string',
-            'fecha_creacion' => 'required|date_format:m-d-Y',
+            'fecha_creacion' => 'required|date_format:Y-m-d',
         ]);
     } catch (ValidationException $e) {
         // Devolver JSON con errores y código 422
@@ -26,15 +26,13 @@ class VideoController extends Controller
         ], 422);
     }
 
-    // Convertir la fecha al formato Y-m-d para guardar en la BD
-    $fecha = Carbon::createFromFormat('m-d-Y', $validated['fecha_creacion'])->format('Y-m-d');
 
     // Actualizar o crear el video basado solo en tipo_video
     $video = Video::updateOrCreate(
         ['tipo_video' => $validated['tipo_video']],
         [
             'url_video' => $validated['url_video'],
-            'fecha_creacion' => $fecha,
+            'fecha_creacion' => $validated['fecha_creacion'],
             'estado' => true,
         ]
     );

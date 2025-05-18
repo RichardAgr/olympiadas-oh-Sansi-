@@ -50,7 +50,6 @@ export default function ConfigurarDatosCompetencia() {
         <div className="cards-container">
               {areas.map((area) => (
                   <PdfUploader 
-                  key={area.area_id}
                         idArchivo={area.area_id} 
                         title={area.nombre} 
                         type="area"
@@ -73,9 +72,9 @@ export default function ConfigurarDatosCompetencia() {
           <Video className="section-icon" /> Videos Instructivos
         </h2>
         <div className="cards-container">
-          <VideoUploader title="Manual de Inscripción" iconName="BookOpen" storageKey="video-manual" />
-          <VideoUploader title="Tutorial de Excel" iconName="FileSpreadsheet" storageKey="video-excel" />
-          <VideoUploader title="Subir Boleta de Pago" iconName="Receipt" storageKey="video-boleta" />
+          <VideoUploader title="Manual de Inscripción" type="manual" />
+          <VideoUploader title="Tutorial de Excel" type="excel" />
+          <VideoUploader title="Subir Boleta de Pago"  type="boleta" />
         </div>
       </section>
     </div>

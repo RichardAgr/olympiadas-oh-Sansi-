@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { Upload, Save, Eye, Trash, FileText, X, CheckCircle, AlertCircle } from 'lucide-react'
+import { Upload, Save, Eye, Trash, FileText, X, CheckCircle, AlertCircle } from "lucide-react"
 import axios from "axios"
 import "./pdfUploader.css"
 
@@ -14,15 +14,18 @@ export default function PdfUploader({ idArchivo, title, type }) {
   const [existingDocument, setExistingDocument] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [pdfError, setPdfError] = useState(false)
+
   const fileInputRef = useRef(null)
   const modalRef = useRef(null)
+  const objectRef = useRef(null)
 
   useEffect(() => {
     const fetchExistingDocument = async () => {
       try {
         setLoading(true)
         setError(false)
-        
+
         const response = await axios.get(`http://127.0.0.1:8000/api/documentos/${type}/${idArchivo}`)
 
         if (response.data.success && response.data.data) {
@@ -35,7 +38,7 @@ export default function PdfUploader({ idArchivo, title, type }) {
         }
       } catch (error) {
         console.log("No hay documento existente:", error)
-        // No mostramos notificación de error aquí porque es normal que no exista documento
+        // Este error es normal cuando no hay documento, así que no mostramos notificación
         setError(true)
         setExistingDocument(null)
         setFileName("")
@@ -92,10 +95,12 @@ export default function PdfUploader({ idArchivo, title, type }) {
     }
 
     const blobUrl = URL.createObjectURL(selectedFile)
+
     setPdfBlobUrl(blobUrl)
     setFile(selectedFile)
     setFileName(selectedFile.name)
     setIsSaved(false)
+    setError(false) // Importante: actualizar el estado de error
     showNotification("PDF subido correctamente", "success")
   }
 
@@ -120,8 +125,7 @@ export default function PdfUploader({ idArchivo, title, type }) {
         uploadedAt: new Date().toISOString().split("T")[0],
       }
 
-      console.log("Datos a enviar al backend:", payload)
-      const res = await axios.post("http://127.0.0.1:8000/api/documentos", payload)
+      const res = await axios.post("http://127.0.0.1:8000/api/documentos/tipoPortal", payload)
 
       if (res.data.success) {
         setExistingDocument(res.data.data)
@@ -140,53 +144,55 @@ export default function PdfUploader({ idArchivo, title, type }) {
   const handleView = () => {
     if (existingDocument && existingDocument.url_pdf) {
       setIsModalOpen(true)
+      setPdfError(false)
     } else if (pdfBlobUrl) {
       setIsModalOpen(true)
+      setPdfError(false)
     } else {
       showNotification("No hay archivo para visualizar", "error")
     }
   }
 
-const handleDelete = async () => {
-  try {
-    if (existingDocument) {
-      const response = await axios.delete(`http://127.0.0.1:8000/api/documentos/${type}/${idArchivo}`);
-      
-      if (response.data.success) {
-        setExistingDocument(null);
-        setError(true);
-        showNotification("Documento eliminado correctamente", "success");
-      } else {
-        showNotification(`Error: ${response.data.message || 'No se pudo eliminar el documento'}`, "error");
-        return;
+  const handleDelete = async () => {
+    try {
+      if (existingDocument) {
+        const response = await axios.delete(`http://127.0.0.1:8000/api/documentos/${type}/${idArchivo}`)
+
+        if (response.data.success) {
+          setExistingDocument(null)
+          setError(true)
+          showNotification("Documento eliminado correctamente", "success")
+        } else {
+          showNotification(`Error: ${response.data.message || "No se pudo eliminar el documento"}`, "error")
+          return
+        }
       }
+
+      // Limpieza del estado local y memoria
+      if (pdfBlobUrl) {
+        URL.revokeObjectURL(pdfBlobUrl)
+        setPdfBlobUrl(null)
+      }
+
+      setFile(null)
+      setFileName("")
+      setIsSaved(false)
+      setError(true) 
+
+    
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
+
+      if (!existingDocument && fileName) {
+        showNotification("Archivo eliminado", "success")
+      }
+    } catch (error) {
+      console.error("Error al eliminar el documento:", error)
+      const errorMessage = error.response?.data?.message || "Error al eliminar el documento"
+      showNotification(errorMessage, "error")
     }
-
-    // Limpieza del estado local y memoria
-    if (pdfBlobUrl) {
-      URL.revokeObjectURL(pdfBlobUrl);
-      setPdfBlobUrl(null);
-    }
-
-    setFile(null);
-    setFileName("");
-    setIsSaved(false);
-
-    // Limpiar input file si está presente
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-
-    if (!existingDocument && fileName) {
-      showNotification("Archivo eliminado", "success");
-    }
-
-  } catch (error) {
-    console.error("Error al eliminar el documento:", error);
-    const errorMessage = error.response?.data?.message || "Error al eliminar el documento";
-    showNotification(errorMessage, "error");
   }
-}
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type })
@@ -194,6 +200,13 @@ const handleDelete = async () => {
     setTimeout(() => {
       setNotification({ ...notification, show: false })
     }, 3000)
+  }
+
+
+  const handlePdfError = () => {
+    console.error("Error al cargar el PDF en el objeto")
+    setPdfError(true)
+    showNotification("Error al cargar el PDF. Intente descargarlo directamente.", "error")
   }
 
   if (loading) {
@@ -241,7 +254,7 @@ const handleDelete = async () => {
               <input type="file" accept=".pdf" className="file-input" onChange={handleFileChange} ref={fileInputRef} />
             </label>
           ) : !isSaved && !existingDocument ? (
-            <button className="btn btn-view" onClick={handleSavePdf}>
+            <button className="btn btn-view full-width" onClick={handleSavePdf}>
               <Save className="icon-small" /> Guardar PDF
             </button>
           ) : null}
@@ -279,23 +292,46 @@ const handleDelete = async () => {
       </div>
 
       {isModalOpen && (
-        <div className="modal-overlay">
+        <div
+          className="modal-overlay"
+          onClick={(e) => {
+            // Cerrar el modal si se hace clic fuera del contenido
+            if (modalRef.current && !modalRef.current.contains(e.target)) {
+              setIsModalOpen(false)
+            }
+          }}
+        >
           <div className="modal-containerPDF" ref={modalRef}>
             <div className="modal-header">
               <h3 className="modal-titlePDF">
-                Visualizando: {existingDocument ? `Documento ${type === "area" ? "de área" : "de convocatoria"}` : fileName}
+                Visualizando:{" "}
+                {existingDocument ? `Documento ${type === "area" ? "de área" : "de convocatoria"}` : fileName}
               </h3>
-              <button className="modal-closePDF" onClick={() => setIsModalOpen(false)}>
-                <X size={33} />
-              </button>
+                <button className="modal-closePDF" onClick={() => setIsModalOpen(false)}>
+                  <X size={24} />
+                </button>
             </div>
             <div className="modal-contentPDF">
-              {existingDocument ? (
-                <iframe src={existingDocument.url_pdf} className="pdf-viewer" title="Documento PDF" />
-              ) : pdfBlobUrl ? (
-                <iframe src={pdfBlobUrl} className="pdf-viewer" title={fileName} />
+              {pdfError ? (
+                <div className="pdf-error">
+                  <AlertCircle size={48} />
+                  <p>Error al cargar el PDF. Intente descargarlo directamente usando el botón "Descargar PDF".</p>
+                </div>
               ) : (
-                <p>No hay archivo para visualizar.</p>
+                <div className="pdf-container">
+                  {/* Usar object en lugar de iframe para mejor compatibilidad */}
+                  <object
+                    ref={objectRef}
+                    data={existingDocument ? existingDocument.url_pdf : pdfBlobUrl}
+                    type="application/pdf"
+                    className="pdf-viewer"
+                    onError={handlePdfError}
+                  >
+                    <div className="pdf-fallback">
+                      <p>Tu navegador no puede mostrar el PDF directamente.</p>
+                    </div>
+                  </object>
+                </div>
               )}
             </div>
           </div>

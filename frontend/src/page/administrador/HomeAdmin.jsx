@@ -31,7 +31,7 @@ const HomeAdmin = () => {
 
         <Link to="configurar/datosCompetencia" className="card">
           <img src="https://ohsansi.umss.edu.bo/user/themes/quark/images/logo.png" alt="Logo oh sansi" />
-          <span>Configurar Datos de la Competencia</span>
+          <span>Configurar Competencia</span>
         </Link>
       </div>
 
