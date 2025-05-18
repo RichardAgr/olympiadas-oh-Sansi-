@@ -52,6 +52,7 @@ export default function ConfigurarDatosCompetencia() {
                   <PdfUploader 
                         idArchivo={area.area_id} 
                         title={area.nombre} 
+                        type="area"
             />
           ))}
         </div>
@@ -62,7 +63,7 @@ export default function ConfigurarDatosCompetencia() {
           <Megaphone className="section-icon" /> Convocatoria
         </h2>
         <div className="cards-container">
-          <PdfUploader  title="Convocatoria Oficial"/>
+          <PdfUploader idArchivo={1} title="Convocatoria Oficial" type="convocatoria"/>
         </div>
       </section>
 

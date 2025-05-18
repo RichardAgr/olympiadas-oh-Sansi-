@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\EstadisticasController;
 use App\Http\Controllers\Api\OcrPagoController;
 use App\Http\Controllers\Api\ReciboController;
 use App\Http\Controllers\Api\DatosExcel;
+use App\Http\Controllers\Api\DocumentoController;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCompetidorController;
 
 
@@ -97,3 +98,7 @@ Route::get('/recibos/tutor/{tutorId}', [ReciboController::class, 'obtenerRecibos
 //excel
 Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
 Route::get('/areasCategoriasGrados', [AreaController::class, 'getAreasWithCategoriasGrados']);
+
+//DocumentosHome
+Route::post('/documentos/tipoPortal', [DocumentoController::class, 'guardarDocumentos']);
+Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
