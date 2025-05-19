@@ -1,0 +1,167 @@
+.ContainerConfigData {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  padding-top: 50px;
+}
+
+.page-headerConfigData {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeInDown 0.8s ease;
+}
+
+.page-headerConfigData p{
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.titulo-configData {
+  font-size: 2.5rem;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.titulo-configData::after {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  bottom: -8px;
+  left: 25%;
+  border-radius: 2px;
+  animation: expandWidth 1s ease-out forwards;
+}
+
+.section-titleConfigData { 
+  font-size: 1.8rem;
+  color: var(--text-color);
+  margin: 2rem 0 1.5rem;
+  padding-left: 1rem;
+  border-left: 4px solid var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: slideInLeft 0.5s ease-out;
+}
+
+.section-icon {
+  color: var(--primary-dark);
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes expandWidth {
+  from {
+    width: 0;
+  }
+  to {
+    width: 50%;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 107, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(74, 107, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 107, 255, 0);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Estilos para diferentes secciones */
+.areas-section .card-icon {
+  color: var(--primary-color);
+  background: rgba(74, 107, 255, 0.1);
+}
+
+.convocatoria-section .card-icon {
+  color: var(--primary-color);
+  background: rgba(140, 82, 255, 0.1);
+}
+
+.videos-section .card-icon {
+  color: var(--primary-color);
+  background: rgba(140, 82, 255, 0.1);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+
+  .app-container {
+    padding: 1rem;
+    padding-top: calc(70px + 1rem);
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+}

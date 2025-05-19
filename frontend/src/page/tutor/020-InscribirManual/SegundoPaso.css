@@ -1,0 +1,129 @@
+/* Contenedor principal */
+.inscribir-manual-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 50px auto;
+    width: 90%;          /* El 90% del ancho disponible */
+    max-width: 1400px;    /* Limite máximo de 1400px */
+    padding: 0 20px; /* Agregado para evitar que se recorte el contenido en pantallas pequeñas */
+  }
+  
+  /* Título */
+  .inscribir-manual-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    margin-left: 20px;
+  }
+  
+  /* Formulario */
+  .inscribir-manual-form {
+    background-color: #d0e6fd;
+  padding: 40px 60px;
+  border-radius: 16px;
+  width: 100% !important;            /* <-- cambia esto */
+  max-width: 800px !important;       /* <-- limita el ancho */
+  margin: 0 auto !important;         /* <-- esto centra horizontalmente */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Estilos dentro del form */
+  .inscribir-manual-form .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .inscribir-manual-form .form-group label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .inscribir-manual-form .form-group input,
+  .inscribir-manual-form .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #444;
+  }
+  
+  /* Botones de opciones en grilla */
+  .grid-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  
+  .option-button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: white;
+    color: black;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .option-button:hover:not(:disabled) {
+    background-color: #d0eaff;
+  }
+  
+  .option-button.selected {
+    background-color: #1e40af;
+    color: white;
+  }
+  
+  .option-button:disabled {
+    background-color: #ccc;
+    color: white;
+    cursor: not-allowed;
+  }
+  
+  /* Botones de navegación */
+  .submit-button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    width: 100%;
+  }
+  
+  .submit-button {
+    background-color: #2D42C8;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 0.6rem 1.4rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .submit-button:hover {
+    background-color: #061A8B;
+  }
+  
+  .submit-button.cancel {
+    background-color: #DEE1E6;
+    color: #565E6C;
+    border: none;
+    border-radius: 25px;
+    padding: 0.6rem 1.4rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .submit-button.cancel:hover {
+    background-color: #CFCFCF;
+  }
+  
+  .option-button.selected-rango {
+    background-color: #1e40af;
+    color: white;
+  }

@@ -1,0 +1,178 @@
+
+/* CONTENEDOR PRINCIPAL */
+.inscribir-manual-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 50px auto;
+  width: 90%;
+  max-width: 1400px;
+}
+
+/* Título */
+.inscribir-manual-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+/* Pasos */
+.steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.step-number {
+  background-color: #d0f0f9;
+  color: #007bff;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.step-number.active {
+  background-color: #007bff;
+  color: #ffffff;
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
+}
+
+.step-line {
+  height: 2px;
+  width: 80px;
+  background-color: #ccc;
+  margin: 0 10px;
+}
+
+/* FORMULARIO CON FONDO CELESTE */
+.inscribir-manual-form {
+  background-color: #d0e6fd;
+  padding: 40px 60px;
+  border-radius: 16px;
+  width: 100% !important;            /* <-- cambia esto */
+  max-width: 800px !important;       /* <-- limita el ancho */
+  margin: 0 auto !important;         /* <-- esto centra horizontalmente */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* GRUPOS DENTRO DEL FORMULARIO */
+.inscribir-manual-form .form-group {
+  margin-bottom: 20px;
+}
+
+.inscribir-manual-form .form-group label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* INPUTS Y SELECTS */
+.inscribir-manual-form .form-group input,
+.inscribir-manual-form .form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #444;
+}
+
+/* INPUTS MÁS PEQUEÑOS PERSONALIZADOS */
+.inscribir-manual-form .form-group select[name="curso"],
+.inscribir-manual-form .form-group input[type="date"],
+.inscribir-manual-form .form-group input[type="departamento"] {
+  width: 150px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+/* BOTONES */
+.inscribir-manual-container .submit-button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.inscribir-manual-container .submit-button {
+  background-color: #2D42C8;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.inscribir-manual-container .submit-button:hover {
+  background-color: #061A8B;
+}
+
+.inscribir-manual-container .submit-button.cancel {
+  background-color: #DEE1E6;
+  color: #565E6C;
+}
+
+.inscribir-manual-container .submit-button.cancel:hover {
+  background-color: #CFCFCF;
+}
+
+/* ESTILOS PARA RADIOS VERTICALES */
+.vertical-radio-group {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.radio-option-vertical {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  width: fit-content;
+  color: #444;
+}
+
+.radio-option-vertical input[type="radio"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 16px !important;
+  height: 16px !important;
+  box-shadow: none !important;
+  appearance: auto !important;
+  transform: translateY(-5px); /* Ajusta el valor a tu gusto */
+  cursor: pointer;
+}
+
+/* ERRORES */
+.inscribir-manual-form .input-error {
+  border: 2px solid #e74c3c;
+  background-color: #ffe6e6;
+}
+
+.inscribir-manual-form .error-message {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 4px;
+}

@@ -1,0 +1,211 @@
+/* Contenedor principal */
+.tercer-paso-container {
+  background-color: #d0e6fd;
+  padding: 40px 60px;
+  border-radius: 16px;
+  width: 100% !important; /* <-- cambia esto */
+  max-width: 800px !important; /* <-- limita el ancho */
+  margin: 0 auto !important; /* <-- esto centra horizontalmente */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+.tercer-paso-container h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* Grupos de formulario: etiqueta a la izquierda, campo a la derecha */
+.tercer-paso-container .form-group {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+/* Etiquetas */
+.tercer-paso-container .form-group label {
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 180px;
+  margin-top: 10px;
+  text-align: left;
+}
+
+/* Contenedor del campo + error (vertical) */
+.tercer-paso-container .form-control-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Inputs y selects */
+.tercer-paso-container .form-control-wrapper input,
+.tercer-paso-container .form-control-wrapper select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+/* Select corto */
+.tercer-paso-container .form-control-wrapper select.short-select {
+  width: 80px;
+}
+
+/* Inputs con error */
+.tercer-paso-container .input-error {
+  border: 2px solid #e74c3c;
+  background-color: #ffe6e6;
+}
+
+/* Mensaje de error */
+.tercer-paso-container .error-message {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 4px;
+  text-align: left;
+}
+
+/* Tarjeta de tutor */
+.tercer-paso-container .tutor-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 750px; /* <-- Esto asegurará que la tarjeta no sea más ancha que el contenedor */
+  margin-left: auto; /* <-- Esto asegura que se centre */
+  margin-right: auto; /* <-- Esto asegura que se centre */
+}
+
+/* Radio buttons */
+.tercer-paso-container .radio-group {
+  display: flex;
+  gap: 1px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.tercer-paso-container .radio-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px; /* reduce el espacio aquí */
+  font-size: 15px;
+  padding: 0px; /* menos padding horizontal */
+}
+
+.tercer-paso-container .radio-group input[type="radio"] {
+  margin: 0;
+  box-shadow: none;
+  appearance: auto;
+  padding: 0;
+  width: 16px; /* Ajustable según necesidad */
+  height: 16px;
+  transform: translateY(0); /* Por si antes se había movido */
+}
+
+/* Botones */
+.tercer-paso-container .submit-button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.tercer-paso-container .submit-button {
+  background-color: #2d42c8;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tercer-paso-container .submit-button:hover {
+  background-color: #061a8b;
+}
+
+.tercer-paso-container .submit-button.cancel {
+  background-color: #dee1e6;
+  color: #565e6c;
+}
+
+.tercer-paso-container .submit-button.cancel:hover {
+  background-color: #cfcfcf;
+}
+
+.tercer-paso-container .short-select {
+  width: 80px; /* puedes ajustar este valor según lo que necesites */
+  padding: 8px;
+}
+
+.exito-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  border: 2px solid #000;
+  border-radius: 12px;
+  background: white;
+}
+
+.exito-container h2 {
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  color: black;
+}
+
+.descargar-button {
+  margin-top: 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.descargar-button:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+/* Estilos para el indicador de progreso de carga */
+.upload-progress {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pdf-uploaded-info {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #d1fae5;
+  color: #065f46;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
