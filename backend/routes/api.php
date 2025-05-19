@@ -109,3 +109,6 @@ Route::delete('/documentos/{type}/{id}', [DocumentoController::class, 'deleteDoc
 Route::post('/Guardarvideos', [VideoController::class, 'crearVideo']);
 Route::get('/Mostrarvideos', [VideoController::class, 'mostrarDetalleVideo']);
 Route ::delete('/Eliminarvideos/{tipo_video}', [VideoController::class, 'eliminarVideo']);
+
+//notificaciones
+Route::get('/notificaciones/{id_tutor}', [NotificacionController::class, 'contarNotificacionesActivas']);

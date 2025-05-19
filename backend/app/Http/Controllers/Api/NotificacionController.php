@@ -132,5 +132,18 @@ public function cambiarEstadoNotificacion(Request $request, $id_tutor, $id_notif
         'data' => $notificacion
     ], 200);
 }
+public function contarNotificacionesActivas($id_tutor)
+{
+    $count = Notificacion::where('tutor_id', $id_tutor)
+                        ->where('estado', false)
+                        ->count();
 
+    return response()->json([
+        'success' => true,
+        'message' => 'Conteo de notificaciones activas obtenido correctamente',
+        'data' => [
+            'total_activas' => $count
+        ]
+    ], 200);
+}
 }
