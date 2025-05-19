@@ -15,7 +15,7 @@ class Competidor extends Migration{
             $table->string('apellidos', 100);
             $table->string('ci', 20);
             $table->date('fecha_nacimiento');
-            $table->string('estado', 30);
+            $table->string('estado', 30)->default('Pendiente');
             $table->timestamps();
             
             $table->foreign('colegio_id')

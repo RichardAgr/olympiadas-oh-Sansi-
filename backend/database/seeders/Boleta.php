@@ -27,7 +27,6 @@ class Boleta extends Seeder{
                 'numero_boleta' => 'BOL-' . str_pad($i, 5, '0', STR_PAD_LEFT),
                 'nombre_pagador' => 'Pagador ' . $i,
                 'monto_total' => rand(15, 100) * 15, // Múltiplos de 15 (costo por área)
-                'fecha_emision' => $fechaEmision,
                 'fecha_pago' => $fechaPago,
                 'estado' => $fechaPago !== null,
                 'created_at' => Carbon::now(),

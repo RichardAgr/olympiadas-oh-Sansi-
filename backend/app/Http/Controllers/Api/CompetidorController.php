@@ -7,6 +7,8 @@ use App\Models\Competidor;
 use App\Models\CompetidorCompetencia;
 use App\Models\TutorCompetidor;
 use App\Models\Area;
+use App\Models\Competencia;
+use App\Models\NivelCategoria;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
@@ -67,9 +69,9 @@ class CompetidorController extends Controller{
         }
 
         // Si no se encuentra ninguna imagen, usar un valor por defecto
-        if (!$rutaImagen) {
+        /* if (!$rutaImagen) {
             $rutaImagen = 'https://i.ibb.co/svnPKS1b/boleta1.jpg';
-        }
+        } */
 
         $informacionCompetidor = [
             'id' => $competidor->competidor_id,
@@ -172,4 +174,69 @@ class CompetidorController extends Controller{
 
         return response()->json($result->values());
     }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nombres' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'ci' => 'required|numeric',
+            'fecha_nacimiento' => 'required|date|before:today',
+            'colegio_id' => 'required|exists:colegio,colegio_id',
+            'curso_id' => 'required|exists:curso,curso_id',
+            'departamento' => 'required|string|max:100',
+            'provincia' => 'required|string|max:100',
+            'areas' => 'required|array|min:1',
+            'areas.*' => 'exists:area,area_id'
+        ]);
+
+        $competidor = Competidor::find($id);
+        if (!$competidor) {
+            return response()->json(['error' => 'Competidor no encontrado'], 404);
+        }
+
+        // Actualizar datos personales y académicos
+        $competidor->nombres = $request->nombres;
+        $competidor->apellidos = $request->apellidos;
+        $competidor->ci = $request->ci;
+        $competidor->fecha_nacimiento = $request->fecha_nacimiento;
+        $competidor->colegio_id = $request->colegio_id;
+        $competidor->curso_id = $request->curso_id;
+        $competidor->save();
+
+        // Actualizar ubicación del colegio si aplica
+        $colegio = $competidor->colegio;
+        if ($colegio && $colegio->ubicacion) {
+            $colegio->ubicacion->departamento = $request->departamento;
+            $colegio->ubicacion->provincia = $request->provincia;
+            $colegio->ubicacion->save();
+        }
+
+        // Eliminar áreas previas
+        CompetidorCompetencia::where('competidor_id', $id)->delete();
+
+        // Asignar nuevas áreas con valores dinámicos
+        foreach ($request->areas as $areaId) {
+            $competencia = \App\Models\Competencia::latest()->first();
+            $nivelCategoria = \App\Models\NivelCategoria::where('area_id', $areaId)->first();
+
+            if (!$competencia || !$nivelCategoria) {
+                continue; // O podrías lanzar un error aquí si es obligatorio
+            }
+
+            CompetidorCompetencia::create([
+                'competidor_id' => $id,
+                'area_id' => $areaId,
+                'competencia_id' => $competencia->competencia_id,
+                'nivel_categoria_id' => $nivelCategoria->nivel_categoria_id,
+                'fecha_inscripcion' => now()
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Cambios guardados con éxito',
+            'competidor_id' => $competidor->competidor_id
+        ]);
+    }
+
 }
