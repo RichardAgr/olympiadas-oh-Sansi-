@@ -121,15 +121,36 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
   }
 
   const validateTutor = (tutor) => {
-    const err = {}
-    if (tutor.nombres.trim().length < 3) err.nombres = "Mínimo 3 caracteres."
-    if (tutor.apellidos.trim().length < 6) err.apellidos = "Mínimo 6 caracteres."
-    if (!/\S+@\S+\.\S+/.test(tutor.correo_electronico)) err.correo = "Correo inválido."
-    if (tutor.telefono.trim().length < 7) err.telefono = "Mínimo 7 dígitos."
-    if (tutor.ci.trim().length < 7) err.ci = "Mínimo 7 caracteres."
-    if (!tutor.relacion) err.relacion = "Seleccione una relación."
-    return err
-  }
+    const err = {};
+    const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+    const soloNumerosRegex = /^[0-9]+$/;
+  
+    if (tutor.nombres.trim().length < 3 || !soloLetrasRegex.test(tutor.nombres)) {
+      err.nombres = "Nombre no válido.";
+    }
+  
+    if (tutor.apellidos.trim().length < 6 || !soloLetrasRegex.test(tutor.apellidos)) {
+      err.apellidos = "Apellido no válido.";
+    }
+  
+    if (!/\S+@\S+\.\S+/.test(tutor.correo_electronico)) {
+      err.correo = "Correo no válido.";
+    }
+  
+    if (tutor.telefono.trim().length < 7 || !soloNumerosRegex.test(tutor.telefono)) {
+      err.telefono = "Teléfono no válido.";
+    }
+  
+    if (tutor.ci.trim().length < 7) {
+      err.ci = "CI no válido.";
+    }
+  
+    if (!tutor.relacion) {
+      err.relacion = "Seleccione una relación.";
+    }
+  
+    return err;
+  };
 
   const handleSubmit = async () => {
     const errores = tutores.slice(0, cantidadTutores).map(validateTutor)

@@ -45,10 +45,13 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
   const handleNext = async () => {
     if (selectedAreaId && selectedCategoria && selectedRango) {
       const areaNombre = areas.find((a) => a.id === selectedAreaId)?.nombre;
+      const gradoSeleccionado = grados.find(g => g.id === gradoId);
+    const cursoCompleto = gradoSeleccionado?.nombre || '';
 
       const datosCompetidor = {
         competidor: {
           ...formData,
+          curso: cursoCompleto, // 👈 AQUI mandas el nombre completo del curso
           area: areaNombre,
           categoria: selectedCategoria.nombre,
           rango: selectedRango,

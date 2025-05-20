@@ -34,23 +34,41 @@ function InscribirManual() {
   const handleSubmitStep1 = (e) => {
     e.preventDefault();
     const newErrors = {};
-
-    if (formData.nombres.trim().length < 3) newErrors.nombres = "Debe tener al menos 3 caracteres.";
-    if (formData.apellidos.trim().length < 6) newErrors.apellidos = "Debe tener al menos 6 caracteres.";
-    if (formData.ci.trim().length < 7) newErrors.ci = "Debe tener al menos 7 caracteres.";
-    if (formData.colegio.trim().length < 5) newErrors.colegio = "Debe tener al menos 5 caracteres.";
-    if (formData.provincia.trim().length < 4) newErrors.provincia = "Debe tener al menos 4 caracteres.";
+  
+    const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+  
+    if (formData.nombres.trim().length < 3 || !soloLetrasRegex.test(formData.nombres)) {
+      newErrors.nombres = "Nombre no válido.";
+    }
+  
+    if (formData.apellidos.trim().length < 6 || !soloLetrasRegex.test(formData.apellidos)) {
+      newErrors.apellidos = "Apellido no válido.";
+    }
+  
+    if (formData.ci.trim().length < 7) {
+      newErrors.ci = "CI no válido.";
+    }
+  
+    if (formData.colegio.trim().length < 5 || !soloLetrasRegex.test(formData.colegio)) {
+      newErrors.colegio = "Colegio no válido.";
+    }
+  
+    if (formData.provincia.trim().length < 4 || !soloLetrasRegex.test(formData.provincia)) {
+      newErrors.provincia = "Provincia no válida.";
+    }
+  
     if (!formData.curso) newErrors.curso = "Debe seleccionar un curso.";
     if (!formData.nivel) newErrors.nivel = "Debe seleccionar un nivel educativo.";
     if (!formData.departamento) newErrors.departamento = "Debe seleccionar un departamento.";
-
+  
     const selectedYear = new Date(formData.fecha_nacimiento).getFullYear();
     const currentYear = new Date().getFullYear();
     if (!formData.fecha_nacimiento) {
       newErrors.fecha_nacimiento = "Debe ingresar una fecha de nacimiento.";
     } else if (selectedYear > currentYear - 5) {
-      newErrors.fecha_nacimiento = `Fecha de naimiento no valida.`;
+      newErrors.fecha_nacimiento = "Fecha de nacimiento no válida.";
     }
+  
     setErrors(newErrors);
 
     // Traducción básica de curso + nivel a grado_id (ajusta esto si tu backend usa otros ID)
@@ -68,7 +86,7 @@ if (!grado_id) {
   return;
 }
 
-setFormData(prev => ({ ...prev, grado_id })); // 💡 Agregamos grado_id aquí
+setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
 
     if (Object.keys(newErrors).length === 0) {
       setCurrentStep(2);
