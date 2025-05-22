@@ -116,3 +116,6 @@ Route::get('/notificaciones/{id_tutor}', [NotificacionController::class, 'contar
 
 //login
 Route::post('/login', [AuthController::class, 'login']);
+
+//Registro de Tutores
+Route::post('/registrar-tutor', [AuthController::class, 'registrarTutor']);
