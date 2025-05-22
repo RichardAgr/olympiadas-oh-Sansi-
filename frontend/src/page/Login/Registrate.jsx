@@ -45,7 +45,7 @@ const Registrate = () => {
         }
         break;
       case "ci":
-        if (!/^[0-9]{5,10}[a-zA-Z]?$/.test(value)) {
+        if (!/^\d{8,15}$/.test(value)) {
           error = "Formato: 12345678 o 87654321";
         }
         break;
@@ -82,7 +82,7 @@ const Registrate = () => {
     } else if (name === "telefono") {
       filteredValue = value.replace(/\D/g, "");
     } else if (name === "ci") {
-      filteredValue = value.replace(/[^0-9\-a-zA-Z]/g, "");
+      filteredValue = value.replace(/\D/g, "");
     }
     
     setFormData(prev => ({
