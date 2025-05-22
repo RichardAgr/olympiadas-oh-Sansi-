@@ -6,6 +6,7 @@ import AppRouteLogin from "./AppRouteLogin";
 import AppRouter from "./AppRouter";
 import AppRouteRespGest from "./AppRouteRespGest";
 import AppRouteTutor from "./AppRouteTutor";
+import Registrate from "../page/Login/Registrate";
 
 
 function HomePrincipalRoutes() {
@@ -17,6 +18,7 @@ function HomePrincipalRoutes() {
       <Route path="/homePrincipal" element={<LayautHomePrincipal />}>
       <Route index element={<HomePrincipal />} />
         <Route path="login" element={<AppRouteLogin />} />
+        <Route path="registrate" element={<Registrate />} />
       </Route>
 
       {/* Rutas independientes según rol */}

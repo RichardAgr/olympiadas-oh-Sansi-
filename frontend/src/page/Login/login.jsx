@@ -90,7 +90,7 @@ const Login = () => {
             Iniciar Sesión
           </button>
           <p className="register-link">
-            ¿No tienes una cuenta? <a href="#">Regístrate</a>
+            ¿No tienes una cuenta? <a href="/homePrincipal/Registrate">Regístrate</a>
           </p>
         </form>
       </div>
