@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\DatosExcel;
 use App\Http\Controllers\Api\DocumentoController;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCompetidorController;
 use App\Http\Controllers\Api\VideoController;
+use App\Http\Controllers\Api\AuthController;
 
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
@@ -112,3 +113,6 @@ Route ::delete('/Eliminarvideos/{tipo_video}', [VideoController::class, 'elimina
 
 //notificaciones
 Route::get('/notificaciones/{id_tutor}', [NotificacionController::class, 'contarNotificacionesActivas']);
+
+//login
+Route::post('/login', [AuthController::class, 'login']);
