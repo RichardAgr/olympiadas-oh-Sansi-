@@ -1,6 +1,5 @@
 import  { useState } from "react";
 import "./Login.css";
-import imgLogin from "../../assets/imgLogin.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -82,7 +81,7 @@ const Login = () => {
 
           {error && <p style={{ color: "red", fontSize: "0.9rem" }}>{error}</p>}
 
-          <a href="#" className="forgot-password">
+          <a href="/homePrincipal/RecuperarContraseña" className="forgot-password">
             ¿Olvidaste tu contraseña?
           </a>
 
