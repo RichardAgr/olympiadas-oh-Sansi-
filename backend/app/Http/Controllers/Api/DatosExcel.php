@@ -394,7 +394,10 @@ class DatosExcel extends Controller{
             // Buscar o crear colegio
             $colegio = Colegio::firstOrCreate(
                 ['nombre' => $competidor_data['colegio']],
-                ['ubicacion_id' => $ubicacion->ubicacion_id]
+                [
+                    'ubicacion_id' => $ubicacion->ubicacion_id,
+                    'telefono' =>'',    
+                ]
             );
             
             // Determinar el grado basado en el nombre del curso

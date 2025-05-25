@@ -11,6 +11,7 @@ function MiPerfil() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [datosTutor, setDatosTutor] = useState(null);
+  
   useEffect(() => {
     try {
       const getDataTutor = async ()=>{
@@ -22,6 +23,7 @@ function MiPerfil() {
       console.log('Error cargando datos del tutor:', error)
     }
   }, [id]);
+
 
   if (!datosTutor) {
     return <p>Cargando datos del tutor...</p>;

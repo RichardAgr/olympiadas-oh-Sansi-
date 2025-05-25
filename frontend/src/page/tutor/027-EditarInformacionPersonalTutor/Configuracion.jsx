@@ -46,45 +46,63 @@ function Configuracion() {
   }, [id])
 
   // Función para validar los campos
-  const validarCampo = (name, value) => {
-    let error = ""
+const validarCampo = (name, value) => {
+  let error = "";
 
-    switch (name) {
-      case "nombres":
-        if (value.trim().length < 3) {
-          error = "El nombre debe tener al menos 3 letras"
-        }
-        break
-      case "apellidos":
-        if (value.trim().length < 3) {
-          error = "El apellido debe tener al menos 3 letras"
-        }
-        break
-      case "correo_electronico":
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(value)) {
-          error = "Ingrese un correo electrónico válido"
-        }
-        break
-      case "telefono":
-        const telefonoRegex = /^\d+$/
-        if (!telefonoRegex.test(value) || value.length < 8) {
-          error = "El teléfono debe tener al menos 8 dígitos"
-        }
-        break
-      case "ci":
-        const ciRegex = /^\d+$/
-        if (!ciRegex.test(value) || value.length < 7) {
-          error = "El número de carnet debe tener al menos 7 dígitos"
-        }
-        break
-      default:
-        break
-    }
+  switch (name) {
+    case "nombres":
+      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/.test(value)) {
+        error = "El nombre solo debe contener letras";
+      } else if (value.trim().length < 3) {
+        error = "El nombre debe tener al menos 3 letras";
+      } else if (value.length > 30) {
+        error = "El nombre no debe exceder 30 caracteres";
+      }
+      break;
 
-    return error
+    case "apellidos":
+      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/.test(value)) {
+        error = "El apellido solo debe contener letras";
+      } else if (value.trim().length < 3) {
+        error = "El apellido debe tener al menos 3 letras";
+      } else if (value.length > 30) {
+        error = "El apellido no debe exceder 30 caracteres";
+      }
+      break;
+
+    case "correo_electronico":
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        error = "Ingrese un correo electrónico válido";
+      }
+      break;
+
+    case "telefono":
+      if (!/^\d*$/.test(value)) {
+        error = "El teléfono solo debe contener números";
+      } else if (value.length < 8) {
+        error = "El teléfono debe tener al menos 8 dígitos";
+      } else if (value.length > 10) {
+        error = "El teléfono no debe exceder 10 dígitos";
+      }
+      break;
+
+    case "ci":
+      if (!/^\d*$/.test(value)) {
+        error = "El número de carnet solo debe contener números";
+      } else if (value.length < 7) {
+        error = "El número de carnet debe tener al menos 7 dígitos";
+      } else if (value.length > 10) {
+        error = "El número de carnet no debe exceder 10 dígitos";
+      }
+      break;
+
+    default:
+      break;
   }
 
+  return error;
+};
   const handleChange = (e) => {
     const { name, value } = e.target
 
@@ -246,7 +264,7 @@ function Configuracion() {
         <button className="btn-guardar" onClick={confirmarGuardado}>
           Guardar
         </button>
-        <button className="btn-cancelar" onClick={cancelarEdicion}>
+        <button className="btn-cancelar" onClick={volverHome}>
           Cancelar
         </button>
       </div>
