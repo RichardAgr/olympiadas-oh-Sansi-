@@ -72,8 +72,8 @@ export default function ConfigurarDatosCompetencia() {
           <Video className="section-icon" /> Videos Instructivos
         </h2>
         <div className="cards-container">
-          <VideoUploader title="Manual de Inscripción" type="manual" />
-          <VideoUploader title="Tutorial de Excel" type="excel" />
+          <VideoUploader title="Inscripcion Manual" type="manual" />
+          <VideoUploader title="Inscripcion con Excel" type="excel" />
           <VideoUploader title="Subir Boleta de Pago"  type="boleta" />
         </div>
       </section>
