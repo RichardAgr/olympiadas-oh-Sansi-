@@ -1,3 +1,14 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
 .registrate-container {
   display: flex;
   min-height: 100vh;
@@ -5,7 +16,7 @@
 }
 
 .registrate-left {
-  width: 55vw;
+  width: 50vw;
   position: relative;
   margin: 0;
   padding: 0;
@@ -37,14 +48,14 @@
 }
 
 .registrate-text h1 {
-  font-size: 55px;
+  font-size: 40px;
   font-weight: bold;
   margin-bottom: 10px;
   color: #ffffff;
 }
 
 .registrate-text p {
-  font-size: 30px;
+  font-size: 20px;
   color: #ffffff;
 }
 
@@ -60,13 +71,13 @@
   background: white;
   padding: 40px;
   border-radius: 20px;
-  box-shadow:-1px 20px 15px 17px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 520px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-bottom: 15px;
+  
 }
 
 .registrate-title {

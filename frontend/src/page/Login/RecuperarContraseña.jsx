@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import "./RecuperarContraseña.css";
 import ConfirmacionIcon from "../../assets/Confirmacion.png";
+import axios from "axios";
 
 const RecuperarContraseña = () => {
   const navigate = useNavigate();
@@ -41,68 +42,98 @@ const RecuperarContraseña = () => {
     setTouched({ ...touched, [field]: true });
   };
 
-  const handleEnviarEmail = (e) => {
+  const handleEnviarEmail = async (e) => {
     e.preventDefault();
     setTouched({ ...touched, email: true });
-    
+  
     if (!email) {
       setError("Por favor ingresa tu correo electrónico");
       return;
     }
-    
+  
     if (!validateEmail(email)) {
       setError("Por favor ingresa un correo electrónico válido");
       return;
     }
-    
-    setPaso(2);
-    setError("");
-  };
+  
+    try {
+      await axios.post("http://localhost:3000/api/recuperar/enviar-codigo", { email }, { withCredentials: true });
+      setPaso(2);
+      setError("");
+    } catch (error) {
+      console.error(error);
+      setError("No se pudo enviar el código. Verifica que el correo esté registrado.");
+    }
+  };  
 
-  const handleVerificarCodigo = (e) => {
+  const handleVerificarCodigo = async (e) => {
     e.preventDefault();
     setTouched({ ...touched, codigo: true });
-    
+  
     if (!codigo) {
       setError("Por favor ingresa el código de verificación");
       return;
     }
-    
+  
     if (!validateCode(codigo)) {
       setError("El código debe tener 6 dígitos numéricos");
       return;
     }
-    
-    setPaso(4);
-    setError("");
+  
+    try {
+      const response = await axios.post("http://localhost:3000/api/recuperar/verificar-codigo", {
+        email,
+        codigo
+      }, { withCredentials: true });
+  
+      if (response.data.valid) {
+        setPaso(4);
+        setError("");
+      } else {
+        setError("Código inválido o expirado");
+      }
+    } catch (error) {
+      console.error(error);
+      setError("Error al verificar el código");
+    }
   };
-
-  const handleCambiarContraseña = (e) => {
+  
+  const handleCambiarContraseña = async (e) => {
     e.preventDefault();
     setTouched({
       ...touched,
       nuevaContraseña: true,
       confirmarContraseña: true
     });
-    
+  
     if (!nuevaContraseña || !confirmarContraseña) {
       setError("Por favor completa ambos campos");
       return;
     }
-    
+  
     if (!validatePassword(nuevaContraseña)) {
       setError("La contraseña debe tener al menos 8 caracteres, una mayúscula y un número");
       return;
     }
-    
+  
     if (nuevaContraseña !== confirmarContraseña) {
       setError("Las contraseñas no coinciden");
       return;
     }
-    
-    setPaso(5);
-    setError("");
-  };
+  
+    try {
+      await axios.post("http://localhost:3000/api/recuperar/cambiar-contraseña", {
+        email,
+        nuevaContraseña
+      }, { withCredentials: true });
+  
+      setPaso(5);
+      setError("");
+    } catch (error) {
+      console.error(error);
+      setError("No se pudo cambiar la contraseña");
+    }
+  };  
 
   const handleVolverLogin = () => {
     navigate("/homePrincipal/login");
