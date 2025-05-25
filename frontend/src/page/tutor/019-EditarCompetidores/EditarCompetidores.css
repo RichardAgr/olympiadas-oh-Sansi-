@@ -142,7 +142,7 @@ input[type="date"].imputEdit {
 }
 
 /* Botones */
-.form-actions {
+.form-actions9 {
   grid-column: span 2;
   display: flex;
   justify-content: flex-end;
@@ -150,10 +150,16 @@ input[type="date"].imputEdit {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid #eee;
+  position: relative;
+  top: -53px;
+  left: -56px;
+  right: 0;
+  bottom: 0;
+
 }
 
-.cancel-button,
-.save-button {
+.cancel-button9,
+.save-button9 {
   padding: 10px 20px;
   border-radius: 14px;
   font-weight: bold;
@@ -161,27 +167,27 @@ input[type="date"].imputEdit {
   transition: all 0.2s;
 }
 
-.cancel-button {
+.cancel-button9 {
   background-color: #f1f1f1;
   color: #555;
   border: 1px solid #ddd;
 }
 
-.cancel-button:hover {
+.cancel-button9:hover {
   background-color: #e5e5e5;
 }
 
-.save-button {
+.save-button9 {
   background-color: #0146b7;
   color: white;
   border: 1px solid #0146b7;
 }
 
-.save-button:hover {
+.save-button9:hover {
   background-color: #013a9c;
 }
 
-.save-button:disabled {
+.save-button9:disabled {
   background-color: #cccccc;
   border-color: #cccccc;
   cursor: not-allowed;

@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { UserCircle, Bell } from "lucide-react";
+import "./estilos/estilosTopBar.css";
 
 const AdminTopBar = () => {
   const [showRolesMenu, setShowRolesMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // 👉 responsive menu
   const timeoutRef = useRef(null);
   const location = useLocation();
+  const [userMenuOpen, setUserMenuOpen] = useState(false); 
 
   const handleMouseEnter = () => {
     clearTimeout(timeoutRef.current);
@@ -26,7 +28,9 @@ const AdminTopBar = () => {
   const isRolesRoute =
     location.pathname.includes("/admin/visualizarRegistro")
 /*     location.pathname.includes("/admin/tutores"); */
-
+  const toggleUserMenu = () => {
+    setUserMenuOpen(!userMenuOpen)
+  }
   return (
     <nav className="topbar">
       <div className="topbar-left">
@@ -114,11 +118,16 @@ const AdminTopBar = () => {
           </button>
         </li> */}
 
-        <li>
-          <div className="admin-badge">
+        <li className="user-menu"  onClick={toggleUserMenu}>
+          <div className="menu-toggle">
             <UserCircle size={22} color="white" />
             <span>Admin</span>
           </div>
+          {userMenuOpen && (
+            <ul className="menu-dropdown">
+              <li><Link to={`/homePrincipal`}>Cerrar Sesion</Link></li>
+            </ul>
+          )}
         </li>
       </ul>
     </nav>

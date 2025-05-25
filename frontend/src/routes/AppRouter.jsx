@@ -15,6 +15,7 @@ import RegistroCategoria from "../page/administrador/RegistroCategoria";
 import EditarCategoria from "../page/administrador/EditarCategoria";
 import AgregarCategoria from "../page/administrador/AgregarCategoria";
 import AppRouteRespGest from "./AppRouteRespGest";
+import ConfigurarDatosCompetencia from "../page/administrador/configurarDatosCompetencia/ConfigurarDatosCompetencia";
 
 const AppRouter = () => {
   return (
@@ -40,6 +41,7 @@ const AppRouter = () => {
           <Route path="registro-categorias" element={<RegistroCategoria />} />
           <Route path="registro-categorias/editar/:id" element={<EditarCategoria />} />
           <Route path="registro-categorias/nueva" element={<AgregarCategoria />} />
+          <Route path="configurar/datosCompetencia" element={<ConfigurarDatosCompetencia />} />
         </Route>
         <Route path="/homeRespGestion/*" element={<AppRouteRespGest />} />
       </Routes>

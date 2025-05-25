@@ -663,5 +663,28 @@ public function registrarTutores(Request $request)
         ], 500);
     }
 }
+   public function datosTutor($id)
+{
+    $tutor = Tutor::find($id);
+
+    if (!$tutor) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Tutor no encontrado'
+        ], 404);
+    }
+
+    return response()->json([
+        'success' => true,
+        'data' => [
+            'nombres' => $tutor->nombres,
+            'apellidos' => $tutor->apellidos,
+            'correo_electronico' => $tutor->correo_electronico,
+            'telefono' => $tutor->telefono,
+            'ci' => $tutor->ci
+        ]
+    ]);
+}
+
 
 }

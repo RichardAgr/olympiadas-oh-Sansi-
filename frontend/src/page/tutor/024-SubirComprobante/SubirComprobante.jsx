@@ -4,9 +4,12 @@ import FileUp from "../../../components/FileUp/FileUp"
 import FileViewer from "../../../components/FileViewer/FileViewer"
 import { extractDataFromImage,validateImage } from "../../../components/ImageProcessor/ImageProcessor"
 import { uploadToCloudinary } from "../../../components/ImageProcessor/cloudinaty"
+import {useParams} from "react-router-dom"
+import axios from "axios"
 import "./subirComprobante.css"
 
 export default function App() {
+  const {id} = useParams()
   const [file, setFile] = useState(null)
   const [extractedData, setExtractedData] = useState(null)
   const [filePreviewUrl, setFilePreviewUrl] = useState(null)
@@ -81,24 +84,38 @@ export default function App() {
     try {
       setIsUploading(true)
       setUploadProgress(0)
-      // Subir el archivo a la nube y obtener la URL (cloudinary)
       const cloudinaryResponse = await uploadToCloudinary(file, (progress) => {
         setUploadProgress(progress)
       })
       const uploadedUrl = await cloudinaryResponse.secure_url
 
+      const postData = {
+      tutor_id: id,
+      fechaPago: extractedData?.fechaPago || "", 
+      imageUrl: uploadedUrl,
+      montoPagado: extractedData?.montoPagado || "", 
+      nombreCompleto: extractedData?.nombreCompleto || "",
+      numeroComprobante: extractedData?.numeroComprobante || "",
+    };
+
+      console.log(postData)
+    const response = await axios.post('http://127.0.0.1:8000/api/boletas/pagoInscripcion',postData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('Respuesta de la API:', response.data);
+
       setUploadedFileUrl(uploadedUrl)
       showAlertMessage("¡Cambios guardados!", "success")
 
       setTimeout(() => {
-        handleDeleteFile() // Esto limpia el estado y vuelve a la pantalla inicial
+        handleDeleteFile()
       }, 1500)
 
-      // Aquí podrías guardar también los datos extraídos junto con la URL
-      console.log("Datos guardados:", {
-        ...extractedData,
-        imageUrl: uploadedUrl,
-      })
     } catch (error) {
       console.error("Error al subir la imagen:", error)
       showAlertMessage("Error al guardar la imagen en la nube: " + error.message, "error")

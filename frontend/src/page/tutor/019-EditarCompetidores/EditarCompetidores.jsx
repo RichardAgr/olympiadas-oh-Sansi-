@@ -152,20 +152,28 @@ function EditarCompetidores() {
   };
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
-    setCompetidor((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
+  const { id, value } = e.target;
 
-    if (errors[id]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[id];
-        return newErrors;
-      });
-    }
-  };
+  // Filtrar números solo si el campo es nombre, apellidos o provincia
+  let newValue = value;
+  if (id === "nombres" || id === "apellidos" || id === "provincia") {
+    newValue = value.replace(/[0-9]/g, "");
+  }
+
+  setCompetidor((prev) => ({
+    ...prev,
+    [id]: newValue,
+  }));
+
+  if (errors[id]) {
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[id];
+      return newErrors;
+    });
+  }
+};
+
 
   const handleCancel = () => {
     navigate(-1);
@@ -333,16 +341,16 @@ function EditarCompetidores() {
           </div>
         </div>
 
-        <div className="form-actions">
+        <div className="form-actions9">
           <button
             type="button"
-            className="cancel-button"
+            className="cancel-button9"
             onClick={handleCancel}
             disabled={loading}
           >
             Cancelar
           </button>
-          <button type="submit" className="save-button" disabled={loading}>
+          <button type="submit" className="save-button9" disabled={loading}>
             {loading ? "Guardando..." : "Guardar"}
           </button>
         </div>

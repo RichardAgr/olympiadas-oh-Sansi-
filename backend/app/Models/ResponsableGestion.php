@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 
-class ResponsableGestion extends Model
+class ResponsableGestion extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens, Notifiable;
 
-    protected $table = 'responsable_gestion'; 
-
-    protected $primaryKey = 'responsable_id'; 
+    protected $table = 'responsable_gestion';
+    protected $primaryKey = 'responsable_id';
 
     protected $fillable = [
         'ci',
@@ -21,7 +22,20 @@ class ResponsableGestion extends Model
         'telefono',
         'fecha_asignacion',
         'estado',
+        'password'  
     ];
 
-    public $timestamps = true; 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    public $timestamps = true;
+
+    
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = \Hash::make($value);
+    }
 }
+
