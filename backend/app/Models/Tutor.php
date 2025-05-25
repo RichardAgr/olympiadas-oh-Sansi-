@@ -29,13 +29,20 @@ class Tutor extends Authenticatable
         'remember_token',
     ];
 
-    
+    /**
+     * Mutator para hashear automáticamente la contraseña
+     */
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = \Hash::make($value);
+        // Solo si el valor no está ya hasheado (opcional)
+        if (\Illuminate\Support\Facades\Hash::needsRehash($value)) {
+            $this->attributes['password'] = \Hash::make($value);
+        } else {
+            $this->attributes['password'] = $value;
+        }
     }
 
-    // Relaciones
+    // 📚 Relaciones existentes
     public function competidores()
     {
         return $this->belongsToMany(Competidor::class, 'tutor_competidor', 'tutor_id', 'competidor_id')

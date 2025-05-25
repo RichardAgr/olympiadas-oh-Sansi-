@@ -14,7 +14,7 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        // Validación con mensajes personalizados
+        // Validación de entrada
         $request->validate([
             'correo_electronico' => 'required|email',
             'password' => 'required'
@@ -27,7 +27,7 @@ class AuthController extends Controller
         $correo = $request->correo_electronico;
         $clave = $request->password;
 
-        // ADMIN
+        // Intentar login como Admin
         $admin = Admin::where('correo_electronico', $correo)->first();
         if ($admin && Hash::check($clave, $admin->password)) {
             $token = $admin->createToken('auth_token')->plainTextToken;
@@ -38,12 +38,8 @@ class AuthController extends Controller
             ]);
         }
 
-        // TUTOR
+        // Intentar login como Tutor
         $tutor = Tutor::where('correo_electronico', $correo)->first();
-        if ($tutor) {
-            Log::info('Tutor encontrado', ['correo' => $tutor->correo_electronico]);
-        }
-
         if ($tutor && Hash::check($clave, $tutor->password)) {
             $token = $tutor->createToken('auth_token')->plainTextToken;
             return response()->json([
@@ -53,7 +49,7 @@ class AuthController extends Controller
             ]);
         }
 
-        // RESPONSABLE
+        // Intentar login como ResponsableGestion
         $responsable = ResponsableGestion::where('correo_electronico', $correo)->first();
         if ($responsable && Hash::check($clave, $responsable->password)) {
             $token = $responsable->createToken('auth_token')->plainTextToken;
@@ -64,41 +60,40 @@ class AuthController extends Controller
             ]);
         }
 
-        //Si no coincide ningún usuario
+        // Si ninguno coincide
         return response()->json(['mensaje' => 'Credenciales inválidas'], 401);
     }
+
     public function registrarTutor(Request $request)
-{
-    // Validación
-    $request->validate([
-        'nombres' => 'required|string|max:100',
-        'apellidos' => 'required|string|max:100',
-        'correo_electronico' => 'required|email|unique:tutor,correo_electronico',
-        'telefono' => 'required|string|max:15',
-        'ci' => 'required|string|max:15|unique:tutor,ci',
-        'password' => 'required|string|min:6|confirmed',
-    ], [
-        'correo_electronico.unique' => 'Este correo ya está registrado.',
-        'ci.unique' => 'Este número de C.I. ya existe.',
-        'password.confirmed' => 'Las contraseñas no coinciden.'
-    ]);
+    {
+        // Validación completa
+        $request->validate([
+            'nombres' => 'required|string|max:100',
+            'apellidos' => 'required|string|max:100',
+            'correo_electronico' => 'required|email|unique:tutor,correo_electronico',
+            'telefono' => 'required|string|max:15',
+            'ci' => 'required|string|max:15|unique:tutor,ci',
+            'password' => 'required|string|min:6|confirmed',
+        ], [
+            'correo_electronico.unique' => 'Este correo ya está registrado.',
+            'ci.unique' => 'Este número de C.I. ya existe.',
+            'password.confirmed' => 'Las contraseñas no coinciden.'
+        ]);
 
-    // Crear tutor (se hashea automáticamente gracias al setPasswordAttribute del modelo)
-    $tutor = \App\Models\Tutor::create([
-        'nombres' => $request->nombres,
-        'apellidos' => $request->apellidos,
-        'correo_electronico' => $request->correo_electronico,
-        'telefono' => $request->telefono,
-        'ci' => $request->ci,
-        'estado' => 1, // Activo por defecto
-        'password' => $request->password
-    ]);
+        // Crear tutor (password será hasheado automáticamente por el mutator)
+        $tutor = Tutor::create([
+            'nombres' => $request->nombres,
+            'apellidos' => $request->apellidos,
+            'correo_electronico' => $request->correo_electronico,
+            'telefono' => $request->telefono,
+            'ci' => $request->ci,
+            'estado' => 1,
+            'password' => $request->password
+        ]);
 
-    return response()->json([
-        'mensaje' => 'Registro exitoso',
-        'usuario' => $tutor
-    ], 201);
+        return response()->json([
+            'mensaje' => 'Registro exitoso',
+            'usuario' => $tutor
+        ], 201);
+    }
 }
-
-}
-

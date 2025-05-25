@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCo
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PasswordResetController;
+use App\Http\Controllers\Api\PasswordChangeController;
 
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
@@ -127,3 +128,6 @@ Route::post('/registrar-tutor', [AuthController::class, 'registrarTutor']);
 Route::post('/password/email', [PasswordResetController::class, 'enviarCodigo']);
 Route::post('/password/verify', [PasswordResetController::class, 'verificarCodigo']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetearPassword']);
+
+//Cambiar password
+Route::middleware('auth:sanctum')->post('/password/change', [PasswordChangeController::class, 'cambiarPassword']);
