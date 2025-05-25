@@ -96,4 +96,16 @@ class AuthController extends Controller
             'usuario' => $tutor
         ], 201);
     }
+
+    public function logout(Request $request)
+    {
+        // Revoke all tokens for the authenticated user
+        $request->user()->tokens()->delete();
+    
+        return response()->json([
+            'mensaje' => 'Sesión cerrada exitósamente.'
+        ]);
+    }
+    
+
 }
