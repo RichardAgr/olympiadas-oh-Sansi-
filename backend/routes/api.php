@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\DocumentoController;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCompetidorController;
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PasswordResetController;
 
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
@@ -120,3 +121,9 @@ Route::post('/login', [AuthController::class, 'login']);
 
 //Registro de Tutores
 Route::post('/registrar-tutor', [AuthController::class, 'registrarTutor']);
+
+
+//Recuperar contraseña
+Route::post('/password/email', [PasswordResetController::class, 'enviarCodigo']);
+Route::post('/password/verify', [PasswordResetController::class, 'verificarCodigo']);
+Route::post('/password/reset', [PasswordResetController::class, 'resetearPassword']);
