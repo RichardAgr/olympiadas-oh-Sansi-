@@ -68,9 +68,15 @@ public function mostrarDetalleVideo(Request $request)
     }
 
     return response()->json([
-        'message' => 'Videos encontrados',
-        'data' => $result,
-    ]);
+    'message' => 'Videos encontrados',
+    'data' => collect($result)->map(function ($video) {
+        return [
+            'existe' => $video->estado,
+            'tipo_video' => $video->tipo_video,
+            'url_video' => $video->url_video,
+        ];
+    })->values()
+]);
 
 }
 public function eliminarVideo($tipo_video)
