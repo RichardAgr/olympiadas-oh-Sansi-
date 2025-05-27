@@ -1,39 +1,45 @@
-import { useEffect, useState,useRef } from "react";
-import axios from "axios";
+"use client"
 
-import olimpicoImage from "../../assets/OLIMPICO1.png";
-import rect34 from "../../assets/Rectangle34.png";
-import rect28 from "../../assets/Rectangle28.png";
-import rect32 from "../../assets/Rectangle32.png";
-import rect33 from "../../assets/Rectangle33.png";
-import iconVideo from "../../assets/image16.png";
+import { useEffect, useState, useRef } from "react"
 
-import "./HomePrincipal.css";
+import olimpicoImage from "../../assets/OLIMPICO1.png"
+import rect34 from "../../assets/Rectangle34.png"
+import rect28 from "../../assets/Rectangle28.png"
+import rect32 from "../../assets/Rectangle32.png"
+import rect33 from "../../assets/Rectangle33.png"
+import iconVideo from "../../assets/image16.png"
+
+import "./HomePrincipal.css"
 
 const HomePrincipal = () => {
   const [convocatoria, setConvocatoria] = useState(null)
   const [tutoriales, setTutoriales] = useState([
     {
-      titulo: "Inscripcion Manual",
-      texto: "Aprende los fundamentos de matemáticas para la olimpiada",
-      url: "https://youtube.com/watch?v=example1",
+      titulo: "Inscripción Manual",
+      texto: "Aprende cómo realizar tu inscripción paso a paso de forma manual",
+      url: "", // URL vacía para probar el aviso
     },
     {
-      titulo: "Física Avanzada",
-      texto: "Conceptos avanzados de física para competencias",
+      titulo: "Inscripción Excel",
+      texto: "Guía completa para inscribirse usando el archivo Excel proporcionado",
       url: "https://youtube.com/watch?v=example2",
     },
     {
-      titulo: "Química Orgánica",
-      texto: "Fundamentos de química orgánica e inorgánica",
-      url: "https://youtube.com/watch?v=example3",
+      titulo: "Subir Boleta de Pago",
+      texto: "Tutorial para subir correctamente tu comprobante de pago",
+      url: "", // URL vacía para probar el aviso
     },
   ])
   const [loading, setLoading] = useState(true)
   const [showTransition, setShowTransition] = useState(false)
   const [showContent, setShowContent] = useState(false)
   const [error, setError] = useState(null)
-  const [scrollY, setScrollY] = useState(0)
+const [scrollState, setScrollState] = useState({
+  opacity: 1,
+  translateY: 0
+})
+  const [showVideoAlert, setShowVideoAlert] = useState(false)
+  const [showConvocatoriaAlert, setShowConvocatoriaAlert] = useState(false)
 
   const observerRef = useRef(null)
   const cardsRef = useRef([])
@@ -51,14 +57,27 @@ const HomePrincipal = () => {
     ))
   }
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY)
-    }
+useEffect(() => {
+  const handleScroll = () => {
+    const scrollPosition = window.scrollY
+    const heroHeight = heroRef.current?.clientHeight || 0
+    
+    // Ajusta estos valores según necesites
+    const fadeStart = heroHeight * 0.3
+    const fadeEnd = heroHeight * 0.8
+    
+    const opacity = Math.max(0, Math.min(1, 1 - (scrollPosition - fadeStart) / (fadeEnd - fadeStart)))
+    const translateY = scrollPosition * 0.3
+    
+    setScrollState({
+      opacity,
+      translateY
+    })
+  }
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  window.addEventListener('scroll', handleScroll)
+  return () => window.removeEventListener('scroll', handleScroll)
+}, [])
 
   useEffect(() => {
     if (!showContent) return
@@ -96,6 +115,7 @@ const HomePrincipal = () => {
         }
       })
     }, observerOptions)
+
     setTimeout(() => {
       const elementsToObserve = document.querySelectorAll(
         ".scroll-reveal-home, .scroll-reveal-left-home, .scroll-reveal-right-home, .scroll-reveal-scale-home",
@@ -118,34 +138,39 @@ const HomePrincipal = () => {
   }, [showContent])
 
   useEffect(() => {
-    // Simular tiempo de carga mínimo para mostrar la animación
-    const minLoadTime = 3000 // 3 segundos
-    const startTime = Date.now()
+    // Carga inicial más realista - solo al cargar la página
+    const loadData = async () => {
+      try {
+        // Simular carga de datos reales
+        await new Promise((resolve) => setTimeout(resolve, 1500)) // 1.5 segundos de carga real
 
-    setTimeout(() => {
-      setConvocatoria({
-        archivo: "/convocatoria-ejemplo.pdf",
-        nombreDescarga: "convocatoria-osansi-2025.pdf",
-      })
+        // Simular obtención de convocatoria (puedes cambiar esto por una llamada real a API)
+        setConvocatoria(null) // Cambiar a null para probar el aviso, o poner datos reales
 
-      const elapsedTime = Date.now() - startTime
-      const remainingTime = Math.max(0, minLoadTime - elapsedTime)
-
-      setTimeout(() => {
         setLoading(false)
         setShowTransition(true)
 
-        // Después de 1.5 segundos de transición, mostrar contenido
+        // Después de 2 segundos de transición, mostrar contenido
         setTimeout(() => {
           setShowTransition(false)
           setShowContent(true)
-        }, 1500)
-      }, remainingTime)
-    }, 500)
+        }, 2000)
+      } catch (err) {
+        setError("Error al cargar los datos")
+        setLoading(false)
+      }
+    }
+
+    loadData()
   }, [])
 
   const handleDownload = () => {
-    if (!convocatoria) return
+    if (!convocatoria || !convocatoria.archivo) {
+      setShowConvocatoriaAlert(true)
+      setTimeout(() => setShowConvocatoriaAlert(false), 3000)
+      return
+    }
+
     const link = document.createElement("a")
     link.href = convocatoria.archivo
     link.download = convocatoria.nombreDescarga || "convocatoria.pdf"
@@ -155,10 +180,15 @@ const HomePrincipal = () => {
   }
 
   const abrirVideo = (url) => {
-    if (!url) return
+    if (!url || url.trim() === "") {
+      setShowVideoAlert(true)
+      setTimeout(() => setShowVideoAlert(false), 3000)
+      return
+    }
     window.open(url, "_blank")
   }
 
+  // Pantalla de carga - solo al inicio
   if (loading) {
     return (
       <div className="loading-screen-home">
@@ -198,12 +228,33 @@ const HomePrincipal = () => {
 
   return (
     <div className={`home-container-home ${showContent ? "fade-in-home" : ""}`}>
+      {/* ALERTAS */}
+      {showVideoAlert && (
+        <div className="alert-overlay-home">
+          <div className="alert-box-home">
+            <h3>⚠️ Video no disponible</h3>
+            <p>Este video tutorial aún no está disponible. Inténtalo más tarde.</p>
+          </div>
+        </div>
+      )}
+
+      {showConvocatoriaAlert && (
+        <div className="alert-overlay-home">
+          <div className="alert-box-home">
+            <h3>⚠️ Convocatoria no disponible</h3>
+            <p>La convocatoria aún no está disponible para descarga. Inténtalo más tarde.</p>
+          </div>
+        </div>
+      )}
+
+      {/* HERO SECTION CON EFECTO DE GALERÍA */}
       <div
         ref={heroRef}
         className="hero-section-home"
         style={{
-          transform: `translateY(${scrollY * 0.5}px)`,
-          opacity: Math.max(0, 1 - scrollY / 600),
+          transform: `translateY(${scrollState * 0.5}px)`,
+          opacity: scrollState.opacity,
+          transition: 'opacity 0.3s ease-out, transform 0.4s ease-out'
         }}
       >
         <div className="hero-background-home"></div>
@@ -224,7 +275,7 @@ const HomePrincipal = () => {
         {/* PRESENTACIÓN */}
         <div
           className="card-home presentacion-card-home scroll-reveal-left-home"
-          style={{ backgroundImage: `url(${rect34}` }}
+          style={{ backgroundImage: `url(${rect34})` }}
         >
           <div className="card-text-home">
             <h3 className="card-title-home">
@@ -236,7 +287,11 @@ const HomePrincipal = () => {
               de Educación Regular a participar en la edición 2025 de las Olimpiadas O! SANSI.
             </p>
           </div>
-          <img className="card-image-home" src={olimpicoImage} alt="Anillos olímpicos con Torre Eiffel" />
+          <img
+            className="card-image-home"
+            src={olimpicoImage || "/placeholder.svg"}
+            alt="Anillos olímpicos con Torre Eiffel"
+          />
         </div>
 
         {/* REQUISITOS */}
@@ -292,8 +347,8 @@ const HomePrincipal = () => {
           </div>
           <div className="tutorials-grid-home">
             {tutoriales.map((tutorial, index) => {
-              const bgImages = [rect28, rect32,rect33 ]
-              const bgImage = bgImages[0]
+              const bgImages = [rect28, rect32, rect33]
+              const bgImage = bgImages[index] || bgImages[0]
 
               return (
                 <div
@@ -304,13 +359,15 @@ const HomePrincipal = () => {
                     transitionDelay: `${index * 0.1}s`,
                   }}
                 >
-                  <div className="tutorial-overlay-home"></div>
                   <div className="tutorial-content-home">
                     <h4 className="tutorial-title-home">{tutorial.titulo}</h4>
                     <p className="tutorial-text-home" dangerouslySetInnerHTML={{ __html: tutorial.texto }} />
                     <button className="tutorial-button-home" onClick={() => abrirVideo(tutorial.url)}>
-                      <img src={iconVideo} alt="Ver video" />
+                      <img src={iconVideo || "/placeholder.svg"} alt="Ver video" />
                     </button>
+                    {(!tutorial.url || tutorial.url.trim() === "") && (
+                      <div className="video-status-home">Video próximamente</div>
+                    )}
                   </div>
                 </div>
               )
@@ -322,4 +379,4 @@ const HomePrincipal = () => {
   )
 }
 
-export default HomePrincipal;
+export default HomePrincipal
