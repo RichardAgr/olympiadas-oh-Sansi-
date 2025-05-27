@@ -62,9 +62,6 @@ const HomePrincipalTopBar = () => {
               <li>
                 <NavLink to="/homePrincipal/login">Login</NavLink>
               </li>
-              <li>
-                <NavLink to="/homePrincipal">Cerrar Sesión</NavLink>
-              </li>
             </ul>
           )}
         </li>

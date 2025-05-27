@@ -54,7 +54,7 @@ Route::post('/tutor/{tutor_id}/boleta/generar', [BoletaController::class, 'gener
 
 Route::get('/tutores/{id}/competidores-filtrados', [TutorController::class, 'competidoresFiltrados']);
 Route::post('/tutores/{tutor_id}/competidor', [TutorController::class, 'inscribirCompetidor']);
-//Route::post('/boleta/generar', [BoletaController::class, 'generarBoleta']);
+Route::post('/boleta/generar', [BoletaController::class, 'generarBoleta']);
 Route::post('/boleta/generar/{competidorId}', [BoletaController::class, 'generarBoleta']);
 
 Route::get('/tutores/{idTutor}/competidoresTutor', [TutorController::class, 'competidoresFiltrados']);
