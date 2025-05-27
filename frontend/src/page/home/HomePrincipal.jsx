@@ -5,28 +5,31 @@ import rect28 from "../../assets/Rectangle28.png"
 import rect32 from "../../assets/Rectangle32.png"
 import rect33 from "../../assets/Rectangle33.png"
 import iconVideo from "../../assets/image16.png"
-
+import axios from 'axios'
 import "./HomePrincipal.css"
 
 const HomePrincipal = () => {
   const [convocatoria, setConvocatoria] = useState(null)
   const [tutoriales, setTutoriales] = useState([
-    {
-      titulo: "Inscripción Manual",
-      texto: "Aprende cómo realizar tu inscripción paso a paso de forma manual",
-      url: "", // URL vacía para probar el aviso
-    },
-    {
-      titulo: "Inscripción Excel",
-      texto: "Guía completa para inscribirse usando el archivo Excel proporcionado",
-      url: "https://youtube.com/watch?v=example2",
-    },
-    {
-      titulo: "Subir Boleta de Pago",
-      texto: "Tutorial para subir correctamente tu comprobante de pago",
-      url: "", // URL vacía para probar el aviso
-    },
-  ])
+  {
+    titulo: "Inscripción Manual",
+    texto: "Aprende cómo realizar tu inscripción paso a paso de forma manual",
+    tipo_video: "manual",
+    url: "",
+  },
+  {
+    titulo: "Inscripción Excel",
+    texto: "Guía completa para inscribirse usando el archivo Excel proporcionado",
+    tipo_video: "excel",
+    url: "",
+  },
+  {
+    titulo: "Subir Boleta de Pago",
+    texto: "Tutorial para subir correctamente tu comprobante de pago",
+    tipo_video: "boleta",
+    url: "",
+  },
+])
   const [loading, setLoading] = useState(true)
   const [showTransition, setShowTransition] = useState(false)
   const [showContent, setShowContent] = useState(false)
@@ -148,7 +151,28 @@ useEffect(() => {
         sessionStorage.setItem('hasSeenLoading', 'true');
       }
 
-      setConvocatoria(null);
+      const response = await axios.get(`http://127.0.0.1:8000/api/documento-convocatoria/${2024}/descargar`);
+      const data = response.data;
+      if (data.success) {
+        setConvocatoria( data.data.url_pdf)
+      } else {
+        setConvocatoria(null);
+      }
+
+      const videosResponse = await axios.get('http://127.0.0.1:8000/api/Mostrarvideos');
+      const videosData = videosResponse.data.data;
+
+      // Actualizar los tutoriales con los videos de la API
+      setTutoriales(prevTutoriales => 
+        prevTutoriales.map(tutorial => {
+          const videoEncontrado = videosData.find(v => v.tipo_video === tutorial.tipo_video);
+          return {
+            ...tutorial,
+            url: videoEncontrado?.url_video || "",
+            existe: videoEncontrado?.existe || false
+          };
+        })
+      );
       
       if (!hasSeenLoading) {
         setLoading(false);
@@ -164,30 +188,36 @@ useEffect(() => {
       }
     } catch (err) {
       setError("Error al cargar los datos");
+      console.log(err)
       setLoading(false);
     }
   };
-
+  
   loadData();
 }, []);
 
-  const handleDownload = () => {
-    if (!convocatoria || !convocatoria.archivo) {
+const handleDownload = async() => {
+    if (!convocatoria) {
       setShowConvocatoriaAlert(true)
       setTimeout(() => setShowConvocatoriaAlert(false), 3000)
       return
     }
 
-    const link = document.createElement("a")
-    link.href = convocatoria.archivo
-    link.download = convocatoria.nombreDescarga || "convocatoria.pdf"
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+const response = await axios.get(convocatoria, {
+      responseType: 'blob'
+    });
+    
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `convocatoria-${convocatoria.año || '2024'}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
   }
 
-  const abrirVideo = (url) => {
-    if (!url || url.trim() === "") {
+  const abrirVideo = (url,existe) => {
+    if (!url || url.trim() === ""|| !existe) {
       setShowVideoAlert(true)
       setTimeout(() => setShowVideoAlert(false), 3000)
       return
@@ -370,10 +400,10 @@ useEffect(() => {
                   <div className="tutorial-content-home">
                     <h4 className="tutorial-title-home">{tutorial.titulo}</h4>
                     <p className="tutorial-text-home" dangerouslySetInnerHTML={{ __html: tutorial.texto }} />
-                    <button className="tutorial-button-home" onClick={() => abrirVideo(tutorial.url)}>
+                    <button className="tutorial-button-home" onClick={() => abrirVideo(tutorial.url, tutorial.existe)}>
                       <img src={iconVideo || "/placeholder.svg"} alt="Ver video" />
                     </button>
-                    {(!tutorial.url || tutorial.url.trim() === "") && (
+                    {(!tutorial.url || tutorial.url.trim() === "" || !tutorial.existe) && (
                       <div className="video-status-home">Video no Disponible</div>
                     )}
                   </div>
