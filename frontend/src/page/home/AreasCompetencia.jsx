@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 import rect34 from "../../assets/Rectangle34.png";
@@ -9,13 +9,74 @@ const AreasCompetencia = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Función para extraer información del grado
+  const extractGradeInfo = (gradeString) => {
+    const match = gradeString.match(/(\d+)\w+\s(Primaria|Secundaria)/);
+    return match ? {
+      number: parseInt(match[1]),
+      level: match[2]
+    } : null;
+  };
+
+  // Función para formatear el rango de grados
+  const getFormattedGradeRange = (categorias) => {
+    if (!categorias || categorias.length === 0) return "No especificado";
+    
+    // Extraer todos los grados posibles
+    const allGrades = categorias.flatMap(categoria => {
+      if (categoria.rango_grado.includes(" a ")) {
+        const [start, end] = categoria.rango_grado.split(" a ");
+        return [
+          extractGradeInfo(start),
+          extractGradeInfo(end)
+        ];
+      }
+      return [extractGradeInfo(categoria.rango_grado)];
+    }).filter(Boolean);
+
+    if (allGrades.length === 0) return "No especificado";
+
+    // Encontrar los grados mínimos y máximos por nivel
+    const primariaGrades = allGrades.filter(g => g.level === "Primaria");
+    const secundariaGrades = allGrades.filter(g => g.level === "Secundaria");
+
+    const minPrimaria = primariaGrades.length > 0 ? 
+      Math.min(...primariaGrades.map(g => g.number)) : null;
+    const maxPrimaria = primariaGrades.length > 0 ? 
+      Math.max(...primariaGrades.map(g => g.number)) : null;
+
+    const minSecundaria = secundariaGrades.length > 0 ? 
+      Math.min(...secundariaGrades.map(g => g.number)) : null;
+    const maxSecundaria = secundariaGrades.length > 0 ? 
+      Math.max(...secundariaGrades.map(g => g.number)) : null;
+
+    // Construir el string de resultado
+    let result = "";
+    
+    if (minPrimaria !== null && maxPrimaria !== null) {
+      result += `${minPrimaria}° Primaria`;
+      
+      if (minSecundaria !== null && maxSecundaria !== null) {
+        result += ` a ${maxSecundaria}° Secundaria`;
+      } else if (maxPrimaria !== minPrimaria) {
+        result += ` a ${maxPrimaria}° Primaria`;
+      }
+    } else if (minSecundaria !== null && maxSecundaria !== null) {
+      result += `${minSecundaria}° Secundaria`;
+      if (maxSecundaria !== minSecundaria) {
+        result += ` a ${maxSecundaria}° Secundaria`;
+      }
+    }
+
+    return result || "No especificado";
+  };
+
   useEffect(() => {
     axios
-      .get("/areas.json")
+      .get("http://127.0.0.1:8000/api/areasCategoriasGrados")
       .then((res) => {
-        console.log("Respuesta completa del JSON:", res.data);
-        if (res.data && Array.isArray(res.data.areas)) {
-          setAreas(res.data.areas);
+        if (res.data && res.data.success && Array.isArray(res.data.data)) {
+          setAreas(res.data.data);
           setError(null);
         } else {
           setError("Los datos no están en el formato esperado.");
@@ -50,19 +111,19 @@ const AreasCompetencia = () => {
             <thead>
               <tr>
                 <th>Área</th>
-                <th>Año de Escolaridad</th>
+                <th>Rango de Grados</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {areas.map((area, index) => (
-                <tr key={index}>
+              {areas.map((area) => (
+                <tr key={area.area_id}>
                   <td>{area.nombre}</td>
-                  <td>{area.descripcion}</td>
+                  <td>{getFormattedGradeRange(area.categorias)}</td>
                   <td>
                     <button
                       className="pdf-button"
-                      onClick={() => window.open(area.pdf, "_blank")}
+                      onClick={() => alert("Función de descarga PDF a implementar")}
                     >
                       Descargar PDF
                     </button>

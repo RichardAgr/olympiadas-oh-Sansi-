@@ -109,7 +109,7 @@ Route::delete('/documentos/{type}/{id}', [DocumentoController::class, 'deleteDoc
 //DocumentosHome Convocatoria
 Route::get('/documento-convocatoria/{año_competencia}/descargar', [DocumentoController::class, 'descargarDocumentoConvocatoria']);
 //DocumentosHome Areas
-Route::get('/documentos-areas/{id_area}', [AreasController::class, 'LinkDocumentoArea']);
+Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocumentacionPorArea']);
 //videos
 Route::post('/Guardarvideos', [VideoController::class, 'crearVideo']);
 Route::get('/Mostrarvideos', [VideoController::class, 'mostrarDetalleVideo']);
