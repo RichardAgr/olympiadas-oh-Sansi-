@@ -1,7 +1,4 @@
-"use client"
-
 import { useEffect, useState, useRef } from "react"
-
 import olimpicoImage from "../../assets/OLIMPICO1.png"
 import rect34 from "../../assets/Rectangle34.png"
 import rect28 from "../../assets/Rectangle28.png"
@@ -34,10 +31,10 @@ const HomePrincipal = () => {
   const [showTransition, setShowTransition] = useState(false)
   const [showContent, setShowContent] = useState(false)
   const [error, setError] = useState(null)
-const [scrollState, setScrollState] = useState({
-  opacity: 1,
-  translateY: 0
-})
+  const [scrollState, setScrollState] = useState({
+    opacity: 1,
+    translateY: 0
+  })
   const [showVideoAlert, setShowVideoAlert] = useState(false)
   const [showConvocatoriaAlert, setShowConvocatoriaAlert] = useState(false)
 
@@ -57,34 +54,34 @@ const [scrollState, setScrollState] = useState({
     ))
   }
 
-useEffect(() => {
-  const handleScroll = () => {
-    const scrollPosition = window.scrollY
-    const heroHeight = heroRef.current?.clientHeight || 0
-    
-    // Ajusta estos valores según necesites
-    const fadeStart = heroHeight * 0.3
-    const fadeEnd = heroHeight * 0.8
-    
-    const opacity = Math.max(0, Math.min(1, 1 - (scrollPosition - fadeStart) / (fadeEnd - fadeStart)))
-    const translateY = scrollPosition * 0.3
-    
-    setScrollState({
-      opacity,
-      translateY
-    })
-  }
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY
+      const heroHeight = heroRef.current?.clientHeight || 0
+      
+      // Ajusta estos valores según necesites
+      const fadeStart = heroHeight * 0.3
+      const fadeEnd = heroHeight * 0.8
+      
+      const opacity = Math.max(0, Math.min(1, 1 - (scrollPosition - fadeStart) / (fadeEnd - fadeStart)))
+      const translateY = scrollPosition * 0.3
+      
+      setScrollState({
+        opacity,
+        translateY
+      })
+    }
 
-  window.addEventListener('scroll', handleScroll)
-  return () => window.removeEventListener('scroll', handleScroll)
-}, [])
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     if (!showContent) return
 
     const observerOptions = {
-      threshold: [0, 0.25, 0.5, 0.75, 1],
-      rootMargin: "-10% 0px -10% 0px",
+      threshold: [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1],
+      rootMargin: "-5% 0px -5% 0px", // Reducido el margen para ser menos estricto
     }
 
     observerRef.current = new IntersectionObserver((entries) => {
@@ -94,23 +91,33 @@ useEffect(() => {
 
         if (entry.isIntersecting) {
           card.classList.add("revealed-home")
-          if (intersectionRatio > 0.6) {
+          
+          // Lógica mejorada para el efecto ghost - menos agresiva
+          if (intersectionRatio > 0.7) {
+            // Elemento muy visible - destacarlo
             card.classList.add("ghost-center-home")
             card.classList.remove("ghost-fade-home")
+          } else if (intersectionRatio > 0.3) {
+            // Elemento parcialmente visible - estado normal
+            card.classList.remove("ghost-center-home")
+            card.classList.remove("ghost-fade-home")
+          } else if (intersectionRatio > 0.1) {
+            // Elemento apenas visible - efecto suave
+            card.classList.add("ghost-fade-home")
+            card.classList.remove("ghost-center-home")
+          }
+          
+          // Solo aplicar fade a otros elementos si este está muy centrado
+          if (intersectionRatio > 0.8) {
             cardsRef.current.forEach((otherCard) => {
               if (otherCard !== card && otherCard.classList.contains("revealed-home")) {
                 otherCard.classList.add("ghost-fade-home")
                 otherCard.classList.remove("ghost-center-home")
               }
             })
-          } else if (intersectionRatio > 0.3) {
-            card.classList.remove("ghost-center-home")
-            card.classList.remove("ghost-fade-home")
-          } else {
-            card.classList.add("ghost-fade-home")
-            card.classList.remove("ghost-center-home")
           }
         } else {
+          // Elemento no visible - remover todas las clases
           card.classList.remove("revealed-home", "ghost-center-home", "ghost-fade-home")
         }
       })
@@ -137,32 +144,38 @@ useEffect(() => {
     }
   }, [showContent])
 
-  useEffect(() => {
-    // Carga inicial más realista - solo al cargar la página
-    const loadData = async () => {
-      try {
-        // Simular carga de datos reales
-        await new Promise((resolve) => setTimeout(resolve, 1500)) // 1.5 segundos de carga real
-
-        // Simular obtención de convocatoria (puedes cambiar esto por una llamada real a API)
-        setConvocatoria(null) // Cambiar a null para probar el aviso, o poner datos reales
-
-        setLoading(false)
-        setShowTransition(true)
-
-        // Después de 2 segundos de transición, mostrar contenido
-        setTimeout(() => {
-          setShowTransition(false)
-          setShowContent(true)
-        }, 2000)
-      } catch (err) {
-        setError("Error al cargar los datos")
-        setLoading(false)
+useEffect(() => {
+  const hasSeenLoading = sessionStorage.getItem('hasSeenLoading');
+  
+  const loadData = async () => {
+    try {
+      if (!hasSeenLoading) {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        sessionStorage.setItem('hasSeenLoading', 'true');
       }
-    }
 
-    loadData()
-  }, [])
+      setConvocatoria(null);
+      
+      if (!hasSeenLoading) {
+        setLoading(false);
+        setShowTransition(true);
+        
+        setTimeout(() => {
+          setShowTransition(false);
+          setShowContent(true);
+        }, 2000);
+      } else {
+        setLoading(false);
+        setShowContent(true);
+      }
+    } catch (err) {
+      setError("Error al cargar los datos");
+      setLoading(false);
+    }
+  };
+
+  loadData();
+}, []);
 
   const handleDownload = () => {
     if (!convocatoria || !convocatoria.archivo) {
@@ -189,7 +202,7 @@ useEffect(() => {
   }
 
   // Pantalla de carga - solo al inicio
-  if (loading) {
+  if (loading && !localStorage.getItem('hasSeenLoading')) {
     return (
       <div className="loading-screen-home">
         <div className="loading-container-home">
@@ -252,7 +265,7 @@ useEffect(() => {
         ref={heroRef}
         className="hero-section-home"
         style={{
-          transform: `translateY(${scrollState * 0.5}px)`,
+          transform: `translateY(${scrollState.translateY * 0.5}px)`,
           opacity: scrollState.opacity,
           transition: 'opacity 0.3s ease-out, transform 0.4s ease-out'
         }}
@@ -359,6 +372,7 @@ useEffect(() => {
                     transitionDelay: `${index * 0.1}s`,
                   }}
                 >
+                  <div className="tutorial-overlay-home"></div>
                   <div className="tutorial-content-home">
                     <h4 className="tutorial-title-home">{tutorial.titulo}</h4>
                     <p className="tutorial-text-home" dangerouslySetInnerHTML={{ __html: tutorial.texto }} />
@@ -366,7 +380,7 @@ useEffect(() => {
                       <img src={iconVideo || "/placeholder.svg"} alt="Ver video" />
                     </button>
                     {(!tutorial.url || tutorial.url.trim() === "") && (
-                      <div className="video-status-home">Video próximamente</div>
+                      <div className="video-status-home">Video no Disponible</div>
                     )}
                   </div>
                 </div>
