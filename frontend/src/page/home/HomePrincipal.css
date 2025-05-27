@@ -231,7 +231,9 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+  background-image: url("../../assets/Rectangle34.png");
+  background-size: cover;
+  background-position: center;
 }
 
 .hero-background-home {
@@ -239,10 +241,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background-image: url("/images/Rectangle34.png");
-  background-size: cover;
-  background-position: center;
+  height: 90%;
   opacity: 0.3;
   z-index: 1;
 }
@@ -495,9 +494,9 @@
 }
 
 .download-button-home {
-  background: linear-gradient(135deg, #e0f2fe, #bae6fd, #7dd3fc);
-  color: #0f172a;
-  border: 2px solid #0ea5e9;
+  background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+  color: #9baedb;
+  border: 2px solid #334155;
   padding: 18px 30px;
   font-size: 20px;
   font-weight: 600;
@@ -505,7 +504,7 @@
   cursor: pointer;
   margin-top: 20px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.2);
+  box-shadow: 0 4px 15px rgba(36, 88, 200, 0.2);
   position: relative;
   overflow: hidden;
 }
@@ -517,7 +516,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.2), transparent);
+  background: linear-gradient(135deg, #203158, #354967, #495d79);
   transition: left 0.5s;
 }
 
@@ -528,7 +527,7 @@
 .download-button-home:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
-  background: linear-gradient(135deg, #7dd3fc, #bae6fd, #e0f2fe);
+  background: linear-gradient(135deg, #233c76, #2d4162, #475e7e);
 }
 
 /* ESTRUCTURA DE CARDS MÁS GRANDES */

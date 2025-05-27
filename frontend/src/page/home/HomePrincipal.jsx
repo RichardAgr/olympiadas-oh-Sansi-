@@ -14,7 +14,7 @@ const HomePrincipal = () => {
   const [convocatoria, setConvocatoria] = useState(null)
   const [tutoriales, setTutoriales] = useState([
     {
-      titulo: "Matemáticas Básicas",
+      titulo: "Inscripcion Manual",
       texto: "Aprende los fundamentos de matemáticas para la olimpiada",
       url: "https://youtube.com/watch?v=example1",
     },
@@ -224,7 +224,7 @@ const HomePrincipal = () => {
         {/* PRESENTACIÓN */}
         <div
           className="card-home presentacion-card-home scroll-reveal-left-home"
-          style={{ backgroundImage: `url(/images/Rectangle34.png)` }}
+          style={{ backgroundImage: `url(${rect34}` }}
         >
           <div className="card-text-home">
             <h3 className="card-title-home">
@@ -236,11 +236,11 @@ const HomePrincipal = () => {
               de Educación Regular a participar en la edición 2025 de las Olimpiadas O! SANSI.
             </p>
           </div>
-          <img className="card-image-home" src="/images/OLIMPICO1.png" alt="Anillos olímpicos con Torre Eiffel" />
+          <img className="card-image-home" src={olimpicoImage} alt="Anillos olímpicos con Torre Eiffel" />
         </div>
 
         {/* REQUISITOS */}
-        <div className="card-home scroll-reveal-right-home" style={{ backgroundImage: `url(/images/Rectangle34.png)` }}>
+        <div className="card-home scroll-reveal-right-home" style={{ backgroundImage: `url(${rect34})` }}>
           <div className="card-text-home full-home">
             <h3 className="card-title-home">
               <div className="wave-text-home">{createWaveText("¿QUÉ REQUISITOS NECESITO?")}</div>
@@ -265,7 +265,7 @@ const HomePrincipal = () => {
         </div>
 
         {/* PREMIOS */}
-        <div className="card-home scroll-reveal-left-home" style={{ backgroundImage: `url(/images/Rectangle34.png)` }}>
+        <div className="card-home scroll-reveal-left-home" style={{ backgroundImage: `url(${rect34})` }}>
           <div className="card-text-home full-home">
             <h3 className="card-title-home">
               <div className="wave-text-home">{createWaveText("PREMIOS")}</div>
@@ -292,8 +292,8 @@ const HomePrincipal = () => {
           </div>
           <div className="tutorials-grid-home">
             {tutoriales.map((tutorial, index) => {
-              const bgImages = ["/images/Rectangle28.png", "/images/Rectangle32.png", "/images/Rectangle33.png"]
-              const bgImage = bgImages[index] || bgImages[0]
+              const bgImages = [rect28, rect32,rect33 ]
+              const bgImage = bgImages[0]
 
               return (
                 <div
@@ -309,7 +309,7 @@ const HomePrincipal = () => {
                     <h4 className="tutorial-title-home">{tutorial.titulo}</h4>
                     <p className="tutorial-text-home" dangerouslySetInnerHTML={{ __html: tutorial.texto }} />
                     <button className="tutorial-button-home" onClick={() => abrirVideo(tutorial.url)}>
-                      <img src="/images/image16.png" alt="Ver video" />
+                      <img src={iconVideo} alt="Ver video" />
                     </button>
                   </div>
                 </div>
