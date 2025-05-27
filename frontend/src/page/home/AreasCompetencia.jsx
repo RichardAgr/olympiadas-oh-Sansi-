@@ -10,7 +10,6 @@ const AreasCompetencia = () => {
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState({ show: false, message: "" });
 
-  // Función para extraer información del grado
   const extractGradeInfo = (gradeString) => {
     const match = gradeString.match(/(\d+)\w+\s(Primaria|Secundaria)/);
     return match ? {
@@ -19,11 +18,10 @@ const AreasCompetencia = () => {
     } : null;
   };
 
-  // Función para formatear el rango de grados
   const getFormattedGradeRange = (categorias) => {
     if (!categorias || categorias.length === 0) return "No especificado";
     
-    // Extraer todos los grados posibles
+
     const allGrades = categorias.flatMap(categoria => {
       if (categoria.rango_grado.includes(" a ")) {
         const [start, end] = categoria.rango_grado.split(" a ");
@@ -37,7 +35,6 @@ const AreasCompetencia = () => {
 
     if (allGrades.length === 0) return "No especificado";
 
-    // Encontrar los grados mínimos y máximos por nivel
     const primariaGrades = allGrades.filter(g => g.level === "Primaria");
     const secundariaGrades = allGrades.filter(g => g.level === "Secundaria");
 
@@ -77,7 +74,6 @@ const AreasCompetencia = () => {
       const response = await axios.get(`http://127.0.0.1:8000/api/documentos-areas/${areaId}`);
       
       if (response.data.success && response.data.url_pdf) {
-        // Crear un enlace temporal para descargar el PDF
         const link = document.createElement('a');
         link.href = response.data.url_pdf;
         link.download = `Documentación_${areaNombre}.pdf`;
