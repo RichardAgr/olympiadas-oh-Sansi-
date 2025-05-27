@@ -278,7 +278,7 @@ public function getDocumento($type, $id){
         return response()->json([
             'success' => false,
             'message' => 'No se encontró documento convocatoria para la competencia especificada.'
-        ], 404);
+        ], 200);
     }
 
     return response()->json([

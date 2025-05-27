@@ -139,7 +139,7 @@ const AreasCompetencia = () => {
       <h1 className="area-title">ÁREAS EN COMPETENCIA</h1>
 
       {notification.show && (
-        <div className="notification">
+        <div className="notificationAreaCom">
           {notification.message}
         </div>
       )}
