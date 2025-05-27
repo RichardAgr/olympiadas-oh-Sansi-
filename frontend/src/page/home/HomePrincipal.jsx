@@ -81,7 +81,7 @@ const HomePrincipal = () => {
 
     const observerOptions = {
       threshold: [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1],
-      rootMargin: "-5% 0px -5% 0px", // Reducido el margen para ser menos estricto
+      rootMargin: "-5% 0px -5% 0px",
     }
 
     observerRef.current = new IntersectionObserver((entries) => {
@@ -92,22 +92,17 @@ const HomePrincipal = () => {
         if (entry.isIntersecting) {
           card.classList.add("revealed-home")
           
-          // Lógica mejorada para el efecto ghost - menos agresiva
           if (intersectionRatio > 0.7) {
-            // Elemento muy visible - destacarlo
             card.classList.add("ghost-center-home")
             card.classList.remove("ghost-fade-home")
           } else if (intersectionRatio > 0.3) {
-            // Elemento parcialmente visible - estado normal
             card.classList.remove("ghost-center-home")
             card.classList.remove("ghost-fade-home")
           } else if (intersectionRatio > 0.1) {
-            // Elemento apenas visible - efecto suave
             card.classList.add("ghost-fade-home")
             card.classList.remove("ghost-center-home")
           }
-          
-          // Solo aplicar fade a otros elementos si este está muy centrado
+        
           if (intersectionRatio > 0.8) {
             cardsRef.current.forEach((otherCard) => {
               if (otherCard !== card && otherCard.classList.contains("revealed-home")) {
@@ -117,7 +112,6 @@ const HomePrincipal = () => {
             })
           }
         } else {
-          // Elemento no visible - remover todas las clases
           card.classList.remove("revealed-home", "ghost-center-home", "ghost-fade-home")
         }
       })
