@@ -19,6 +19,9 @@ use App\Http\Controllers\Api\DatosExcel;
 use App\Http\Controllers\Api\DocumentoController;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCompetidorController;
 use App\Http\Controllers\Api\VideoController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PasswordResetController;
+use App\Http\Controllers\Api\PasswordChangeController;
 
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
@@ -50,6 +53,7 @@ Route::post('/tutor/{tutor_id}/inscribir-competidor', [TutorController::class, '
 Route::get('/tutor/competidor/datos-competencia', [TutorController::class, 'getOpcionesCompetencia']);
 Route::post('/tutor/{tutor_id}/registrar-tutores', [TutorController::class, 'registrarTutores']);
 Route::post('/tutor/{tutor_id}/boleta/generar', [BoletaController::class, 'generarBoleta']);
+Route::get('/tutor/{tutor_id}/boleta/generar', [BoletaController::class, 'generarBoletaDesdeQuery']);
 
 Route::get('/tutores/{id}/competidores-filtrados', [TutorController::class, 'competidoresFiltrados']);
 Route::post('/tutores/{tutor_id}/competidor', [TutorController::class, 'inscribirCompetidor']);
@@ -112,3 +116,21 @@ Route ::delete('/Eliminarvideos/{tipo_video}', [VideoController::class, 'elimina
 
 //notificaciones
 Route::get('/notificaciones/{id_tutor}', [NotificacionController::class, 'contarNotificacionesActivas']);
+
+//login
+Route::post('/login', [AuthController::class, 'login']);
+
+//Registro de Tutores
+Route::post('/registrar-tutor', [AuthController::class, 'registrarTutor']);
+
+
+//Recuperar contraseña
+Route::post('/password/email', [PasswordResetController::class, 'enviarCodigo']);
+Route::post('/password/verify', [PasswordResetController::class, 'verificarCodigo']);
+Route::post('/password/reset', [PasswordResetController::class, 'resetearPassword']);
+
+//Cambiar password
+Route::middleware('auth:sanctum')->post('/password/change', [PasswordChangeController::class, 'cambiarPassword']);
+
+//Logout
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
