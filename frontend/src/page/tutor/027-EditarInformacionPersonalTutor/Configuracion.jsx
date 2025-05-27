@@ -20,6 +20,9 @@ function Configuracion() {
     correo_electronico: "",
     telefono: "",
     ci: "",
+    contrasenaActual: "",
+    nuevaContrasena: "",
+    confirmarContrasena: ""
   })
 
   // Estado para manejar errores de validación
@@ -29,6 +32,9 @@ function Configuracion() {
     correo_electronico: "",
     telefono: "",
     ci: "",
+    contrasenaActual: "",
+    nuevaContrasena: "",
+    confirmarContrasena: ""
   })
 
   const [exito, setExito] = useState(false)
@@ -127,6 +133,22 @@ const validarCampo = (name, value) => {
         formularioValido = false
       }
     })
+    if (datosTutor.nuevaContrasena || datosTutor.confirmarContrasena || datosTutor.contrasenaActual) {
+      if (!datosTutor.contrasenaActual) {
+        nuevosErrores.contrasenaActual = "Debe ingresar su contraseña actual"
+        formularioValido = false
+      }
+    
+      if (!datosTutor.nuevaContrasena || datosTutor.nuevaContrasena.length < 6) {
+        nuevosErrores.nuevaContrasena = "La nueva contraseña debe tener al menos 6 caracteres"
+        formularioValido = false
+      }
+    
+      if (datosTutor.nuevaContrasena !== datosTutor.confirmarContrasena) {
+        nuevosErrores.confirmarContrasena = "Las contraseñas no coinciden"
+        formularioValido = false
+      }
+    }
 
     setErrores(nuevosErrores)
     return formularioValido
@@ -148,6 +170,13 @@ const validarCampo = (name, value) => {
       console.error("Error al guardar cambios:", error)
       setMostrarConfirmacion(false)
     }
+    const datosEnviar = { ...datosTutor }
+
+if (!datosTutor.nuevaContrasena) {
+  delete datosEnviar.contrasenaActual
+  delete datosEnviar.nuevaContrasena
+  delete datosEnviar.confirmarContrasena
+}
   }
 
   const volverHome = () => {
@@ -258,6 +287,69 @@ const validarCampo = (name, value) => {
           {errores.ci && <span className="mensaje-error">{errores.ci}</span>}
         </div>
       </div>
+
+            {/* Título fuera de la tarjeta */}
+<h2 className="titulo-seccion">
+  <span className="icono-candado">🔒</span> Seguridad
+</h2>
+
+{/* Sección de seguridad */}
+<div className="card-perfil vertical">
+  <div className="campo">
+    <label>Contraseña actual:</label>
+    <div className="input-con-icono">
+      <input
+        type="password"
+        name="contrasenaActual"
+        value={datosTutor.contrasenaActual || ""}
+        onChange={(e) =>
+          setDatosTutor((prev) => ({ ...prev, contrasenaActual: e.target.value }))
+        }
+        className={errores.contrasenaActual ? "input-error" : ""}
+      />
+    </div>
+    {errores.contrasenaActual && (
+      <span className="mensaje-error">{errores.contrasenaActual}</span>
+    )}
+  </div>
+
+  <div className="campo">
+    <label>Nueva contraseña:</label>
+    <div className="input-con-icono">
+      <input
+        type="password"
+        name="nuevaContrasena"
+        value={datosTutor.nuevaContrasena || ""}
+        onChange={(e) =>
+          setDatosTutor((prev) => ({ ...prev, nuevaContrasena: e.target.value }))
+        }
+        className={errores.nuevaContrasena ? "input-error" : ""}
+      />
+    </div>
+    {errores.nuevaContrasena && (
+      <span className="mensaje-error">{errores.nuevaContrasena}</span>
+    )}
+  </div>
+
+  <div className="campo">
+    <label>Confirmar nueva contraseña:</label>
+    <div className="input-con-icono">
+      <input
+        type="password"
+        name="confirmarContrasena"
+        value={datosTutor.confirmarContrasena || ""}
+        onChange={(e) =>
+          setDatosTutor((prev) => ({ ...prev, confirmarContrasena: e.target.value }))
+        }
+        className={errores.confirmarContrasena ? "input-error" : ""}
+      />
+    </div>
+    {errores.confirmarContrasena && (
+      <span className="mensaje-error">{errores.confirmarContrasena}</span>
+    )}
+  </div>
+</div>
+
 
       {/* Botones */}
       <div className="botones-centrados">
