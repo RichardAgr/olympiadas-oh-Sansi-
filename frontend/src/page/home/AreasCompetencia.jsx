@@ -8,6 +8,7 @@ const AreasCompetencia = () => {
   const [areas, setAreas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notification, setNotification] = useState({ show: false, message: "" });
 
   // Función para extraer información del grado
   const extractGradeInfo = (gradeString) => {
@@ -71,6 +72,33 @@ const AreasCompetencia = () => {
     return result || "No especificado";
   };
 
+  const handleDownloadPdf = async (areaId, areaNombre) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/documentos-areas/${areaId}`);
+      
+      if (response.data.success && response.data.url_pdf) {
+        // Crear un enlace temporal para descargar el PDF
+        const link = document.createElement('a');
+        link.href = response.data.url_pdf;
+        link.download = `Documentación_${areaNombre}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        setNotification({
+          show: true,
+          message: response.data.message || `El área ${areaNombre} no tiene documentación PDF disponible`
+        });
+      }
+    } catch (error) {
+      console.error("Error al descargar el PDF:", error);
+      setNotification({
+        show: true,
+        message: `Error al intentar descargar la documentación de ${areaNombre}`
+      });
+    }
+  };
+
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/api/areasCategoriasGrados")
@@ -93,6 +121,15 @@ const AreasCompetencia = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (notification.show) {
+      const timer = setTimeout(() => {
+        setNotification({ show: false, message: "" });
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification.show]);
+
   if (loading) {
     return <div>Cargando áreas...</div>;
   }
@@ -104,6 +141,12 @@ const AreasCompetencia = () => {
   return (
     <div className="area-container">
       <h1 className="area-title">ÁREAS EN COMPETENCIA</h1>
+
+      {notification.show && (
+        <div className="notification">
+          {notification.message}
+        </div>
+      )}
 
       <div className="area-card" style={{ backgroundImage: `url(${rect34})` }}>
         <div className="area-table-container">
@@ -123,7 +166,7 @@ const AreasCompetencia = () => {
                   <td>
                     <button
                       className="pdf-button"
-                      onClick={() => alert("Función de descarga PDF a implementar")}
+                      onClick={() => handleDownloadPdf(area.area_id, area.nombre)}
                     >
                       Descargar PDF
                     </button>
