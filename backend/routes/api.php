@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\DatosExcel;
 use App\Http\Controllers\Api\DocumentoController;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCompetidorController;
 use App\Http\Controllers\Api\VideoController;
+use App\Http\Controllers\Api\HomePage\AreasController;
 
 
 Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
@@ -105,6 +106,10 @@ Route::post('/documentos/tipoPortal', [DocumentoController::class, 'guardarDocum
 Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
 Route::delete('/documentos/{type}/{id}', [DocumentoController::class, 'deleteDocumento']);
 
+//DocumentosHome Convocatoria
+Route::get('/documento-convocatoria/{año_competencia}/descargar', [DocumentoController::class, 'descargarDocumentoConvocatoria']);
+//DocumentosHome Areas
+Route::get('/documentos-areas/{id_area}', [AreasController::class, 'LinkDocumentoArea']);
 //videos
 Route::post('/Guardarvideos', [VideoController::class, 'crearVideo']);
 Route::get('/Mostrarvideos', [VideoController::class, 'mostrarDetalleVideo']);
