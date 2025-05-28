@@ -163,13 +163,37 @@ const validarCampo = (name, value) => {
 
   const guardarCambios = async () => {
     try {
-      await axios.put(`http://127.0.0.1:8000/api/tutor/ActualizarMiPerfil/${id}`, datosTutor)
+      // Actualiza el perfil básico
+      await axios.put(
+        `http://127.0.0.1:8000/api/tutor/ActualizarMiPerfil/${id}`,
+        datosTutor,
+        { withCredentials: true } // ¡Importante para Sanctum!
+      )
+  
+      // Si se está actualizando la contraseña
+      if (datosTutor.contrasenaActual && datosTutor.nuevaContrasena && datosTutor.confirmarContrasena) {
+        const datosPassword = {
+          current_password: datosTutor.contrasenaActual,
+          new_password: datosTutor.nuevaContrasena,
+          new_password_confirmation: datosTutor.confirmarContrasena
+        }
+  
+        await axios.post(
+          "http://127.0.0.1:8000/update-password",
+          datosPassword,
+          { withCredentials: true } // También aquí para Sanctum
+        )
+      }
+  
       setMostrarConfirmacion(false)
       setExito(true)
     } catch (error) {
       console.error("Error al guardar cambios:", error)
       setMostrarConfirmacion(false)
+      // Puedes mostrar mensaje al usuario si hay error
     }
+  }
+  
     const datosEnviar = { ...datosTutor }
 
 if (!datosTutor.nuevaContrasena) {

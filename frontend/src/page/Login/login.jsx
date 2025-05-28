@@ -17,7 +17,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        //"http://localhost:5173/api/login",
+        " http://127.0.0.1:8000/login",
         { email, password },
         { withCredentials: true } // habilita el envío/recepción de cookies
       );
