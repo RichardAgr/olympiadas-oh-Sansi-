@@ -1,8 +1,8 @@
-import  { useState } from "react";
-import "./Login.css";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
+import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,33 +12,53 @@ const Login = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  //Interceptor Global de Axios para enviar token automáticamente
+  useEffect(() => {
+    axios.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
 
     try {
       const response = await axios.post(
-        " http://127.0.0.1:8000/login",
-        { email, password },
-        { withCredentials: true } // habilita el envío/recepción de cookies
+        "http://127.0.0.1:8000/api/login",
+        {
+          correo_electronico: email,
+          password: password
+        }
       );
 
       const data = response.data;
-      if (!data.rol || (data.rol === "tutor" && !data.id)) {
-        setError("Error al procesar la información del usuario.");
-        return;
-      }
 
-      // Redireccionar según el rol
+      // Guardar token y datos en localStorage
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("user", JSON.stringify(data.usuario));
+      localStorage.setItem("rol", data.rol);
+
+      // Redirigir según rol
       switch (data.rol) {
-        case "admin_sistema":
+        case "admin":
           navigate("/admin");
           break;
-        case "admin_gestion":
+        case "responsable":
           navigate("/respGest");
           break;
         case "tutor":
-          if (data.id) {
-            navigate(`/homeTutor/${data.id}/tutor/`);
+          if (data.usuario && data.usuario.tutor_id) {
+            navigate(`/homeTutor/${data.usuario.tutor_id}/tutor/`);
           } else {
             setError("No se pudo obtener el ID del tutor.");
           }
@@ -48,8 +68,8 @@ const Login = () => {
       }
     } catch (err) {
       console.error(err);
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
+      if (err.response?.data?.mensaje) {
+        setError(err.response.data.mensaje);
       } else {
         setError("Error de conexión con el servidor.");
       }
@@ -64,6 +84,7 @@ const Login = () => {
           <p>Únete al futuro de la ciencia y la tecnología</p>
         </div>
       </div>
+
       <div className="login-right">
         <form className="login-card" onSubmit={handleLogin}>
           <h2 className="login-title">Iniciar Sesión</h2>
@@ -77,10 +98,10 @@ const Login = () => {
             required
           />
 
-<label>Contraseña</label>
+          <label>Contraseña</label>
           <div className="password-input">
             <input
-              type={showPassword ? "text" : "password"} // DINÁMICO
+              type={showPassword ? "text" : "password"}
               placeholder="Ingresar contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -92,14 +113,16 @@ const Login = () => {
               style={{ cursor: "pointer" }}
             >
               {showPassword ? (
-                <Eye size={20} strokeWidth={0.75} />
+                <Eye size={20} strokeWidth={1} />
               ) : (
-                <EyeOff size={20} strokeWidth={0.75} />
+                <EyeOff size={20} strokeWidth={1} />
               )}
             </span>
           </div>
 
-          {error && <p style={{ color: "red", fontSize: "0.9rem" }}>{error}</p>}
+          {error && (
+            <p style={{ color: "red", fontSize: "0.9rem" }}>{error}</p>
+          )}
 
           <a href="/homePrincipal/RecuperarContraseña" className="forgot-password">
             ¿Olvidaste tu contraseña?
@@ -108,6 +131,7 @@ const Login = () => {
           <button type="submit" className="login-button">
             Iniciar Sesión
           </button>
+
           <p className="register-link">
             ¿No tienes una cuenta? <a href="/homePrincipal/Registrate">Regístrate</a>
           </p>

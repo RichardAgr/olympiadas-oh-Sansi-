@@ -161,47 +161,42 @@ const validarCampo = (name, value) => {
     }
   }
 
-  const guardarCambios = async () => {
-    try {
-      // Preparar datos a enviar
-      const datosEnviar = { ...datosTutor }
-  
-      if (!datosTutor.nuevaContrasena) {
-        delete datosEnviar.contrasenaActual
-        delete datosEnviar.nuevaContrasena
-        delete datosEnviar.confirmarContrasena
-      }
-  
-      // Actualiza el perfil básico
-      await axios.put(
-        `http://127.0.0.1:8000/api/tutor/ActualizarMiPerfil/${id}`,
-        datosEnviar,
-        { withCredentials: true }
-      )
-  
-      // Si se está actualizando la contraseña
-      if (datosTutor.contrasenaActual && datosTutor.nuevaContrasena && datosTutor.confirmarContrasena) {
-        const datosPassword = {
-          current_password: datosTutor.contrasenaActual,
-          new_password: datosTutor.nuevaContrasena,
-          new_password_confirmation: datosTutor.confirmarContrasena
-        }
-  
-        await axios.post(
-          "http://127.0.0.1:8000/update-password",
-          datosPassword,
-          { withCredentials: true }
-        )
-      }
-  
-      setMostrarConfirmacion(false)
-      setExito(true)
-    } catch (error) {
-      console.error("Error al guardar cambios:", error)
-      setMostrarConfirmacion(false)
-      // Puedes mostrar mensaje al usuario si hay error
+ const guardarCambios = async () => {
+  try {
+    const datosEnviar = { ...datosTutor };
+    if (!datosTutor.nuevaContrasena) {
+      delete datosEnviar.contrasenaActual;
+      delete datosEnviar.nuevaContrasena;
+      delete datosEnviar.confirmarContrasena;
     }
+
+    // Actualiza perfil
+    await axios.put(
+      `http://127.0.0.1:8000/api/tutor/ActualizarMiPerfil/${id}`,
+      datosEnviar
+    );
+
+    // Actualiza contraseña si fue ingresada
+    if (datosTutor.contrasenaActual && datosTutor.nuevaContrasena && datosTutor.confirmarContrasena) {
+      await axios.post(
+        `http://127.0.0.1:8000/api/tutor/${id}/cambiar-password`,
+        {
+          password_actual: datosTutor.contrasenaActual,
+          password: datosTutor.nuevaContrasena,
+          password_confirmation: datosTutor.confirmarContrasena
+        }
+      );
+    }
+
+    setMostrarConfirmacion(false);
+    setExito(true);
+  } catch (error) {
+    console.error("Error al guardar cambios:", error);
+    setMostrarConfirmacion(false);
+    // Muestra error al usuario si es necesario
   }
+};
+
   
   const volverHome = () => {
     navigate(`/homeTutor/${id}/tutor`)

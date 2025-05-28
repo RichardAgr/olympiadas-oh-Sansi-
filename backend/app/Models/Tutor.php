@@ -42,7 +42,7 @@ class Tutor extends Authenticatable
         }
     }
 
-    // 📚 Relaciones existentes
+    // Relaciones existentes
     public function competidores()
     {
         return $this->belongsToMany(Competidor::class, 'tutor_competidor', 'tutor_id', 'competidor_id')
