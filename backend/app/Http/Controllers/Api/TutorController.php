@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class TutorController extends Controller{
     public function competidoresTutor($id){
@@ -149,6 +150,35 @@ class TutorController extends Controller{
             ], 500);
         }
     }
+
+    
+
+public function cambiarPassword(Request $request, $id)
+{
+    // Validación de los campos de entrada
+    $request->validate([
+        'password_actual' => 'required|string',
+        'password' => 'required|string|min:6|confirmed',
+    ]);
+
+    // Buscar el tutor
+    $tutor = Tutor::find($id);
+    if (!$tutor) {
+        return response()->json(['success' => false, 'message' => 'Tutor no encontrado.'], 404);
+    }
+
+    // Verificar contraseña actual
+    if (!Hash::check($request->password_actual, $tutor->password)) {
+        return response()->json(['success' => false, 'message' => 'La contraseña actual es incorrecta.'], 401);
+    }
+
+    // Cambiar la contraseña
+    $tutor->password = Hash::make($request->password);
+    $tutor->save();
+
+    return response()->json(['success' => true, 'message' => 'Contraseña actualizada correctamente.']);
+}
+
 
     public function actualizarEstadoTutor(Request $request, $id){
         $validator = Validator::make($request->all(), [

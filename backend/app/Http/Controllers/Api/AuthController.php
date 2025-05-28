@@ -51,6 +51,7 @@ class AuthController extends Controller
                 'rol' => 'tutor',  // 🏆 Return role
                 'usuario' => [
                     'id' => $tutor->id,
+                    'tutor_id' => $tutor->tutor_id,
                     'nombres' => $tutor->nombres,
                     'apellidos' => $tutor->apellidos,
                     'correo_electronico' => $tutor->correo_electronico

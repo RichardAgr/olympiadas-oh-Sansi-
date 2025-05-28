@@ -15,7 +15,7 @@ class PasswordResetController extends Controller
     {
         $request->validate(['correo_electronico' => 'required|email']);
 
-        // 🔍 Buscar usuario en cada tabla por separado
+        // Buscar usuario en cada tabla por separado
         $tutor = DB::table('tutor')->where('correo_electronico', $request->correo_electronico)->first();
         $responsable = DB::table('responsable_gestion')->where('correo_electronico', $request->correo_electronico)->first();
         $admin = DB::table('admin')->where('correo_electronico', $request->correo_electronico)->first();
@@ -26,7 +26,7 @@ class PasswordResetController extends Controller
             return response()->json(['mensaje' => 'Correo electrónico no encontrado.'], 404);
         }
 
-        // 🔐 Generar código aleatorio
+        // Generar código aleatorio
         $codigo = random_int(100000, 999999);
 
         DB::table('password_resets')->updateOrInsert(
@@ -38,7 +38,7 @@ class PasswordResetController extends Controller
             ]
         );
 
-        // 📧 Simular el envío del código por correo
+        // Simular el envío del código por correo
         Log::info("Código de recuperación enviado a {$request->correo_electronico}: $codigo");
 
         return response()->json(['mensaje' => 'Código de recuperación enviado al correo electrónico.']);
@@ -83,7 +83,7 @@ class PasswordResetController extends Controller
             return response()->json(['mensaje' => 'Token inválido.'], 401);
         }
 
-        // 🔍 Determinar modelo donde está el usuario
+        //Determinar modelo donde está el usuario
         $usuario = \App\Models\Tutor::where('correo_electronico', $request->correo_electronico)->first() ??
                    \App\Models\ResponsableGestion::where('correo_electronico', $request->correo_electronico)->first() ??
                    \App\Models\Admin::where('correo_electronico', $request->correo_electronico)->first();
@@ -92,11 +92,11 @@ class PasswordResetController extends Controller
             return response()->json(['mensaje' => 'Usuario no encontrado.'], 404);
         }
 
-        // 🔑 Actualizar contraseña con Hash seguro
+        //Actualizar contraseña con Hash seguro
         $usuario->password = Hash::make($request->password);
         $usuario->save();
 
-        // 🧹 Eliminar el código usado
+        // Eliminar el código usado
         DB::table('password_resets')->where('correo_electronico', $request->correo_electronico)->delete();
 
         return response()->json(['mensaje' => 'Contraseña restablecida correctamente.']);

@@ -1,0 +1,206 @@
+/* Estilos base */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Contenedor principal */
+.R-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Sección izquierda (imagen de fondo) */
+.R-left {
+  width: 50%;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url("../../assets/imgLogin.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.R-text {
+  text-align: center;
+  color: white;
+  padding: 20px;
+  max-width: 80%;
+}
+
+.R-text h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.R-text p {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+/* Sección derecha (formulario) */
+.R-right {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+.R-card {
+  width: 80%;
+  max-width: 400px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -2px 7px 15px 9px rgba(0, 0, 0, 0.2);
+  gap: 1.5rem;
+}
+
+/* Elementos del formulario */
+.R-logo {
+  font-size: 1.8rem;
+  text-align: center;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 0.5rem;
+}
+
+.R-subtitulo {
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 0px;
+  margin-top: 56px;
+}
+
+.R-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.R-input-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.R-input-group input {
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  outline: none;
+  width: 100%;
+}
+
+.R-error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin: -0.5rem 0;
+  text-align: center;
+}
+
+.R-button {
+  background-color: #2D42C8;
+  color: white;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+
+.R-button:hover {
+  background-color: #1a2a8a;
+}
+
+/* Estilos específicos para confirmación */
+.R-confirmacion-icon {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.R-confirmacion-icon img {
+  width: 80px;
+  height: 80px;
+  margin-top: 20px;
+    margin-bottom: -70px;
+}
+
+.R-confirmacion-message {
+  text-align: center;
+  margin: 1.5rem 0;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: -8px;
+}
+
+.R-confirmacion-message p {
+  margin: 0.5rem 0;
+}
+
+.R-confirmacion-titulo {
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 10px;
+    margin-top: 47px;
+}
+
+.R-instrucciones {
+  font-size: 0.9rem;
+  text-align: center;
+  color: #666;
+  margin-bottom: 1rem;
+}
+/* Estilos para el botón de retroceso */
+.R-back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #2D42C8;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+}
+
+.R-back-button:hover {
+  background-color: #f0f0f0;
+}
+
+.R-card {
+  position: relative; /* Añadido para posicionar la flecha correctamente */
+  /* ... otros estilos existentes ... */
+}
+/* Estilos para inputs con error */
+.R-input-error {
+  border-color: #ff4444 !important;
+}
+
+.R-input-hint {
+  font-size: 0.9rem;
+    color: #ff4444;
+    margin-top: -0.75rem;
+}
