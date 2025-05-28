@@ -163,11 +163,20 @@ const validarCampo = (name, value) => {
 
   const guardarCambios = async () => {
     try {
+      // Preparar datos a enviar
+      const datosEnviar = { ...datosTutor }
+  
+      if (!datosTutor.nuevaContrasena) {
+        delete datosEnviar.contrasenaActual
+        delete datosEnviar.nuevaContrasena
+        delete datosEnviar.confirmarContrasena
+      }
+  
       // Actualiza el perfil básico
       await axios.put(
         `http://127.0.0.1:8000/api/tutor/ActualizarMiPerfil/${id}`,
-        datosTutor,
-        { withCredentials: true } // ¡Importante para Sanctum!
+        datosEnviar,
+        { withCredentials: true }
       )
   
       // Si se está actualizando la contraseña
@@ -181,7 +190,7 @@ const validarCampo = (name, value) => {
         await axios.post(
           "http://127.0.0.1:8000/update-password",
           datosPassword,
-          { withCredentials: true } // También aquí para Sanctum
+          { withCredentials: true }
         )
       }
   
@@ -194,15 +203,6 @@ const validarCampo = (name, value) => {
     }
   }
   
-    const datosEnviar = { ...datosTutor }
-
-if (!datosTutor.nuevaContrasena) {
-  delete datosEnviar.contrasenaActual
-  delete datosEnviar.nuevaContrasena
-  delete datosEnviar.confirmarContrasena
-}
-  }
-
   const volverHome = () => {
     navigate(`/homeTutor/${id}/tutor`)
   }
@@ -423,4 +423,4 @@ if (!datosTutor.nuevaContrasena) {
   )
 }
 
-export default Configuracion
+export default Configuracion;
