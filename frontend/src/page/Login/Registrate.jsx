@@ -1,8 +1,11 @@
 import { useState } from "react";
+import axios from "axios"; // Importar axios
 import "./Registrate.css";
 import { Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // Para redireccionar después del registro
 
 const Registrate = () => {
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     nombres: "",
@@ -22,7 +25,7 @@ const Registrate = () => {
     ci: "",
     password: "",
     confirmPassword: "",
-    general: ""
+    general: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +34,7 @@ const Registrate = () => {
   // Validaciones en tiempo real
   const validateField = (name, value) => {
     let error = "";
-    
+
     switch (name) {
       case "nombres":
       case "apellidos":
@@ -67,54 +70,122 @@ const Registrate = () => {
       default:
         break;
     }
-    
-    setErrors(prev => ({ ...prev, [name]: error }));
+
+    setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
-  // Manejo de cambios en los campos
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Filtrado de valores según el campo
     let filteredValue = value;
     if (name === "nombres" || name === "apellidos") {
       filteredValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
-    } else if (name === "telefono") {
-      filteredValue = value.replace(/\D/g, "");
-    } else if (name === "ci") {
+    } else if (name === "telefono" || name === "ci") {
       filteredValue = value.replace(/\D/g, "");
     }
-    
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
-      [name]: filteredValue
+      [name]: filteredValue,
     }));
-    
-    // Validación en tiempo real
+
     validateField(name, filteredValue);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    setErrors((prev) => ({ ...prev, general: "" }));
+
     // Validar todos los campos antes de enviar
-    Object.keys(formData).forEach(key => {
+    Object.keys(formData).forEach((key) => {
       validateField(key, formData[key]);
     });
-    
-    // Verificar si hay errores
-    if (Object.values(errors).some(error => error !== "")) {
-      setErrors(prev => ({ ...prev, general: "Por favor corrige los errores" }));
-      return;
-    }
-    
-    // Si todo está bien, proceder con el registro
+
     try {
-      // Aquí iría tu lógica de registro
-      // navigate("/login"); // Redirigir después de registro exitoso
+      // Preparar los datos para la API
+      const dataToSend = {
+        nombres: formData.nombres,
+        apellidos: formData.apellidos,
+        correo_electronico: formData.email,
+        telefono: formData.telefono,
+        ci: formData.ci,
+        password: formData.password,
+        password_confirmation: formData.confirmPassword,
+      };
+
+      const response = await axios.post(
+        "http://localhost:8000/api/registrar-tutor",
+        dataToSend,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      // Verificar si la respuesta indica éxito aunque sea status 200
+      if (response.data && response.data.tutor_id) {
+        // Registro exitoso - redirigir con mensaje
+        navigate("/homePrincipal/login", {
+          state: {
+            registrationSuccess: true,
+            message: "¡Registro exitoso! Ya puedes iniciar sesión.",
+          },
+        });
+      } else {
+        // La API respondió con 200 pero sin datos esperados
+        navigate("/homePrincipal/login", {
+              state: {
+                registrationSuccess: true,
+                message: "¡Registro completado con éxito!",
+              },
+            });
+      }
     } catch (err) {
-      setErrors(prev => ({ ...prev, general: "Error en el registro: " + err.message }));
-    }
+      // Manejar errores de conexión o validación del servidor
+      let errorMessage = "Error en el registro";
+
+      if (err.response) {
+        // Si el backend devuelve un error de validación
+        if (err.response.data && err.response.data.errors) {
+          const backendErrors = err.response.data.errors;
+          const newErrors = {};
+
+          Object.keys(backendErrors).forEach((key) => {
+            if (key === "correo_electronico")
+              newErrors.email = backendErrors[key][0];
+            else if (key === "password_confirmation")
+              newErrors.confirmPassword = backendErrors[key][0];
+            else newErrors[key] = backendErrors[key][0];
+          });
+
+          setErrors((prev) => ({ ...prev, ...newErrors }));
+        }
+
+        // Si el registro fue exitoso pero la respuesta no es estándar
+        if (err.response.status === 200 && err.response.data) {
+          // Verificar si hay datos de tutor en la respuesta
+          if (err.response.data.nombres) {
+            navigate("/homePrincipal/login", {
+              state: {
+                registrationSuccess: true,
+                message: "¡Registro completado con éxito!",
+              },
+            });
+            return;
+          }
+        }
+
+        errorMessage = err.response.data?.message || errorMessage;
+      } else if (err.request) {
+        errorMessage = "No se pudo conectar al servidor";
+      }
+
+      setErrors((prev) => ({ ...prev, general: errorMessage }));
+    } 
   };
 
   return (
@@ -139,7 +210,9 @@ const Registrate = () => {
             onChange={handleChange}
             required
           />
-          {errors.nombres && <p className="registrate-error-message">{errors.nombres}</p>}
+          {errors.nombres && (
+            <p className="registrate-error-message">{errors.nombres}</p>
+          )}
 
           {/* Apellido */}
           <label>Apellido(s)</label>
@@ -151,7 +224,9 @@ const Registrate = () => {
             onChange={handleChange}
             required
           />
-          {errors.apellidos && <p className="registrate-error-message">{errors.apellidos}</p>}
+          {errors.apellidos && (
+            <p className="registrate-error-message">{errors.apellidos}</p>
+          )}
 
           {/* Email */}
           <label>Correo Electrónico</label>
@@ -163,7 +238,9 @@ const Registrate = () => {
             onChange={handleChange}
             required
           />
-          {errors.email && <p className="registrate-error-message">{errors.email}</p>}
+          {errors.email && (
+            <p className="registrate-error-message">{errors.email}</p>
+          )}
 
           {/* Teléfono */}
           <label>Número de Teléfono</label>
@@ -175,7 +252,9 @@ const Registrate = () => {
             onChange={handleChange}
             required
           />
-          {errors.telefono && <p className="registrate-error-message">{errors.telefono}</p>}
+          {errors.telefono && (
+            <p className="registrate-error-message">{errors.telefono}</p>
+          )}
 
           {/* CI */}
           <label>Carnet de Identidad</label>
@@ -211,7 +290,9 @@ const Registrate = () => {
               )}
             </span>
           </div>
-          {errors.password && <p className="registrate-error-message">{errors.password}</p>}
+          {errors.password && (
+            <p className="registrate-error-message">{errors.password}</p>
+          )}
 
           {/* Confirmar Contraseña */}
           <label>Confirmar Contraseña</label>
@@ -235,10 +316,16 @@ const Registrate = () => {
               )}
             </span>
           </div>
-          {errors.confirmPassword && <p className="registrate-error-message">{errors.confirmPassword}</p>}
+          {errors.confirmPassword && (
+            <p className="registrate-error-message">{errors.confirmPassword}</p>
+          )}
 
           {/* Error general */}
-          {errors.general && <p className="registrate-error-message registrate-general-error">{errors.general}</p>}
+          {errors.general && (
+            <p className="registrate-error-message registrate-general-error">
+              {errors.general}
+            </p>
+          )}
 
           <button type="submit" className="registrate-button">
             Registrarse
