@@ -130,7 +130,8 @@ Route::post('/password/verify', [PasswordResetController::class, 'verificarCodig
 Route::post('/password/reset', [PasswordResetController::class, 'resetearPassword']);
 
 //Cambiar password
-Route::middleware('auth:sanctum')->post('/password/change', [PasswordChangeController::class, 'cambiarPassword']);
+Route::middleware('auth:sanctum')->post('/update-password', [AuthController::class, 'updatePassword']);
+
 
 //Logout
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
