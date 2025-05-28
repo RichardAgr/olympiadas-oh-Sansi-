@@ -150,7 +150,7 @@ const AreasCompetencia = () => {
             <thead>
               <tr>
                 <th>Área</th>
-                <th>Rango de Grados</th>
+                <th>Año de Escolaridad</th>
                 <th>Acciones</th>
               </tr>
             </thead>
