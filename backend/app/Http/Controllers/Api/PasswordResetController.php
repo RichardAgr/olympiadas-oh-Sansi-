@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;  // Importamos Mail para enviar correos
 use Carbon\Carbon;
 
 class PasswordResetController extends Controller
@@ -29,6 +30,7 @@ class PasswordResetController extends Controller
         // Generar código aleatorio
         $codigo = random_int(100000, 999999);
 
+        // Guardar código en la tabla password_resets
         DB::table('password_resets')->updateOrInsert(
             ['correo_electronico' => $request->correo_electronico],
             [
@@ -38,10 +40,13 @@ class PasswordResetController extends Controller
             ]
         );
 
-        // Simular el envío del código por correo
-        Log::info("Código de recuperación enviado a {$request->correo_electronico}: $codigo");
+        // Enviar el código real usando Mailgun (Mail::raw)
+        Mail::raw("Tu código de recuperación es: {$codigo}", function ($message) use ($request) {
+            $message->to($request->correo_electronico)
+                    ->subject('Código de Recuperación - O! SanSi');
+        });
 
-        return response()->json(['mensaje' => 'Código de recuperación enviado al correo electrónico.']);
+        return response()->json(['mensaje' => 'Código enviado a tu correo.']);
     }
 
     public function verificarCodigo(Request $request)
@@ -83,7 +88,7 @@ class PasswordResetController extends Controller
             return response()->json(['mensaje' => 'Token inválido.'], 401);
         }
 
-        //Determinar modelo donde está el usuario
+        // Determinar modelo donde está el usuario
         $usuario = \App\Models\Tutor::where('correo_electronico', $request->correo_electronico)->first() ??
                    \App\Models\ResponsableGestion::where('correo_electronico', $request->correo_electronico)->first() ??
                    \App\Models\Admin::where('correo_electronico', $request->correo_electronico)->first();
@@ -92,7 +97,7 @@ class PasswordResetController extends Controller
             return response()->json(['mensaje' => 'Usuario no encontrado.'], 404);
         }
 
-        //Actualizar contraseña con Hash seguro
+        // Actualizar contraseña con Hash seguro
         $usuario->password = Hash::make($request->password);
         $usuario->save();
 
