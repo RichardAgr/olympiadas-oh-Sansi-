@@ -139,15 +139,15 @@ const RecuperarContraseña = () => {
     navigate("/homePrincipal/login");
   };
 
-  const handleRetroceder = (e) => {
-  e.preventDefault();
-  if (paso > 1) {
-    setPaso(paso - 1);
-    setError("");
-    return;
-  }
-  navigate("/homePrincipal/login");
-};
+  const handleRetroceder = () => {
+    if (paso > 1) {
+      setPaso(paso - 1);
+      setError("");
+    }
+    if (paso === 1) {
+      navigate("/homePrincipal/login");
+    }
+  };
 
   return (
     <div className="R-container">
