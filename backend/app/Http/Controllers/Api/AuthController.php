@@ -33,8 +33,12 @@ class AuthController extends Controller
             $token = $admin->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'token' => $token,
-                'rol' => 'admin',
-                'usuario' => $admin
+                'rol' => 'admin',  // 🏆 Return role
+                'usuario' => [
+                    'id' => $admin->id,
+                    'nombre' => $admin->nombre,  // Puedes añadir campos relevantes
+                    'correo_electronico' => $admin->correo_electronico
+                ]
             ]);
         }
 
@@ -44,8 +48,14 @@ class AuthController extends Controller
             $token = $tutor->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'token' => $token,
-                'rol' => 'tutor',
-                'usuario' => $tutor
+                'rol' => 'tutor',  // 🏆 Return role
+                'usuario' => [
+                    'id' => $tutor->id,
+                    'tutor_id' => $tutor->tutor_id,
+                    'nombres' => $tutor->nombres,
+                    'apellidos' => $tutor->apellidos,
+                    'correo_electronico' => $tutor->correo_electronico
+                ]
             ]);
         }
 
@@ -55,8 +65,13 @@ class AuthController extends Controller
             $token = $responsable->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'token' => $token,
-                'rol' => 'responsable',
-                'usuario' => $responsable
+                'rol' => 'responsable',  // 🏆 Return role
+                'usuario' => [
+                    'id' => $responsable->id,
+                    'nombres' => $responsable->nombres,
+                    'apellidos' => $responsable->apellidos,
+                    'correo_electronico' => $responsable->correo_electronico
+                ]
             ]);
         }
 
@@ -99,13 +114,46 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // Revoke all tokens for the authenticated user
+        // Revocar todos los tokens para el usuario autenticado
         $request->user()->tokens()->delete();
-    
+
         return response()->json([
             'mensaje' => 'Sesión cerrada exitósamente.'
         ]);
     }
-    
 
+    public function updatePassword(Request $request)
+    {
+        // Validar los campos ingresados
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/[A-Z]/', // Al menos una letra mayúscula
+                'regex:/[0-9]/', // Al menos un número
+                'regex:/[@$!%*#?&]/', // Al menos un símbolo especial
+                'different:current_password',
+                'confirmed'
+            ],
+        ], [
+            'new_password.regex' => 'La nueva contraseña debe contener al menos una mayúscula, un número y un símbolo.',
+            'new_password.different' => 'La nueva contraseña debe ser diferente de la actual.',
+            'new_password.confirmed' => 'La nueva contraseña y la confirmación no coinciden.'
+        ]);
+
+        $usuario = $request->user();
+
+        // Verificar la contraseña actual
+        if (!Hash::check($request->current_password, $usuario->password)) {
+            return response()->json(['mensaje' => 'La contraseña actual es incorrecta.'], 422);
+        }
+
+        // Actualizar la contraseña
+        $usuario->password = $request->new_password;
+        $usuario->save();
+
+        return response()->json(['mensaje' => 'Contraseña actualizada con éxito.']);
+    }
 }
