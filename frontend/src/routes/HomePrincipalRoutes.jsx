@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import LayautHomePrincipal from "../components/HomePrincipalLayaut/layautHomePrincipal";
 import HomePrincipal from "../page/home/HomePrincipal";
+import AreasCompetencia from "../page/home/AreasCompetencia";
 import AppRouteLogin from "./AppRouteLogin";
 import AppRouter from "./AppRouter";
 import AppRouteRespGest from "./AppRouteRespGest";
@@ -9,18 +10,17 @@ import AppRouteTutor from "./AppRouteTutor";
 import Registrate from "../page/Login/Registrate";
 import RecuperarContraseña from "../page/Login/RecuperarContraseña";
 
-
 function HomePrincipalRoutes() {
-   return (
+  return (
     <Routes>
       <Route path="/" element={<Navigate to="/homePrincipal" />} />
 
-      {/* Layout principal con login */}
       <Route path="/homePrincipal" element={<LayautHomePrincipal />}>
-      <Route index element={<HomePrincipal />} />
+        <Route index element={<HomePrincipal />} />
         <Route path="login/*" element={<AppRouteLogin />} />
         <Route path="registrate" element={<Registrate />} />
         <Route path="recuperarContraseña" element={<RecuperarContraseña />} />
+        <Route path="areasCompetencia" element={<AreasCompetencia />} />
       </Route>
 
       {/* Rutas independientes según rol */}
@@ -30,4 +30,5 @@ function HomePrincipalRoutes() {
     </Routes>
   );
 }
+
 export default HomePrincipalRoutes;

@@ -1,9 +1,8 @@
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import HomePrincipalTopBar from "./homePrincipalTopBar";
 import AdminFooter from "../AdminFooter";
 
-const homePrincipalLayout = () => {
-    
+const LayautHomePrincipal = () => {
   return (
     <div className="admin-layout">
       <HomePrincipalTopBar />
@@ -15,4 +14,4 @@ const homePrincipalLayout = () => {
   );
 };
 
-export default homePrincipalLayout;
+export default LayautHomePrincipal;
