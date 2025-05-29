@@ -1,27 +1,37 @@
-import { useState, useEffect } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { UserCircle } from "lucide-react";
+import { UserCircle, Bell } from "lucide-react";
 import "./estilosTopBar.css";
 
-const HomePrincipalTopBar = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+const homePrincipalTopBar = () => {
+  const [showRolesMenu, setShowRolesMenu] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // 👉 responsive menu
+  const timeoutRef = useRef(null);
   const location = useLocation();
+ 
+
+  // 👉 ID temporal estático desde el backend
+  const {id}= useParams();
+  const navigate = useNavigate(); // Para manejar la navegación programáticamente
+  const [userMenuOpen, setUserMenuOpen] = useState(false); 
+
+  
 
   useEffect(() => {
-    setMenuOpen(false);
-    setUserMenuOpen(false);
+    setShowRolesMenu(false);
+    setMenuOpen(false); // Cierra el menú al cambiar de ruta
   }, [location.pathname]);
 
   const toggleUserMenu = () => {
-    setUserMenuOpen((prev) => !prev);
-  };
+    setUserMenuOpen(!userMenuOpen)
+  }
 
   return (
     <nav className="topbar">
       <div className="topbar-left">
         <img src={logo} alt="Logo" className="logo" />
+
         <button
           className="hamburger-btn"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -33,44 +43,30 @@ const HomePrincipalTopBar = () => {
 
       <ul className={`topbar-menu ${menuOpen ? "show" : ""}`}>
         <li>
-          <NavLink
-            to="/homePrincipal"
-            end
-            className={({ isActive }) => (isActive ? "active" : "")}
+          <Link
+            to={`/homePrincipal`}
+            className={location.pathname == (`/homePrincipal`) ? "active" : ""}
           >
             Inicio
-          </NavLink>
+          </Link>
         </li>
 
-        <li>
-          <NavLink
-            to="/homePrincipal/areasCompetencia"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Áreas en Competencia
-          </NavLink>
+        <li className="roles-dropdown">
+            Competidores
         </li>
-
-        {/* Quitamos Login de aquí para meterlo en el menú desplegable */}
         
-        <li className="user-menu" onClick={toggleUserMenu}>
-          <div className="menu-toggle">
-            <UserCircle size={22} color="white" />
-          </div>
-          {userMenuOpen && (
-            <ul className="menu-dropdown">
-              <li>
-                <NavLink to="/homePrincipal/login">Login</NavLink>
-              </li>
-              <li>
-                <NavLink to="/homePrincipal">Cerrar Sesión</NavLink>
-              </li>
-            </ul>
-          )}
+        <li className="roles-dropdown">
+          <Link to={`/homePrincipal/login`}
+            className={location.pathname === `/homePrincipal/login`  ? "active" : ""}>
+          Login
+          </Link>
         </li>
+
+
+       
       </ul>
     </nav>
   );
 };
 
-export default HomePrincipalTopBar;
+export default homePrincipalTopBar;
