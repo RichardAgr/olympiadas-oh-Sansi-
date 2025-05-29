@@ -64,7 +64,7 @@ public function mostrarDetalleVideo(Request $request)
         return response()->json([
             'message' => 'No hay videos disponibles',
             'data' => []
-        ], 404);
+        ], 200);
     }
 
     return response()->json([
