@@ -211,4 +211,23 @@
      font-size: 13px;
      border-radius: 4px;
    }
-   
+
+   .titulo-seccion {
+    font-size: 2rem;        /* Título más grande */
+  font-weight: bold;
+  margin: 30px 0 15px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #000;
+  }
+  
+  .icono-candado {
+    font-size: 1.8rem;      /* Tamaño del candado */
+  color: #000; 
+  }
+
+  .input-con-icono {
+    position: relative;
+  }
+ 

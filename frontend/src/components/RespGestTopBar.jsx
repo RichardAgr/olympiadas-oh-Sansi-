@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { useNavigate,Link, NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { UserCircle, Bell } from "lucide-react";
 import "./estilos/estilosTopBar.css";
+import axios from "axios";
 
 const RespGestTopBar = () => {
   const [showRolesMenu, setShowRolesMenu] = useState(false);
@@ -10,6 +11,8 @@ const RespGestTopBar = () => {
   const timeoutRef = useRef(null);
   const location = useLocation();
    const [userMenuOpen, setUserMenuOpen] = useState(false); 
+
+  const navigate = useNavigate();
 
 
   const handleMouseEnter = () => {
@@ -33,6 +36,26 @@ const RespGestTopBar = () => {
   const toggleUserMenu = () => {
     setUserMenuOpen(!userMenuOpen)
   }
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://127.0.0.1:8000/api/logout", {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`
+        }
+      });
+
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("rol");
+
+      navigate("/homePrincipal");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      localStorage.clear();
+      navigate("/homePrincipal");
+    }
+  };
 
   return (
     <nav className="topbar">
@@ -85,7 +108,9 @@ const RespGestTopBar = () => {
           </div>
           {userMenuOpen && (
             <ul className="menu-dropdown">
-              <li><Link to={`/homePrincipal`}>Cerrar Sesion</Link></li>
+              <li>
+                <a onClick={handleLogout}>Cerrar Sesión</a>
+              </li>
             </ul>
           )}
         </li>
