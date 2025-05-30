@@ -8,6 +8,7 @@ import AppRouteRespGest from "./AppRouteRespGest";
 import AppRouteTutor from "./AppRouteTutor";
 import Registrate from "../page/Login/Registrate";
 import RecuperarContraseña from "../page/Login/RecuperarContraseña";
+import AreasCompetencia from "../page/home/AreasCompetencia";
 
 
 function HomePrincipalRoutes() {
@@ -19,6 +20,7 @@ function HomePrincipalRoutes() {
       <Route path="/homePrincipal" element={<LayautHomePrincipal />}>
       <Route index element={<HomePrincipal />} />
         <Route path="login/*" element={<AppRouteLogin />} />
+        <Route path="areasCompetencia" element={<AreasCompetencia />}/>
         <Route path="registrate" element={<Registrate />} />
         <Route path="recuperarContraseña" element={<RecuperarContraseña />} />
       </Route>
