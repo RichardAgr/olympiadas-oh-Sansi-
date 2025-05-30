@@ -6,12 +6,12 @@ import "./estilosTopBar.css";
 
 const homePrincipalTopBar = () => {
   const [showRolesMenu, setShowRolesMenu] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); // 👉 responsive menu
+  const [menuOpen, setMenuOpen] = useState(false); // responsive menu
   const timeoutRef = useRef(null);
   const location = useLocation();
  
 
-  // 👉 ID temporal estático desde el backend
+  // ID temporal estático desde el backend
   const {id}= useParams();
   const navigate = useNavigate(); // Para manejar la navegación programáticamente
   const [userMenuOpen, setUserMenuOpen] = useState(false); 

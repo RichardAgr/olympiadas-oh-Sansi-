@@ -13,6 +13,18 @@ const AgregarArea = () => {
   const [descripcionError, setDescripcionError] = useState("");
   const [costoError, setCostoError] = useState("");
 
+  const handleNombreChange = (e) => {
+    const valor = e.target.value;
+    //Expresion regular para validar que solo permite letras y espacios
+    const regex = /^[a-zA-Z\s]*$/;
+    if (regex.test(valor) || valor === "") {
+      setNombre(valor);
+      setNombreError("");
+    } else {
+      setNombreError("El nombre solo puede contener letras y espacios.");
+    }
+  }
+
 
   const validarFormulario = () => {
     const nuevosErrores = {};
@@ -33,7 +45,7 @@ const AgregarArea = () => {
   
     if (!costo) {
       nuevosErrores.costo = "El costo es obligatorio.";
-    } else if (isNaN(costo) || parseFloat(costo) <= 0) {
+    } else if (isNaN(costo) || parseFloat(costo) <= 10) {
       nuevosErrores.costo = "Debe ser un número mayor a 0.";
     }
   
@@ -68,7 +80,7 @@ const AgregarArea = () => {
         <input
           type="text"
           value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
+          onChange={handleNombreChange}
         />
         {errores.nombre && <small className="error">{errores.nombre}</small>}
 
@@ -82,6 +94,7 @@ const AgregarArea = () => {
         <label>Costo (Bs)</label>
         <input
           type="number"
+          min="10"
           value={costo}
           onChange={(e) => setCosto(e.target.value)}
         />

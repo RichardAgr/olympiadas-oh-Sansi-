@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CalendarDays, MapPin } from "lucide-react";
 import "./VEvento.css";
+import Fuse from "fuse.js"; // Import Fuse.js for fuzzy searching
 
 const formatDate = (isoString) => {
   if (!isoString) return "Sin Asignar";
@@ -31,10 +32,16 @@ const VEvento = () => {
     fetchData();
   }, []);
 
-  // 🔍 Filter by area name
-  const filteredAreas = areas.filter((area) =>
-    area.nombre.toLowerCase().includes(search.toLowerCase())
-  );
+// 🔍 Fuzzy search with Fuse.js
+const fuse = new Fuse(areas, {
+  keys: ["nombre"], // Campos a buscar
+  threshold: 0.4,   // Sensibilidad: más bajo = más estricto
+});
+
+const filteredAreas = search.trim()
+  ? fuse.search(search).map(result => result.item)
+  : areas;
+
 
   // 📄 Pagination logic
   const totalPaginas = Math.ceil(filteredAreas.length / itemsPorPagina);

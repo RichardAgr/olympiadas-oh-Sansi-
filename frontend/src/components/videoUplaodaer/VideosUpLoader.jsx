@@ -17,10 +17,21 @@ export default function VideoUploader({ title, type }) {
         setIsLoading(true)
         const response = await axios.get("http://127.0.0.1:8000/api/Mostrarvideos")
 
-        if (response.data && response.data.data && response.data.data[type]) {
-          setVideoData(response.data.data[type])
-          setVideoUrl(response.data.data[type].url_video)
+        if (response.data?.data) {
+        // Busca el video que coincida con el tipo (type)
+        const foundVideo = response.data.data.find(
+          (video) => video.tipo_video === type
+        );
+
+        if (foundVideo) {
+          setVideoData(foundVideo);
+          setVideoUrl(foundVideo.url_video);
+        } else {
+          // No se encontró video para este tipo
+          setVideoData(null);
+          setVideoUrl("");
         }
+      }
       } catch (error) {
         console.error("Error al obtener datos del video:", error)
       } finally {
