@@ -1,0 +1,148 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+.registrate-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.registrate-left {
+  width: 50vw;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 5vw;
+  
+}
+
+.registrate-left::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../../assets/imgLogin.png");
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.registrate-text {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.registrate-text h1 {
+  font-size: 40px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.registrate-text p {
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.registrate-right {
+  flex: 1;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.registrate-card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  
+}
+
+.registrate-title {
+  font-size: 26px;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #000000;
+}
+
+.registrate-card label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.registrate-card input {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+}
+
+.registrate-button {
+  background-color: #2D42C8;
+  color: white;
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  margin-top: 10px;
+}
+
+.registrate-button:hover,
+.registrate-button:active {
+  background-color: #061a8b;
+  transform: scale(0.97);
+}
+
+.login-link {
+  font-size: 14px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.login-link a {
+  color: #1a237e;
+  font-weight: bold;
+  text-decoration: none;
+}
+.registrate-error-message {
+  text-align: center;
+  color: #ff4444;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  margin-top: -23px;
+
+  height: 16px;
+}
+
+.registrate-general-error {
+  color: #ff4444;
+  text-align: center;
+  margin: 10px 0;
+  font-size: 0.9rem;
+}

@@ -52,6 +52,30 @@ const TutorTopBar = () => {
     setUserMenuOpen(!userMenuOpen)
   }
 
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        "http://127.0.0.1:8000/api/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("rol");
+
+      navigate("/homePrincipal");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      localStorage.clear();
+      navigate("/homePrincipal");
+    }
+  };
+
   return (
     <nav className="topbar">
       <div className="topbar-left">
@@ -113,7 +137,11 @@ const TutorTopBar = () => {
             <ul className="menu-dropdown">
               <li><Link to={`/homeTutor/${id}/tutor/MiPerfil`}>Mi perfil</Link></li>
               <li><Link to={`/homeTutor/${id}/tutor/Configuracion`}>Configuración</Link></li>
-              <li><Link to={`/homePrincipal`}>Cerrar Sesion</Link></li>
+              <li>
+                <a onClick={handleLogout}>
+                  Cerrar Sesión
+                </a>
+              </li>
             </ul>
           )}
         </li>
