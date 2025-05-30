@@ -18,9 +18,9 @@ function HomePrincipalRoutes() {
 
       {/* Layout principal con login */}
       <Route path="/homePrincipal" element={<LayautHomePrincipal />}>
+      <Route path="areasCompetencia" element={<AreasCompetencia />}/>
       <Route index element={<HomePrincipal />} />
         <Route path="login/*" element={<AppRouteLogin />} />
-        <Route path="areasCompetencia" element={<AreasCompetencia />}/>
         <Route path="registrate" element={<Registrate />} />
         <Route path="recuperarContraseña" element={<RecuperarContraseña />} />
       </Route>
