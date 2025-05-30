@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-
+import PrivateRoute from "../routes/PrivateRoutes";
 import LayautHomePrincipal from "../components/HomePrincipalLayaut/layautHomePrincipal";
 import HomePrincipal from "../page/home/HomePrincipal";
 import AppRouteLogin from "./AppRouteLogin";
@@ -23,10 +23,32 @@ function HomePrincipalRoutes() {
         <Route path="recuperarContraseña" element={<RecuperarContraseña />} />
       </Route>
 
-      {/* Rutas independientes según rol */}
-      <Route path="/admin/*" element={<AppRouter />} />
-      <Route path="/respGest/*" element={<AppRouteRespGest />} />
-      <Route path="/homeTutor/:id/tutor/*" element={<AppRouteTutor />} />
+      <Route
+        path="/admin/*"
+        element={
+          <PrivateRoute allowedRoles={["admin"]}>
+            <AppRouter />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/respGest/*"
+        element={
+          <PrivateRoute allowedRoles={["responsable"]}>
+            <AppRouteRespGest />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/homeTutor/:id/tutor/*"
+        element={
+          <PrivateRoute allowedRoles={["tutor"]}>
+            <AppRouteTutor />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 }
