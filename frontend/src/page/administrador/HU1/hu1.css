@@ -1,0 +1,195 @@
+/* Layout general */
+.areas-list-containerHu1 {
+  font-family: 'Comfortaa', sans-serif;
+  padding: 20px 40px;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+.areas-titleHu1 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  color: #000;
+}
+/* Buscador + botón agregar */
+.search-add-containerHu1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding: 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.search-wrapperHu1 {
+  position: relative;
+  width: 60%;
+}
+.search-inputHu1 {
+  width: 100%;
+  padding: 12px 12px 12px 34px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-family: 'Comfortaa', sans-serif;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-inputHu1:focus {
+  border-color: #384FD6;
+}
+
+.add-area-buttonHu1 {
+   margin-top: 0;
+  background-color: #384FD6;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.add-area-buttonHu1:hover {
+  background-color: #061f66;
+  transform: scale(1.05);
+}
+/* Contador de áreas */
+.areas-countHu1 {
+  text-align: right;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+ .areas-countHu1 {
+    text-align: center;
+    font-size: 13px;
+  }
+  /* Sin resultados */
+.no-resultsHu1 {
+  text-align: center;
+  font-size: 18px;
+  color: #999;
+  margin-top: 40px;
+  animation: fadeIn 0.3s ease-in;
+}
+.no-resultsHu1,
+  .loading {
+    font-size: 16px;
+    padding: 0 10px;
+  }
+  /* Tarjetas de áreas */
+.area-cards-containerHu1 {
+  display: flex; /*hace que las tarjetas se alineen horizontalmente*/
+  flex-direction: column; 
+  gap: 20px; 
+
+}
+.area-cardHu1 {
+  background-color: #F7F7F7;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #DEE1E6;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.area-cardHu1:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+
+  .area-info-TituloHu1 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.area-info-descripcionHu1 {
+  color: #666;
+  margin: 0;
+}
+
+/* Botones dentro de las tarjetas */
+.area-buttonsHu1 {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btnHu1,
+.delete-btnHu1 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 12px;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.edit-btnHu1 {
+  background-color: #DEE1E6;
+  color: #565E6C;
+}
+
+.edit-btnHu1:hover {
+  background-color: #cfd8eb;
+  transform: scale(1.05);
+}
+
+.delete-btnHu1 {
+  background-color: #DEE1E6;
+  color: #565E6C;
+}
+
+.delete-btnHu1:hover {
+  background-color: #f8d7da;
+  color: #a10d23;
+  transform: scale(1.05);
+}
+/* Paginación */
+.paginationHu1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0;
+  gap: 8px;
+}
+
+.paginationbotonHu1{
+  border: none;
+  background-color: #f0f0f0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: 'Comfortaa', sans-serif;
+}
+
+.paginationbotonHu1.active {
+  background-color: #0A2E8C;
+  color: white;
+}
+
+.paginationbotonHu1:hover {
+  background-color: #ccc;
+}
+
+.paginationbotonHu1:disabled {
+  background-color: #e0e0e0;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+
