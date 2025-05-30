@@ -33,10 +33,10 @@ class AuthController extends Controller
             $token = $admin->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'token' => $token,
-                'rol' => 'admin',  // 🏆 Return role
+                'rol' => 'admin',  
                 'usuario' => [
                     'id' => $admin->id,
-                    'nombre' => $admin->nombre,  // Puedes añadir campos relevantes
+                    'nombre' => $admin->nombre,  
                     'correo_electronico' => $admin->correo_electronico
                 ]
             ]);
@@ -48,7 +48,7 @@ class AuthController extends Controller
             $token = $tutor->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'token' => $token,
-                'rol' => 'tutor',  // 🏆 Return role
+                'rol' => 'tutor',  
                 'usuario' => [
                     'id' => $tutor->id,
                     'tutor_id' => $tutor->tutor_id,
@@ -65,7 +65,7 @@ class AuthController extends Controller
             $token = $responsable->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'token' => $token,
-                'rol' => 'responsable',  // 🏆 Return role
+                'rol' => 'responsable',  
                 'usuario' => [
                     'id' => $responsable->id,
                     'nombres' => $responsable->nombres,
@@ -131,9 +131,9 @@ class AuthController extends Controller
                 'required',
                 'string',
                 'min:8',
-                'regex:/[A-Z]/', // Al menos una letra mayúscula
-                'regex:/[0-9]/', // Al menos un número
-                'regex:/[@$!%*#?&]/', // Al menos un símbolo especial
+                'regex:/[A-Z]/', 
+                'regex:/[0-9]/', 
+                'regex:/[@$!%*#?&]/', 
                 'different:current_password',
                 'confirmed'
             ],
