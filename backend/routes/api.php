@@ -28,6 +28,11 @@ Route::post('/registrar-tutor', [AuthController::class, 'registrarTutor']);
 Route::post('/password/email', [PasswordResetController::class, 'enviarCodigo']);
 Route::post('/password/verify', [PasswordResetController::class, 'verificarCodigo']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetearPassword']);
+Route::get('/Mostrarvideos', [VideoController::class, 'mostrarDetalleVideo']);
+// Documentos
+    Route::post('/documentos/tipoPortal', [DocumentoController::class, 'guardarDocumentos']);
+    Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
+    Route::delete('/documentos/{type}/{id}', [DocumentoController::class, 'deleteDocumento']);
 
 // Rutas protegidas con Sanctum
 Route::middleware('auth:sanctum')->group(function() {
@@ -104,14 +109,10 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
     Route::get('/areasCategoriasGrados', [AreaController::class, 'getAreasWithCategoriasGrados']);
 
-    // Documentos
-    Route::post('/documentos/tipoPortal', [DocumentoController::class, 'guardarDocumentos']);
-    Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
-    Route::delete('/documentos/{type}/{id}', [DocumentoController::class, 'deleteDocumento']);
 
-    // Videos
+    // Videos Admin
     Route::post('/Guardarvideos', [VideoController::class, 'crearVideo']);
-    Route::get('/Mostrarvideos', [VideoController::class, 'mostrarDetalleVideo']);
+
     Route::delete('/Eliminarvideos/{tipo_video}', [VideoController::class, 'eliminarVideo']);
 
 });
