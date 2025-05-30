@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Pencil, Trash2 } from "lucide-react";
-import ModalConfirmDelete from "../../components/ModalConfirmDelete";
-import ModalAreaInfo from "../../components/ModalAreaInfo";
-import "../../App.css";
+import ModalConfirmDelete from "../../../components/ModalConfirmDelete";
+import ModalAreaInfo from "../../../components/ModalAreaInfo";
+import "../../../App.css"; // Asegúrate de que la ruta sea correcta
+import "./hu1.css"; 
 
 const AreasList = () => {
   const [areas, setAreas] = useState([]);
@@ -57,16 +58,15 @@ const AreasList = () => {
   };
 
   return (
-    <div className="areas-list-container">
-      <h1 className="areas-title">Gestión de Áreas de Competencia</h1>
+    <div className="areas-list-containerHu1">
+      <h1 className="areas-titleHu1">Gestión de Áreas de Competencia</h1>
 
-      <div className="search-add-container">
-        <div className="search-wrapper">
-          <i className="fa fa-search search-icon" aria-hidden="true"></i>
+      <div className="search-add-containerHu1">
+        <div className="search-wrapperHu1">
           <input
             type="text"
             placeholder="Buscar por nombre de Área"
-            className="search-input"
+            className="search-inputHu1"
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
