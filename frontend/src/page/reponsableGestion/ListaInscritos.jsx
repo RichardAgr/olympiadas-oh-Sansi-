@@ -101,6 +101,7 @@ function ListaInscritos() {
             <th>Apellidos</th>
             <th>Nombres</th>
             <th>Colegio</th>
+            <th>Curso</th>
             <th>Departamento</th>
             <th>Provincia</th>
           </tr>

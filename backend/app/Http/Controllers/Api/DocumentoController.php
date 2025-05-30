@@ -267,7 +267,7 @@ public function getDocumento($type, $id){
         return response()->json([
             'success' => false,
             'message' => 'No se encontró competencia para el año especificado.'
-        ], 404);
+        ], 200);
     }
 
     $documento = DocumentoConvocatoria::where('competencia_id', $competencia->competencia_id)
