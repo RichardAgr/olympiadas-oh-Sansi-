@@ -29,6 +29,10 @@ Route::post('/password/email', [PasswordResetController::class, 'enviarCodigo'])
 Route::post('/password/verify', [PasswordResetController::class, 'verificarCodigo']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetearPassword']);
 Route::get('/Mostrarvideos', [VideoController::class, 'mostrarDetalleVideo']);
+<<<<<<< HEAD
+=======
+Route::get('/areasCategoriasGrados', [AreaController::class, 'getAreasWithCategoriasGrados']);
+>>>>>>> origin/frontend
 // DocumentosHome
     Route::post('/documentos/tipoPortal', [DocumentoController::class, 'guardarDocumentos']);
     Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
@@ -110,12 +114,19 @@ Route::middleware('auth:sanctum')->group(function() {
 
     // Excel
     Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
+<<<<<<< HEAD
     Route::get('/areasCategoriasGrados', [AreaController::class, 'getAreasWithCategoriasGrados']);
+=======
+    
+>>>>>>> origin/frontend
 
 
     // Videos Admin
     Route::post('/Guardarvideos', [VideoController::class, 'crearVideo']);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/frontend
     Route::delete('/Eliminarvideos/{tipo_video}', [VideoController::class, 'eliminarVideo']);
 
 });

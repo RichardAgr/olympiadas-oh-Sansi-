@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import HomeAdmin from "../page/administrador/HomeAdmin";
-import AreasList from "../page/administrador/AreasList";
+import AreasList from "../page/administrador/HU1/AreasList";
 import AgregarArea from "../page/administrador/AgregarArea";
 import EditArea from "../page/administrador/EditArea";
 import VisualizarRegistro from "../page/administrador/VRegistroOrg";
