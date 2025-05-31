@@ -6,7 +6,7 @@ import addUsuario from "../../assets/perfil_usuario_add.svg";
 import { Edit, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
-import ModalConfirmDelete from "../../components/ModalConfirmDelete";
+import ModalConfirmDelete from "../../components/ModalesAdmin/ModalConfirmDelete";
 import axios from "axios";
 
 const filasPorPagina = 6;

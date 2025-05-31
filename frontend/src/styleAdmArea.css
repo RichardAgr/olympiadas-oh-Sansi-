@@ -896,4 +896,18 @@ footer p {
   opacity: 0.4;
   cursor: default;
 }
+.titulo-editar-area,
+.etiqueta-campo-area,
+.campo-entrada-area,
+.campo-textarea-area,
+.btn-guardar-area,
+.btn-cancelar-area {
+  font-family: 'Comfortaa', sans-serif;
+}
+.campo-entrada-area,
+.campo-textarea-area,
+.campo-select-area {
+  font-family: 'Comfortaa', sans-serif;
+}
+
 

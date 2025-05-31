@@ -1,7 +1,8 @@
 import  { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../../App.css";
+import "../../../App.css";
+import "./hu1.css"; // Asegúrate de que este archivo CSS exista y tenga los estilos necesarios
 
 const AgregarArea = () => {
   const [nombre, setNombre] = useState("");
@@ -12,6 +13,9 @@ const AgregarArea = () => {
   const [nombreError, setNombreError] = useState("");
   const [descripcionError, setDescripcionError] = useState("");
   const [costoError, setCostoError] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [tipoMensaje, setTipoMensaje] = useState(""); // 'exito' o 'error'
+
 
   const handleNombreChange = (e) => {
     const valor = e.target.value;
@@ -53,62 +57,88 @@ const AgregarArea = () => {
     return Object.keys(nuevosErrores).length === 0;
   };  
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!validarFormulario()) return;
+  if (!validarFormulario()) return;
 
-    try {
-      await axios.post("http://127.0.0.1:8000/api/areas", {
-        nombre,
-        descripcion,
-        costo,
-      });
-      alert("Área registrada con éxito ✅");
+  try {
+    await axios.post("http://127.0.0.1:8000/api/areas", {
+      nombre,
+      descripcion,
+      costo,
+    });
+
+    setMensaje("Área registrada con éxito ✅");
+    setTipoMensaje("exito");
+
+    setTimeout(() => {
+      setMensaje("");
+      setTipoMensaje("");
       navigate("/admin/areas");
-    } catch (error) {
-      console.error("Error al registrar el área:", error);
-      alert("Hubo un error al guardar el área ❌");
-    }
-  };
+    }, 2500); // Opcional: espera 2.5s antes de redirigir
+  } catch (error) {
+    console.error("Error al registrar el área:", error);
+    setMensaje("Hubo un error al guardar el área ❌");
+    setTipoMensaje("error");
+  }
+};
+
 
   return (
-    <div className="form-container">
-      <h1>Registrar Nueva Área</h1>
+    <div className="form-area-container-area">
+      <h1 className="titulo-editar-area">Registrar Nueva Área</h1>
+      {mensaje && (
+  <div className="modal-overlay">
+    <div className={`modal-mensaje ${tipoMensaje}`}>
+      <button className="modal-cerrar-btn" onClick={() => {
+        setMensaje("");
+        setTipoMensaje("");
+      }}>
+        ✖
+      </button>
+      <h2>{mensaje}</h2>
+    </div>
+  </div>
+)}
+
       <form onSubmit={handleSubmit}>
-        <label>Nombre del Área</label>
+        <label className="etiqueta-campo-area">Nombre del Área</label>
         <input
+         className="campo-entrada-area"
           type="text"
           value={nombre}
           onChange={handleNombreChange}
         />
-        {errores.nombre && <small className="error">{errores.nombre}</small>}
+        {errores.nombre && <small className="error-text-area">{errores.nombre}</small>}
 
-        <label>Descripción del Área</label>
+        <label className="etiqueta-campo-area">Descripción del Área</label>
         <textarea
+        className="campo-textarea-area"
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
         ></textarea>
-        {errores.descripcion && <small className="error">{errores.descripcion}</small>}
+        {errores.descripcion && <small className="error-text-area">{errores.descripcion}</small>}
 
-        <label>Costo (Bs)</label>
+        <label className="etiqueta-campo-area">Costo (Bs)</label>
         <input
+        className="campo-entrada-area"
           type="number"
-          min="10"
+          min="11"
           value={costo}
           onChange={(e) => setCosto(e.target.value)}
         />
-        {errores.costo && <small className="error">{errores.costo}</small>}
+        {errores.costo && <small className="error-text-area">{errores.costo}</small>}
 
-        <div className="button-group">
+        <div className="botones-form-area">
           <button
             type="button"
             onClick={() => navigate("/admin/areas")}
-            className="btn-cancelarReg"
+            className="btn-cancelar-area"
           >
             Cancelar
           </button>
-          <button type="submit" className="btn-guardarReg">
+          <button type="submit"  className="btn-guardar-area">
             Guardar
           </button>
         </div>

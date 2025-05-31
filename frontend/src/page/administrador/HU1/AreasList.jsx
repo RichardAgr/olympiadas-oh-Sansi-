@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Pencil, Trash2 } from "lucide-react";
-import ModalConfirmDelete from "../../../components/ModalConfirmDelete";
+import ModalConfirmDelete from "../../../components/ModalesAdmin/ModalConfirmDelete";
 import ModalAreaInfo from "../../../components/ModalAreaInfo";
 import "./hu1.css"; 
 
@@ -13,6 +13,9 @@ const AreasList = () => {
   const [selectedArea, setSelectedArea] = useState(null); 
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [mensaje, setMensaje] = useState("");
+const [tipoMensaje, setTipoMensaje] = useState(""); // "exito" o "error"
+
 
   const areasPerPage = 15;
 
@@ -24,11 +27,27 @@ const AreasList = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const filteredAreas = areas
-    .filter((area) =>
-      area.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => a.nombre.localeCompare(b.nombre));
+ const onlyLettersRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
+
+const filteredAreas = onlyLettersRegex.test(searchTerm)
+  ? areas
+      .filter((area) =>
+        area.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .sort((a, b) => a.nombre.localeCompare(b.nombre))
+  : []; // Si contiene caracteres no permitidos, retorna una lista vacía
+  const handleKeyDown = (e) => {
+    const key = e.key;
+    const esLetraOespacio = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/;
+
+    if (!esLetraOespacio.test(key) && key !== 'Backspace' && key !== 'Delete' && key !== 'ArrowLeft' && key !== 'ArrowRight') {
+      e.preventDefault();
+    }
+  };
+
+  const handleChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   const indexOfLastArea = currentPage * areasPerPage;
   const indexOfFirstArea = indexOfLastArea - areasPerPage;
@@ -41,36 +60,63 @@ const AreasList = () => {
   };
 
   const handleConfirmDelete = async () => {
-    if (!areaToDelete) return;
+  if (!areaToDelete) return;
 
-    try {
-      await axios.delete(
-        `http://localhost:8000/api/areas/${areaToDelete.area_id}`
-      );
-      setAreas(areas.filter((area) => area.area_id !== areaToDelete.area_id));
-      setAreaToDelete(null);
-      alert("Área eliminada correctamente ✅");
-    } catch (error) {
-      console.error("Error al eliminar el área:", error);
-      alert("Hubo un error al eliminar el área ❌");
-    }
-  };
+  try {
+    await axios.delete(`http://localhost:8000/api/areas/${areaToDelete.area_id}`);
+    setAreas(areas.filter((area) => area.area_id !== areaToDelete.area_id));
+    setAreaToDelete(null);
+
+    setMensaje("Área eliminada correctamente ✅");
+    setTipoMensaje("exito");
+
+    setTimeout(() => {
+      setMensaje("");
+      setTipoMensaje("");
+    }, 3000);
+
+  } catch (error) {
+    console.error("Error al eliminar el área:", error);
+
+    setMensaje("Hubo un error al eliminar el área ❌");
+    setTipoMensaje("error");
+
+    setTimeout(() => {
+      setMensaje("");
+      setTipoMensaje("");
+    }, 3000);
+  }
+};
+
 
   return (
     <div className="areas-list-containerHu1">
       <h1 className="areas-titleHu1">Gestión de Áreas de Competencia</h1>
+      {mensaje && (
+  <div className="modal-overlay">
+    <div className={`modal-mensaje ${tipoMensaje}`}>
+      <button className="modal-cerrar-btn" onClick={() => {
+        setMensaje("");
+        setTipoMensaje("");
+      }}>
+        ✖
+      </button>
+      <h2>{mensaje}</h2>
+    </div>
+  </div>
+)}
 
       <div className="search-add-containerHu1">
         <div className="search-wrapperHu1">
           <input
+             
+             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             type="text"
             placeholder="Buscar por nombre de Área"
+             pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*"
             className="search-inputHu1"
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
             aria-label="Buscar área por nombre"
           />
         </div>

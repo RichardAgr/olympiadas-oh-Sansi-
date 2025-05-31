@@ -1,4 +1,5 @@
-import '../App.css';
+
+import "./ModalDelete.css";
 
 const ModalConfirmDelete = ({ areaName, responsable, onConfirm, onCancel }) => {
   // Determinar el texto a mostrar
@@ -8,16 +9,15 @@ const ModalConfirmDelete = ({ areaName, responsable, onConfirm, onCancel }) => {
 
     
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <button className="modal-close" onClick={onCancel}>✖</button>
+    <div className="modal-overlayConfirmDelete">
+      <div className="modalConfirmDelete">
         <p>
           ¿Está seguro de eliminar{" "}
           <strong>{`"${nombreMostrado}"`}</strong>?
         </p>
-        <div className="modal-buttons">
-          <button onClick={onCancel} className="btn-cancelar2">No</button>
-          <button onClick={() => onConfirm(responsable || areaName)} className="btn-eliminar2">
+        <div className="modal-buttonsConfirmDelete">
+          <button onClick={onCancel} className="btn-cancelar2ConfirmDelete">No</button>
+          <button onClick={() => onConfirm(responsable || areaName)} className="btn-eliminar2ConfirmDelete">
             Sí
           </button>
         </div>
