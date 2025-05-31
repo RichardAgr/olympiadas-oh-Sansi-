@@ -111,7 +111,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
     // Excel
     Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
-    
+
 
 
     // Videos Admin

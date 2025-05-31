@@ -1,20 +1,20 @@
 import "./VRegistroOrg.css";
 import { useState, useEffect } from "react";
-import buscador from "../../assets/buscador.svg";
-import excel from "../../assets/excel.svg";
-import addUsuario from "../../assets/perfil_usuario_add.svg";
+import buscador from "../../../assets/buscador.svg"
+import excel from "../../../assets/excel.svg";
+import addUsuario from "../../../assets/perfil_usuario_add.svg";
 import { Edit, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
-import ModalConfirmDelete from "../../components/ModalConfirmDelete";
+import ModalConfirmDelete from "../../../components/ModalConfirmDelete";
 import axios from "axios";
 
-const filasPorPagina = 6;
+const filasPorPagina = 15;
 
 function RegistrarOrganizador() {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
-  const [filtroEstado, setFiltroEstado] = useState("todos"); // 👈 NUEVO
+  const [filtroEstado, setFiltroEstado] = useState("todos"); //  NUEVO
   const [paginaActual, setPaginaActual] = useState(1);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
@@ -81,50 +81,51 @@ function RegistrarOrganizador() {
   };
 
   return (
-    <div className="home-container3">
+    <div className="home-container3Hu43">
       <h1>Registros de Responsables de Gestión</h1>
 
       {/* Buscador + Filtro */}
-      <div className="buscador">
-        <input
-          type="text"
-          placeholder="Buscar por nombre"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+<div className="buscadorHu43">
+  <input
+    type="text"
+    placeholder="Buscar por nombre"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="input-busquedaHu43 search-inputHu43"
+  />
 
-        <select
-          value={filtroEstado}
-          onChange={(e) => setFiltroEstado(e.target.value)}
-          className="filtro-select"
-        >
-          <option value="todos">Todos</option>
-          <option value="activos">Activos</option>
-          <option value="inactivos">Inactivos</option>
-        </select>
-      </div>
+  <select
+    value={filtroEstado}
+    onChange={(e) => setFiltroEstado(e.target.value)}
+    className="filtro-selectHu43"
+  >
+    <option value="todos">Todos</option>
+    <option value="activos">Activos</option>
+    <option value="inactivos">Inactivos</option>
+  </select>
+</div>
 
       {/* Botones Excel y Agregar */}
-      <div className="botones_excel_agregar">
-        <button className="boton-excel" onClick={exportarExcel}>
-          <img src={excel} alt="Excel" className="icono-boton" />
+      <div className="botones_excel_agregarHu43">
+        <button className="boton-excelHu43" onClick={exportarExcel}>
+          <img src={excel} alt="Excel" className="icono-botonHu43" />
           Descargar Excel
         </button>
 
         <button
-          className="boton-addUser"
+          className="boton-addUserHu43"
           onClick={() =>
             (window.location.href = "/admin/visualizarRegistro/agregarRegistro")
           }
         >
-          <img src={addUsuario} alt="Agregar Usuario" className="icono-boton2" />
+          <img src={addUsuario} alt="Agregar Usuario" className="icono-boton2Hu43" />
           Agregar
         </button>
       </div>
 
       {/* Tabla */}
-      <div className="contenedor-tabla">
-        <table className="tabla">
+      <div className="contenedor-tablaHu43">
+        <table className="tablaHu43">
           <thead>
             <tr>
               <th>Nombre Responsable</th>
@@ -149,19 +150,19 @@ function RegistrarOrganizador() {
                   <td>{dato.ci}</td>
                   <td>{dato.correo_electronico}</td>
                   <td>{dato.telefono}</td>
-                  <td className={dato.estado ? "estado-activo" : "estado-inactivo"}>
+                  <td className={dato.estado ? "estado-activoHu43" : "estado-inactivoHu43"}>
                     {dato.estado ? "Activo" : "Inactivo"}
                   </td>
-                  <td className="botones-tabla">
+                  <td className="botones-tablaHu43">
                     <Link
                       to={`/admin/visualizarRegistro/editarRegistro/${dato.responsable_id}`}
-                      className="boton-icono"
+                      className="boton-iconoHu43"
                       title="Editar"
                     >
                       <Edit size={20} color="white" />
                     </Link>
                     <button
-                      className="boton-icono"
+                      className="boton-iconoHu43"
                       onClick={() => abrirModal(dato)}
                       title="Eliminar"
                     >
@@ -210,4 +211,3 @@ function RegistrarOrganizador() {
 }
 
 export default RegistrarOrganizador;
-
