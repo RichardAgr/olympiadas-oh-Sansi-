@@ -11,9 +11,9 @@ import AreasRegistradas from "../page/administrador/VerAreasRegistradas";
 import VEvento from "../page/administrador/VEvento";
 import VEditarFechaInscripcion from "../page/administrador/VEditarFechaInscripcion";
 import VEditarFechaCompetencia from "../page/administrador/VEditarFechaCompetencia";
-import RegistroCategoria from "../page/administrador/RegistroCategoria";
-import EditarCategoria from "../page/administrador/EditarCategoria";
-import AgregarCategoria from "../page/administrador/AgregarCategoria";
+import RegistroCategoria from "../page/administrador/HU2/RegistroCategoria";
+import EditarCategoria from "../page/administrador/HU2/EditarCategoria";
+import AgregarCategoria from "../page/administrador/HU2/AgregarCategoria";
 import AppRouteRespGest from "./AppRouteRespGest";
 import ConfigurarDatosCompetencia from "../page/administrador/configurarDatosCompetencia/ConfigurarDatosCompetencia";
 

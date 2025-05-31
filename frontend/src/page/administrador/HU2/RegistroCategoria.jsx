@@ -3,7 +3,7 @@ import axios from "axios";
 import "./RegistroCategoria.css";
 import { Edit, Trash2, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import ModalEliminarCategoria from "../../components/ModalEliminarCategoria";
+import ModalEliminarCategoria from "../../../components/ModalEliminarCategoria";
 
 function RegistroCategoria() {
   const [categorias, setCategorias] = useState([]);
@@ -76,11 +76,11 @@ function RegistroCategoria() {
   };
 
   return (
-    <div className="registro-categoria-container">
+    <div className="registro-categoria-containerLi">
       <h5>Gestión de Categorías de Competencia</h5>
 
       {/* Buscador */}
-      <div className="buscador-wrapper">
+      <div className="buscador-wrapperLi">
         <input
           type="text"
           placeholder="Buscar por nombre de categoría"
@@ -92,16 +92,16 @@ function RegistroCategoria() {
         />
       </div>
 
-      <div className="tabla-categorias-wrapper">
+      <div className="tabla-categorias-wrapperLi">
         <button
-          className="btn-agregar"
+          className="btn-agregarLi"
           onClick={() => navigate("/admin/registro-categorias/nueva")}
         >
           <Plus size={18} />
           Agregar
         </button>
 
-        <table className="tabla-categorias">
+        <table className="tabla-categoriasLi">
           <thead>
             <tr>
               <th>Área</th>
@@ -119,15 +119,15 @@ function RegistroCategoria() {
                   <td>
                     {cat.grado_inicial?.nombre} - {cat.grado_final?.nombre}
                   </td>
-                  <td className="acciones">
+                  <td className="accionesLi">
                     <Link
                       to={`/admin/registro-categorias/editar/${cat.nivel_categoria_id}`}
-                      className="boton-icono"
+                      className="boton-iconoLi"
                     >
                       <Edit size={20} color="white" />
                     </Link>
                     <button
-                      className="boton-icono"
+                      className="boton-iconoLi"
                       onClick={() => abrirModal(cat)}
                     >
                       <Trash2 size={20} color="white" />
@@ -147,13 +147,13 @@ function RegistroCategoria() {
 
         {/* Paginación */}
         {totalPages > 1 && (
-          <div className="pagination">
+          <div className="paginationLi">
             <button onClick={() => goToPage(currentPage - 1)}>{"<"}</button>
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
                 onClick={() => goToPage(i + 1)}
-                className={currentPage === i + 1 ? "active" : ""}
+                className={currentPage === i + 1 ? "activeLi" : ""}
               >
                 {i + 1}
               </button>

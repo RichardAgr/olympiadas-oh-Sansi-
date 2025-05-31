@@ -25,10 +25,6 @@ function AgregarCategoria() {
       .catch((err) => console.error("Error al cargar áreas", err));
   }, []);
 
-  const handleChange = (e) => {
-    setFormulario({ ...formulario, [e.target.name]: e.target.value });
-  };
-
   const handleGradoSeleccionado = ({ grado_id_inicial, grado_id_final }) => {
     setFormulario((prev) => ({
       ...prev,
@@ -37,13 +33,38 @@ function AgregarCategoria() {
     }));
   };
 
+  const handleChange = (e) => {
+  // Validación especial para el campo nombre
+  if (e.target.name === 'nombre') {
+    // Expresión regular que permite letras (incluyendo acentos), números y espacios
+    // pero no permite caracteres especiales
+    const regexValido = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]*$/;
+    
+    // Verificar si contiene caracteres no permitidos
+    if (!regexValido.test(e.target.value)) {
+      setErrores(prev => ({
+        ...prev,
+        nombre: "No se permiten caracteres especiales (solo letras, números y espacios)."
+      }));
+      return; // No actualizar el estado si hay caracteres inválidos
+    } else {
+      // Limpiar el error si el valor es válido
+      setErrores(prev => ({ ...prev, nombre: '' }));
+    }
+  }
+  
+  setFormulario({ ...formulario, [e.target.name]: e.target.value });
+};
+
   const validarFormulario = () => {
     const nuevosErrores = {};
 
+    // Validación para el nombre (mínimo 6 caracteres y sin números)
     if (!formulario.nombre || formulario.nombre.trim().length < 2) {
-      nuevosErrores.nombre = "El nombre debe tener al menos 2 caracteres.";
+      nuevosErrores.nombre = "El nombre debe tener al menos 6 caracteres.";
     }
 
+    // Resto de validaciones permanecen igual
     if (formulario.descripcion.length > 255) {
       nuevosErrores.descripcion = "La descripción no puede exceder los 255 caracteres.";
     }
@@ -86,31 +107,34 @@ function AgregarCategoria() {
   };
 
   return (
-    <div className="form-categoria-container">
-      <h3>Registrar Categoría</h3>
-      <form onSubmit={handleSubmit}>
-        <label>Nombre de Categoría</label>
+    <div className="form-categoria-container-h2">
+      <h3 className="titulo-formulario-h2">Registrar Categoría</h3>
+      <form onSubmit={handleSubmit} className="formulario-categoria-h2">
+        <label className="etiqueta-campo-h2">Nombre de Categoría</label>
         <input
           type="text"
           name="nombre"
           value={formulario.nombre}
           onChange={handleChange}
+          className="campo-entrada-h2"
         />
-        {errores.nombre && <span className="error-text">{errores.nombre}</span>}
+        {errores.nombre && <span className="error-text-h2">{errores.nombre}</span>}
 
-        <label>Descripción de Categoría</label>
+        <label className="etiqueta-campo-h2">Descripción de Categoría</label>
         <textarea
           name="descripcion"
           value={formulario.descripcion}
           onChange={handleChange}
+          className="campo-textarea-h2"
         ></textarea>
-        {errores.descripcion && <span className="error-text">{errores.descripcion}</span>}
+        {errores.descripcion && <span className="error-text-h2">{errores.descripcion}</span>}
 
-        <label>Área</label>
+        <label className="etiqueta-campo-h2">Área</label>
         <select
           name="area_id"
           value={formulario.area_id}
           onChange={handleChange}
+          className="campo-select-h2"
         >
           <option value="">Seleccione un área</option>
           {areas.map((a) => (
@@ -119,22 +143,29 @@ function AgregarCategoria() {
             </option>
           ))}
         </select>
-        {errores.area_id && <span className="error-text">{errores.area_id}</span>}
+        {errores.area_id && <span className="error-text-h2">{errores.area_id}</span>}
 
-        <h4>Registrar Grado</h4>
+        <h4 className="subtitulo-seccion-h2">Registrar Grado</h4>
         <SelectorGrado onSeleccionarGrados={handleGradoSeleccionado} />
         {errores.grado_id_inicial && (
-          <span className="error-text">{errores.grado_id_inicial}</span>
+          <span className="error-text-h2">{errores.grado_id_inicial}</span>
         )}
         {errores.grado_id_final && (
-          <span className="error-text">{errores.grado_id_final}</span>
+          <span className="error-text-h2">{errores.grado_id_final}</span>
         )}
 
-        <div className="botones-form">
-          <button type="button" className="btn-cancelar" onClick={() => navigate(-1)}>
+        <div className="botones-form-h2">
+          <button 
+            type="button" 
+            className="btn-cancelar-h2" 
+            onClick={() => navigate(-1)}
+          >
             Cancelar
           </button>
-          <button type="submit" className="btn-guardar">
+          <button 
+            type="submit" 
+            className="btn-guardar-h2"
+          >
             Guardar
           </button>
         </div>
@@ -144,5 +175,3 @@ function AgregarCategoria() {
 }
 
 export default AgregarCategoria;
-
-
