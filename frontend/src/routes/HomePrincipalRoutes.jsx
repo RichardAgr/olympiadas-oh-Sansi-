@@ -8,10 +8,7 @@ import AppRouteRespGest from "./AppRouteRespGest";
 import AppRouteTutor from "./AppRouteTutor";
 import Registrate from "../page/Login/Registrate";
 import RecuperarContraseña from "../page/Login/RecuperarContraseña";
-<<<<<<< HEAD
-=======
 import AreasCompetencia from "../page/home/AreasCompetencia";
->>>>>>> origin/frontend
 
 
 function HomePrincipalRoutes() {
@@ -21,10 +18,7 @@ function HomePrincipalRoutes() {
 
       {/* Layout principal con login */}
       <Route path="/homePrincipal" element={<LayautHomePrincipal />}>
-<<<<<<< HEAD
-=======
       <Route path="areasCompetencia" element={<AreasCompetencia />}/>
->>>>>>> origin/frontend
       <Route index element={<HomePrincipal />} />
         <Route path="login/*" element={<AppRouteLogin />} />
         <Route path="registrate" element={<Registrate />} />
