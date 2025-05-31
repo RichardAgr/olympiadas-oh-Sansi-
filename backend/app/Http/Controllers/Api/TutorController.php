@@ -510,7 +510,7 @@ public function verPerfilTutor($id)
         }
     }
 
-    public function inscribirCompetidor(Request $request, $tutor_id)
+ public function inscribirCompetidor(Request $request, $tutor_id)
 {
     $validator = Validator::make($request->all(), [
         'competidor.nombres' => 'required|string',
@@ -534,10 +534,18 @@ public function verPerfilTutor($id)
 
     DB::beginTransaction();
     try {
+        // Buscar o crear ubicación
+        $ubicacion = Ubicacion::firstOrCreate(
+            [
+                'departamento' => $request->competidor['departamento'],
+                'provincia' => $request->competidor['provincia']
+            ]
+        );
+
         // Colegio
         $colegio = Colegio::firstOrCreate(
             ['nombre' => $request->competidor['colegio']],
-            ['ubicacion_id' => 1, 'telefono' => '00000000']
+            ['ubicacion_id' => $ubicacion->ubicacion_id, 'telefono' => '00000000']
         );
 
         // Curso
@@ -554,7 +562,7 @@ public function verPerfilTutor($id)
             'fecha_nacimiento' => $request->competidor['fecha_nacimiento'],
             'colegio_id' => $colegio->colegio_id,
             'curso_id' => $curso->curso_id,
-            'ubicacion_id' => 1,
+            'ubicacion_id' => $ubicacion->ubicacion_id,
             'estado' => 'Pendiente'
         ]);
 
@@ -579,11 +587,11 @@ public function verPerfilTutor($id)
         ]);
 
         DB::commit();
-        // Incluir competidor_id en la respuesta
+
         return response()->json([
             'success' => true,
             'message' => 'Competidor registrado correctamente.',
-            'competidor_id' => $competidor->competidor_id // Aquí se incluye el ID del competidor
+            'competidor_id' => $competidor->competidor_id
         ]);
     } catch (\Exception $e) {
         DB::rollBack();
@@ -594,6 +602,7 @@ public function verPerfilTutor($id)
         ], 500);
     }
 }
+
 
 
     public function getOpcionesCompetencia()
