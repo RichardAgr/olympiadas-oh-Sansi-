@@ -98,11 +98,9 @@ function EditarRespon() {
       });
 
       console.log("Responsable actualizado correctamente.");
-      alert("Responsable actualizado con éxito.");
       navigate("/admin/visualizarRegistro");
     } catch (error) {
-      console.error("❌ Error al actualizar:", error);
-      alert("Hubo un error al actualizar al responsable");
+      console.error("Error al actualizar:", error);
     }
   };
 

@@ -77,12 +77,9 @@ function AgregarRespon() {
         telefono,
       });
       console.log("Datos enviados con éxito.");
-
-      alert("Responsable de Gestión registrado con éxito ✅");
       navigate("/admin/visualizarRegistro");
     } catch (error) {
       console.error("Error al registrar al responsable:", error);
-      alert("Hubo un error al registrar al responsable ❌");
     }
   };
 

@@ -75,10 +75,8 @@ useEffect(() => {
       );
       setModalAbierto(false);
       setItemSeleccionado(null);
-      alert("Responsable eliminado correctamente ✅");
     } catch (error) {
       console.error("Error al eliminar el responsable:", error);
-      alert("Hubo un error al eliminar el responsable ❌");
     }
   };
 
