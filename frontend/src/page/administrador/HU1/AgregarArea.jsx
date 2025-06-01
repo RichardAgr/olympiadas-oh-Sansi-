@@ -68,7 +68,7 @@ const handleSubmit = async (e) => {
   }
 
   try {
-    await axios.post("http://localhost:8000/api/registrarAra", data);
+    await axios.post("http://localhost:8000/api/registrarArea", data);
 
     setMensaje("Área registrada con éxito ✅");
     setTipoMensaje("exito");

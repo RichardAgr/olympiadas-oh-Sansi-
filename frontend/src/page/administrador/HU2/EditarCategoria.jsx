@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import "./EditarCategoria.css";
-import SelectorGrado from "./SelectorGrado";
+import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import axios from "axios"
+import "./EditarCategoria.css"
+import SelectorGrado from "./SelectorGrado"
 
 function EditarCategoria() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams()
+  const navigate = useNavigate()
 
-  const [areas, setAreas] = useState([]);
+  const [areas, setAreas] = useState([])
   const [formulario, setFormulario] = useState({
     nombre: "",
     descripcion: "",
@@ -16,28 +16,36 @@ function EditarCategoria() {
     grado_id_inicial: "",
     grado_id_final: "",
     estado: true,
-  });
+  })
 
-  const [errores, setErrores] = useState({});
+  // Estado adicional para almacenar los objetos completos de grado
+  const [gradosCompletos, setGradosCompletos] = useState({
+    grado_inicial: null,
+    grado_final: null,
+  })
+
+  const [errores, setErrores] = useState({})
 
   // Cargar áreas
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/areas")
+      .get("http://localhost:8000/api/areasRegistradas")
       .then((res) => {
-        console.log("Datos de áreas recibidos:", res.data);
-        setAreas(res.data);
+/*         console.log("Datos de áreas recibidos:", res.data) */
+        setAreas(res.data)
       })
-      .catch((err) => console.error("Error al cargar áreas", err));
-  }, []);
+      .catch((err) => console.error("Error al cargar áreas", err))
+  }, [])
 
   // Cargar datos existentes
   useEffect(() => {
     axios
       .get(`http://localhost:8000/api/nivel-categorias/${id}`)
       .then((res) => {
-        console.log("Datos de categoría recibidos:", res.data);
-        const cat = res.data;
+/*         console.log("Datos de categoría recibidos:", res.data) */
+        const cat = res.data
+
+        // Actualizar formulario con los datos básicos
         setFormulario({
           nombre: cat.nombre,
           descripcion: cat.descripcion,
@@ -45,92 +53,118 @@ function EditarCategoria() {
           grado_id_inicial: cat.grado_id_inicial,
           grado_id_final: cat.grado_id_final,
           estado: cat.estado,
-        });
+        })
+
+        // Guardar los objetos completos de grado
+        setGradosCompletos({
+          grado_inicial: cat.grado_inicial,
+          grado_final: cat.grado_final,
+        })
+
+/*         console.log("Grado inicial completo:", cat.grado_inicial)
+        console.log("Grado final completo:", cat.grado_final) */
       })
       .catch((err) => {
-        console.error("Error al cargar categoría:", err);
-        alert("No se pudo cargar la categoría.");
-        navigate("/admin/registro-categorias");
-      });
-  }, [id]);
+        console.error("Error al cargar categoría:", err)
+        alert("No se pudo cargar la categoría.")
+        navigate("/admin/registro-categorias")
+      })
+  }, [id])
 
   const handleChange = (e) => {
     if (e.target.name === "nombre") {
       // Solo actualizar si el valor cumple con la expresión regular o está vacío
-      const regex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]*$/;
+      const regex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]*$/
       if (regex.test(e.target.value) || e.target.value === "") {
-        setFormulario({ ...formulario, [e.target.name]: e.target.value });
-        setErrores({ ...errores, [e.target.name]: "" });
+        setFormulario({ ...formulario, [e.target.name]: e.target.value })
+        setErrores({ ...errores, [e.target.name]: "" })
       }
     } else {
-      setFormulario({ ...formulario, [e.target.name]: e.target.value });
-      setErrores({ ...errores, [e.target.name]: "" });
+      setFormulario({ ...formulario, [e.target.name]: e.target.value })
+      setErrores({ ...errores, [e.target.name]: "" })
     }
-  };
+  }
 
-  const handleGradoSeleccionado = ({ grado_id_inicial, grado_id_final }) => {
+  const handleGradoSeleccionado = ({ grado_id_inicial, grado_id_final, grado_inicial_obj, grado_final_obj }) => {
+    // Actualizar tanto los IDs como los objetos completos
     setFormulario((prev) => ({
       ...prev,
       grado_id_inicial,
       grado_id_final,
-    }));
+    }))
+
+    // Actualizar los objetos completos si se proporcionan
+    if (grado_inicial_obj || grado_final_obj) {
+      setGradosCompletos((prev) => ({
+        ...prev,
+        ...(grado_inicial_obj && { grado_inicial: grado_inicial_obj }),
+        ...(grado_final_obj && { grado_final: grado_final_obj }),
+      }))
+    }
+
     setErrores((prev) => ({
       ...prev,
       grado_id_inicial: "",
       grado_id_final: "",
-    }));
-  };
+    }))
+  }
 
   const validar = () => {
-    const nuevosErrores = {};
+    const nuevosErrores = {}
 
     // Validación del nombre
     if (!formulario.nombre.trim()) {
-      nuevosErrores.nombre = "El nombre es obligatorio.";
+      nuevosErrores.nombre = "El nombre es obligatorio."
     } else {
       // Expresión regular que solo permite letras, números y espacios
-      const regex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]+$/;
+      const regex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]+$/
       if (!regex.test(formulario.nombre)) {
-        nuevosErrores.nombre =
-          "No se permiten caracteres especiales en el nombre.";
+        nuevosErrores.nombre = "No se permiten caracteres especiales en el nombre."
       }
     }
 
-    if (!formulario.area_id)
-      nuevosErrores.area_id = "Debe seleccionar un área.";
-    if (!formulario.grado_id_inicial)
-      nuevosErrores.grado_id_inicial = "Seleccione el grado inicial.";
-    if (!formulario.grado_id_final)
-      nuevosErrores.grado_id_final = "Seleccione el grado final.";
+    if (!formulario.area_id) nuevosErrores.area_id = "Debe seleccionar un área."
+    if (!formulario.grado_id_inicial) nuevosErrores.grado_id_inicial = "Seleccione el grado inicial."
+    if (!formulario.grado_id_final) nuevosErrores.grado_id_final = "Seleccione el grado final."
 
-    return nuevosErrores;
-  };
+    return nuevosErrores
+  }
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    const validacion = validar();
+    e.preventDefault()
+    const validacion = validar()
     if (Object.keys(validacion).length > 0) {
-      setErrores(validacion);
-      return;
+      setErrores(validacion)
+      return
+    }
+
+    // Preparar datos para envío (solo IDs, no objetos completos)
+    const datosParaEnvio = {
+      nombre: formulario.nombre,
+      descripcion: formulario.descripcion,
+      area_id: formulario.area_id,
+      grado_id_inicial: formulario.grado_id_inicial,
+      grado_id_final: formulario.grado_id_final,
+      estado: formulario.estado,
     }
 
     axios
-      .put(`http://localhost:8000/api/nivel-categorias/${id}`, formulario)
+      .put(`http://localhost:8000/api/nivel-categorias/${id}`, datosParaEnvio)
       .then((response) => {
-        console.log("Datos enviados en PUT:", formulario); // Muestra lo que envías
-        console.log("Respuesta del servidor:", response.data); // Muestra la respuesta
-        alert("¡Categoría actualizada con éxito!");
-        navigate("/admin/registro-categorias");
+/*         console.log("Datos enviados en PUT:", datosParaEnvio) */
+        console.log("Respuesta del servidor:", response.data)
+        alert("¡Categoría actualizada con éxito!")
+        navigate("/admin/registro-categorias")
       })
       .catch((err) => {
         console.error("Detalles del error al actualizar:", {
           mensaje: err.message,
-          datosError: err.response?.data, 
-          status: err.response?.status, 
-        });
-        alert("Hubo un error al actualizar la categoría.");
-      });
-  };
+          datosError: err.response?.data,
+          status: err.response?.status,
+        })
+        alert("Hubo un error al actualizar la categoría.")
+      })
+  }
 
   return (
     <div className="form-categoria-container-Cat">
@@ -144,9 +178,7 @@ function EditarCategoria() {
           onChange={handleChange}
           className="campo-entrada-Cat"
         />
-        {errores.nombre && (
-          <small className="error-text-Cat">{errores.nombre}</small>
-        )}
+        {errores.nombre && <small className="error-text-Cat">{errores.nombre}</small>}
 
         <label className="etiqueta-campo-Cat">Descripción de Categoría</label>
         <textarea
@@ -157,12 +189,7 @@ function EditarCategoria() {
         ></textarea>
 
         <label className="etiqueta-campo-Cat">Área*</label>
-        <select
-          name="area_id"
-          value={formulario.area_id}
-          onChange={handleChange}
-          className="campo-select-Cat"
-        >
+        <select name="area_id" value={formulario.area_id} onChange={handleChange} className="campo-select-Cat">
           <option value="">Seleccione un área</option>
           {areas.map((a) => (
             <option key={a.area_id} value={a.area_id}>
@@ -170,29 +197,21 @@ function EditarCategoria() {
             </option>
           ))}
         </select>
-        {errores.area_id && (
-          <small className="error-text-Cat">{errores.area_id}</small>
-        )}
+        {errores.area_id && <small className="error-text-Cat">{errores.area_id}</small>}
 
         <h4 className="subtitulo-grado-Cat">Editar Grado</h4>
         <SelectorGrado
           onSeleccionarGrados={handleGradoSeleccionado}
           gradoInicial={formulario.grado_id_inicial}
           gradoFinal={formulario.grado_id_final}
+          gradoInicialCompleto={gradosCompletos.grado_inicial}
+          gradoFinalCompleto={gradosCompletos.grado_final}
         />
-        {errores.grado_id_inicial && (
-          <small className="error-text-Cat">{errores.grado_id_inicial}</small>
-        )}
-        {errores.grado_id_final && (
-          <small className="error-text-Cat">{errores.grado_id_final}</small>
-        )}
+        {errores.grado_id_inicial && <small className="error-text-Cat">{errores.grado_id_inicial}</small>}
+        {errores.grado_id_final && <small className="error-text-Cat">{errores.grado_id_final}</small>}
 
         <div className="botones-form-Cat">
-          <button
-            type="button"
-            className="btn-cancelar-Cat"
-            onClick={() => navigate(-1)}
-          >
+          <button type="button" className="btn-cancelar-Cat" onClick={() => navigate(-1)}>
             Cancelar
           </button>
           <button type="submit" className="btn-guardar-Cat">
@@ -201,7 +220,7 @@ function EditarCategoria() {
         </div>
       </form>
     </div>
-  );
+  )
 }
 
-export default EditarCategoria;
+export default EditarCategoria
