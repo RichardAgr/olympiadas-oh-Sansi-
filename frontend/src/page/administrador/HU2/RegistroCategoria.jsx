@@ -1,4 +1,3 @@
-"use client"
 
 import { useEffect, useState } from "react"
 import axios from "axios"
@@ -17,6 +16,7 @@ function RegistroCategoria() {
 
   const [modalAbierto, setModalAbierto] = useState(false)
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   // Función para aplanar las categorías
   const aplanarCategorias = (data) => {
@@ -75,12 +75,13 @@ function RegistroCategoria() {
 /* 
       console.log("Datos de respuesta:", response.data) */
 
-      alert("Categoría eliminada correctamente ✅")
+      
 
       // Actualizar el estado eliminando la categoría
       setCategorias((prev) => prev.filter((cat) => cat.nivel_categoria_id !== categoriaSeleccionada.nivel_categoria_id))
 
       cerrarModal()
+      setShowSuccessModal(true)
     } catch (error) {
       console.error("Datos del error:", error.response?.data || error.message)
       alert("❌ Error al eliminar la categoría.")
@@ -191,6 +192,20 @@ function RegistroCategoria() {
           onConfirm={confirmarEliminacion}
         />
       )}
+
+      {showSuccessModal && (
+        <div className="modal-overlayLi">
+          <div className="modal-contentLi">
+            <h3>Operación exitosa</h3>
+            <p>La categoría ha sido eliminada correctamente.</p>
+            
+            <div className="modal-buttonsLi">
+              <button className="modal-confirmLi" onClick={() => setShowSuccessModal(false)}>Aceptar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

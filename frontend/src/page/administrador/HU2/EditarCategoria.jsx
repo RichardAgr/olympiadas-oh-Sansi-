@@ -18,20 +18,24 @@ function EditarCategoria() {
     estado: true,
   })
 
-  // Estado adicional para almacenar los objetos completos de grado
   const [gradosCompletos, setGradosCompletos] = useState({
     grado_inicial: null,
     grado_final: null,
   })
 
   const [errores, setErrores] = useState({})
+  const [mostrarModalCat, setMostrarModalCat] = useState(false)
+  const [modalDataCat, setModalDataCat] = useState({
+    titulo: "",
+    mensaje: "",
+    esExito: false,
+  })
 
   // Cargar áreas
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/areasRegistradas")
       .then((res) => {
-/*         console.log("Datos de áreas recibidos:", res.data) */
         setAreas(res.data)
       })
       .catch((err) => console.error("Error al cargar áreas", err))
@@ -42,10 +46,7 @@ function EditarCategoria() {
     axios
       .get(`http://localhost:8000/api/nivel-categorias/${id}`)
       .then((res) => {
-/*         console.log("Datos de categoría recibidos:", res.data) */
         const cat = res.data
-
-        // Actualizar formulario con los datos básicos
         setFormulario({
           nombre: cat.nombre,
           descripcion: cat.descripcion,
@@ -54,26 +55,24 @@ function EditarCategoria() {
           grado_id_final: cat.grado_id_final,
           estado: cat.estado,
         })
-
-        // Guardar los objetos completos de grado
         setGradosCompletos({
           grado_inicial: cat.grado_inicial,
           grado_final: cat.grado_final,
         })
-
-/*         console.log("Grado inicial completo:", cat.grado_inicial)
-        console.log("Grado final completo:", cat.grado_final) */
       })
       .catch((err) => {
         console.error("Error al cargar categoría:", err)
-        alert("No se pudo cargar la categoría.")
-        navigate("/admin/registro-categorias")
+        setModalDataCat({
+          titulo: "Error",
+          mensaje: "No se pudo cargar la categoría.",
+          esExito: false
+        })
+        setMostrarModalCat(true)
       })
   }, [id])
 
   const handleChange = (e) => {
     if (e.target.name === "nombre") {
-      // Solo actualizar si el valor cumple con la expresión regular o está vacío
       const regex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]*$/
       if (regex.test(e.target.value) || e.target.value === "") {
         setFormulario({ ...formulario, [e.target.name]: e.target.value })
@@ -86,14 +85,12 @@ function EditarCategoria() {
   }
 
   const handleGradoSeleccionado = ({ grado_id_inicial, grado_id_final, grado_inicial_obj, grado_final_obj }) => {
-    // Actualizar tanto los IDs como los objetos completos
     setFormulario((prev) => ({
       ...prev,
       grado_id_inicial,
       grado_id_final,
     }))
 
-    // Actualizar los objetos completos si se proporcionan
     if (grado_inicial_obj || grado_final_obj) {
       setGradosCompletos((prev) => ({
         ...prev,
@@ -112,11 +109,9 @@ function EditarCategoria() {
   const validar = () => {
     const nuevosErrores = {}
 
-    // Validación del nombre
     if (!formulario.nombre.trim()) {
       nuevosErrores.nombre = "El nombre es obligatorio."
     } else {
-      // Expresión regular que solo permite letras, números y espacios
       const regex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]+$/
       if (!regex.test(formulario.nombre)) {
         nuevosErrores.nombre = "No se permiten caracteres especiales en el nombre."
@@ -138,7 +133,6 @@ function EditarCategoria() {
       return
     }
 
-    // Preparar datos para envío (solo IDs, no objetos completos)
     const datosParaEnvio = {
       nombre: formulario.nombre,
       descripcion: formulario.descripcion,
@@ -151,10 +145,12 @@ function EditarCategoria() {
     axios
       .put(`http://localhost:8000/api/nivel-categorias/${id}`, datosParaEnvio)
       .then((response) => {
-/*         console.log("Datos enviados en PUT:", datosParaEnvio) */
-        console.log("Respuesta del servidor:", response.data)
-        alert("¡Categoría actualizada con éxito!")
-        navigate("/admin/registro-categorias")
+        setModalDataCat({
+          titulo: "Éxito",
+          mensaje: "¡Categoría actualizada con éxito!",
+          esExito: true
+        })
+        setMostrarModalCat(true)
       })
       .catch((err) => {
         console.error("Detalles del error al actualizar:", {
@@ -162,8 +158,20 @@ function EditarCategoria() {
           datosError: err.response?.data,
           status: err.response?.status,
         })
-        alert("Hubo un error al actualizar la categoría.")
+        setModalDataCat({
+          titulo: "Error",
+          mensaje: err.response?.data?.message || "Hubo un error al actualizar la categoría.",
+          esExito: false
+        })
+        setMostrarModalCat(true)
       })
+  }
+
+  const cerrarModalCat = () => {
+    setMostrarModalCat(false)
+    if (modalDataCat.esExito) {
+      navigate("/admin/registro-categorias")
+    }
   }
 
   return (
@@ -219,6 +227,22 @@ function EditarCategoria() {
           </button>
         </div>
       </form>
+
+      {/* Modal de confirmación con sufijo Cat */}
+      {mostrarModalCat && (
+        <div className="modal-overlay-Cat">
+          <div className={`modal-container-Cat ${modalDataCat.esExito ? 'modal-success-Cat' : 'modal-error-Cat'}`}>
+            <h3>{modalDataCat.titulo}</h3>
+            <p>{modalDataCat.mensaje}</p>
+            <button 
+              onClick={cerrarModalCat}
+              className={`modal-btn-Cat ${modalDataCat.esExito ? 'modal-btn-success-Cat' : 'modal-btn-error-Cat'}`}
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
