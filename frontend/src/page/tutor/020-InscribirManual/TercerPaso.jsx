@@ -288,7 +288,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
 
     const data = {
       tutor_id: id, 
-      competidor_ci: competidorCI,
+      ci: competidorCI,
       numero_recibo: boletaData.numero_boleta,
       monto_total: boletaData.monto_total,
       fecha_emision: new Date().toISOString().split("T")[0], 
