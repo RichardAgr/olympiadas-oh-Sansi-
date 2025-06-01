@@ -20,7 +20,7 @@ function AgregarCategoria() {
 
   useEffect(() => {
   axios
-    .get("http://localhost:8000/api/areas")
+    .get("http://localhost:8000/api/areasRegistradas")
     .then((res) => {
       console.log("Datos recibidos de áreas:", res.data); 
       setAreas(res.data);

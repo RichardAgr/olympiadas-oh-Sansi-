@@ -191,23 +191,95 @@ class AreaController extends Controller{
      * Actualizar un área.
      * PUT /api/areas/{id}
      */
-    public function update(Request $request, $id)
-    {
-        $area = Area::findOrFail($id);
+    public function actualizarArea(Request $request, int $areaId): JsonResponse{
+        try {
+            $area = Area::where('area_id', $areaId)->first();
 
-        $request->validate([
-            'nombre' => 'required|string|max:50|unique:area,nombre,' . $id . ',area_id',
-            'descripcion' => 'required|string',
-            'costo' => 'required|numeric|min:0',
-            'estado' => 'required|boolean'
-        ]);
+            if (!$area) {
+                return response()->json([
+                    'error' => 'Área no encontrada'
+                ], 404);
+            }
 
-        $area->update($request->all());
+            // Validar los datos de entrada
+            $validated = $request->validate([
+                'nombre' => 'sometimes|string|max:255|unique:area,nombre,' . $areaId . ',area_id',
+                'descripcion' => 'sometimes|string|max:1000',
+                'costo' => 'sometimes|numeric|min:0|max:999999.99',
+                'estado' => 'sometimes|boolean'
+            ]);
 
-        return response()->json([
-            'message' => 'Área actualizada correctamente',
-            'area' => $area
-        ]);
+            // Preparar los datos para actualizar
+            $dataToUpdate = [];
+
+            if (isset($validated['nombre'])) {
+                $dataToUpdate['nombre'] = strtoupper(trim($validated['nombre']));
+            }
+
+            if (isset($validated['descripcion'])) {
+                $dataToUpdate['descripcion'] = trim($validated['descripcion']);
+            }
+
+            if (isset($validated['costo'])) {
+                $dataToUpdate['costo'] = $validated['costo'];
+            }
+
+            if (isset($validated['estado'])) {
+                $dataToUpdate['estado'] = $validated['estado'] ? 1 : 0;
+            }
+
+            $dataToUpdate['updated_at'] = now();
+
+            // Actualizar el área
+            $area->update($dataToUpdate);
+
+            // Recargar el área para obtener los datos actualizados
+            $area->refresh();
+
+            // Formatear la respuesta
+            $areaFormatted = [
+                'area_id' => $area->area_id,
+                'costo' => (float) $area->costo,
+                'nombre' => $area->nombre,
+                'descripcion' => $area->descripcion,
+                'estado' => (int) $area->estado,
+                'created_at' => $area->created_at->toISOString(),
+                'updated_at' => $area->updated_at->toISOString()
+            ];
+
+            return response()->json($areaFormatted, 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => 'Datos de entrada inválidos',
+                'details' => $e->errors()
+            ], 422);
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == 23000) { // Integrity constraint violation si hay datos duplicados
+                return response()->json([
+                    'error' => 'El nombre del área ya existe'
+                ], 409); // Conflict
+            }
+
+            Log::error('Error de base de datos al actualizar área: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Error de base de datos'
+            ], 500);
+
+        } catch (Exception $e) {
+            Log::error('Error al actualizar área: ' . $e->getMessage(), [
+                'area_id' => $areaId,
+                'request_data' => $request->all(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'error' => 'Error interno del servidor'
+            ], 500);
+        }
     }
 
 

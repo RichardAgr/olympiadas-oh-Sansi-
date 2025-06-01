@@ -56,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/obtenerDatosArea/{areaId}', [AreaController::class,'DatosAreaId']);
     Route::post('/registrarArea', [AreaController::class,'RegistrarNuevaArea']);
     Route::get('/datosAreaCompleto', [AreaController::class,'DatosAreasCompleto']);
+    Route::put('/actualizarArea/{areaId}', [AreaController::class,'actualizarArea']);
 /*     Route::get('/areasRegistradas', [AreaController::class, 'getEventosCronograma']); */
 
     // Niveles

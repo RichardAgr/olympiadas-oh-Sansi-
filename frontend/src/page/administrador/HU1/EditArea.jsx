@@ -70,14 +70,16 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!validarFormulario()) return;
-
-  try {
-    await axios.put(`http://localhost:8000/api/areas/${id}`, {
+  const data ={
       nombre,
       descripcion,
       costo,
       estado: true,
-    });
+  }
+
+
+  try {
+    await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`,data);
 
     setMensaje("Área actualizada con éxito ✅");
     setTipoMensaje("exito");

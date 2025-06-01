@@ -49,12 +49,12 @@ function SelectorGrado({
       const gradoInicialObj = encontrarGradoPorId(gradoInicial)
       const gradoFinalObj = encontrarGradoPorId(gradoFinal)
 
-      console.log("Enviando grados seleccionados:", {
+/*       console.log("Enviando grados seleccionados:", {
         grado_id_inicial: Number.parseInt(gradoInicial),
         grado_id_final: Number.parseInt(gradoFinal),
         grado_inicial_obj: gradoInicialObj,
         grado_final_obj: gradoFinalObj,
-      })
+      }) */
 
       onSeleccionarGrados({
         grado_id_inicial: Number.parseInt(gradoInicial),
