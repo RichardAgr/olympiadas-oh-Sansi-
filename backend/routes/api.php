@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCo
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PasswordResetController;
+use App\Http\Controllers\Api\HomePage\AreasController;
 
 // Rutas públicas
 Route::post('/login', [AuthController::class, 'login']);

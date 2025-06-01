@@ -12,6 +12,7 @@ const uploadToCloudinary = async (file, onProgress = () => {}) => {
   try {
     const uploadPreset = "veltrixImg" 
     const cloudName = "dq5zw44wg" 
+    const axiosSinAuth = axios.create();
 
     const formData = new FormData()
     formData.append("file", file)
@@ -19,7 +20,7 @@ const uploadToCloudinary = async (file, onProgress = () => {}) => {
     formData.append("resource_type", "auto") // Importante: esto permite a Cloudinary detectar automáticamente el tipo de archivo
 
     // Usar axios para la subida
-    const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
+    const response = await axiosSinAuth.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
       onUploadProgress: (progressEvent) => {
         if (progressEvent.total) {
           const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
@@ -279,26 +280,46 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
 
   // Función para guardar la URL en la base de datos
   const guardarURLEnBaseDeDatos = async (url) => {
-    try {
-      // Intentar enviar datos a la API especificada primero
-      const data ={
-        tutor_id: id, 
-        competidor_ci: competidorCI,
-        numero_recibo: boletaData.numero_boleta,
-        monto_total: boletaData.monto_total,
-        fecha_emision: new Date().toISOString().split("T")[0], 
-        ruta_pdf: url,
-        estado: "Pendiente",
-      }
-      await axios.post("http://127.0.0.1:8000/api/guardarDatos/recibosInscripcionManual",data ) 
-
-      console.log("Datos enviados correctamente")
-
-    } catch (error) {
-      console.error("Error al guardar datos:", error)
-      throw error 
+  try {
+    // Verifica que todos los datos requeridos existen
+    if (!boletaData || !boletaData.numero_boleta || !boletaData.monto_total) {
+      throw new Error("Datos de la boleta incompletos");
     }
+
+    const data = {
+      tutor_id: id, 
+      competidor_ci: competidorCI,
+      numero_recibo: boletaData.numero_boleta,
+      monto_total: boletaData.monto_total,
+      fecha_emision: new Date().toISOString().split("T")[0], 
+      ruta_pdf: url,
+      estado: "Pendiente",
+    };
+
+    // Añade logs para depuración
+    console.log("Enviando datos al backend:", data);
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/guardarDatos/recibosInscripcionManual",
+      data,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+
+    console.log("Respuesta del backend:", response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error("Error al guardar datos:", error);
+    if (error.response) {
+      console.error("Detalles del error:", error.response.data);
+    }
+    throw error;
   }
+  };
 
   const handleNuevaInscripcion = async () => {
     // Si el PDF no se ha subido aún, subirlo automáticamente
