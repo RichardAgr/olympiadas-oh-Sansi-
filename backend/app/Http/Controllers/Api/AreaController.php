@@ -111,14 +111,43 @@ class AreaController extends Controller{
         ], 201);
     }
 
-    /**
-     * Mostrar un área específica.
-     * GET /api/areas/{id}
-     */
-    public function show($id)
-    {
-        $area = Area::findOrFail($id);
-        return response()->json($area, 200);
+
+    public function DatosAreaId(int $areaId): JsonResponse {
+        try {
+            $area = Area::select('area_id', 'costo', 'nombre', 'descripcion', 'estado', 'created_at', 'updated_at')
+                       ->where('area_id', $areaId)
+                       ->first();
+
+            // Verificar si el área existe
+            if (!$area) {
+                return response()->json([
+                    'error' => 'Área no encontrada'
+                ], 404);
+            }
+
+            $areaFormatted = [
+                'area_id' => $area->area_id,
+                'costo' => (float) $area->costo,
+                'nombre' => $area->nombre,
+                'descripcion' => $area->descripcion,
+                'estado' => (int) $area->estado,
+                'created_at' => $area->created_at->toISOString(),
+                'updated_at' => $area->updated_at->toISOString()
+            ];
+
+            return response()->json($areaFormatted, 200);
+
+        } catch (Exception $e) {
+            Log::error('Error al obtener área: ' . $e->getMessage(), [
+                'area_id' => $areaId,
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'error' => 'Error interno del servidor'
+            ], 500);
+        }
     }
 
     /**
