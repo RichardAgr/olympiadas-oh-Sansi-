@@ -20,12 +20,39 @@ const [tipoMensaje, setTipoMensaje] = useState(""); // "exito" o "error"
   const areasPerPage = 15;
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/areas")
-      .then((response) => setAreas(response.data))
-      .catch((error) => console.error("Error fetching areas:", error))
-      .finally(() => setLoading(false));
-  }, []);
+  const fetchAreas = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/areasRegistradas`, {
+        timeout: 5000, // timeout para evitar requests colgados
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+      console.log(response.data)
+      if (response.status === 200) {
+        setAreas(response.data);
+      } else {
+        throw new Error(`Unexpected status code: ${response.status}`);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error fetching areas:', {
+          message: error.message,
+          code: error.code,
+          url: error.config?.url,
+          response: error.response?.data
+        });
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchAreas();
+}, []);
 
  const onlyLettersRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
 

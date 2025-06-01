@@ -51,8 +51,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/evento/fechas', [EventoController::class, 'destroy']);
 
     // Áreas
-    Route::apiResource('areas', AreaController::class);
-    Route::get('/areasRegistradas', [AreaController::class, 'getEventosCronograma']);
+    Route::get('/areasRegistradas', [AreaController::class,'ObtenerAreasRegistradas']);
+/*     Route::get('/areasRegistradas', [AreaController::class, 'getEventosCronograma']); */
 
     // Niveles
     Route::apiResource('niveles-educativos', NivelEducativoController::class);
