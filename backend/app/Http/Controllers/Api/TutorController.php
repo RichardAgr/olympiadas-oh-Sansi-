@@ -22,67 +22,66 @@ use Illuminate\Support\Facades\Hash;
 
 class TutorController extends Controller{
     public function competidoresTutor($id){
-        try {
-            $tutor = Tutor::find($id);
-            if (!$tutor) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tutor no encontrado'
-                ], 404);
-            }
-
-            $competidores = Competidor::select([
-                'competidor.competidor_id as id',
-                'competidor.nombres',
-                'competidor.apellidos',
-                'colegio.nombre as colegio',
-                'curso.nombre as curso',
-                'grado.nombre as grado'
-            ])
-            ->join('tutor_competidor', 'competidor.competidor_id', '=', 'tutor_competidor.competidor_id')
-            ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
-            ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
-            ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
-            ->where('tutor_competidor.tutor_id', $id)
-            ->get();
-
-            $competidoresFormateados = $competidores->map(function ($competidor) {
-                $areas = CompetidorCompetencia::select('area.nombre')
-                    ->join('area', 'competidor_competencia.area_id', '=', 'area.area_id')
-                    ->where('competidor_competencia.competidor_id', $competidor->id)
-                    ->pluck('area.nombre')
-                    ->unique()
-                    ->implode(', ');
-
-                $nombreCompleto = $competidor->nombres . ' ' . $competidor->apellidos;
-
-                $cursoCompleto = $competidor->grado;
-
-                return [
-                    'id' => $competidor->id,
-                    'nombre' => $nombreCompleto,
-                    'colegio' => $competidor->colegio,
-                    'curso' => $cursoCompleto,
-                    'competencia' => $areas ?: 'No asignada'
-                ];
-            });
-
-            // Construir la respuesta en el formato solicitado
-            $respuesta = [
-                'data' => [
-                    'estudiantes' => $competidoresFormateados
-                ]
-            ];
-
-            return response()->json($respuesta);
-        } catch (\Exception $e) {
+    try {
+        $tutor = Tutor::find($id);
+        if (!$tutor) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener los competidores del tutor',
-                'error' => $e->getMessage()
-            ], 500);
+                'message' => 'Tutor no encontrado'
+            ], 404);
         }
+
+        $competidores = Competidor::select([
+            'competidor.competidor_id',
+            'competidor.nombres',
+            'competidor.apellidos',
+            'colegio.nombre as colegio',
+            'curso.nombre as curso',
+            'grado.nombre as grado',
+            'competidor.estado'  // Asumiendo que tienes esta columna
+        ])
+        ->join('tutor_competidor', 'competidor.competidor_id', '=', 'tutor_competidor.competidor_id')
+        ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
+        ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
+        ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
+        ->where('tutor_competidor.tutor_id', $id)
+        ->get();
+
+        $competidoresFormateados = $competidores->map(function ($competidor) {
+            $areas = CompetidorCompetencia::select('area.nombre')
+                ->join('area', 'competidor_competencia.area_id', '=', 'area.area_id')
+                ->where('competidor_competencia.competidor_id', $competidor->competidor_id)
+                ->pluck('area.nombre')
+                ->unique()
+                ->implode(', ');
+
+            $nombreCompleto = $competidor->nombres . ' ' . $competidor->apellidos;
+
+            // Asumo que 'categoria' viene de alguna relación o tabla; si no, deja un valor fijo o vacío.
+            $categoria = 'Categoría X'; // Cambia esto según tu lógica
+
+            return [
+                'competidor_id' => $competidor->competidor_id,
+                'nombre_completo' => $nombreCompleto,
+                'area' => $areas ?: 'No asignada',
+                'categoria' => $categoria,
+                'curso' => $competidor->curso,
+                'estado' => $competidor->estado ?? 'Desconocido'
+            ];
+        });
+
+        return response()->json([
+            'data' => $competidoresFormateados
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener los competidores del tutor',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
 
 
     public function obtenerInformacionTutores(Request $request){

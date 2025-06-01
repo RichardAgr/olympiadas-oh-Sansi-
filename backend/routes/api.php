@@ -60,7 +60,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('nivel-categorias', NivelCategoriaController::class);
 
     // Tutor
-    Route::get('/tutores/{tutorId}/competidores', [TutorController::class, 'competidoresTutor']);
+    Route::get('/tutores/{tutorId}/competidoresTutor', [TutorController::class, 'competidoresTutor']);
     Route::get('/tutoresInformacion', [TutorController::class, 'obtenerInformacionTutores']);
     Route::put('/tutores/{id}/estado', [TutorController::class, 'actualizarEstadoTutor']);
     Route::post('/tutor/{tutor_id}/inscribir-competidor', [TutorController::class, 'inscribirCompetidor']);

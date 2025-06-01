@@ -50,7 +50,6 @@ class AuthController extends Controller
                 'token' => $token,
                 'rol' => 'tutor',  
                 'usuario' => [
-                    'id' => $tutor->id,
                     'tutor_id' => $tutor->tutor_id,
                     'nombres' => $tutor->nombres,
                     'apellidos' => $tutor->apellidos,

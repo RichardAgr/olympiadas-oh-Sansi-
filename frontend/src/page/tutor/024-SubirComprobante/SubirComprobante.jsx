@@ -20,6 +20,8 @@ export default function App() {
   const [uploadedFileUrl, setUploadedFileUrl] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
+  
+
 
   const showAlertMessage = (message, type) => {
     setAlertMessage(message)
@@ -99,14 +101,18 @@ export default function App() {
     };
 
       console.log(postData)
+      
     const response = await axios.post('http://127.0.0.1:8000/api/boletas/pagoInscripcion',postData,
       {
-        headers: {
+         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          
         },
+        
       }
+      
     );
-
     console.log('Respuesta de la API:', response.data);
 
       setUploadedFileUrl(uploadedUrl)
