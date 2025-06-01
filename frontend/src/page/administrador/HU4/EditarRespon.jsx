@@ -17,14 +17,14 @@ function EditarRespon() {
   useEffect(() => {
     console.log(`Cargando datos del responsable con ID: ${id}`);
     axios
-      .get(`http://127.0.0.1:8000/api/responsables/${id}`)
+      .get(`http://localhost:8000/api/datosResponsableId/${id}`)
       .then((res) => {
-        const data = res.data;
+        const data = res.data.data;
         console.log("Datos del responsable obtenidos:", data);
-        setNombres(data.nombres);
-        setApellidos(data.apellidos);
+        setNombres(data.nombre);
+        setApellidos(data.apellido);
         setCi(data.ci);
-        setCorreo(data.correo_electronico);
+        setCorreo(data.correo);
         setTelefono(data.telefono);
       })
       .catch((err) => {

@@ -187,10 +187,6 @@ class AreaController extends Controller{
         }
     }
 
-    /**
-     * Actualizar un área.
-     * PUT /api/areas/{id}
-     */
     public function actualizarArea(Request $request, int $areaId): JsonResponse{
         try {
             $area = Area::where('area_id', $areaId)->first();

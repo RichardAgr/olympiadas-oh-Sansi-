@@ -5,16 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ResponsableGestion;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class ResponsableGestionController extends Controller
-{
-    /**
-     * Mostrar todos los responsables de gestión.
-     * GET /api/responsables
-     */
-    public function index()
-    {
+class ResponsableGestionController extends Controller{
+    public function obtenerResponsableGestion(){
         $responsables = ResponsableGestion::all();
         return response()->json($responsables, 200);
     }
@@ -65,21 +63,57 @@ class ResponsableGestionController extends Controller
         }
     }
 
-    /**
-     * Mostrar un responsable de gestión específico.
-     * GET /api/responsables/{id}
-     */
-    public function show($id)
-    {
-        try {
-            $responsable = ResponsableGestion::findOrFail($id);
-            return response()->json($responsable, 200);
-        } catch (\Exception $e) {
+    public function obtenerDatosRespGestionId(int $responsableId): JsonResponse{
+       try {
+            $responsable = DB::table('responsable_gestion')
+                ->select([
+                    'responsable_id',
+                    'nombres',
+                    'apellidos',
+                    'ci',
+                    'correo_electronico',
+                    'telefono',
+                    'estado',
+                    'created_at',
+                    'updated_at'
+                ])
+                ->where('responsable_id', $responsableId)
+                ->first();
+
+            if (!$responsable) {
+                return response()->json([
+                    'error' => 'Responsable no encontrado'
+                ], 404);
+            }
+
+            $data = $this->formatResponsable($responsable);
+
             return response()->json([
-                'message' => 'Responsable no encontrado',
-                'error' => $e->getMessage()
-            ], 404);
+                'message' => 'Responsable obtenido exitosamente',
+                'data' => $data
+            ], 200);
+        } catch (Exception $e) {
+            Log::error('Error al obtener el responsable: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Error interno del servidor'
+            ], 500);
         }
+    }
+
+        private function formatResponsable($responsable): array
+    {
+        return [
+            'responsable_id' => (int)$responsable->responsable_id,
+            'nombre' => (string)$responsable->nombres,
+            'apellido' => (string)$responsable->apellidos,
+            'ci' => (string)$responsable->ci,
+            'correo' => (string)$responsable->correo_electronico,
+            'telefono' => (string)$responsable->telefono,
+            'estado' => (bool)$responsable->estado,
+            'created_at' => (string)$responsable->created_at,
+            'updated_at' => (string)$responsable->updated_at,
+        ];
     }
 
     /**
@@ -121,12 +155,7 @@ class ResponsableGestionController extends Controller
         }
     }
 
-    /**
-     * Eliminar un responsable.
-     * DELETE /api/responsables/{id}
-     */
-    public function destroy($id)
-    {
+    public function eliminarResponsableGestion($id){
         try {
             $responsable = ResponsableGestion::findOrFail($id);
             $responsable->delete();

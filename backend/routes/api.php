@@ -43,7 +43,11 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
 Route::middleware('auth:sanctum')->group(function() {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
-
+    //responsable de gestion
+    Route::get('/datosResponsableGestion', [ResponsableGestionController::class, 'obtenerResponsableGestion']);
+    Route::get('/datosResponsableId/{responsableId}', [ResponsableGestionController::class, 'obtenerDatosRespGestionId']);
+    Route::delete('/eliminarResponsableGestion/{id}', [ResponsableGestionController::class, 'eliminarResponsableGestion']);
+    
     // Eventos
     Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
     Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
@@ -118,8 +122,7 @@ Route::middleware('auth:sanctum')->group(function() {
     // Excel
     Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
     
-
-
+    
     // Videos Admin
     Route::post('/Guardarvideos', [VideoController::class, 'crearVideo']);
     Route::delete('/Eliminarvideos/{tipo_video}', [VideoController::class, 'eliminarVideo']);

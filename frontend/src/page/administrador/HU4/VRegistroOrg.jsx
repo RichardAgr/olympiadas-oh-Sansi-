@@ -6,7 +6,7 @@ import addUsuario from "../../../assets/perfil_usuario_add.svg";
 import { Edit, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
-//import ModalConfirmDelete from "../../components/ModalConfirmDelete";
+import ModalConfirmDelete from "../../../components/ModalesAdmin/ModalConfirmDelete"
 import axios from "axios";
 
 const filasPorPagina = 15;
@@ -19,16 +19,15 @@ function RegistrarOrganizador() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
 
-  useEffect(() => {
-    console.log("Realizando petición para obtener responsables...");
-    fetch("http://localhost:8000/api/responsables")
-      .then((res) => {
-        if (!res.ok) throw new Error("Error en la API");
-        return res.json();
-      })
-      .then((data) => setData(data))
-      .catch((err) => console.error("Error al traer responsables:", err));
-  }, []);
+useEffect(() => {
+  axios.get("http://localhost:8000/api/datosResponsableGestion")
+    .then((response) => {
+      setData(response.data);
+    })
+    .catch((error) => {
+      console.error("Error al traer responsables:", error);
+    });
+}, []);
 
   const datosFiltrados = data.filter((dato) => {
     const nombreCompleto = `${dato.nombres} ${dato.apellidos}`.toLowerCase();
@@ -69,7 +68,7 @@ function RegistrarOrganizador() {
 
     try {
       await axios.delete(
-        `http://localhost:8000/api/responsables/${responsable.responsable_id}`
+        `http://localhost:8000/api/eliminarResponsableGestion/${responsable.responsable_id}`
       );
       setData((prevData) =>
         prevData.filter((item) => item.responsable_id !== responsable.responsable_id)
