@@ -61,13 +61,15 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!validarFormulario()) return;
-
-  try {
-    await axios.post("http://127.0.0.1:8000/api/areas", {
+  const data ={
       nombre,
       descripcion,
       costo,
-    });
+  }
+  console.log(data)
+
+  try {
+    await axios.post("http://localhost:8000/api/registrarArea", data);
 
     setMensaje("Área registrada con éxito ✅");
     setTipoMensaje("exito");

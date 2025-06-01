@@ -85,30 +85,66 @@ class AreaController extends Controller{
 }
 
 
-    /**
-     * Registrar una nueva área.
-     * POST /api/areas
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:50|unique:area,nombre',
-            'descripcion' => 'required|string',
-            'costo' => 'required|numeric|min:0',
-            'estado' => 'nullable|boolean'
-        ]);
+    public function RegistrarNuevaArea(Request $request){
+        try {
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:255|unique:area,nombre',
+                'descripcion' => 'required|string|max:1000',
+                'costo' => 'required|numeric|min:0|max:999999.99'
+            ]);
 
-        $area = Area::create([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'costo' => $request->costo,
-            'estado' => $request->estado ?? true
-        ]);
+            $area = Area::create([
+                'nombre' => strtoupper(trim($validated['nombre'])), // Convertir a mayúsculas
+                'descripcion' => trim($validated['descripcion']),
+                'costo' => $validated['costo'],
+                'estado' => 1, // Por defecto activo
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
 
-        return response()->json([
-            'message' => 'Área registrada con éxito',
-            'area' => $area
-        ], 201);
+            // Formatear la respuesta
+            $areaFormatted = [
+                'area_id' => $area->area_id,
+                'costo' => (float) $area->costo,
+                'nombre' => $area->nombre,
+                'descripcion' => $area->descripcion,
+                'estado' => (int) $area->estado,
+                'created_at' => $area->created_at->toISOString(),
+                'updated_at' => $area->updated_at->toISOString()
+            ];
+
+            return response()->json($areaFormatted, 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => 'Datos de entrada inválidos',
+                'details' => $e->errors()
+            ], 422);
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == 23000) { 
+                return response()->json([
+                    'error' => 'El nombre del área ya existe'
+                ], 409); // Conflict
+            }
+
+            Log::error('Error de base de datos al crear área: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Error de base de datos'
+            ], 500);
+
+        } catch (Exception $e) {
+            Log::error('Error al crear área: ' . $e->getMessage(), [
+                'request_data' => $request->all(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'error' => 'Error interno del servidor'
+            ], 500);
+        }
     }
 
 
