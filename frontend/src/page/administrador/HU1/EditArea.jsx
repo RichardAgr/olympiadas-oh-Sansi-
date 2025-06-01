@@ -30,7 +30,7 @@ const EditArea = () => {
 
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/areas/${id}`)
+    axios.get(`http://localhost:8000/api/obtenerDatosArea/${id}`)
       .then((response) => {
         setNombre(response.data.nombre);
         setDescripcion(response.data.descripcion);
