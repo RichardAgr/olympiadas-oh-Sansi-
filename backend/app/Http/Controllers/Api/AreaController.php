@@ -13,18 +13,15 @@ use App\Models\Area;
 class AreaController extends Controller{
     public function ObtenerAreasRegistradas(Request $request): JsonResponse{
          try {
-            // Obtener todas las áreas únicas ordenadas por nombre
             $areas = Area::select('area_id', 'costo', 'nombre', 'descripcion', 'estado', 'created_at', 'updated_at')
                          ->distinct()
                          ->orderBy('nombre', 'asc')
                          ->get();
 
-            // Si no hay áreas, retornar array vacío
             if ($areas->isEmpty()) {
                 return response()->json([], 200);
             }
 
-            // Formatear los datos exactamente como solicitas
             $areasFormatted = $areas->map(function ($area) {
                 return [
                     'area_id' => $area->area_id,
@@ -147,18 +144,47 @@ class AreaController extends Controller{
         ]);
     }
 
-    /**
-     * Eliminar un área.
-     * DELETE /api/areas/{id}
-     */
-    public function destroy($id)
-    {
-        $area = Area::findOrFail($id);
-        $area->delete();
 
-        return response()->json([
-            'message' => 'Área eliminada exitosamente'
-        ]);
+    public function EliminarArea(int $areaId): JsonResponse{
+        try {
+            // Buscar el área por area_id
+            $area = Area::where('area_id', $areaId)->first();
+
+            // Verificar si el área existe
+            if (!$area) {
+                return response()->json([
+                    'error' => 'Área no encontrada'
+                ], 404);
+            }
+
+            // Guardar los datos del área antes de eliminar
+            $areaData = [
+                'area_id' => $area->area_id,
+                'costo' => (float) $area->costo,
+                'nombre' => $area->nombre,
+                'descripcion' => $area->descripcion,
+                'estado' => (int) $area->estado,
+                'created_at' => $area->created_at->toISOString(),
+                'updated_at' => $area->updated_at->toISOString()
+            ];
+
+            // Eliminar el área sin verificar relaciones
+            $area->delete();
+
+            // Retornar los datos del área eliminada
+            return response()->json($areaData, 200);
+
+        } catch (Exception $e) {
+            Log::error('Error al eliminar área forzadamente: ' . $e->getMessage(), [
+                'area_id' => $areaId,
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'error' => 'Error interno del servidor'
+            ], 500);
+        }
     }
 
     public function getAreasWithCategoriasGrados()

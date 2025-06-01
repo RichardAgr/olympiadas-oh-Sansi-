@@ -29,7 +29,7 @@ const [tipoMensaje, setTipoMensaje] = useState(""); // "exito" o "error"
           'Accept': 'application/json'
         }
       });
-      console.log(response.data)
+
       if (response.status === 200) {
         setAreas(response.data);
       } else {
@@ -90,7 +90,7 @@ const filteredAreas = onlyLettersRegex.test(searchTerm)
   if (!areaToDelete) return;
 
   try {
-    await axios.delete(`http://localhost:8000/api/areas/${areaToDelete.area_id}`);
+    await axios.delete(`http://127.0.0.1:8000/api/eliminarArea/${areaToDelete.area_id}`);
     setAreas(areas.filter((area) => area.area_id !== areaToDelete.area_id));
     setAreaToDelete(null);
 
