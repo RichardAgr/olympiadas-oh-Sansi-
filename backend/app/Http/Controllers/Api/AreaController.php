@@ -320,34 +320,114 @@ class AreaController extends Controller{
     }
 
     public function DatosAreasCompleto(Request $request): JsonResponse{
-         try {
-            // Por ahora solo obtenemos las áreas básicas
-            $areas = DB::table('area')
-                ->select([
-                    'area_id',
-                    'nombre as area',
-                    'descripcion',
-                    'costo',
-                    'estado',
-                    'created_at',
-                    'updated_at'
-                ])
-                ->where('estado', 1)
-                ->orderBy('nombre', 'asc')
-                ->get();
+try {
+            // Validar parámetros opcionales
+            $validated = $request->validate([
+                'search' => 'sometimes|string|max:255',
+                'fecha_desde' => 'sometimes|date',
+                'fecha_hasta' => 'sometimes|date|after_or_equal:fecha_desde',
+                'area_id' => 'sometimes|integer|exists:area,area_id',
+                'tipo_evento' => 'sometimes|string'
+            ]);
 
-            // Formatear los datos para tu frontend
-            $dataFormatted = $areas->map(function ($item) {
+            // Consulta principal: área + cronograma + nivel_categoria + grados (SIN competencia por ahora)
+            $query = DB::table('area as a')
+                ->join('cronograma as cr', 'a.area_id', '=', 'cr.area_id')
+                ->leftJoin('nivel_categoria as nc', 'a.area_id', '=', 'nc.area_id')
+                ->leftJoin('grado as gi', 'nc.grado_id_inicial', '=', 'gi.grado_id')
+                ->leftJoin('grado as gf', 'nc.grado_id_final', '=', 'gf.grado_id')
+                ->select([
+                    'a.area_id',
+                    'a.nombre as area',
+                    'a.descripcion as area_descripcion',
+                    'a.costo',
+                    'a.estado',
+                    'a.created_at as area_created_at',
+                    'a.updated_at as area_updated_at',
+                    'cr.cronograma_id',
+                    'cr.nombre_evento',
+                    'cr.descripcion as cronograma_descripcion',
+                    'cr.fecha_inicio',
+                    'cr.fecha_fin',
+                    'cr.tipo_evento',
+                    'cr.anio_olimpiada',
+                    'cr.competencia_id',
+                    'nc.nombre as nivel_categoria',
+                    'nc.descripcion as nivel_descripcion',
+                    DB::raw("CASE 
+                        WHEN gi.nombre IS NOT NULL AND gf.nombre IS NOT NULL AND gi.grado_id != gf.grado_id
+                        THEN CONCAT(gi.nombre, ' - ', gf.nombre)
+                        WHEN gi.nombre IS NOT NULL 
+                        THEN gi.nombre
+                        ELSE '-'
+                    END as grado"),
+                    'gi.nombre as grado_inicial',
+                    'gf.nombre as grado_final'
+                ])
+                ->where('a.estado', 1); // Solo áreas activas
+
+            // Aplicar filtros si se proporcionan
+            if (isset($validated['search']) && !empty($validated['search'])) {
+                $search = $validated['search'];
+                $query->where(function($q) use ($search) {
+                    $q->where('a.nombre', 'LIKE', "%{$search}%")
+                      ->orWhere('nc.nombre', 'LIKE', "%{$search}%")
+                      ->orWhere('gi.nombre', 'LIKE', "%{$search}%")
+                      ->orWhere('gf.nombre', 'LIKE', "%{$search}%")
+                      ->orWhere('cr.tipo_evento', 'LIKE', "%{$search}%")
+                      ->orWhere('cr.nombre_evento', 'LIKE', "%{$search}%");
+                });
+            }
+
+            if (isset($validated['fecha_desde'])) {
+                $query->where('cr.fecha_inicio', '>=', $validated['fecha_desde']);
+            }
+
+            if (isset($validated['fecha_hasta'])) {
+                $query->where('cr.fecha_inicio', '<=', $validated['fecha_hasta']);
+            }
+
+            if (isset($validated['area_id'])) {
+                $query->where('a.area_id', $validated['area_id']);
+            }
+
+            if (isset($validated['tipo_evento'])) {
+                $query->where('cr.tipo_evento', $validated['tipo_evento']);
+            }
+
+            // Ordenar por área y fecha de inicio
+            $query->orderBy('a.nombre', 'asc')
+                  ->orderBy('cr.fecha_inicio', 'asc');
+
+            // Obtener los resultados
+            $areasRegistradas = $query->get();
+
+            // Verificar si hay datos
+            if ($areasRegistradas->isEmpty()) {
+                return response()->json([
+                    'data' => []
+                ], 200);
+            }
+
+            // Formatear los datos para el frontend
+            $dataFormatted = $areasRegistradas->map(function ($item) {
                 return [
                     'area_id' => $item->area_id,
+                    'cronograma_id' => $item->cronograma_id,
                     'area' => $item->area,
-                    'nivel_categoria' => '-',
-                    'grado' => '-',
+                    'nivel_categoria' => $item->nivel_categoria ?: '-',
+                    'grado' => $item->grado ?: '-',
+                    'grado_inicial' => $item->grado_inicial ?: '-',
+                    'grado_final' => $item->grado_final ?: '-',
                     'costo' => (float) $item->costo,
-                    'tipo_evento' => '-',
-                    'fecha_inicio' => null,
-                    'fecha_fin' => null,
-                    'descripcion' => $item->descripcion ?: '-'
+                    'tipo_evento' => $item->tipo_evento ?: '-',
+                    'fecha_inicio' => $item->fecha_inicio ?: null,
+                    'fecha_fin' => $item->fecha_fin ?: null,
+                    'descripcion' => $item->cronograma_descripcion ?: $item->area_descripcion ?: '-',
+                    'nombre_evento' => $item->nombre_evento ?: '-',
+                    'anio_olimpiada' => $item->anio_olimpiada ?: '-',
+                    'competencia_id' => $item->competencia_id ?: null,
+                    'nivel_descripcion' => $item->nivel_descripcion ?: '-'
                 ];
             });
 
@@ -355,14 +435,23 @@ class AreaController extends Controller{
                 'data' => $dataFormatted->toArray()
             ], 200);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => 'Parámetros inválidos',
+                'details' => $e->errors()
+            ], 422);
+
         } catch (Exception $e) {
-            Log::error('Error al obtener áreas: ' . $e->getMessage());
+            Log::error('Error al obtener áreas registradas: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'request' => $request->all()
+            ]);
 
             return response()->json([
                 'error' => 'Error interno del servidor'
             ], 500);
         }
     }
-
 }
 

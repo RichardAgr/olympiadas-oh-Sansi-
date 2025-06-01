@@ -18,9 +18,8 @@ function RegistrarOrganizador() {
   const cargarAreas = async () => {
     try {
       setLoading(true)
-      const response = await axios.get("http://127.0.0.1:8000/api/areasRegistradas")
-      const flattenedData = response.data.data.flatMap(item => item.data)
-      setAreas(flattenedData)
+      const response = await axios.get("http://127.0.0.1:8000/api/datosAreaCompleto")
+      setAreas(response.data.data || [])
       setError(null)
     } catch (err) {
       console.error("Error al cargar áreas:", err)
