@@ -320,8 +320,7 @@ class AreaController extends Controller{
     }
 
     public function DatosAreasCompleto(Request $request): JsonResponse{
-try {
-            // Validar parámetros opcionales
+        try {
             $validated = $request->validate([
                 'search' => 'sometimes|string|max:255',
                 'fecha_desde' => 'sometimes|date',
@@ -329,8 +328,6 @@ try {
                 'area_id' => 'sometimes|integer|exists:area,area_id',
                 'tipo_evento' => 'sometimes|string'
             ]);
-
-            // Consulta principal: área + cronograma + nivel_categoria + grados (SIN competencia por ahora)
             $query = DB::table('area as a')
                 ->join('cronograma as cr', 'a.area_id', '=', 'cr.area_id')
                 ->leftJoin('nivel_categoria as nc', 'a.area_id', '=', 'nc.area_id')
@@ -366,19 +363,6 @@ try {
                 ])
                 ->where('a.estado', 1); // Solo áreas activas
 
-            // Aplicar filtros si se proporcionan
-            if (isset($validated['search']) && !empty($validated['search'])) {
-                $search = $validated['search'];
-                $query->where(function($q) use ($search) {
-                    $q->where('a.nombre', 'LIKE', "%{$search}%")
-                      ->orWhere('nc.nombre', 'LIKE', "%{$search}%")
-                      ->orWhere('gi.nombre', 'LIKE', "%{$search}%")
-                      ->orWhere('gf.nombre', 'LIKE', "%{$search}%")
-                      ->orWhere('cr.tipo_evento', 'LIKE', "%{$search}%")
-                      ->orWhere('cr.nombre_evento', 'LIKE', "%{$search}%");
-                });
-            }
-
             if (isset($validated['fecha_desde'])) {
                 $query->where('cr.fecha_inicio', '>=', $validated['fecha_desde']);
             }
@@ -399,7 +383,6 @@ try {
             $query->orderBy('a.nombre', 'asc')
                   ->orderBy('cr.fecha_inicio', 'asc');
 
-            // Obtener los resultados
             $areasRegistradas = $query->get();
 
             // Verificar si hay datos
