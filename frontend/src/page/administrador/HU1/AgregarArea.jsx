@@ -66,7 +66,6 @@ const handleSubmit = async (e) => {
       descripcion,
       costo,
   }
-  console.log(data)
 
   try {
     await axios.post("http://localhost:8000/api/registrarArea", data);
