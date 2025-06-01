@@ -9,7 +9,7 @@ function RegistroCategoria() {
   const [categorias, setCategorias] = useState([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 15;
   const navigate = useNavigate();
 
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -19,10 +19,14 @@ function RegistroCategoria() {
     axios
       .get("http://localhost:8000/api/nivel-categorias")
       .then((response) => {
+        console.log("Datos de categorías recibidos:", response.data);
         setCategorias(response.data);
       })
       .catch((error) => {
-        console.error("Error al cargar categorías:", error);
+        console.error("Error al cargar categorías:", {
+          errorMessage: error.message,
+          errorData: error.response?.data,
+        });
       });
   }, []);
 
@@ -38,28 +42,38 @@ function RegistroCategoria() {
 
   const confirmarEliminacion = async () => {
     try {
-      await axios.delete(
+      console.log(
+        "ID enviado para eliminar:",
+        categoriaSeleccionada.nivel_categoria_id
+      );
+
+      const response = await axios.delete(
         `http://localhost:8000/api/nivel-categorias/${categoriaSeleccionada.nivel_categoria_id}`
       );
+
+      console.log("Datos de respuesta:", response.data);
+
       alert("Categoría eliminada correctamente ✅");
 
       setCategorias((prev) =>
         prev.filter(
-          (cat) => cat.nivel_categoria_id !== categoriaSeleccionada.nivel_categoria_id
+          (cat) =>
+            cat.nivel_categoria_id !== categoriaSeleccionada.nivel_categoria_id
         )
       );
 
       cerrarModal();
     } catch (error) {
-      console.error("Error al eliminar categoría:", error);
+      console.error("Datos del error:", error.response?.data || error.message);
       alert("❌ Error al eliminar la categoría.");
       cerrarModal();
     }
   };
 
-  const categoriasFiltradas = categorias.filter((cat) =>
-    cat.nombre.toLowerCase().includes(search.toLowerCase()) ||
-    cat.area?.nombre.toLowerCase().includes(search.toLowerCase())
+  const categoriasFiltradas = categorias.filter(
+    (cat) =>
+      cat.nombre.toLowerCase().includes(search.toLowerCase()) ||
+      cat.area?.nombre.toLowerCase().includes(search.toLowerCase())
   );
 
   const totalPages = Math.ceil(categoriasFiltradas.length / itemsPerPage);
@@ -103,7 +117,7 @@ function RegistroCategoria() {
 
         <table className="tabla-categoriasLi">
           <thead>
-            <tr>
+            <tr className="cabeceraLi">
               <th>Área</th>
               <th>Nombre Nivel / Categoría</th>
               <th>Grados</th>
@@ -115,7 +129,7 @@ function RegistroCategoria() {
               categoriasPaginadas.map((cat) => (
                 <tr key={cat.nivel_categoria_id}>
                   <td>{cat.area?.nombre || "-"}</td>
-                  <td>{cat.nombre}</td>
+                  <td className="accionesLi2">{cat.nombre}</td>
                   <td>
                     {cat.grado_inicial?.nombre} - {cat.grado_final?.nombre}
                   </td>
@@ -137,7 +151,10 @@ function RegistroCategoria() {
               ))
             ) : (
               <tr>
-                <td colSpan="4" style={{ textAlign: "center", padding: "1rem" }}>
+                <td
+                  colSpan="4"
+                  style={{ textAlign: "center", padding: "1rem" }}
+                >
                   No hay categorías registradas.
                 </td>
               </tr>

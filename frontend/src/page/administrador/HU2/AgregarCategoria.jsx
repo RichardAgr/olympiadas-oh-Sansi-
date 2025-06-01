@@ -19,11 +19,16 @@ function AgregarCategoria() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/areas")
-      .then((res) => setAreas(res.data))
-      .catch((err) => console.error("Error al cargar áreas", err));
-  }, []);
+  axios
+    .get("http://localhost:8000/api/areas")
+    .then((res) => {
+      console.log("Datos recibidos de áreas:", res.data); 
+      setAreas(res.data);
+    })
+    .catch((err) => {
+      console.error("Error al cargar áreas:", err.response?.data || err.message);
+    });
+}, []);
 
   const handleGradoSeleccionado = ({ grado_id_inicial, grado_id_final }) => {
     setFormulario((prev) => ({
@@ -94,14 +99,20 @@ function AgregarCategoria() {
       return;
     }
 
+    console.log("Datos que se enviarán en el POST:", formulario);
+
     axios
       .post("http://localhost:8000/api/nivel-categorias", formulario)
-      .then(() => {
+      .then((response) => {
+        console.log("Respuesta del servidor:", response.data);
         alert("¡Categoría registrada con éxito!");
         navigate("/admin/registro-categorias");
       })
       .catch((err) => {
         console.error("Error al guardar categoría:", err);
+        if (err.response) {
+          console.error("Detalles del error:", err.response.data);
+        }
         alert("Hubo un error al registrar la categoría.");
       });
   };

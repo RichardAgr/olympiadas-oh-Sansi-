@@ -24,7 +24,10 @@ function EditarCategoria() {
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/areas")
-      .then((res) => setAreas(res.data))
+      .then((res) => {
+        console.log("Datos de áreas recibidos:", res.data);
+        setAreas(res.data);
+      })
       .catch((err) => console.error("Error al cargar áreas", err));
   }, []);
 
@@ -33,6 +36,7 @@ function EditarCategoria() {
     axios
       .get(`http://localhost:8000/api/nivel-categorias/${id}`)
       .then((res) => {
+        console.log("Datos de categoría recibidos:", res.data);
         const cat = res.data;
         setFormulario({
           nombre: cat.nombre,
@@ -112,12 +116,18 @@ function EditarCategoria() {
 
     axios
       .put(`http://localhost:8000/api/nivel-categorias/${id}`, formulario)
-      .then(() => {
+      .then((response) => {
+        console.log("Datos enviados en PUT:", formulario); // Muestra lo que envías
+        console.log("Respuesta del servidor:", response.data); // Muestra la respuesta
         alert("¡Categoría actualizada con éxito!");
         navigate("/admin/registro-categorias");
       })
       .catch((err) => {
-        console.error("Error al actualizar categoría:", err);
+        console.error("Detalles del error al actualizar:", {
+          mensaje: err.message,
+          datosError: err.response?.data, 
+          status: err.response?.status, 
+        });
         alert("Hubo un error al actualizar la categoría.");
       });
   };

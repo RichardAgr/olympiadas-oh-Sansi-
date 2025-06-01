@@ -171,7 +171,7 @@
 .tabla-categoriasLi th,
 .tabla-categoriasLi td {
   padding: 1rem;
-  text-align: left;
+  text-align: center;
   border-bottom: 1px solid #EDF2F7;
   color: #4A5568;
 }
@@ -195,7 +195,13 @@
 
 .tabla-categoriasLi td.accionesLi {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.tabla-categoriasLi td.accionesLi2 {
+  display: flex;
+  justify-content: center;
   gap: 0.75rem;
 }
 

@@ -8,11 +8,16 @@ function SelectorGrado({ onSeleccionarGrados }) {
   const [gradoFinal, setGradoFinal] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/grados")
-      .then((res) => setGrados(res.data))
-      .catch((err) => console.error("Error al cargar grados", err));
-  }, []);
+  axios
+    .get("http://localhost:8000/api/grados")
+    .then((res) => {
+      console.log("Datos de grados recibidos:", res.data); // Muestra solo los datos
+      setGrados(res.data);
+    })
+    .catch((err) => {
+      console.error("Error en GET /grados:", err.response?.data || err.message); // Muestra solo datos de error
+    });
+}, []);
 
   useEffect(() => {
     // Enviar datos al padre cuando ambos estén seleccionados
