@@ -15,6 +15,12 @@ function AgregarCategoria() {
     estado: true,
   });
   const [errores, setErrores] = useState({});
+  const [mostrarModalHu2, setMostrarModalHu2] = useState(false);
+  const [modalDataHu2, setModalDataHu2] = useState({
+    titulo: "",
+    mensaje: "",
+    esExito: false,
+  });
 
   const navigate = useNavigate();
 
@@ -39,37 +45,30 @@ function AgregarCategoria() {
   };
 
   const handleChange = (e) => {
-  // Validación especial para el campo nombre
-  if (e.target.name === 'nombre') {
-    // Expresión regular que permite letras (incluyendo acentos), números y espacios
-    // pero no permite caracteres especiales
-    const regexValido = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]*$/;
-    
-    // Verificar si contiene caracteres no permitidos
-    if (!regexValido.test(e.target.value)) {
-      setErrores(prev => ({
-        ...prev,
-        nombre: "No se permiten caracteres especiales (solo letras, números y espacios)."
-      }));
-      return; // No actualizar el estado si hay caracteres inválidos
-    } else {
-      // Limpiar el error si el valor es válido
-      setErrores(prev => ({ ...prev, nombre: '' }));
+    if (e.target.name === 'nombre') {
+      const regexValido = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]*$/;
+      
+      if (!regexValido.test(e.target.value)) {
+        setErrores(prev => ({
+          ...prev,
+          nombre: "No se permiten caracteres especiales (solo letras, números y espacios)."
+        }));
+        return;
+      } else {
+        setErrores(prev => ({ ...prev, nombre: '' }));
+      }
     }
-  }
-  
-  setFormulario({ ...formulario, [e.target.name]: e.target.value });
-};
+    
+    setFormulario({ ...formulario, [e.target.name]: e.target.value });
+  };
 
   const validarFormulario = () => {
     const nuevosErrores = {};
 
-    // Validación para el nombre (mínimo 6 caracteres y sin números)
     if (!formulario.nombre || formulario.nombre.trim().length < 2) {
       nuevosErrores.nombre = "El nombre debe tener al menos 6 caracteres.";
     }
 
-    // Resto de validaciones permanecen igual
     if (formulario.descripcion.length > 255) {
       nuevosErrores.descripcion = "La descripción no puede exceder los 255 caracteres.";
     }
@@ -105,16 +104,29 @@ function AgregarCategoria() {
       .post("http://localhost:8000/api/nivel-categorias", formulario)
       .then((response) => {
         console.log("Respuesta del servidor:", response.data);
-        alert("¡Categoría registrada con éxito!");
-        navigate("/admin/registro-categorias");
+        setModalDataHu2({
+          titulo: "Éxito",
+          mensaje: "¡Categoría registrada con éxito!",
+          esExito: true,
+        });
+        setMostrarModalHu2(true);
       })
       .catch((err) => {
         console.error("Error al guardar categoría:", err);
-        if (err.response) {
-          console.error("Detalles del error:", err.response.data);
-        }
-        alert("Hubo un error al registrar la categoría.");
+        setModalDataHu2({
+          titulo: "Error",
+          mensaje: err.response?.data?.message || "Hubo un error al registrar la categoría.",
+          esExito: false,
+        });
+        setMostrarModalHu2(true);
       });
+  };
+
+  const cerrarModalHu2 = () => {
+    setMostrarModalHu2(false);
+    if (modalDataHu2.esExito) {
+      navigate("/admin/registro-categorias");
+    }
   };
 
   return (
@@ -181,6 +193,22 @@ function AgregarCategoria() {
           </button>
         </div>
       </form>
+
+      {/* Modal de confirmación con classNames únicos */}
+      {mostrarModalHu2 && (
+        <div className="modal-overlay-hu2">
+          <div className={`modal-container-hu2 ${modalDataHu2.esExito ? 'modal-success-hu2' : 'modal-error-hu2'}`}>
+            <h3>{modalDataHu2.titulo}</h3>
+            <p>{modalDataHu2.mensaje}</p>
+            <button 
+              onClick={cerrarModalHu2}
+              className={`modal-btn-hu2 ${modalDataHu2.esExito ? 'modal-btn-success-hu2' : 'modal-btn-error-hu2'}`}
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

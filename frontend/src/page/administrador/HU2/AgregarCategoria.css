@@ -172,3 +172,58 @@
     width: 100%;
   }
 }
+
+/* Estilos para el modal con sufijo hu2 para evitar colisiones */
+.modal-overlay-hu2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-container-hu2 {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.modal-success-hu2 {
+  border-top: 4px solid #4CAF50;
+}
+
+.modal-error-hu2 {
+  border-top: 4px solid #F44336;
+}
+
+.modal-btn-hu2 {
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-btn-success-hu2 {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.modal-btn-error-hu2 {
+  background-color: #F44336;
+  color: white;
+}
+
+.modal-btn-hu2:hover {
+  opacity: 0.9;
+}
