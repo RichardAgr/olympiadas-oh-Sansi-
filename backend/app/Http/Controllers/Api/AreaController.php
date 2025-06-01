@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Models\Area;
 
 class AreaController extends Controller{
@@ -252,8 +253,7 @@ class AreaController extends Controller{
         }
     }
 
-    public function getAreasWithCategoriasGrados()
-    {
+    public function getAreasWithCategoriasGrados(){
         try {
             // Obtener todas las áreas con sus categorías y relaciones de grados
             $areas = Area::with([
@@ -318,4 +318,51 @@ class AreaController extends Controller{
             ], 500);
         }
     }
+
+    public function DatosAreasCompleto(Request $request): JsonResponse{
+         try {
+            // Por ahora solo obtenemos las áreas básicas
+            $areas = DB::table('area')
+                ->select([
+                    'area_id',
+                    'nombre as area',
+                    'descripcion',
+                    'costo',
+                    'estado',
+                    'created_at',
+                    'updated_at'
+                ])
+                ->where('estado', 1)
+                ->orderBy('nombre', 'asc')
+                ->get();
+
+            // Formatear los datos para tu frontend
+            $dataFormatted = $areas->map(function ($item) {
+                return [
+                    'area_id' => $item->area_id,
+                    'area' => $item->area,
+                    'nivel_categoria' => '-',
+                    'grado' => '-',
+                    'costo' => (float) $item->costo,
+                    'tipo_evento' => '-',
+                    'fecha_inicio' => null,
+                    'fecha_fin' => null,
+                    'descripcion' => $item->descripcion ?: '-'
+                ];
+            });
+
+            return response()->json([
+                'data' => $dataFormatted->toArray()
+            ], 200);
+
+        } catch (Exception $e) {
+            Log::error('Error al obtener áreas: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Error interno del servidor'
+            ], 500);
+        }
+    }
+
 }
+
