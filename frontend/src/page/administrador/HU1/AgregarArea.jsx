@@ -68,7 +68,7 @@ const handleSubmit = async (e) => {
   }
 
   try {
-    await axios.post("http://localhost:8000/api/registrarArea", data);
+    await axios.post("http://localhost:8000/api/registrarAra", data);
 
     setMensaje("Área registrada con éxito ✅");
     setTipoMensaje("exito");
@@ -82,7 +82,7 @@ const handleSubmit = async (e) => {
   console.error("Error al registrar el área:", error);
   
   // Mostrar mensaje inmediatamente
-  setMensaje("Hubo un error al guardar el área ❌");
+  setMensaje("Hubo un error al guardar el área");
   setTipoMensaje("error");
 
   // Ocultar el mensaje después de 2.5 segundos
