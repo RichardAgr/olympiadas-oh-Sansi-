@@ -67,15 +67,17 @@ function AgregarRespon() {
       return; }
 
       console.log("Validación exitosa. Enviando datos...");
-
+      
     try {
-      await axios.post("http://127.0.0.1:8000/api/responsables", {
+      const data = {
         nombres,
         apellidos,
         ci,
         correo_electronico: correo,
         telefono,
-      });
+      }
+      console.log(data)
+      const te =await axios.post("http://localhost:8000/api/registrarResponGestion", data);
       console.log("Datos enviados con éxito.");
 
       alert("Responsable de Gestión registrado con éxito ✅");
