@@ -106,12 +106,6 @@ const handleSubmit = async (e) => {
     {mensaje && (
   <div className="modal-overlay">
     <div className={`modal-mensaje ${tipoMensaje}`}>
-      <button className="modal-cerrar-btn" onClick={() => {
-        setMensaje("");
-        setTipoMensaje("");
-      }}>
-        ✖
-      </button>
       <h2>{mensaje}</h2>
     </div>
   </div>

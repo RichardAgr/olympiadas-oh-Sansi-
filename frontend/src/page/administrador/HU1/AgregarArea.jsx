@@ -79,10 +79,18 @@ const handleSubmit = async (e) => {
       navigate("/admin/areas");
     }, 2500); // Opcional: espera 2.5s antes de redirigir
   } catch (error) {
-    console.error("Error al registrar el área:", error);
-    setMensaje("Hubo un error al guardar el área ❌");
-    setTipoMensaje("error");
-  }
+  console.error("Error al registrar el área:", error);
+  
+  // Mostrar mensaje inmediatamente
+  setMensaje("Hubo un error al guardar el área ❌");
+  setTipoMensaje("error");
+
+  // Ocultar el mensaje después de 2.5 segundos
+  setTimeout(() => {
+    setMensaje("");
+    setTipoMensaje("");
+  }, 2500);
+}
 };
 
 
@@ -92,12 +100,6 @@ const handleSubmit = async (e) => {
       {mensaje && (
   <div className="modal-overlay">
     <div className={`modal-mensaje ${tipoMensaje}`}>
-      <button className="modal-cerrar-btn" onClick={() => {
-        setMensaje("");
-        setTipoMensaje("");
-      }}>
-        ✖
-      </button>
       <h2>{mensaje}</h2>
     </div>
   </div>
