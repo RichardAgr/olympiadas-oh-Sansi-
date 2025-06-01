@@ -89,7 +89,7 @@ function EditarRespon() {
     console.log("Validación exitosa. Enviando datos actualizados...");
 
     try {
-      await axios.put(`http://127.0.0.1:8000/api/responsables/${id}`, {
+      await axios.put(`http://127.0.0.1:8000/api/editarResponsableGestion/${id}`, {
         nombres,
         apellidos,
         ci,

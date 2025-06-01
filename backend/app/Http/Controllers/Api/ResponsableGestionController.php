@@ -116,11 +116,8 @@ class ResponsableGestionController extends Controller{
         ];
     }
 
-    /**
-     * Modificar un responsable existente.
-     * PUT /api/responsables/{id}
-     */
-    public function update(Request $request, $id)
+
+    public function editarResponsableGestion(Request $request, $id)
     {
         try {
             $responsable = ResponsableGestion::findOrFail($id);

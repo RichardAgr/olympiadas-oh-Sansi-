@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/datosResponsableGestion', [ResponsableGestionController::class, 'obtenerResponsableGestion']);
     Route::get('/datosResponsableId/{responsableId}', [ResponsableGestionController::class, 'obtenerDatosRespGestionId']);
     Route::delete('/eliminarResponsableGestion/{id}', [ResponsableGestionController::class, 'eliminarResponsableGestion']);
+    Route::put('/editarResponsableGestion/{id}', [ResponsableGestionController::class, 'editarResponsableGestion']);
     
     // Eventos
     Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
