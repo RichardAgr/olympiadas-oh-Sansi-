@@ -95,6 +95,7 @@ html, body {
 
 .registrate-card input {
   padding: 10px;
+  width: 100%;
   border-radius: 12px;
   border: 1px solid #ccc;
   font-size: 14px;
