@@ -7,21 +7,7 @@ import { fetchWithAuth } from "../../components/Tokens/fetchWithAuth";
 
 
 const VEvento = () => {
-  const [areas, setAreas] = useState([]);
   const [search, setSearch] = useState("");
-
- 
-
-  const fetchData = async () => {
-    try {
-      const res = await fetchWithAuth("http://localhost:8000/api/evento/fechas");
-      const data = await res.json();
-      setAreas(data);
-    } catch (err) {
-      console.error("Error fetching areas:", err);
-    }
-  };
-
   useEffect(() => {
     fetchData();
   }, []);
@@ -31,12 +17,6 @@ const fuse = new Fuse(areas, {
   keys: ["nombre"], // Campos a buscar
   threshold: 0.4,   // Sensibilidad: más bajo = más estricto
 });
-
-
-
-
- 
-
   return (
     <div className="evento-grid-container">
       <h2 className="evento-title">Próximos eventos</h2>
