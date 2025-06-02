@@ -1,22 +1,81 @@
-/* AdminFooter.css */
+  .admin-footer.homePrincipal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background-color: #2c3e50;
+  color: white;
+  font-size: 0.9rem;
+}
 
-.admin-layout {
-    display: flex;
+.footer-left.homePrincipal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.contact-title.homePrincipal {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.social-icons.homePrincipal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.contact-link.homePrincipal {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contact-link.homePrincipal:hover {
+  color: #3498db;
+}
+
+.icon.homePrincipal {
+  transition: transform 0.2s;
+}
+
+.contact-link.homePrincipal:hover .icon.homePrincipal {
+  transform: scale(1.1);
+}
+
+.contact-text.homePrincipal {
+  font-size: 0.85rem;
+}
+
+.footer-right.homePrincipal {
+  text-align: right;
+}
+
+.org-title.homePrincipal {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.org-detail.homePrincipal {
+  line-height: 1.4;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .admin-footer.homePrincipal {
     flex-direction: column;
-    min-height: 100vh;
+    gap: 1.5rem;
+    text-align: center;
   }
   
-  .admin-content {
-    flex: 1;
-    padding: 0.5rem;
+  .footer-right.homePrincipal {
+    text-align: center;
   }
   
-  .admin-footer {
-    background-color: #000;
-    color: white;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .social-icons.homePrincipal {
+    justify-content: center;
   }
-  
+}
