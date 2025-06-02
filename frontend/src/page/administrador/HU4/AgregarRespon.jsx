@@ -59,31 +59,46 @@ function AgregarRespon() {
   };
   
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Envío de formulario iniciado.");
+  e.preventDefault();
+  console.log("Envío de formulario iniciado.");
 
-    if (!validarFormulario()) {
-      console.warn("Validación fallida. Formulario no enviado.");
-      return; }
+  if (!validarFormulario()) {
+    console.warn("Validación fallida. Formulario no enviado.");
+    return;
+  }
 
-      console.log("Validación exitosa. Enviando datos...");
-      
-    try {
-      const data = {
-        nombres,
-        apellidos,
-        ci,
-        correo_electronico: correo,
-        telefono,
-      }
-      console.log(data)
-      const te =await axios.post("http://localhost:8000/api/registrarResponGestion", data);
-      console.log("Datos enviados con éxito.");
-      navigate("/admin/visualizarRegistro");
-    } catch (error) {
-      console.error("Error al registrar al responsable:", error);
-    }
-  };
+  console.log("Validación exitosa. Enviando datos...");
+
+  try {
+    const data = {
+      nombres,
+      apellidos,
+      ci,
+      correo_electronico: correo,
+      telefono,
+    };
+
+    const authToken = localStorage.getItem("authToken"); // Asegúrate de que esto esté guardado al hacer login
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    console.log("Data a enviar:", data);
+    console.log("Token:", authToken);
+
+    const response = await axios.post("http://localhost:8000/api/registrarResponGestion", data, config);
+    console.log("Datos enviados con éxito.");
+    navigate("/admin/visualizarRegistro");
+
+  } catch (error) {
+    console.error("Error al registrar al responsable:", error.response || error.message);
+  }
+};
+
 
   const handleCancel = () => {
     navigate("/admin/visualizarRegistro");

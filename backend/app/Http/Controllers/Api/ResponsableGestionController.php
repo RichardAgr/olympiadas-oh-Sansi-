@@ -18,99 +18,106 @@ class ResponsableGestionController extends Controller{
     }
 
     public function registrarResponsableGestion(Request $request): JsonResponse {
-        try {
-            // Validar los datos de entrada
-            $validated = $request->validate([
-                'nombres' => 'required|string|max:255',
-                'apellidos' => 'required|string|max:255',
-                'ci' => 'required|string|max:20|unique:responsable,ci',
-                'correo_electronico' => 'required|email|max:255|unique:responsable,correo',
-                'telefono' => 'required|string|max:20'
-            ]);
-            $responsableId = DB::table('responsable')->insertGetId([
-                'nombre' => strtoupper(trim($validated['nombres'])), 
-                'apellido' => strtoupper(trim($validated['apellidos'])), 
-                'ci' => trim($validated['ci']),
-                'correo' => strtolower(trim($validated['correo_electronico'])), 
-                'telefono' => trim($validated['telefono']),
-                'estado' => 1, // Por defecto activo
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
+    try {
+        // Validar los datos de entrada
+        $validated = $request->validate([
+            'nombres' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'ci' => 'required|string|max:20|unique:responsable,ci',
+            'correo_electronico' => 'required|email|max:255|unique:responsable,correo_electronico',
+            'telefono' => 'required|string|max:20'
+        ]);
 
-            $responsable = DB::table('responsable')
-                ->select([
-                    'responsable_id',
-                    'nombre',
-                    'apellido',
-                    'ci',
-                    'correo',
-                    'telefono',
-                    'estado',
-                    'created_at',
-                    'updated_at'
-                ])
-                ->where('responsable_id', $responsableId)
-                ->first();
+        // Insertar nuevo responsable y obtener su ID
+        $responsableId = DB::table('responsable')->insertGetId([
+            'nombres' => strtoupper(trim($validated['nombres'])),
+            'apellidos' => strtoupper(trim($validated['apellidos'])),
+            'ci' => trim($validated['ci']),
+            'correo_electronico' => strtolower(trim($validated['correo_electronico'])),
+            'telefono' => trim($validated['telefono']),
+            'estado' => 1, // Por defecto activo
+            'fecha_asignacion' => now()->toDateString(),
+            'password' => bcrypt('default_password'), // Contraseña por defecto, cambiar después
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
 
-            $responsableFormatted = [
-                'responsable_id' => $responsable->responsable_id,
-                'nombres' => $responsable->nombre,
-                'apellidos' => $responsable->apellido,
-                'ci' => $responsable->ci,
-                'correo_electronico' => $responsable->correo,
-                'telefono' => $responsable->telefono,
-                'estado' => (bool) $responsable->estado,
-                'estado_texto' => $responsable->estado ? 'Activo' : 'Inactivo',
-                'created_at' => $responsable->created_at,
-                'updated_at' => $responsable->updated_at
-            ];
+        // Recuperar el responsable insertado
+        $responsable = DB::table('responsable')
+            ->select([
+                'responsable_id',
+                'nombres',
+                'apellidos',
+                'ci',
+                'correo_electronico',
+                'telefono',
+                'estado',
+                'created_at',
+                'updated_at'
+            ])
+            ->where('responsable_id', $responsableId)
+            ->first();
 
-            return response()->json([
-                'message' => 'Responsable registrado exitosamente',
-                'data' => $responsableFormatted
-            ], 201); // 201 Created
+        // Formatear la respuesta
+        $responsableFormatted = [
+            'responsable_id' => $responsable->responsable_id,
+            'nombres' => $responsable->nombres,
+            'apellidos' => $responsable->apellidos,
+            'ci' => $responsable->ci,
+            'correo_electronico' => $responsable->correo_electronico,
+            'telefono' => $responsable->telefono,
+            'estado' => (bool) $responsable->estado,
+            'estado_texto' => $responsable->estado ? 'Activo' : 'Inactivo',
+            'created_at' => $responsable->created_at,
+            'updated_at' => $responsable->updated_at
+        ];
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'error' => 'Datos de entrada inválidos',
-                'details' => $e->errors()
-            ], 422);
+        return response()->json([
+            'message' => 'Responsable registrado exitosamente',
+            'data' => $responsableFormatted
+        ], 201); // 201 Created
 
-        } catch (\Illuminate\Database\QueryException $e) {
-            if ($e->getCode() == 23000) { 
-                $errorMessage = 'Ya existe un responsable con ';
-                if (strpos($e->getMessage(), 'ci') !== false) {
-                    $errorMessage .= 'ese número de CI';
-                } elseif (strpos($e->getMessage(), 'correo') !== false) {
-                    $errorMessage .= 'ese correo electrónico';
-                } else {
-                    $errorMessage .= 'esos datos';
-                }
-                
-                return response()->json([
-                    'error' => $errorMessage
-                ], 409); // Conflict
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'error' => 'Datos de entrada inválidos',
+            'details' => $e->errors()
+        ], 422);
+
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) { 
+            $errorMessage = 'Ya existe un responsable con ';
+            if (strpos($e->getMessage(), 'ci') !== false) {
+                $errorMessage .= 'ese número de CI';
+            } elseif (strpos($e->getMessage(), 'correo_electronico') !== false) {
+                $errorMessage .= 'ese correo electrónico';
+            } else {
+                $errorMessage .= 'esos datos';
             }
-
-            Log::error('Error de base de datos al crear responsable: ' . $e->getMessage());
-
+            
             return response()->json([
-                'error' => 'Error de base de datos'
-            ], 500);
-
-        } catch (Exception $e) {
-            Log::error('Error al crear responsable: ' . $e->getMessage(), [
-                'request_data' => $request->all(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
-            ]);
-
-            return response()->json([
-                'error' => 'Error interno del servidor'
-            ], 500);
+                'error' => $errorMessage
+            ], 409); // Conflict
         }
+
+        Log::error('Error de base de datos al crear responsable: ' . $e->getMessage());
+
+        return response()->json([
+            'error' => 'Error de base de datos'
+        ], 500);
+
+    } catch (Exception $e) {
+        Log::error('Error al crear responsable: ' . $e->getMessage(), [
+            'request_data' => $request->all(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ]);
+
+        return response()->json([
+            'error' => 'Error interno del servidor'
+        ], 500);
     }
+}
+
 
     public function obtenerDatosRespGestionId(int $responsableId): JsonResponse{
        try {
