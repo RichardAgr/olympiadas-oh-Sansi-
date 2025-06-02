@@ -25,6 +25,7 @@ function InscribirManual() {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
+  const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -140,6 +141,11 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
     setFormData((prev) => ({ ...prev, ...paso2Data }));
     setCompetidorId(Number(nuevoCompetidorId));
     setCurrentStep(3);
+  };
+
+  const handleCancelarConfirmado = () => {
+    setMostrarModalCancelar(false);
+    window.history.back(); // O redirige a otra ruta si prefieres
   };
 
   return (
@@ -299,7 +305,7 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
           </div>
 
           <div className="submit-button-container">
-            <button type="button" className="submit-button cancel" onClick={handleBack}>
+            <button type="button" className="submit-button cancel" onClick={() => setMostrarModalCancelar(true)}>
               Cancelar
             </button>
             <button type="submit" className="submit-button">
@@ -332,6 +338,29 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
         
       />
       )}
+      {mostrarModalCancelar && (
+  <div className="modal-overlayCancelarManual">
+    <div className="modalCancelarManual">
+      <h2>¿Estás seguro que deseas cancelar?</h2>
+      <p>Se perderán los datos ingresados hasta ahora.</p>
+      <div className="modal-buttonsCancelarManual">
+        <button
+          className="btn-eliminar2CancelarManual"
+          onClick={handleCancelarConfirmado}
+        >
+          Sí
+        </button>
+        <button
+          className="btn-eliminar2CancelarManual"
+          onClick={() => setMostrarModalCancelar(false)}
+        >
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

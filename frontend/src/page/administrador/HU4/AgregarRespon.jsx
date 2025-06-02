@@ -11,6 +11,7 @@ function AgregarRespon() {
   const [correo, setCorreo] = useState("");
   const [telefono, setTelefono] = useState("");
   const [errores, setErrores] = useState({});
+  const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
 
   const navigate = useNavigate();
 
@@ -98,9 +99,17 @@ function AgregarRespon() {
 };
 
 
-  const handleCancel = () => {
-    navigate("/admin/visualizarRegistro");
-  };
+const handleCancel = () => {
+  setMostrarModalCancelar(true);
+};
+
+const confirmarCancelacion = () => {
+  navigate("/admin/visualizarRegistro");
+};
+
+const cerrarModal = () => {
+  setMostrarModalCancelar(false);
+};
 
   return (
     <div className="form-container2Hu41">
@@ -175,6 +184,18 @@ function AgregarRespon() {
           </button>
         </div>
       </form>
+      {mostrarModalCancelar && (
+  <div className="modal-overlayCancelarhu41">
+    <div className="modalCancelarhu41">
+      <h3>¿Estás seguro que deseas cancelar?</h3>
+      <p>Perderás los datos no guardados.</p>
+      <div className="modal-buttonsCancelarhu41">
+        <button className="btn-eliminar2Cancelarhu41" onClick={confirmarCancelacion}>Sí</button>
+        <button className="btn-eliminar2Cancelarhu41" onClick={cerrarModal}>No</button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
