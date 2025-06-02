@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import "../../App.css"
+import api from '../../components/Tokens/api';
 
 function RegistrarOrganizador() {
   const navigate = useNavigate()
@@ -18,7 +19,7 @@ function RegistrarOrganizador() {
   const cargarAreas = async () => {
     try {
       setLoading(true)
-      const response = await axios.get("http://127.0.0.1:8000/api/datosAreaCompleto")
+      const response = await api.get("http://127.0.0.1:8000/api/datosAreaCompleto")
       setAreas(response.data.data || [])
       setError(null)
     } catch (err) {

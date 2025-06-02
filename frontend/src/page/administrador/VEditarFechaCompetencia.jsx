@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
 import "./VEditarFecha.css";
+import { fetchWithAuth } from "../../components/Tokens/fetchWithAuth"; // Adjust the import path as necessary
 
 registerLocale("es", es);
 
@@ -39,7 +40,7 @@ const VEditarFechaCompetencia = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/evento/fechas/${areaId}/competencia`);
+        const res = await fetchWithAuth(`http://localhost:8000/api/evento/fechas/${areaId}/competencia`);
         const data = await res.json();
 
         if (data?.inicio) setStartDate(parseDateSafely(data.inicio));
@@ -56,7 +57,7 @@ const VEditarFechaCompetencia = () => {
   useEffect(() => {
     const fetchArea = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/areas/${areaId}`); // 👈 with "areas" (plural)
+        const res = await fetchWithAuth(`http://localhost:8000/api/areas/${areaId}`); // 👈 with "areas" (plural)
 
         const data = await res.json();
         setAreaNombre(data.nombre);
@@ -85,7 +86,7 @@ const VEditarFechaCompetencia = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:8000/api/evento/fechas", {
+      const res = await fetchWithAuth("http://localhost:8000/api/evento/fechas", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

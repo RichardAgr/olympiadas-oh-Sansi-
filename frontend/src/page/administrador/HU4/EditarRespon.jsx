@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import "./EditarRespon.css";
+import api from '../../../components/Tokens/api';
 
 function EditarRespon() {
   const { id } = useParams();
@@ -16,7 +17,7 @@ function EditarRespon() {
 
   useEffect(() => {
     console.log(`Cargando datos del responsable con ID: ${id}`);
-    axios
+    api
       .get(`http://localhost:8000/api/datosResponsableId/${id}`)
       .then((res) => {
         const data = res.data.data;
@@ -89,7 +90,7 @@ function EditarRespon() {
     console.log("Validación exitosa. Enviando datos actualizados...");
 
     try {
-      await axios.put(`http://127.0.0.1:8000/api/editarResponsableGestion/${id}`, {
+      await api.put(`http://127.0.0.1:8000/api/editarResponsableGestion/${id}`, {
         nombres,
         apellidos,
         ci,

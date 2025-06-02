@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 import ModalConfirmDelete from "../../../components/ModalesAdmin/ModalConfirmDelete"
 import axios from "axios";
+import api from '../../../components/Tokens/api';
 
 const filasPorPagina = 15;
 
@@ -20,7 +21,7 @@ function RegistrarOrganizador() {
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
 
 useEffect(() => {
-  axios.get("http://localhost:8000/api/datosResponsableGestion")
+  api.get("http://localhost:8000/api/datosResponsableGestion")
     .then((response) => {
       setData(response.data);
     })
@@ -67,7 +68,7 @@ useEffect(() => {
     if (!responsable || !responsable.responsable_id) return;
 
     try {
-      await axios.delete(
+      await api.delete(
         `http://localhost:8000/api/eliminarResponsableGestion/${responsable.responsable_id}`
       );
       setData((prevData) =>

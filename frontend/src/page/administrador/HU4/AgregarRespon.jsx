@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AgregarRespon.css";
+import api from '../../../components/Tokens/api';
 
 function AgregarRespon() {
   const [nombres, setNombres] = useState("");
@@ -87,7 +88,7 @@ function AgregarRespon() {
       },
     };
   
-    await axios.post("http://localhost:8000/api/registrarResponGestion", data, config);
+    await api.post("http://localhost:8000/api/registrarResponGestion", data, config);
     console.log("Datos enviados con éxito.");
     navigate("/admin/visualizarRegistro");
 

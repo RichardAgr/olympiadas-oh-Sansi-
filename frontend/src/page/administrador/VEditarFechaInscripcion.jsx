@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
 import "./VEditarFecha.css";
+import { fetchWithAuth } from "../../components/Tokens/fetchWithAuth"; // Adjust the import path as necessary
 
 registerLocale("es", es);
 
@@ -17,7 +18,7 @@ const VEditarFechaInscripcion = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/evento/fechas/${areaId}/inscripcion`);
+        const res = await fetchWithAuth(`http://localhost:8000/api/evento/fechas/${areaId}/inscripcion`);
         const data = await res.json();
         if (data) {
           const offsetMs = new Date().getTimezoneOffset() * 60000;
@@ -50,7 +51,7 @@ const VEditarFechaInscripcion = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:8000/api/evento/fechas", { //change to a global varaible
+      const res = await fetchWithAuth("http://localhost:8000/api/evento/fechas", { //change to a global varaible
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CalendarDays, MapPin } from "lucide-react";
 import "./VEvento.css";
 import Fuse from "fuse.js"; // Import Fuse.js for fuzzy searching
+import { fetchWithAuth } from "../../components/Tokens/fetchWithAuth";
 
 const formatDate = (isoString) => {
   if (!isoString) return "Sin Asignar";
