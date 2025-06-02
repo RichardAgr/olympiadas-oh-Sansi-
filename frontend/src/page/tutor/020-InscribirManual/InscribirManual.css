@@ -165,14 +165,12 @@
   cursor: pointer;
 }
 
-/* ERRORES */
-.inscribir-manual-form .input-error {
-  border: 2px solid #e74c3c;
-  background-color: #ffe6e6;
-}
 
-.inscribir-manual-form .error-message {
-  color: #e74c3c;
+.inscribir-manual-form .errorins {
+  color: red;
   font-size: 13px;
-  margin-top: 4px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  display: block;
+  text-align: left;
 }

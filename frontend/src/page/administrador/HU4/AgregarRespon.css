@@ -71,7 +71,7 @@
 .errorHu41 {
   color: red;
   font-size: 13px;
-  margin-top: -10px;
+  margin-top: 5px;
   margin-bottom: 10px;
   display: block;
   text-align: left;
@@ -97,6 +97,7 @@
   cursor: pointer;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s, transform 0.2s;
+
 }
 
 .btn-cancelarRespHu41 {

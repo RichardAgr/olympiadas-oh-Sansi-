@@ -25,7 +25,13 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
     const cargarDatos = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/tutor/competidor/datos-competencia"
+          "http://127.0.0.1:8000/api/tutor/competidor/datos-competencia",
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+          }
         );
         setAreas(response.data.areas);
         setCategorias(response.data.categorias);
@@ -67,6 +73,7 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
           {
             headers: {
               "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem('authToken')}`
             },
           }
         );
@@ -83,13 +90,13 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
       } catch (error) {
         console.error("Error al registrar al competidor:", error);
         if (error.response) {
-          alert("Error del servidor: " + JSON.stringify(error.response.data));
+          //alert("Error del servidor: " + JSON.stringify(error.response.data));
         } else {
-          alert("Error al registrar al competidor.");
+          //alert("Error al registrar al competidor.");
         }
       }
     } else {
-      alert("Por favor, selecciona todos los campos.");
+      //alert("Por favor, selecciona todos los campos.");
     }
   };
 
