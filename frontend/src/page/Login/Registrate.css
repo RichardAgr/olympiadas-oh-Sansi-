@@ -136,7 +136,7 @@ html, body {
   color: #ff4444;
   font-size: 0.8rem;
   margin-top: 4px;
-  margin-top: -23px;
+  margin-top: -10px;
 
   height: 16px;
 }
@@ -146,4 +146,9 @@ html, body {
   text-align: center;
   margin: 10px 0;
   font-size: 0.9rem;
+}
+.password-requirements {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
 }

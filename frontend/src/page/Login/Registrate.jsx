@@ -60,6 +60,12 @@ const Registrate = () => {
       case "password":
         if (value.length < 6) {
           error = "Mínimo 6 caracteres";
+        } else if (!/(?=.*[0-9])/.test(value)) {
+          error = "Debe contener al menos un número";
+        } else if (!/(?=.*[A-Z])/.test(value)) {
+          error = "Debe contener al menos una mayúscula";
+        } else if (!/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/.test(value)) {
+          error = "Debe contener al menos un carácter especial";
         }
         break;
       case "confirmPassword":
@@ -95,7 +101,7 @@ const Registrate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     setErrors((prev) => ({ ...prev, general: "" }));
 
     // Validar todos los campos antes de enviar
@@ -138,11 +144,11 @@ const Registrate = () => {
       } else {
         // La API respondió con 200 pero sin datos esperados
         navigate("/homePrincipal/login", {
-              state: {
-                registrationSuccess: true,
-                message: "¡Registro completado con éxito!",
-              },
-            });
+          state: {
+            registrationSuccess: true,
+            message: "¡Registro completado con éxito!",
+          },
+        });
       }
     } catch (err) {
       // Manejar errores de conexión o validación del servidor
@@ -185,7 +191,7 @@ const Registrate = () => {
       }
 
       setErrors((prev) => ({ ...prev, general: errorMessage }));
-    } 
+    }
   };
 
   return (
@@ -269,6 +275,7 @@ const Registrate = () => {
           {errors.ci && <p className="registrate-error-message">{errors.ci}</p>}
 
           {/* Contraseña */}
+          {/* Contraseña */}
           <label>Contraseña</label>
           <div className="password-input">
             <input
@@ -290,8 +297,13 @@ const Registrate = () => {
               )}
             </span>
           </div>
-          {errors.password && (
+          {errors.password ? (
             <p className="registrate-error-message">{errors.password}</p>
+          ) : (
+            <p className="password-requirements">
+              La contraseña debe tener al menos 6 caracteres, incluir un número,
+              una mayúscula y un carácter especial.
+            </p>
           )}
 
           {/* Confirmar Contraseña */}
