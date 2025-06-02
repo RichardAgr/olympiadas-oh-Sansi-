@@ -18,7 +18,7 @@ const [tipoMensaje, setTipoMensaje] = useState(""); // "exito" o "error"
 
 
   const areasPerPage = 15;
-
+const authToken = localStorage.getItem("authToken");
   useEffect(() => {
   const fetchAreas = async () => {
     try {
@@ -26,7 +26,9 @@ const [tipoMensaje, setTipoMensaje] = useState(""); // "exito" o "error"
         timeout: 5000, // timeout para evitar requests colgados
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+          
         }
       });
 
@@ -90,9 +92,18 @@ const filteredAreas = onlyLettersRegex.test(searchTerm)
   if (!areaToDelete) return;
 
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/eliminarArea/${areaToDelete.area_id}`);
-    setAreas(areas.filter((area) => area.area_id !== areaToDelete.area_id));
-    setAreaToDelete(null);
+    const authToken = localStorage.getItem("authToken");
+
+await axios.delete(`http://127.0.0.1:8000/api/eliminarArea/${areaToDelete.area_id}`, {
+  headers: {
+    Authorization: `Bearer ${authToken}`,
+    'Accept': 'application/json',
+  },
+});
+
+setAreas(areas.filter((area) => area.area_id !== areaToDelete.area_id));
+setAreaToDelete(null);
+
 
     setMensaje("Área eliminada correctamente ✅");
     setTipoMensaje("exito");

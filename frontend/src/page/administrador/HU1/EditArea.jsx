@@ -29,15 +29,23 @@ const EditArea = () => {
 };
 
 
-  useEffect(() => {
-    axios.get(`http://localhost:8000/api/obtenerDatosArea/${id}`)
-      .then((response) => {
-        setNombre(response.data.nombre);
-        setDescripcion(response.data.descripcion);
-        setCosto(response.data.costo);
-      })
-      .catch((error) => console.error("Error al cargar el área:", error));
-  }, [id]);
+useEffect(() => {
+  const authToken = localStorage.getItem("authToken");
+
+  axios.get(`http://localhost:8000/api/obtenerDatosArea/${id}`, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Accept': 'application/json',
+    },
+  })
+    .then((response) => {
+      setNombre(response.data.nombre);
+      setDescripcion(response.data.descripcion);
+      setCosto(response.data.costo);
+    })
+    .catch((error) => console.error("Error al cargar el área:", error));
+}, [id]);
+
 
   const validarFormulario = () => {
     const nuevosErrores = {};
@@ -79,7 +87,16 @@ const handleSubmit = async (e) => {
 
 
   try {
-    await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`,data);
+    const authToken = localStorage.getItem("authToken");
+
+await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
+  headers: {
+    Authorization: `Bearer ${authToken}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+});
+
 
     setMensaje("Área actualizada con éxito ✅");
     setTipoMensaje("exito");
