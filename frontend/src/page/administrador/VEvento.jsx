@@ -21,7 +21,7 @@ const VEvento = () => {
 
   const fetchData = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/evento/fechas");
+      const res = await fetchWithAuth("http://localhost:8000/api/evento/fechas");
       const data = await res.json();
       setAreas(data);
     } catch (err) {
