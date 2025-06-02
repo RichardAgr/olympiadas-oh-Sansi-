@@ -76,8 +76,7 @@ function AgregarRespon() {
         correo_electronico: correo,
         telefono,
       }
-      console.log(data)
-      const te =await axios.post("http://localhost:8000/api/registrarResponGestion", data);
+      await axios.post("http://localhost:8000/api/registrarResponGestion", data);
       console.log("Datos enviados con éxito.");
       navigate("/admin/visualizarRegistro");
     } catch (error) {
