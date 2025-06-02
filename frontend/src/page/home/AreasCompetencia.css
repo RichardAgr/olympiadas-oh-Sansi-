@@ -1,80 +1,49 @@
-.area-container {
-     padding: 30px;
-     color: white;
-   }
-   
-   .area-title {
-     margin-top: -50px;
-     font-size: 35px;
-     margin-bottom: 20px;
-     font-weight: bold;
-     text-align: center;
-   }
-   .area-container {
-     height: 100vh; 
-     display: flex;
-     justify-content: center; 
-     align-items: center;     
-     padding: 30px;
-     color: white;
-     background:#F6FAFF; 
-     box-sizing: border-box;
-     flex-direction: column; 
-   }
-   .area-card {
-     background-size: cover;
-     background-position: center;
-     padding: 20px;
-     border-radius: 10px;
-     overflow-x: auto;
-     min-width: 600px; 
-     max-width: 900px; 
-     max-height: 800px; 
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     width: 90%;  
-     max-width: 980px;
-     margin: 0 auto; 
-   }   
-   
-   .area-table {
-     width: 90%;
-     border-collapse: collapse;
-     background: rgba(255, 255, 255, 0.15); /* fondo blanco semi-transparente */
-     border-radius: 10px;
-     overflow: hidden;
-   }
-   
-   .area-table th,
-   .area-table td {
-     border: 1px solid rgba(255, 255, 255, 0.3);
-     padding: 20px;
-     font-size: 20px;
-     text-align: left;
-     background-color: rgba(255, 255, 255, 0.25); /* fondo semi-transparente */
-     color: white;
-     white-space: nowrap;
-   }
-   
-   .area-table thead th {
-     background-color: rgba(255, 255, 255, 0.35);
-     font-weight: bold;
-   }
-   
-   /* Para que el botón mantenga texto blanco */
-   .pdf-button {
-     white-space: nowrap; /* evita salto de línea */
-     background-color: #061A8B;
-     color: white;
-     border: none;
-     padding: 6px 12px;
-     border-radius: 4px;
-     cursor: pointer;
-     font-size: 18px;
-   }
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600&display=swap');
 
-   .notificationAreaCom {
+/* Contenedor principal */
+.area-container {
+  height: 100vh;
+  padding: 30px;
+  background: #F6FAFF;
+  color: #222; /* texto oscuro para contraste con fondo claro */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Comfortaa', cursive;
+}
+
+/* Título principal */
+.area-title {
+  margin: 0 0 20px 0; /* elimina margin-top negativo */
+  font-size: 40px;
+  font-weight: 1000; /* peso de fuente más grueso */
+  text-align: center;
+  color:#ffffff /* color que destaca en fondos oscuros */
+  
+}
+
+/* Botón descargar PDF */
+.pdf-button {
+  white-space: nowrap; /* evita que el texto se divida en varias líneas */
+  background: linear-gradient(135deg, #5c6477, #1d283a, #334155);
+  color: white;
+  border: none;
+  padding: 8px 14px; 
+  border-radius: 6px; 
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-top: 20px; /* espacio entre la tabla y el botón */
+}
+
+.pdf-button:hover {
+  background-color: var(--primary-dark);;
+}
+
+/* Notificación */
+.notificationAreaCom {
   position: fixed;
   top: 20px;
   left: 50%;
@@ -93,4 +62,151 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Eventos: container y cards (con la nomenclatura corregida) */
+.eventoH-grid-container {
+  background-color: #0000008e;
+  padding: 2rem 0;
+  min-height: 100vh;
+  color: white;
+  text-align: center;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.imagen-AreasCompetencia {
+ background-size: cover !important;
+  background-position: center !important;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 8px 25px rgba(14, 165, 233, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(14, 165, 233, 0.3);
+}
+
+
+
+.eventoH-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  color: white;
+}
+
+.eventoH-card-grid {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.eventoH-card {
+  background-color: rgba(32, 30, 80, 0.753);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.5rem;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  position: relative;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.eventoH-nombre {
+  font-size: 1.3rem;
+  color: #facc15;
+  font-weight: 600;
+  text-align: center;
+}
+
+
+.eventoH-info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.eventoH-icon {
+  color: white;
+  min-width: 20px;
+  cursor: default;
+}
+
+.eventoH-icon.clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.eventoH-icon.clickable:hover {
+  transform: scale(1.1);
+  color: #facc15;
+}
+
+.eventoH-info-label {
+  font-weight: 600;
+  margin-right: 4px;
+  color: #e2e8f0;
+}
+
+.eventoH-info-value {
+  color: #fff;
+}
+
+.eventoH-info-value.location {
+  margin-left: 0.5rem;
+}
+
+.eventoH-info-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.eventoH-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.eventoH-info-label {
+  font-size: 0.7rem;
+  color: #f0f0f0;
+  margin-bottom: 4px;
+  font-weight: 700;
+  padding-left: 34px;
+}
+
+.eventoH-info-value {
+  font-size: 0.9rem;
+  color: white;
+  padding-top: 2px; /* 👈 Pushes it slightly downward */
+  position: relative;
+  top: 1px; /* Optional: adds even finer control */
+}
+.eventoH-location-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* 🧭 aligns left */
+  gap: 3px;
+  margin-left: 7px; /* aligns it with other labels */
+  width: 100%;
+}
+.eventoH-icon.calendar {
+  color: #f07ec0; /* 🌸 Change to whatever color you'd like */
+}
+
    

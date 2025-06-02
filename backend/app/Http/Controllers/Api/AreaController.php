@@ -321,71 +321,78 @@ class AreaController extends Controller{
         }
     }
 
-    public function getAreasWithCategoriasGrados(){
-        try {
-            // Obtener todas las áreas con sus categorías y relaciones de grados
-            $areas = Area::with([
-                'nivelCategoria',
-                'nivelCategoria.gradoInicial',
-                'nivelCategoria.gradoFinal',
-                'nivelCategoria.gradoInicial.nivelEducativo',
-                'nivelCategoria.gradoFinal.nivelEducativo'
-            ])
-            ->where('estado', true)
-            ->get();
+       public function getAreasWithCategoriasGrados()
+{
+    try {
+        $areas = Area::with([
+            'nivelCategoria',
+            'nivelCategoria.gradoInicial',
+            'nivelCategoria.gradoFinal',
+            'nivelCategoria.gradoInicial.nivelEducativo',
+            'nivelCategoria.gradoFinal.nivelEducativo',
+            'cronograma' // Relación del área hacia sus cronogramas
+        ])
+        ->where('estado', true)
+        ->get();
 
-            $result = [];
+        $result = [];
 
-            foreach ($areas as $area) {
-                $categorias = [];
+        foreach ($areas as $area) {
+            $categorias = [];
 
-                // Procesar cada categoría del área
-                foreach ($area->nivelCategoria as $categoria) {
-                    $gradoInicialNombre = $categoria->gradoInicial->nombre;
-                    $gradoFinalNombre = $categoria->gradoFinal->nombre;
-                    
-                    // Crear el rango_grado
-                    $rangoGrado = $gradoInicialNombre;
-                    if ($categoria->grado_id_inicial !== $categoria->grado_id_final) {
-                        $rangoGrado .= ' a ' . $gradoFinalNombre;
-                    }
-                    
-                    $categoriaData = [
-                        'nivel_categoria_id' => $categoria->nivel_categoria_id,
-                        'nombre' => $categoria->nombre,
-                        'rango_grado' => $rangoGrado
-                    ];
+            foreach ($area->nivelCategoria as $categoria) {
+                $gradoInicialNombre = $categoria->gradoInicial->nombre;
+                $gradoFinalNombre = $categoria->gradoFinal->nombre;
 
-                    $categorias[] = $categoriaData;
+                $rangoGrado = $gradoInicialNombre;
+                if ($categoria->grado_id_inicial !== $categoria->grado_id_final) {
+                    $rangoGrado .= ' a ' . $gradoFinalNombre;
                 }
 
-                // Solo agregar áreas que tengan categorías
-                if (count($categorias) > 0) {
-                    $result[] = [
-                        'area_id' => $area->area_id,
-                        'nombre' => $area->nombre,
-                        'costo' => $area->costo,
-                        'categorias' => $categorias
-                    ];
-                }
+                $categorias[] = [
+                    'nivel_categoria_id' => $categoria->nivel_categoria_id,
+                    'nombre' => $categoria->nombre,
+                    'rango_grado' => $rangoGrado
+                ];
             }
 
-            return response()->json([
-                'success' => true,
-                'data' => $result,
-                'message' => 'Áreas con categorías y grados obtenidas correctamente'
-            ], 200);
+            if (count($categorias) > 0) {
+                // Obtener fechas de cronograma según tipo_evento
+                $inscripcion = $area->cronograma->firstWhere('tipo_evento', 'Inscripcion');
+                $fin = $area->cronograma->firstWhere('tipo_evento', 'Fin');
+                $competencia = $area->cronograma->firstWhere('tipo_evento', 'Competencia');
 
-        } catch (\Exception $e) {
-            Log::error('Error al obtener áreas con categorías y grados: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al obtener las áreas con categorías y grados',
-                'error' => $e->getMessage()
-            ], 500);
+                $result[] = [
+                    'area_id' => $area->area_id,
+                    'nombre' => $area->nombre,
+                    'costo' => $area->costo,
+                    'fecha_inscripcion_inicio' => $inscripcion ? \Carbon\Carbon::parse($inscripcion->fecha_inicio)->format('d-m-Y') : null,
+                    'fecha_inscripcion_fin' => $inscripcion ? \Carbon\Carbon::parse($inscripcion->fecha_fin)->format('d-m-Y') : null,
+                    'fecha_fin_inicio' => $fin ? \Carbon\Carbon::parse($fin->fecha_inicio)->format('d-m-Y') : null,
+                    'fecha_fin_fin' => $fin ? \Carbon\Carbon::parse($fin->fecha_fin)->format('d-m-Y') : null,
+                    'fecha_competencia_inicio' => $competencia ? \Carbon\Carbon::parse($competencia->fecha_inicio)->format('d-m-Y') : null,
+                    'fecha_competencia_fin' => $competencia ? \Carbon\Carbon::parse($competencia->fecha_fin)->format('d-m-Y') : null,
+                    'categorias' => $categorias
+                ];
+            }
         }
+
+        return response()->json([
+            'success' => true,
+            'data' => $result,
+            'message' => 'Áreas con categorías, grados y cronogramas obtenidos correctamente'
+        ], 200);
+
+    } catch (\Exception $e) {
+        Log::error('Error al obtener áreas con cronogramas: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener las áreas con cronogramas',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
     public function DatosAreasCompleto(Request $request): JsonResponse{
         try {

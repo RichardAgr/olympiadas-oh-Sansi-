@@ -1,23 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CalendarDays, MapPin } from "lucide-react";
 import "./VEvento.css";
 import Fuse from "fuse.js"; // Import Fuse.js for fuzzy searching
 import { fetchWithAuth } from "../../components/Tokens/fetchWithAuth";
 
-const formatDate = (isoString) => {
-  if (!isoString) return "Sin Asignar";
-  const [year, month, day] = isoString.split("T")[0].split("-");
-  return `${day}/${month}/${year}`;
-};
+
 
 const VEvento = () => {
   const [areas, setAreas] = useState([]);
-  const [paginaActual, setPaginaActual] = useState(1);
   const [search, setSearch] = useState("");
 
-  const itemsPorPagina = 3;
-  const navigate = useNavigate();
+ 
 
   const fetchData = async () => {
     try {
@@ -39,16 +32,10 @@ const fuse = new Fuse(areas, {
   threshold: 0.4,   // Sensibilidad: más bajo = más estricto
 });
 
-const filteredAreas = search.trim()
-  ? fuse.search(search).map(result => result.item)
-  : areas;
 
 
-  // 📄 Pagination logic
-  const totalPaginas = Math.ceil(filteredAreas.length / itemsPorPagina);
-  const startIndex = (paginaActual - 1) * itemsPorPagina;
-  const endIndex = startIndex + itemsPorPagina;
-  const areasPaginadas = filteredAreas.slice(startIndex, endIndex);
+
+ 
 
   return (
     <div className="evento-grid-container">
@@ -62,92 +49,10 @@ const filteredAreas = search.trim()
         value={search}
         onChange={(e) => {
           setSearch(e.target.value);
-          setPaginaActual(1); // Reset to page 1 on search
         }}
       />
 
-      <div className="evento-card-grid">
-        {areasPaginadas.map((area) => (
-          <div className="evento-card" key={area.id}>
-            {/* 🖼️ Image Placeholder */}
-            <div className="evento-image-placeholder" />
-
-            {/* 🏷️ Area Name */}
-            <h3 className="evento-nombre">{area.nombre}</h3>
-
-            {/* 📅 Fecha de Inscripción */}
-            <div className="evento-info-group">
-              <p className="evento-info-label">Fecha de Inscripción:</p>
-              <div
-                className="evento-icon-row"
-                onClick={() =>
-                  navigate(`/admin/Evento/FechaInscripcion/${area.id}/null`)
-                }
-              >
-                <CalendarDays size={20} className="evento-icon clickable calendar" />
-                <span className="evento-info-value">
-                  {area.fechas_inscripcion?.inicio
-                    ? `${formatDate(area.fechas_inscripcion.inicio)} - ${formatDate(area.fechas_inscripcion.fin)}`
-                    : "Sin Asignar"}
-                </span>
-              </div>
-            </div>
-
-            {/* 📆 Fecha de Competencia */}
-            <div className="evento-info-group">
-              <p className="evento-info-label">Fecha de Culminacion:</p>
-              <div
-                className="evento-icon-row"
-                onClick={() => {
-                  const competenciaId = area.competencia_id ?? "null";
-                  navigate(`/admin/Evento/FechaCompetencia/${area.id}/${competenciaId}`);
-                }}
-              >
-                <CalendarDays size={20} className="evento-icon clickable calendar" />
-                <span className="evento-info-value">
-                  {area.fechas_fin?.inicio
-                    ? `${formatDate(area.fechas_fin.inicio)} - ${formatDate(area.fechas_fin.fin)}`
-                    : "Sin Asignar"}
-                </span>
-              </div>
-            </div>
-
-            {/* 📍 Lugar */}
-            <div className="evento-location-row">
-              <MapPin size={20} className="evento-icon" />
-              <span className="evento-info-value location">
-                {area.lugar ? `${area.lugar}, Bolivia` : "Coliseo UMSS"}
-              </span>
-            </div>
-          </div>
-        ))}
       </div>
-
-      {/* 📑 Pagination */}
-      <div className="pagination">
-        <button
-          onClick={() => setPaginaActual(paginaActual - 1)}
-          disabled={paginaActual === 1}
-        >
-          {"<"}
-        </button>
-        {Array.from({ length: totalPaginas }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setPaginaActual(i + 1)}
-            className={paginaActual === i + 1 ? "active" : ""}
-          >
-            {i + 1}
-          </button>
-        ))}
-        <button
-          onClick={() => setPaginaActual(paginaActual + 1)}
-          disabled={paginaActual === totalPaginas}
-        >
-          {">"}
-        </button>
-      </div>
-    </div>
   );
 };
 

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
-import rect34 from "../../assets/Rectangle34.png";
+import "../administrador/VEvento.css";
+import fondo from "../../assets/fondo_areasCompetencia.png";
+import { CalendarDays, MapPin } from "lucide-react";
 import "./AreasCompetencia.css";
 
 const AreasCompetencia = () => {
@@ -135,50 +136,90 @@ const AreasCompetencia = () => {
   }
 
   return (
-    <div className="area-container">
-      <h1 className="area-title">ÁREAS EN COMPETENCIA</h1>
-
-      {notification.show && (
-        <div className="notificationAreaCom">
+    <div className="imagen-AreasCompetencia"
+    style={{ backgroundImage: `url(${fondo})` }}>
+    <div className="eventoH-grid-container" >
+      {notification.show && ( // Mostrar notificación si está activa
+        <div className="notificationAreaCom"> 
           {notification.message}
         </div>
       )}
+      <div >
+        <h1 className="area-title">ÁREAS EN COMPETENCIA</h1>
+      <div className="eventoH-card-grid">
+          {/*Inicio Mapeo*/}
+          {areas.map((area) => (
+        <div className="eventoH-card" > 
+            {/* 🏷️ Area Name */}
+            <h3 className="eventoH-nombre" >{area.nombre}</h3>
+            <p >{getFormattedGradeRange(area.categorias)}</p>
+            {/* 📅 Fecha de Inscripción */}
+            <div className="eventoH-info-group">
+              <p className="eventoH-info-label">Fecha de Inscripción:</p>
+              <div
+                className="eventoH-icon-row"
+              >
+                <CalendarDays size={20} className="eventoH-icon clickable calendar" />
+                <span className="eventoH-info-value">
+                  {area.fecha_inscripcion_inicio} al {area.fecha_inscripcion_fin}
+                </span>
+              </div>
+            </div>
+            {/* 📆 Fecha de Competencia */}
+            <div className="eventoH-info-group">
+              <p className="eventoH-info-label">Fecha de Competencia:</p>
+              <div
+                className="eventoH-icon-row"
+                
+              >
+                <CalendarDays size={20} className="eventoH-icon clickable calendar" />
+                <span className="eventoH-info-value">
+                  {area.fecha_competencia_inicio} al {area.fecha_competencia_fin}
+                </span>
+              </div>
+            </div>
 
-      <div className="area-card" style={{ backgroundImage: `url(${rect34})` }}>
-        <div className="area-table-container">
-          <table className="area-table">
-            <thead>
-              <tr>
-                <th>Área</th>
-                <th>Año de Escolaridad</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {areas.map((area) => (
-                <tr key={area.area_id}>
-                  <td>{area.nombre}</td>
-                  <td>{getFormattedGradeRange(area.categorias)}</td>
-                  <td>
-                    <button
-                      className="pdf-button"
-                      onClick={() => handleDownloadPdf(area.area_id, area.nombre)}
-                    >
-                      Descargar PDF
-                    </button>
-                  </td>
-                </tr>
-              ))}
+            {/* 📆 Fecha de Competencia */}
+            <div className="eventoH-info-group">
+              <p className="eventoH-info-label">Fecha de Culminacion:</p>
+              <div
+                className="eventoH-icon-row"
+                
+              >
+                <CalendarDays size={20} className="eventoH-icon clickable calendar" />
+                <span className="eventoH-info-value">
+                  {area.fecha_fin_inicio} al {area.fecha_fin_fin}
+                </span>
+              </div>
+            </div>
+
+            {/* 📍 Lugar */}
+            <div className="eventoH-location-row">
+              <MapPin size={20} className="evento-icon" />
+              <span className="eventoH-info-value location">
+               Cochabamba-Bolivia
+              </span>
+            </div>
+             <button
+                className="pdf-button"
+                onClick={() => handleDownloadPdf(area.area_id, area.nombre)}
+                >
+                Descargar PDF
+              </button>
+          </div>
+          ))}
               {areas.length === 0 && (
                 <tr>
                   <td colSpan="3">No hay áreas para mostrar.</td>
                 </tr>
               )}
-            </tbody>
-          </table>
-        </div>
+        {/*//Finaliza el mapeo de áreas*/ }
+        
       </div>
     </div>
+    </div>
+    </div>
+    
   );
 };
 
