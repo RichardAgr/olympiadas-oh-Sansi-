@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import "./SelectorGrado.css"
+import api from '../../../components/Tokens/api';
 
 function SelectorGrado({
   onSeleccionarGrados,
@@ -15,7 +16,7 @@ function SelectorGrado({
 
   // Cargar grados desde la API
   useEffect(() => {
-    axios
+    api
       .get("http://localhost:8000/api/grados")
       .then((res) => {
 /*         console.log("Datos de grados recibidos:", res.data) */

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./AgregarCategoria.css";
 import SelectorGrado from "./SelectorGrado";
+import api from '../../../components/Tokens/api';
 
 function AgregarCategoria() {
   const [areas, setAreas] = useState([]);
@@ -25,8 +26,15 @@ function AgregarCategoria() {
   const navigate = useNavigate();
 
   useEffect(() => {
-  axios
-    .get("http://localhost:8000/api/areasRegistradas")
+  const authToken = localStorage.getItem("authToken");
+
+  api
+    .get("http://localhost:8000/api/areasRegistradas", {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Accept': 'application/json',
+      },
+    })
     .then((res) => {
       console.log("Datos recibidos de áreas:", res.data); 
       setAreas(res.data);
@@ -35,6 +43,7 @@ function AgregarCategoria() {
       console.error("Error al cargar áreas:", err.response?.data || err.message);
     });
 }, []);
+
 
   const handleGradoSeleccionado = ({ grado_id_inicial, grado_id_final }) => {
     setFormulario((prev) => ({
@@ -91,36 +100,44 @@ function AgregarCategoria() {
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    if (!validarFormulario()) {
-      return;
-    }
+  if (!validarFormulario()) {
+    return;
+  }
 
-    console.log("Datos que se enviarán en el POST:", formulario);
+  const authToken = localStorage.getItem("authToken"); // O de donde guardes tu token
 
-    axios
-      .post("http://localhost:8000/api/nivel-categorias", formulario)
-      .then((response) => {
-        console.log("Respuesta del servidor:", response.data);
-        setModalDataHu2({
-          titulo: "Éxito",
-          mensaje: "¡Categoría registrada con éxito!",
-          esExito: true,
-        });
-        setMostrarModalHu2(true);
-      })
-      .catch((err) => {
-        console.error("Error al guardar categoría:", err);
-        setModalDataHu2({
-          titulo: "Error",
-          mensaje: err.response?.data?.message || "Hubo un error al registrar la categoría.",
-          esExito: false,
-        });
-        setMostrarModalHu2(true);
+  console.log("Datos que se enviarán en el POST:", formulario);
+
+  api
+    .post("http://localhost:8000/api/nivel-categorias", formulario, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => {
+      console.log("Respuesta del servidor:", response.data);
+      setModalDataHu2({
+        titulo: "Éxito",
+        mensaje: "¡Categoría registrada con éxito!",
+        esExito: true,
       });
-  };
+      setMostrarModalHu2(true);
+    })
+    .catch((err) => {
+      console.error("Error al guardar categoría:", err);
+      setModalDataHu2({
+        titulo: "Error",
+        mensaje: err.response?.data?.message || "Hubo un error al registrar la categoría.",
+        esExito: false,
+      });
+      setMostrarModalHu2(true);
+    });
+};
+
 
   const cerrarModalHu2 = () => {
     setMostrarModalHu2(false);

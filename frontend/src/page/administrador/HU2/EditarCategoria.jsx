@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import axios from "axios"
 import "./EditarCategoria.css"
 import SelectorGrado from "./SelectorGrado"
+import api from '../../../components/Tokens/api';
 
 function EditarCategoria() {
   const { id } = useParams()
@@ -33,7 +34,7 @@ function EditarCategoria() {
 
   // Cargar áreas
   useEffect(() => {
-    axios
+    api
       .get("http://localhost:8000/api/areasRegistradas")
       .then((res) => {
         setAreas(res.data)
@@ -43,7 +44,7 @@ function EditarCategoria() {
 
   // Cargar datos existentes
   useEffect(() => {
-    axios
+    api
       .get(`http://localhost:8000/api/nivel-categorias/${id}`)
       .then((res) => {
         const cat = res.data
@@ -142,7 +143,7 @@ function EditarCategoria() {
       estado: formulario.estado,
     }
 
-    axios
+    api
       .put(`http://localhost:8000/api/nivel-categorias/${id}`, datosParaEnvio)
       .then((response) => {
         setModalDataCat({

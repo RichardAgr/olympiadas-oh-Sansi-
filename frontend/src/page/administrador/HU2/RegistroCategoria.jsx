@@ -5,6 +5,7 @@ import "./RegistroCategoria.css"
 import { Edit, Trash2, Plus } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import ModalEliminarCategoria from "../../../components/ModalEliminarCategoria"
+import api from '../../../components/Tokens/api';
 
 function RegistroCategoria() {
   const [areasConCategorias, setAreasConCategorias] = useState([])
@@ -37,7 +38,7 @@ function RegistroCategoria() {
   }
 
   useEffect(() => {
-    axios
+    api
       .get("http://localhost:8000/api/areasCategoriasGrados")
       .then((response) => {
 
@@ -69,7 +70,7 @@ function RegistroCategoria() {
     try {
 /*       console.log("ID enviado para eliminar:", categoriaSeleccionada.nivel_categoria_id) */
 
-      const response = await axios.delete(
+      const response = await api.delete(
         `http://localhost:8000/api/nivel-categorias/${categoriaSeleccionada.nivel_categoria_id}`,
       )
 /* 
