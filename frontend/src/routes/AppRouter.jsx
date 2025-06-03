@@ -8,9 +8,7 @@ import VisualizarRegistro from "../page/administrador/HU4/VRegistroOrg";
 import AgregarRespon from "../page/administrador/HU4/AgregarRespon";
 import EditarRespon from "../page/administrador/HU4/EditarRespon";
 import AreasRegistradas from "../page/administrador/VerAreasRegistradas";
-import VEvento from "../page/administrador/VEvento";
-import VEditarFechaInscripcion from "../page/administrador/VEditarFechaInscripcion";
-import VEditarFechaCompetencia from "../page/administrador/VEditarFechaCompetencia";
+import VEvento from "../page/administrador/ModificarEventos/VEvento";
 import RegistroCategoria from "../page/administrador/HU2/RegistroCategoria";
 import EditarCategoria from "../page/administrador/HU2/EditarCategoria";
 import AgregarCategoria from "../page/administrador/HU2/AgregarCategoria";
@@ -32,8 +30,6 @@ const AppRouter = () => {
           <Route path="visualizarRegistro" element={<VisualizarRegistro />} />
           <Route path="visualizarRegistro/editarRegistro/:id" element={<EditarRespon />} />
           <Route path="visualizarRegistro/agregarRegistro" element={<AgregarRespon />} />
-          <Route path="Evento/FechaInscripcion/:areaId/:competenciaId" element={<VEditarFechaInscripcion />} />
-          <Route path="Evento/FechaCompetencia/:areaId/:competenciaId?" element={<VEditarFechaCompetencia />} />
           <Route path="Evento" element={<VEvento />} />
           <Route path="visualizarRegistro" element={<VisualizarRegistro/>}/>
           <Route path="visualizarRegistro/editarRegistro/:id" element={<EditarRespon/>}/>

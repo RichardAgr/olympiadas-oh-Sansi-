@@ -1,6 +1,5 @@
 import { use, useEffect, useState } from "react";
 import axios from "axios";
-import "../administrador/VEvento.css";
 import fondo from "../../assets/fondo_areasCompetencia.png";
 import { CalendarDays, MapPin } from "lucide-react";
 import "./AreasCompetencia.css";
