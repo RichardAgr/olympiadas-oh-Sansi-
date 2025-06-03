@@ -2,9 +2,7 @@ import { useState, useEffect } from "react"
 import { Calendar, Settings } from "lucide-react"
 import AreaCard from "./areaCard/AreaCard"
 import EditCronograma from "./formularioEdicion/EditCronograma"
-/* 
-import EditCronogramaModal from "./EditCronogramaModal"
-import Notification from "./Notification" */
+import Notificacion from "./notificacion/Notificacion"
 import api from "../../../components/Tokens/api"
 import "./VEvento.css"
 
@@ -196,10 +194,9 @@ const VEvento = () => {
           loading={loading}
         />
       )}
-{/* 
      {notification && (
-        <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
-      )} */}
+        <Notificacion message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+      )} 
     </div>
   )
 }
