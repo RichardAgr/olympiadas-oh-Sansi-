@@ -10,7 +10,6 @@ class Cronograma extends Migration{
             $table->id('cronograma_id');
             $table->unsignedBigInteger('competencia_id');
             $table->unsignedBigInteger('area_id')->nullable();
-            $table->string('nombre_evento', 100);
             $table->text('descripcion');
             $table->date('fecha_inicio');
             $table->date('fecha_fin');

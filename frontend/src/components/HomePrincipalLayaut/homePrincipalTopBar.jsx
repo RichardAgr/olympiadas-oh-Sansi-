@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
+import { NavLink,Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { UserCircle, Bell } from "lucide-react";
 import "./estilosTopBar.css";
 
 const homePrincipalTopBar = () => {
   const [showRolesMenu, setShowRolesMenu] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); // 👉 responsive menu
+  const [menuOpen, setMenuOpen] = useState(false); // responsive menu
   const timeoutRef = useRef(null);
   const location = useLocation();
  
 
-  // 👉 ID temporal estático desde el backend
+  // ID temporal estático desde el backend
   const {id}= useParams();
   const navigate = useNavigate(); // Para manejar la navegación programáticamente
   const [userMenuOpen, setUserMenuOpen] = useState(false); 
@@ -52,7 +52,12 @@ const homePrincipalTopBar = () => {
         </li>
 
         <li className="roles-dropdown">
-            Competidores
+            <NavLink
+            to="/homePrincipal/areasCompetencia"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Áreas en Competencia
+          </NavLink>
         </li>
         
         <li className="roles-dropdown">

@@ -87,7 +87,7 @@ class ReciboController extends Controller{
     try {
         $validator = Validator::make($request->all(), [
             'tutor_id' => 'required|exists:TUTOR,tutor_id',
-            'competidor_ci' => 'required|exists:competidor,ci',
+            'ci' => 'required|exists:competidor,ci',
             'numero_recibo' => 'required|string|max:20|unique:RECIBO,numero_recibo',
             'monto_total' => 'required|numeric|min:0',
             'fecha_emision' => 'required|date',
@@ -96,8 +96,8 @@ class ReciboController extends Controller{
         ], [
             'tutor_id.required' => 'El ID del tutor es obligatorio',
             'tutor_id.exists' => 'El tutor seleccionado no existe',
-            'competidor_ci.required' => 'El CI del competidor es obligatorio',
-            'competidor_ci.exists' => 'El competidor con el CI proporcionado no existe',
+            'ci.required' => 'El CI del competidor es obligatorio',
+            'ci.exists' => 'El competidor con el CI proporcionado no existe',
             'numero_recibo.required' => 'El número de recibo es obligatorio',
             'numero_recibo.unique' => 'El número de recibo ya existe',
             'monto_total.required' => 'El monto total es obligatorio',
@@ -116,7 +116,7 @@ class ReciboController extends Controller{
             ], 422);
         }
 
-        $competidor = Competidor::where('ci', $request->competidor_ci)->first();
+        $competidor = Competidor::where('ci', $request->ci)->first();
         
         if (!$competidor) {
             return response()->json([

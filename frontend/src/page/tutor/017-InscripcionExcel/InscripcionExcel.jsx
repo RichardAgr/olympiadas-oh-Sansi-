@@ -12,9 +12,11 @@ import { useParams } from "react-router-dom"
 import "./inscripcionExcel.css"
 import axios from "axios"
 
+
 //simulamos la carga del excel poner datos simulados aca
 
 const uploadToCloudinary = async (file, onProgress = () => {}) => {
+    const axiosSinAuth = axios.create();
   try {
     const uploadPreset = "veltrixImg" // Tu upload preset
     const cloudName = "dq5zw44wg" // Tu cloud name
@@ -25,7 +27,7 @@ const uploadToCloudinary = async (file, onProgress = () => {}) => {
     formData.append("resource_type", "auto") // Importante: esto permite a Cloudinary detectar automáticamente el tipo de archivo
 
     // Usar axios para la subida
-    const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
+    const response = await axiosSinAuth.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
       onUploadProgress: (progressEvent) => {
         if (progressEvent.total) {
           const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
@@ -54,6 +56,7 @@ const InscripcionMasiva = () => {
   const [pdfUploaded, setPdfUploaded] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
+
 
   const guardarRecibo = async (reciboData) => {
     try {
