@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 
 class EventoController extends Controller{
+
     public function ObtenerCronogramasPorArea(int $areaId): JsonResponse
     {
         try {

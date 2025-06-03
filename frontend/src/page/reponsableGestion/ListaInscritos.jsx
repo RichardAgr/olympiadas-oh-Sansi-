@@ -58,7 +58,7 @@ function ListaInscritos() {
 
   return (
     <div className="lista-container">
-      <h1>Lista de inscritos</h1>
+      <h1 className="liesta-Incritos-tituloX">Lista de inscritos</h1>
 
       <div className="search-bar">
         <input
