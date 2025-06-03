@@ -1,7 +1,7 @@
 
 
 .evento-grid-container {
-  background: linear-gradient(138deg, #000000, #2c37ff);
+  background: linear-gradient(138deg, #000000, #565766);
   padding: 0; /* 👈 Remove left/right padding */
   margin: 0 !important;         /* ✅ override any default margin */
   min-height: 100vh;

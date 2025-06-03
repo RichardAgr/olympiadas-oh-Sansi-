@@ -51,10 +51,9 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/registrarResponGestion', [ResponsableGestionController::class, 'registrarResponsableGestion']);
     
     // Eventos
-    Route::get('/evento/fechas', [EventoController::class, 'listarFechasEvento']);
-    Route::get('/evento/fechas/{area_id}/{tipo}', [EventoController::class, 'obtenerFechaPorTipo']);
-    Route::post('/evento/fechas', [EventoController::class, 'store']);
-    Route::delete('/evento/fechas', [EventoController::class, 'destroy']);
+    Route::get('/area/{areaId}/cronogramas', [EventoController::class, 'ObtenerCronogramasPorArea']);
+    Route::put('/editarCronograma/{cronogramaId}', [EventoController::class, 'EditarCronograma']);
+
 
     // Áreas
     Route::get('/areasRegistradas', [AreaController::class,'ObtenerAreasRegistradas']);
