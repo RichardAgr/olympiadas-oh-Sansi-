@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import axios from "axios";
 import "../administrador/VEvento.css";
 import fondo from "../../assets/fondo_areasCompetencia.png";
@@ -10,6 +10,14 @@ const AreasCompetencia = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState({ show: false, message: "" });
+  //Buscador
+  const [searchTerm, setSearchTerm]=useState("");
+  const normalizeText = (text) =>
+  text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const filteredAreas = areas.filter(area =>
+  normalizeText(area.nombre).includes(normalizeText(searchTerm))
+);
+  //Fin Buscador
 
   const extractGradeInfo = (gradeString) => {
     const match = gradeString.match(/(\d+)\w+\s(Primaria|Secundaria)/);
@@ -146,10 +154,20 @@ const AreasCompetencia = () => {
       )}
       <div >
         <h1 className="area-title">ÁREAS EN COMPETENCIA</h1>
+        <div className="buscadorHomePage-wrapper">
+  <input
+    type="text"
+    placeholder="Buscar área por nombre..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s]/g, ''))}
+    className="buscadorHomePage-input"
+  />
+</div>
+
       <div className="eventoH-card-grid">
           {/*Inicio Mapeo*/}
-          {areas.map((area) => (
-        <div className="eventoH-card" > 
+          {filteredAreas.map((area) => (
+        <div key={area.area_id} className="eventoH-card" > 
             {/* 🏷️ Area Name */}
             <h3 className="eventoH-nombre" >{area.nombre}</h3>
             <p >{getFormattedGradeRange(area.categorias)}</p>
@@ -208,11 +226,11 @@ const AreasCompetencia = () => {
               </button>
           </div>
           ))}
-              {areas.length === 0 && (
-                <tr>
-                  <td colSpan="3">No hay áreas para mostrar.</td>
-                </tr>
-              )}
+              {filteredAreas.length === 0 && (
+  <div className="no-resultsBuscadorHomePage">
+    No se encontraron áreas con ese nombre.
+  </div>
+)}
         {/*//Finaliza el mapeo de áreas*/ }
         
       </div>
