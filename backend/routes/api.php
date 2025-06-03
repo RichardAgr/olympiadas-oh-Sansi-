@@ -53,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function() {
     // Eventos
     Route::get('/area/{areaId}/cronogramas', [EventoController::class, 'ObtenerCronogramasPorArea']);
     Route::get('/cronogramasAreas', [EventoController::class, 'ObtenerCronogramasPorArea2']);
-    Route::put('/editarCronograma/{cronogramaId}', [EventoController::class, 'EditarCronograma']);
+    Route::put('/editarCronograma/{areaId}', [EventoController::class, 'EditarCronograma']);
 
 
     // Áreas

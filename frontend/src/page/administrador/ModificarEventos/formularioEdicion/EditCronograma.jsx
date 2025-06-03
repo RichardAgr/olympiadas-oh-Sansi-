@@ -74,13 +74,9 @@ const EditCronograma = ({ area, onClose, onSave, loading }) => {
 
   const handleClose = () => {
     if (hasChanges) {
-      if (window.confirm("¿Estás seguro de que quieres cerrar? Los cambios no guardados se perderán.")) {
-        onClose()
-      }
-    } else {
-      onClose()
-    }
+     onClose()
   }
+}
 
   return (
     <div className="modal-overlayEventA">

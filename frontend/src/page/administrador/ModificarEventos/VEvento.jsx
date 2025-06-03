@@ -102,33 +102,24 @@ const VEvento = () => {
           anio_olimpiada: cronograma.anio_olimpiada,
         })),
       }
+      console.log(cronogramasData)
 
-      // Llamada real al backend:
-      // const response = await api.put(`/area/${selectedArea.area_id}/cronogramas`, cronogramasData)
-      //
-      // if (response.status === 200) {
-      //   // Actualizar el estado local con los datos del servidor
-      //   setAreas(prevAreas =>
-      //     prevAreas.map(area =>
-      //       area.area_id === selectedArea.area_id
-      //         ? { ...area, cronogramas: response.data.cronogramas }
-      //         : area
-      //     )
-      //   )
-      //
-      //   showNotification('Cronogramas actualizados exitosamente', 'success')
-      //   handleCloseModal()
-      // }
-
-      // Simulación de actualización exitosa
-      setAreas((prevAreas) =>
-        prevAreas.map((area) =>
-          area.area_id === selectedArea.area_id ? { ...area, cronogramas: updatedCronogramas } : area,
-        ),
-      )
-
-      showNotification("Cronogramas actualizados exitosamente", "success")
-      handleCloseModal()
+      const response = await api.put(`http://localhost:8000/api/editarCronograma/${selectedArea.area_id}`, cronogramasData)
+    
+      if (response.status === 200) {
+        // Actualizar el estado local con los datos del servidor
+        setAreas(prevAreas =>
+          prevAreas.map(area =>
+            area.area_id === selectedArea.area_id
+              ? { ...area, cronogramas: response.data.cronogramas }
+              : area
+          )
+        )
+    
+        showNotification('Cronogramas actualizados exitosamente', 'success')
+        handleCloseModal()
+      }
+      
     } catch (error) {
       console.error("Error saving cronogramas:", error)
 
