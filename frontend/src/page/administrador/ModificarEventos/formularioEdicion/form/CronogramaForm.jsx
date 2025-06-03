@@ -1,34 +1,24 @@
-"use client"
-import { Calendar, Clock, Tag, Hash, FileText } from "lucide-react"
+import { Calendar, Clock, FileText, Hash, AlertTriangle } from "lucide-react"
 import "./cronogramaForm.css"
 
-const CronogramaForm = ({ cronograma, index, onChange, errors }) => {
-  const tiposEvento = ["Inscripcion", "Competencia", "Fin"]
-  const aniosOlimpiada = [ 2025, 2026,2027]
+const CronogramaForm = ({ cronograma, index, onChange, errors, dateWarnings, allCronogramas }) => {
+  const aniosOlimpiada = [2025, 2026, 2027]
 
   const getEventIcon = (tipoEvento) => {
     switch (tipoEvento) {
-      case "Inscripcion":
-        return "📝"
-      case "Competencia":
-        return "🏆"
-      case "Fin":
-        return "🎯"
-      default:
-        return "📅"
+      case "Inscripcion": return "📝"
+      case "Competencia": return "🏆"
+      case "Fin": return "🎯"
+      default: return "📅"
     }
   }
 
   const getEventColor = (tipoEvento) => {
     switch (tipoEvento) {
-      case "Inscripcion":
-        return "#4CAF50"
-      case "Competencia":
-        return "#FF9800"
-      case "Fin":
-        return "#F44336"
-      default:
-        return "#9E9E9E"
+      case "Inscripcion": return "#4CAF50"
+      case "Competencia": return "#FF9800"
+      case "Fin": return "#F44336"
+      default: return "#9E9E9E"
     }
   }
 
@@ -40,6 +30,27 @@ const CronogramaForm = ({ cronograma, index, onChange, errors }) => {
     return /^[a-zA-Z0-9\s.,;:()áéíóúÁÉÍÓÚñÑ-]*$/.test(value)
   }
 
+  // Calcular fechas mínimas/máximas según tipo de evento
+  const getDateConstraints = () => {
+    if (cronograma.tipo_evento === "Competencia") {
+      const inscripcion = allCronogramas.find(c => c.tipo_evento === "Inscripcion")
+      return {
+        min: inscripcion?.fecha_fin || undefined,
+        max: allCronogramas.find(c => c.tipo_evento === "Fin")?.fecha_inicio || undefined
+      }
+    }
+    if (cronograma.tipo_evento === "Fin") {
+      const competencia = allCronogramas.find(c => c.tipo_evento === "Competencia")
+      return {
+        min: competencia?.fecha_fin || undefined,
+        max: undefined
+      }
+    }
+    return { min: undefined, max: undefined }
+  }
+
+  const { min, max } = getDateConstraints()
+
   return (
     <div className="cronograma-formEventA">
       <div className="form-headerEventA">
@@ -48,6 +59,17 @@ const CronogramaForm = ({ cronograma, index, onChange, errors }) => {
         </span>
         <h3 className="form-titleEventA">{cronograma.tipo_evento}</h3>
       </div>
+
+      {dateWarnings.length > 0 && (
+        <div className="date-warningsEvent">
+          {dateWarnings.map((warning, i) => (
+            <div key={i} className="warning-messageEvent">
+              <AlertTriangle size={16} />
+              <span>{warning}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="form-gridEventA">
         <div className="form-groupEventA">
@@ -58,12 +80,8 @@ const CronogramaForm = ({ cronograma, index, onChange, errors }) => {
           <textarea
             className={`form-textareaEventA ${errors[`${index}_descripcion`] ? "errorEventA" : ""}`}
             value={cronograma.descripcion}
-            onChange={(e) => {
-              if (validateDescription(e.target.value)) {
-                handleInputChange("descripcion", e.target.value)
-              }
-            }}
-            placeholder="Describe este evento del cronograma..."
+            onChange={(e) => validateDescription(e.target.value) && handleInputChange("descripcion", e.target.value)}
+            placeholder={`Describe el evento de ${cronograma.tipo_evento.toLowerCase()}...`}
             rows="3"
           />
           {errors[`${index}_descripcion`] && (
@@ -82,6 +100,8 @@ const CronogramaForm = ({ cronograma, index, onChange, errors }) => {
               className={`form-inputEventA ${errors[`${index}_fecha_inicio`] ? "errorEventA" : ""}`}
               value={cronograma.fecha_inicio === "1900-01-01" ? "" : cronograma.fecha_inicio}
               onChange={(e) => handleInputChange("fecha_inicio", e.target.value || "1900-01-01")}
+              min={min}
+              max={max}
             />
             {errors[`${index}_fecha_inicio`] && (
               <span className="error-messageEventA">{errors[`${index}_fecha_inicio`]}</span>
@@ -98,6 +118,7 @@ const CronogramaForm = ({ cronograma, index, onChange, errors }) => {
               className={`form-inputEventA ${errors[`${index}_fecha_fin`] ? "errorEventA" : ""}`}
               value={cronograma.fecha_fin === "1900-01-01" ? "" : cronograma.fecha_fin}
               onChange={(e) => handleInputChange("fecha_fin", e.target.value || "1900-01-01")}
+              min={cronograma.fecha_inicio !== "1900-01-01" ? cronograma.fecha_inicio : min}
             />
             {errors[`${index}_fecha_fin`] && (
               <span className="error-messageEventA">{errors[`${index}_fecha_fin`]}</span>
@@ -105,43 +126,24 @@ const CronogramaForm = ({ cronograma, index, onChange, errors }) => {
           </div>
         </div>
 
-        <div className="form-rowEventA">
-          <div className="form-groupEventA">
-            <label className="form-labelEventA">
-              <Tag size={16} />
-              <span>Tipo de Evento:</span>
-            </label>
-            <select
-              className="form-selectEventA"
-              value={cronograma.tipo_evento}
-              onChange={(e) => handleInputChange("tipo_evento", e.target.value)}
-            >
-              {tiposEvento.map((tipo) => (
-                <option key={tipo} value={tipo}>
-                  {getEventIcon(tipo)} {tipo}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-groupEventA">
-            <label className="form-labelEventA">
-              <Hash size={16} />
-              <span>Año Olimpiada:</span>
-            </label>
-            <select
-              className="form-selectEventA"
-              value={cronograma.anio_olimpiada}
-              onChange={(e) => handleInputChange("anio_olimpiada", Number.parseInt(e.target.value))}
-            >
-              <option value={0}>Seleccionar año</option>
-              {aniosOlimpiada.map((anio) => (
-                <option key={anio} value={anio}>
-                  {anio}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="form-groupEventA">
+          <label className="form-labelEventA">
+            <Hash size={16} />
+            <span>Año Olimpiada:</span>
+          </label>
+          <select
+            className={`form-selectEventA ${errors[`${index}_anio_olimpiada`] ? "errorEventA" : ""}`}
+            value={cronograma.anio_olimpiada}
+            onChange={(e) => handleInputChange("anio_olimpiada", parseInt(e.target.value))}
+          >
+            <option value={0}>Seleccionar año</option>
+            {aniosOlimpiada.map((anio) => (
+              <option key={anio} value={anio}>{anio}</option>
+            ))}
+          </select>
+          {errors[`${index}_anio_olimpiada`] && (
+            <span className="error-messageEventA">{errors[`${index}_anio_olimpiada`]}</span>
+          )}
         </div>
       </div>
     </div>

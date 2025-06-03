@@ -7,6 +7,7 @@ const EditCronograma = ({ area, onClose, onSave, loading }) => {
   const [cronogramas, setCronogramas] = useState([])
   const [errors, setErrors] = useState({})
   const [hasChanges, setHasChanges] = useState(false)
+  const [dateWarnings, setDateWarnings] = useState({})
 
   useEffect(() => {
     setCronogramas([...area.cronogramas])
@@ -21,6 +22,11 @@ const EditCronograma = ({ area, onClose, onSave, loading }) => {
     setCronogramas(updatedCronogramas)
     setHasChanges(true)
 
+    // Validación inmediata al cambiar fechas
+    if (field.includes('fecha')) {
+      validateDates(updatedCronogramas)
+    }
+
     if (errors[`${index}_${field}`]) {
       const newErrors = { ...errors }
       delete newErrors[`${index}_${field}`]
@@ -28,42 +34,56 @@ const EditCronograma = ({ area, onClose, onSave, loading }) => {
     }
   }
 
+  const validateDates = (currentCronogramas = cronogramas) => {
+    const newWarnings = {}
+    const inscripcion = currentCronogramas.find(c => c.tipo_evento === "Inscripcion")
+    const competencia = currentCronogramas.find(c => c.tipo_evento === "Competencia")
+    const fin = currentCronogramas.find(c => c.tipo_evento === "Fin")
+
+    // Validar secuencia de fechas
+    if (inscripcion && competencia) {
+      if (new Date(inscripcion.fecha_fin) > new Date(competencia.fecha_inicio)) {
+        const compIndex = currentCronogramas.findIndex(c => c.tipo_evento === "Competencia")
+        newWarnings[compIndex] = ["La competencia debe comenzar después del período de inscripción"]
+      }
+    }
+
+    if (competencia && fin) {
+      if (new Date(competencia.fecha_fin) > new Date(fin.fecha_inicio)) {
+        const finIndex = currentCronogramas.findIndex(c => c.tipo_evento === "Fin")
+        newWarnings[finIndex] = ["El evento de fin debe ser posterior a la competencia"]
+      }
+    }
+
+    setDateWarnings(newWarnings)
+    return Object.keys(newWarnings).length === 0
+  }
+
   const validateForm = () => {
     const newErrors = {}
+    const hasDateWarnings = !validateDates()
 
     cronogramas.forEach((cronograma, index) => {
+      // Validación de descripción
       if (cronograma.descripcion && !/^[a-zA-Z0-9\s.,;:()áéíóúÁÉÍÓÚñÑ-]+$/.test(cronograma.descripcion)) {
-        newErrors[`${index}_descripcion`] =
-          "La descripción solo puede contener letras, números y signos de puntuación básicos"
+        newErrors[`${index}_descripcion`] = "La descripción solo puede contener letras, números y signos de puntuación básicos"
       }
 
+      // Validación de fechas
       if (cronograma.fecha_inicio && cronograma.fecha_fin) {
         if (new Date(cronograma.fecha_inicio) > new Date(cronograma.fecha_fin)) {
           newErrors[`${index}_fecha_fin`] = "La fecha de fin debe ser posterior o igual a la fecha de inicio"
         }
       }
+
+      // Validación de año de olimpiada
+      if (cronograma.anio_olimpiada <= 0) {
+        newErrors[`${index}_anio_olimpiada`] = "Debe seleccionar un año válido"
+      }
     })
 
-    const inscripcion = cronogramas.find((c) => c.tipo_evento === "Inscripcion")
-    const competencia = cronogramas.find((c) => c.tipo_evento === "Competencia")
-    const fin = cronogramas.find((c) => c.tipo_evento === "Fin")
-
-    if (inscripcion?.fecha_fin && competencia?.fecha_inicio) {
-      if (new Date(inscripcion.fecha_fin) > new Date(competencia.fecha_inicio)) {
-        const compIndex = cronogramas.findIndex((c) => c.tipo_evento === "Competencia")
-        newErrors[`${compIndex}_fecha_inicio`] = "La competencia debe iniciar después del fin de inscripciones"
-      }
-    }
-
-    if (competencia?.fecha_fin && fin?.fecha_inicio) {
-      if (new Date(competencia.fecha_fin) > new Date(fin.fecha_inicio)) {
-        const finIndex = cronogramas.findIndex((c) => c.tipo_evento === "Fin")
-        newErrors[`${finIndex}_fecha_inicio`] = "El fin debe ser después del fin de la competencia"
-      }
-    }
-
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    return Object.keys(newErrors).length === 0 && !hasDateWarnings
   }
 
   const handleSave = () => {
@@ -74,9 +94,13 @@ const EditCronograma = ({ area, onClose, onSave, loading }) => {
 
   const handleClose = () => {
     if (hasChanges) {
-     onClose()
+      if (window.confirm("¿Estás seguro de que deseas salir sin guardar los cambios?")) {
+        onClose()
+      }
+    } else {
+      onClose()
+    }
   }
-}
 
   return (
     <div className="modal-overlayEventA">
@@ -89,7 +113,7 @@ const EditCronograma = ({ area, onClose, onSave, loading }) => {
         </div>
 
         <div className="modal-bodyEventA">
-          {Object.keys(errors).length > 0 && (
+          {(Object.keys(errors).length > 0 || Object.keys(dateWarnings).length > 0) && (
             <div className="validation-summaryEventA">
               <AlertTriangle size={20} />
               <span>Por favor, corrige los errores antes de guardar</span>
@@ -104,6 +128,8 @@ const EditCronograma = ({ area, onClose, onSave, loading }) => {
                 index={index}
                 onChange={handleCronogramaChange}
                 errors={errors}
+                dateWarnings={dateWarnings[index] || []}
+                allCronogramas={cronogramas}
               />
             ))}
           </div>
@@ -117,7 +143,7 @@ const EditCronograma = ({ area, onClose, onSave, loading }) => {
           <button
             className="save-buttonEventA"
             onClick={handleSave}
-            disabled={loading || Object.keys(errors).length > 0}
+            disabled={loading || Object.keys(errors).length > 0 || Object.keys(dateWarnings).length > 0}
           >
             <Save size={18} />
             <span>{loading ? "Guardando..." : "Guardar Cambios"}</span>

@@ -86,7 +86,6 @@ const VEvento = () => {
     setSelectedArea(null)
   }
 
-  // ENDPOINT: PUT /api/area/{areaId}/cronogramas - Actualizar cronogramas de un área
   const handleSaveCronogramas = async (updatedCronogramas) => {
     try {
       setLoading(true)
@@ -107,7 +106,6 @@ const VEvento = () => {
       const response = await api.put(`http://localhost:8000/api/editarCronograma/${selectedArea.area_id}`, cronogramasData)
     
       if (response.status === 200) {
-        // Actualizar el estado local con los datos del servidor
         setAreas(prevAreas =>
           prevAreas.map(area =>
             area.area_id === selectedArea.area_id
@@ -129,7 +127,6 @@ const VEvento = () => {
 
         switch (status) {
           case 422:
-            // Errores de validación
             showNotification(
               `Error de validación: ${data.details ? Object.values(data.details).flat().join(", ") : data.error}`,
               "error",
