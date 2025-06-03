@@ -10,6 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Models\Area;
+use App\Models\Cronograma;
 
 class AreaController extends Controller{
     public function ObtenerAreasRegistradas(Request $request): JsonResponse{
@@ -86,7 +87,8 @@ class AreaController extends Controller{
 }
 
 
-    public function RegistrarNuevaArea(Request $request){
+public function RegistrarNuevaArea(Request $request){
+        DB::beginTransaction();
         try {
             $validated = $request->validate([
                 'nombre' => 'required|string|max:255|unique:area,nombre',
@@ -95,7 +97,7 @@ class AreaController extends Controller{
             ]);
 
             $area = Area::create([
-                'nombre' => strtoupper(trim($validated['nombre'])), // Convertir a mayúsculas
+                'nombre' => strtoupper(trim($validated['nombre'])), 
                 'descripcion' => trim($validated['descripcion']),
                 'costo' => $validated['costo'],
                 'estado' => 1, // Por defecto activo
@@ -103,7 +105,29 @@ class AreaController extends Controller{
                 'updated_at' => now()
             ]);
 
-            // Formatear la respuesta
+            $tiposEvento = ['Inscripcion', 'Competencia', 'Fin'];
+            $fechaPorDefecto = '1000-00-00'; // Fecha por defecto
+            
+            // Verificar si existe la competencia con ID 1
+            $competenciaExiste = DB::table('competencia')->where('competencia_id', 1)->exists();
+            
+            if (!$competenciaExiste) {
+                throw new Exception("La competencia con ID 1 no existe. Debes crear esta competencia primero.");
+            }
+            
+            foreach ($tiposEvento as $tipoEvento) {
+                Cronograma::create([
+                    'area_id' => $area->area_id,
+                    'competencia_id' => 1, 
+                    'descripcion' => '', 
+                    'fecha_inicio' => $fechaPorDefecto,
+                    'fecha_fin' => $fechaPorDefecto,
+                    'tipo_evento' => $tipoEvento,
+                    'anio_olimpiada' => 0 
+                ]);
+            }
+            DB::commit();
+
             $areaFormatted = [
                 'area_id' => $area->area_id,
                 'costo' => (float) $area->costo,
@@ -117,25 +141,32 @@ class AreaController extends Controller{
             return response()->json($areaFormatted, 201);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
             return response()->json([
                 'error' => 'Datos de entrada inválidos',
                 'details' => $e->errors()
             ], 422);
 
         } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            
             if ($e->getCode() == 23000) { 
                 return response()->json([
-                    'error' => 'El nombre del área ya existe'
+                    'error' => 'El nombre del área ya existe o hay un problema con claves foráneas',
+                    'details' => $e->getMessage()
                 ], 409); // Conflict
             }
 
             Log::error('Error de base de datos al crear área: ' . $e->getMessage());
 
             return response()->json([
-                'error' => 'Error de base de datos'
+                'error' => 'Error de base de datos',
+                'details' => $e->getMessage(), 
+                'code' => $e->getCode()
             ], 500);
 
         } catch (Exception $e) {
+            DB::rollBack();
             Log::error('Error al crear área: ' . $e->getMessage(), [
                 'request_data' => $request->all(),
                 'file' => $e->getFile(),
@@ -143,19 +174,17 @@ class AreaController extends Controller{
             ]);
 
             return response()->json([
-                'error' => 'Error interno del servidor'
+                'error' => 'Error interno del servidor',
+                'details' => $e->getMessage() 
             ], 500);
         }
     }
-
 
     public function DatosAreaId(int $areaId): JsonResponse {
         try {
             $area = Area::select('area_id', 'costo', 'nombre', 'descripcion', 'estado', 'created_at', 'updated_at')
                        ->where('area_id', $areaId)
                        ->first();
-
-            // Verificar si el área existe
             if (!$area) {
                 return response()->json([
                     'error' => 'Área no encontrada'
@@ -186,6 +215,8 @@ class AreaController extends Controller{
             ], 500);
         }
     }
+
+
 
     public function actualizarArea(Request $request, int $areaId): JsonResponse{
         try {
@@ -279,19 +310,20 @@ class AreaController extends Controller{
     }
 
 
-    public function EliminarArea(int $areaId): JsonResponse{
+ public function EliminarArea(int $areaId): JsonResponse{
+        DB::beginTransaction();
+        
         try {
-            // Buscar el área por area_id
             $area = Area::where('area_id', $areaId)->first();
 
             // Verificar si el área existe
             if (!$area) {
+                DB::rollBack();
                 return response()->json([
                     'error' => 'Área no encontrada'
                 ], 404);
             }
 
-            // Guardar los datos del área antes de eliminar
             $areaData = [
                 'area_id' => $area->area_id,
                 'costo' => (float) $area->costo,
@@ -302,21 +334,46 @@ class AreaController extends Controller{
                 'updated_at' => $area->updated_at->toISOString()
             ];
 
-            // Eliminar el área sin verificar relaciones
+            $cronogramasCount = Cronograma::where('area_id', $areaId)->count();
+
+            Cronograma::where('area_id', $areaId)->delete();
+
             $area->delete();
 
-            // Retornar los datos del área eliminada
-            return response()->json($areaData, 200);
+            DB::commit();
+
+            $response = array_merge($areaData, [
+                'cronogramas_eliminados' => $cronogramasCount,
+                'message' => 'Área y cronogramas asociados eliminados exitosamente'
+            ]);
+
+            return response()->json($response, 200);
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            
+            Log::error('Error de base de datos al eliminar área: ' . $e->getMessage(), [
+                'area_id' => $areaId,
+                'error_code' => $e->getCode()
+            ]);
+
+            return response()->json([
+                'error' => 'Error de base de datos al eliminar',
+                'details' => $e->getMessage()
+            ], 500);
 
         } catch (Exception $e) {
-            Log::error('Error al eliminar área forzadamente: ' . $e->getMessage(), [
+            DB::rollBack();
+            
+            Log::error('Error al eliminar área: ' . $e->getMessage(), [
                 'area_id' => $areaId,
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
             ]);
 
             return response()->json([
-                'error' => 'Error interno del servidor'
+                'error' => 'Error interno del servidor',
+                'details' => $e->getMessage()
             ], 500);
         }
     }
@@ -417,7 +474,6 @@ class AreaController extends Controller{
                     'a.created_at as area_created_at',
                     'a.updated_at as area_updated_at',
                     'cr.cronograma_id',
-                    'cr.nombre_evento',
                     'cr.descripcion as cronograma_descripcion',
                     'cr.fecha_inicio',
                     'cr.fecha_fin',
@@ -482,7 +538,6 @@ class AreaController extends Controller{
                     'fecha_inicio' => $item->fecha_inicio ?: null,
                     'fecha_fin' => $item->fecha_fin ?: null,
                     'descripcion' => $item->cronograma_descripcion ?: $item->area_descripcion ?: '-',
-                    'nombre_evento' => $item->nombre_evento ?: '-',
                     'anio_olimpiada' => $item->anio_olimpiada ?: '-',
                     'competencia_id' => $item->competencia_id ?: null,
                     'nivel_descripcion' => $item->nivel_descripcion ?: '-'
