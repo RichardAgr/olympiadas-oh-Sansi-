@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Calendar, Settings } from "lucide-react"
 import AreaCard from "./areaCard/AreaCard"
+import EditCronograma from "./formularioEdicion/EditCronograma"
 /* 
 import EditCronogramaModal from "./EditCronogramaModal"
 import Notification from "./Notification" */
@@ -56,7 +57,7 @@ const VEvento = () => {
 
   const loadAreaCronogramas = async (areaId) => {
     try {
-      const response = await api.get(`http://localhost:8000/api/area/${area.area_id}/cronogramas`)
+      const response = await api.get(`http://localhost:8000/api/area/${areaId}/cronogramas`)
       return response.data.cronogramas
     } catch (error) {
       console.error("Error loading area cronogramas:", error)
@@ -188,17 +189,17 @@ const VEvento = () => {
       </div>
 
       {isModalOpen && selectedArea && (
-        <EditCronogramaModal
+        <EditCronograma
           area={selectedArea}
           onClose={handleCloseModal}
           onSave={handleSaveCronogramas}
           loading={loading}
         />
       )}
-
+{/* 
      {notification && (
         <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
-      )}
+      )} */}
     </div>
   )
 }
