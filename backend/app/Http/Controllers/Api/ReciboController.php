@@ -19,8 +19,8 @@ class ReciboController extends Controller{
         try {
             // Validar los datos de entrada
             $validator = Validator::make($request->all(), [
-                'tutor_id' => 'required|exists:TUTOR,tutor_id',
-                'numero_recibo' => 'required|string|max:20|unique:RECIBO,numero_recibo',
+                'tutor_id' => 'required|exists:tutor,tutor_id',
+                'numero_recibo' => 'required|string|max:20|unique:recibo,numero_recibo',
                 'monto_total' => 'required|numeric|min:0',
                 'fecha_emision' => 'required|date',
                 'ruta_pdf' => 'required|string',
@@ -86,9 +86,9 @@ class ReciboController extends Controller{
  public function registrarReciboInscripcionManual(Request $request){
     try {
         $validator = Validator::make($request->all(), [
-            'tutor_id' => 'required|exists:TUTOR,tutor_id',
+            'tutor_id' => 'required|exists:tutor,tutor_id',
             'ci' => 'required|exists:competidor,ci',
-            'numero_recibo' => 'required|string|max:20|unique:RECIBO,numero_recibo',
+            'numero_recibo' => 'required|string|max:20|unique:recibo,numero_recibo',
             'monto_total' => 'required|numeric|min:0',
             'fecha_emision' => 'required|date',
             'ruta_pdf' => 'required|string',
@@ -208,19 +208,19 @@ class ReciboController extends Controller{
 
             // Obtener los recibos del tutor con los datos del tutor
             $recibos = Recibo::select(
-                    'RECIBO.recibo_id',
-                    'RECIBO.numero_recibo',
-                    'RECIBO.monto_total',
-                    'RECIBO.fecha_emision',
-                    'RECIBO.estado',
-                    'RECIBO.ruta_pdf',
+                    'recibo.recibo_id',
+                    'recibo.numero_recibo',
+                    'recibo.monto_total',
+                    'recibo.fecha_emision',
+                    'recibo.estado',
+                    'recibo.ruta_pdf',
                     'tutor.nombres',
                     'tutor.apellidos',
                     DB::raw("CONCAT(tutor.nombres, ' ', tutor.apellidos) as nombre_completo")
                 )
-                ->join('tutor', 'RECIBO.tutor_id', '=', 'tutor.tutor_id')
-                ->where('RECIBO.tutor_id', $tutorId)
-                ->orderBy('RECIBO.fecha_emision', 'desc')
+                ->join('tutor', 'recibo.tutor_id', '=', 'tutor.tutor_id')
+                ->where('recibo.tutor_id', $tutorId)
+                ->orderBy('recibo.fecha_emision', 'desc')
                 ->get();
 
             // Formatear los datos para la respuesta
