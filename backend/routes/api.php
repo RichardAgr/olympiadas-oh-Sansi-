@@ -40,7 +40,7 @@ Route::get('/documento-convocatoria/{año_competencia}/descargar', [DocumentoCon
 //DocumentosHome Areas
 Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocumentacionPorArea']);
 // Rutas protegidas con Sanctum
-Route::middleware('auth:sanctum')->group(function() {
+//Route::middleware('auth:sanctum')->group(function() {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
     //responsable de gestion
@@ -129,4 +129,4 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/Guardarvideos', [VideoController::class, 'crearVideo']);
     Route::delete('/Eliminarvideos/{tipo_video}', [VideoController::class, 'eliminarVideo']);
 
-});
+//});
