@@ -1,12 +1,13 @@
 import { Outlet } from "react-router-dom";
 import AdminTopBar from "./AdminTopBar";
 import AdminFooter from "./AdminFooter"; 
+import "./adminLayout.css"
 
 const AdminLayout = () => {
   return (
     <div className="admin-layout">
       <AdminTopBar />
-      <main className="admin-content">
+      <main>
         <Outlet />
       </main>
       <AdminFooter />

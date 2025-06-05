@@ -1,0 +1,176 @@
+.modal-overlayEventA {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-contentEventA {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-headerEventA {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.modal-titleEventA {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-buttonEventA {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-buttonEventA:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.close-buttonEventA:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modal-bodyEventA {
+  padding: 2rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+
+.validation-summaryEventA {
+  background-color: #FFEBEE;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #C62828;
+  font-weight: 500;
+}
+
+
+.cronogramas-formsEventA {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.modal-footerEventA {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+.cancel-buttonEventA,
+.save-buttonEventA {
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cancel-buttonEventA {
+  background: #6c757d;
+  color: white;
+}
+
+.cancel-buttonEventA:hover:not(:disabled) {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+.save-buttonEventA {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  font-weight: 600;
+}
+
+.save-buttonEventA:hover:not(:disabled) {
+  background: linear-gradient(135deg, #218838, #1ea085);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+.cancel-buttonEventA:disabled,
+.save-buttonEventA:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .modal-contentEventA {
+    margin: 1rem;
+    max-height: 95vh;
+  }
+
+  .modal-headerEventA,
+  .modal-bodyEventA,
+  .modal-footerEventA {
+    padding: 1rem;
+  }
+
+  .modal-titleEventA {
+    font-size: 1.2rem;
+  }
+
+  .modal-footerEventA {
+    flex-direction: column;
+  }
+
+  .cancel-buttonEventA,
+  .save-buttonEventA {
+    width: 100%;
+  }
+}

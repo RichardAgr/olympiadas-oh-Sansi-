@@ -11,6 +11,7 @@ use App\Models\Competencia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentoController extends Controller{
 public function guardarDocumentos(Request $request){
@@ -256,4 +257,38 @@ public function getDocumento($type, $id){
             ], 500);
         }
     }
+ public function descargarDocumentoConvocatoria($año_competencia)
+{
+    $competencia = Competencia::select('competencia_id', 'fecha_inicio')
+        ->whereYear('fecha_inicio', $año_competencia)
+        ->first();
+
+    if (!$competencia) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No se encontró competencia para el año especificado.'
+        ], 200);
+    }
+
+    $documento = DocumentoConvocatoria::where('competencia_id', $competencia->competencia_id)
+        ->select('url_pdf')
+        ->first();
+
+    if (!$documento) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No se encontró documento convocatoria para la competencia especificada.'
+        ], 200);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Documento encontrado',
+        'data' => [
+            'url_pdf' => $documento->url_pdf,
+            'año' => $año_competencia
+        ]
+    ]);
+}
+
 }
