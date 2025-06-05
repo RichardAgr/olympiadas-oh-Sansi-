@@ -1,16 +1,3 @@
-/* Estilos base */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-* {
-  box-sizing: border-box;
-}
-
 /* Contenedor principal */
 .R-container {
   display: flex;

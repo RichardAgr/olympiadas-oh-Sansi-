@@ -6,7 +6,6 @@
   background-color: white;
   padding: 10px 20px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  margin-bottom: 20px;
   border-bottom: 1px solid #eee;
 }
 
@@ -220,11 +219,8 @@
 
 .admin-content {
   margin: 0 auto;        
-  padding: 0 30px;        
-  width: 100%; 
-  /*display: flex;
-  justify-content: center;   /* 🠈 Centra horizontalmente */
-  /*align-items: center;       /* 🠇 Centra verticalmente */          
+  padding: 0;        
+  width: 100%;     
 }
 
 .admin-welcome-container {
@@ -720,24 +716,6 @@
     font-size: 16px;
     padding: 0 10px;
   }
-}
-
-
-
-footer {
-  background: #000;
-  color: #fff;
-  display: flex;
-  justify-content: space-between;
-  padding: 20px 50px;
-}
-
-footer p {
-  margin: 5px 0;
-}
-
-.footer-left a img {
-  margin-top: 10px;
 }
 
 .form-container {

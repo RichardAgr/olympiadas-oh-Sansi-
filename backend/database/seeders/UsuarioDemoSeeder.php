@@ -13,8 +13,8 @@ class UsuarioDemoSeeder extends Seeder
         // Tutor demo
         DB::table('tutor')->insert([
             'ci' => '12345678',
-            'nombres' => 'Fer',
-            'apellidos' => 'Gómez',
+            'nombres' => 'Diego',
+            'apellidos' => 'Fernandez Fernandez',
             'correo_electronico' => 'tutor@sansi.bo',
             'telefono' => '78945612',
             'estado' => 1,
