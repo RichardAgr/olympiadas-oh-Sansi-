@@ -2,6 +2,8 @@
 .areas-list-containerHu1 {
   font-family: 'Comfortaa', sans-serif;
   padding: 20px 40px;
+  width: 60%;
+  margin: 0 auto;
   background-color: #ffffff;
   min-height: 100vh;
 }

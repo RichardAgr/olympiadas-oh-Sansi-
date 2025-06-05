@@ -85,7 +85,6 @@ function RegistroCategoria() {
       setShowSuccessModal(true)
     } catch (error) {
       console.error("Datos del error:", error.response?.data || error.message)
-      alert("❌ Error al eliminar la categoría.")
       cerrarModal()
     }
   }
