@@ -25,6 +25,7 @@ function InscribirManual() {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
+  const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,42 +35,81 @@ function InscribirManual() {
   const handleSubmitStep1 = (e) => {
     e.preventDefault();
     const newErrors = {};
-  
-    const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
-  
-    if (formData.nombres.trim().length < 3 || !soloLetrasRegex.test(formData.nombres)) {
-      newErrors.nombres = "Nombre no válido.";
-    }
-  
-    if (formData.apellidos.trim().length < 6 || !soloLetrasRegex.test(formData.apellidos)) {
-      newErrors.apellidos = "Apellido no válido.";
-    }
-  
-    if (formData.ci.trim().length < 7) {
-      newErrors.ci = "CI no válido.";
-    }
-  
-    if (formData.colegio.trim().length < 5 || !soloLetrasRegex.test(formData.colegio)) {
-      newErrors.colegio = "Colegio no válido.";
-    }
-  
-    if (formData.provincia.trim().length < 4 || !soloLetrasRegex.test(formData.provincia)) {
-      newErrors.provincia = "Provincia no válida.";
-    }
-  
-    if (!formData.curso) newErrors.curso = "Debe seleccionar un curso.";
-    if (!formData.nivel) newErrors.nivel = "Debe seleccionar un nivel educativo.";
-    if (!formData.departamento) newErrors.departamento = "Debe seleccionar un departamento.";
-  
-    const selectedYear = new Date(formData.fecha_nacimiento).getFullYear();
-    const currentYear = new Date().getFullYear();
-    if (!formData.fecha_nacimiento) {
-      newErrors.fecha_nacimiento = "Debe ingresar una fecha de nacimiento.";
-    } else if (selectedYear > currentYear - 5) {
-      newErrors.fecha_nacimiento = "Fecha de nacimiento no válida.";
-    }
-  
-    setErrors(newErrors);
+
+const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+const soloNumerosRegex = /^[0-9]+$/;
+
+// Validación: nombres
+if (!formData.nombres.trim()) {
+  newErrors.nombres = "El nombre es obligatorio.";
+} else if (formData.nombres.trim().length < 3) {
+  newErrors.nombres = "El nombre debe tener al menos 3 caracteres.";
+} else if (!soloLetrasRegex.test(formData.nombres)) {
+  newErrors.nombres = "El nombre solo debe contener letras.";
+}
+
+// Validación: apellidos
+if (!formData.apellidos.trim()) {
+  newErrors.apellidos = "El apellido es obligatorio.";
+} else if (formData.apellidos.trim().length < 6) {
+  newErrors.apellidos = "El apellido debe tener al menos 6 caracteres.";
+} else if (!soloLetrasRegex.test(formData.apellidos)) {
+  newErrors.apellidos = "El apellido solo debe contener letras.";
+}
+
+// Validación: carnet de identidad (ci)
+if (!formData.ci.trim()) {
+  newErrors.ci = "El CI es obligatorio.";
+} else if (!soloNumerosRegex.test(formData.ci)) {
+  newErrors.ci = "El CI solo debe contener números.";
+} else if (formData.ci.trim().length < 7) {
+  newErrors.ci = "El CI debe tener al menos 7 dígitos.";
+}
+
+// Validación: colegio
+if (!formData.colegio.trim()) {
+  newErrors.colegio = "El nombre del colegio es obligatorio.";
+} else if (formData.colegio.trim().length < 5) {
+  newErrors.colegio = "El nombre del colegio debe tener al menos 5 caracteres.";
+} else if (!soloLetrasRegex.test(formData.colegio)) {
+  newErrors.colegio = "El nombre del colegio solo debe contener letras.";
+}
+
+// Validación: provincia
+if (!formData.provincia.trim()) {
+  newErrors.provincia = "La provincia es obligatoria.";
+} else if (formData.provincia.trim().length < 4) {
+  newErrors.provincia = "La provincia debe tener al menos 4 caracteres.";
+} else if (!soloLetrasRegex.test(formData.provincia)) {
+  newErrors.provincia = "La provincia solo debe contener letras.";
+}
+
+// Validación: curso
+if (!formData.curso) {
+  newErrors.curso = "Debe seleccionar un curso.";
+}
+
+// Validación: nivel educativo
+if (!formData.nivel) {
+  newErrors.nivel = "Debe seleccionar un nivel educativo.";
+}
+
+// Validación: departamento
+if (!formData.departamento) {
+  newErrors.departamento = "Debe seleccionar un departamento.";
+}
+
+// Validación: fecha de nacimiento
+const selectedYear = new Date(formData.fecha_nacimiento).getFullYear();
+const currentYear = new Date().getFullYear();
+
+if (!formData.fecha_nacimiento) {
+  newErrors.fecha_nacimiento = "Debe ingresar una fecha de nacimiento.";
+} else if (selectedYear > currentYear - 5) {
+  newErrors.fecha_nacimiento = "La fecha de nacimiento indica que es demasiado joven (mínimo 5 años).";
+}
+
+setErrors(newErrors);
 
     // Traducción básica de curso + nivel a grado_id (ajusta esto si tu backend usa otros ID)
 const calcularGradoId = (nivel, curso) => {
@@ -81,10 +121,10 @@ const calcularGradoId = (nivel, curso) => {
 const grado_id = calcularGradoId(formData.nivel, formData.curso);
 
 // Validación extra (por si acaso)
-if (!grado_id) {
-  alert("No se pudo determinar el grado escolar.");
-  return;
-}
+//if (!grado_id) {
+  //alert("No se pudo determinar el grado escolar.");
+//  return;
+//}
 
 setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
 
@@ -101,6 +141,11 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
     setFormData((prev) => ({ ...prev, ...paso2Data }));
     setCompetidorId(Number(nuevoCompetidorId));
     setCurrentStep(3);
+  };
+
+  const handleCancelarConfirmado = () => {
+    setMostrarModalCancelar(false);
+    window.history.back(); // O redirige a otra ruta si prefieres
   };
 
   return (
@@ -133,7 +178,7 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
               onChange={handleChange}
               className={errors.nombres ? "input-error" : ""}
             />
-            {errors.nombres && <div className="error-message">{errors.nombres}</div>}
+            {errors.nombres && <div className="errorins">{errors.nombres}</div>}
           </div>
 
           <div className="form-group">
@@ -145,7 +190,7 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
               onChange={handleChange}
               className={errors.apellidos ? "input-error" : ""}
             />
-            {errors.apellidos && <div className="error-message">{errors.apellidos}</div>}
+            {errors.apellidos && <div className="errorins">{errors.apellidos}</div>}
           </div>
 
           <div className="form-group">
@@ -157,7 +202,7 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
               onChange={handleChange}
               className={errors.ci ? "input-error" : ""}
             />
-            {errors.ci && <div className="error-message">{errors.ci}</div>}
+            {errors.ci && <div className="errorins">{errors.ci}</div>}
           </div>
 
           <div className="form-group">
@@ -168,7 +213,7 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
               value={formData.fecha_nacimiento}
               onChange={handleChange}
             />
-            {errors.fecha_nacimiento && <div className="error-message">{errors.fecha_nacimiento}</div>}
+            {errors.fecha_nacimiento && <div className="errorins">{errors.fecha_nacimiento}</div>}
           </div>
 
           <div className="form-group">
@@ -180,7 +225,7 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
               onChange={handleChange}
               className={errors.colegio ? "input-error" : ""}
             />
-            {errors.colegio && <div className="error-message">{errors.colegio}</div>}
+            {errors.colegio && <div className="errorins">{errors.colegio}</div>}
           </div>
 
           <div className="form-group">
@@ -194,7 +239,7 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
               <option value="5">5to</option>
               <option value="6">6to</option>
             </select>
-            {errors.curso && <div className="error-message">{errors.curso}</div>}
+            {errors.curso && <div className="errorins">{errors.curso}</div>}
           </div>
 
           <div className="form-group">
@@ -223,7 +268,7 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
                 <label htmlFor="secundaria">Secundaria</label>
               </div>
             </div>
-            {errors.nivel && <div className="error-message">{errors.nivel}</div>}
+            {errors.nivel && <div className="errorins">{errors.nivel}</div>}
           </div>
 
           <div className="form-group">
@@ -244,7 +289,7 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
               <option value="Santa Cruz">Santa Cruz</option>
               <option value="Tarija">Tarija</option>
             </select>
-            {errors.departamento && <div className="error-message">{errors.departamento}</div>}
+            {errors.departamento && <div className="errorins">{errors.departamento}</div>}
           </div>
 
           <div className="form-group">
@@ -256,11 +301,11 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
               onChange={handleChange}
               className={errors.provincia ? "input-error" : ""}
             />
-            {errors.provincia && <div className="error-message">{errors.provincia}</div>}
+            {errors.provincia && <div className="errorins">{errors.provincia}</div>}
           </div>
 
           <div className="submit-button-container">
-            <button type="button" className="submit-button cancel" onClick={handleBack}>
+            <button type="button" className="submit-button cancel" onClick={() => setMostrarModalCancelar(true)}>
               Cancelar
             </button>
             <button type="submit" className="submit-button">
@@ -293,6 +338,29 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
         
       />
       )}
+      {mostrarModalCancelar && (
+  <div className="modal-overlayCancelarManual">
+    <div className="modalCancelarManual">
+      <h2>¿Estás seguro que deseas cancelar?</h2>
+      <p>Se perderán los datos ingresados hasta ahora.</p>
+      <div className="modal-buttonsCancelarManual">
+        <button
+          className="btn-eliminar2CancelarManual"
+          onClick={handleCancelarConfirmado}
+        >
+          Sí
+        </button>
+        <button
+          className="btn-eliminar2CancelarManual"
+          onClick={() => setMostrarModalCancelar(false)}
+        >
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

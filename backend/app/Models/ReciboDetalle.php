@@ -9,7 +9,7 @@ class ReciboDetalle extends Model
 {
     use HasFactory;
 
-    protected $table = 'RECIBO_DETALLE';
+    protected $table = 'recibo_detalle';
     protected $primaryKey = 'recibo_detalle_id';
     public $timestamps = false;
 

@@ -165,14 +165,51 @@
   cursor: pointer;
 }
 
-/* ERRORES */
-.inscribir-manual-form .input-error {
-  border: 2px solid #e74c3c;
-  background-color: #ffe6e6;
+
+.inscribir-manual-form .errorins {
+  color: red;
+  font-size: 13px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  display: block;
+  text-align: left;
 }
 
-.inscribir-manual-form .error-message {
-  color: #e74c3c;
-  font-size: 13px;
-  margin-top: 4px;
+/* modal cancelar */
+.modalCancelarManual {
+  background-color: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 470px;
+  text-align: center;
+  position: relative;
+  border: 3px solid #0A2E8C;
+}
+.modal-overlayCancelarManual {
+  position: fixed; 
+   top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  background-color: rgba(0, 0, 0, 0.7); 
+   display: flex; 
+   align-items: center; 
+  justify-content: center; 
+   z-index: 1000; 
+  animation: fadeIn 0.3s ease;
+}
+.modal-buttonsCancelarManual {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.btn-eliminar2CancelarManual {
+  background-color: #0A2E8C;
+  color: white;
+  border: none;
+  padding: 8px 30px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
 }

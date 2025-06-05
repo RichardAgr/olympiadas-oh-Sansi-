@@ -12,6 +12,7 @@ const uploadToCloudinary = async (file, onProgress = () => {}) => {
   try {
     const uploadPreset = "veltrixImg" 
     const cloudName = "dq5zw44wg" 
+    const axiosSinAuth = axios.create();
 
     const formData = new FormData()
     formData.append("file", file)
@@ -19,7 +20,7 @@ const uploadToCloudinary = async (file, onProgress = () => {}) => {
     formData.append("resource_type", "auto") // Importante: esto permite a Cloudinary detectar automáticamente el tipo de archivo
 
     // Usar axios para la subida
-    const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
+    const response = await axiosSinAuth.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
       onUploadProgress: (progressEvent) => {
         if (progressEvent.total) {
           const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
@@ -125,28 +126,52 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
     const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
     const soloNumerosRegex = /^[0-9]+$/;
   
-    if (tutor.nombres.trim().length < 3 || !soloLetrasRegex.test(tutor.nombres)) {
-      err.nombres = "Nombre no válido.";
+    // Validación: nombres
+    if (!tutor.nombres.trim()) {
+      err.nombres = "El nombre es obligatorio.";
+    } else if (tutor.nombres.trim().length < 3) {
+      err.nombres = "El nombre debe tener al menos 3 caracteres.";
+    } else if (!soloLetrasRegex.test(tutor.nombres)) {
+      err.nombres = "El nombre solo debe contener letras.";
     }
   
-    if (tutor.apellidos.trim().length < 6 || !soloLetrasRegex.test(tutor.apellidos)) {
-      err.apellidos = "Apellido no válido.";
+    // Validación: apellidos
+    if (!tutor.apellidos.trim()) {
+      err.apellidos = "El apellido es obligatorio.";
+    } else if (tutor.apellidos.trim().length < 6) {
+      err.apellidos = "El apellido debe tener al menos 6 caracteres.";
+    } else if (!soloLetrasRegex.test(tutor.apellidos)) {
+      err.apellidos = "El apellido solo debe contener letras.";
     }
   
-    if (!/\S+@\S+\.\S+/.test(tutor.correo_electronico)) {
-      err.correo = "Correo no válido.";
+    // Validación: correo electrónico
+    if (!tutor.correo_electronico.trim()) {
+      err.correo = "El correo electrónico es obligatorio.";
+    } else if (!/\S+@\S+\.\S+/.test(tutor.correo_electronico)) {
+      err.correo = "Ingrese un correo electrónico válido.";
     }
   
-    if (tutor.telefono.trim().length < 7 || !soloNumerosRegex.test(tutor.telefono)) {
-      err.telefono = "Teléfono no válido.";
+    // Validación: teléfono
+    if (!tutor.telefono.trim()) {
+      err.telefono = "El teléfono es obligatorio.";
+    } else if (!soloNumerosRegex.test(tutor.telefono)) {
+      err.telefono = "El teléfono solo debe contener números.";
+    } else if (tutor.telefono.trim().length < 7) {
+      err.telefono = "El teléfono debe tener al menos 7 dígitos.";
     }
   
-    if (tutor.ci.trim().length < 7) {
-      err.ci = "CI no válido.";
+    // Validación: carnet de identidad
+    if (!tutor.ci.trim()) {
+      err.ci = "El CI es obligatorio.";
+    } else if (!soloNumerosRegex.test(tutor.ci)) {
+      err.ci = "El CI solo debe contener números.";
+    } else if (tutor.ci.trim().length < 7) {
+      err.ci = "El CI debe tener al menos 7 dígitos.";
     }
   
+    // Validación: relación
     if (!tutor.relacion) {
-      err.relacion = "Seleccione una relación.";
+      err.relacion = "Debe seleccionar una relación con el estudiante.";
     }
   
     return err;
@@ -279,26 +304,46 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
 
   // Función para guardar la URL en la base de datos
   const guardarURLEnBaseDeDatos = async (url) => {
-    try {
-      // Intentar enviar datos a la API especificada primero
-      const data ={
-        tutor_id: id, 
-        competidor_ci: competidorCI,
-        numero_recibo: boletaData.numero_boleta,
-        monto_total: boletaData.monto_total,
-        fecha_emision: new Date().toISOString().split("T")[0], 
-        ruta_pdf: url,
-        estado: "Pendiente",
-      }
-      await axios.post("http://127.0.0.1:8000/api/guardarDatos/recibosInscripcionManual",data ) 
-
-      console.log("Datos enviados correctamente")
-
-    } catch (error) {
-      console.error("Error al guardar datos:", error)
-      throw error 
+  try {
+    // Verifica que todos los datos requeridos existen
+    if (!boletaData || !boletaData.numero_boleta || !boletaData.monto_total) {
+      throw new Error("Datos de la boleta incompletos");
     }
+
+    const data = {
+      tutor_id: id, 
+      ci: competidorCI,
+      numero_recibo: boletaData.numero_boleta,
+      monto_total: boletaData.monto_total,
+      fecha_emision: new Date().toISOString().split("T")[0], 
+      ruta_pdf: url,
+      estado: "Pendiente",
+    };
+
+    // Añade logs para depuración
+    console.log("Enviando datos al backend:", data);
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/guardarDatos/recibosInscripcionManual",
+      data,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+
+    console.log("Respuesta del backend:", response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error("Error al guardar datos:", error);
+    if (error.response) {
+      console.error("Detalles del error:", error.response.data);
+    }
+    throw error;
   }
+  };
 
   const handleNuevaInscripcion = async () => {
     // Si el PDF no se ha subido aún, subirlo automáticamente
@@ -371,7 +416,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
               className={err.nombres ? "input-error" : ""}
               disabled={index === 0}
             />
-            {err.nombres && <div className="error-message">{err.nombres}</div>}
+            {err.nombres && <div className="errorpaso3">{err.nombres}</div>}
           </div>
         </div>
 
@@ -386,7 +431,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
               className={err.apellidos ? "input-error" : ""}
               disabled={index === 0}
             />
-            {err.apellidos && <div className="error-message">{err.apellidos}</div>}
+            {err.apellidos && <div className="errorpaso3">{err.apellidos}</div>}
           </div>
         </div>
 
@@ -401,7 +446,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
               className={err.correo ? "input-error" : ""}
               disabled={index === 0}
             />
-            {err.correo_electronico && <div className="error-message">{err.correo_electronico}</div>}
+            {err.correo_electronico && <div className="errorpaso3">{err.correo_electronico}</div>}
           </div>
         </div>
 
@@ -416,7 +461,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
               className={err.telefono ? "input-error" : ""}
               disabled={index === 0}
             />
-            {err.telefono && <div className="error-message">{err.telefono}</div>}
+            {err.telefono && <div className="errorpaso3">{err.telefono}</div>}
           </div>
         </div>
 
@@ -431,7 +476,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
               className={err.ci ? "input-error" : ""}
               disabled={index === 0}
             />
-            {err.ci && <div className="error-message">{err.ci}</div>}
+            {err.ci && <div className="errorpaso3">{err.ci}</div>}
           </div>
         </div>
 
@@ -456,7 +501,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
                 </label>
               ))}
             </div>
-            {err.relacion && <div className="error-message">{err.relacion}</div>}
+            {err.relacion && <div className="errorpaso3">{err.relacion}</div>}
           </div>
         </div>
       </div>

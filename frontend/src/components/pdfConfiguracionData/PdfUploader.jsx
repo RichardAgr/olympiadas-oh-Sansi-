@@ -20,6 +20,9 @@ export default function PdfUploader({ idArchivo, title, type }) {
   const modalRef = useRef(null)
   const objectRef = useRef(null)
 
+  const axiosSinAuth = axios.create();
+
+
   useEffect(() => {
     const fetchExistingDocument = async () => {
       try {
@@ -64,14 +67,15 @@ export default function PdfUploader({ idArchivo, title, type }) {
       formData.append("resource_type", "auto") // Importante: esto permite a Cloudinary detectar automáticamente el tipo de archivo
 
       // Usar axios para la subida
-      const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
-            onProgress(progress)
-          }
-        },
-      })
+      const response = await axiosSinAuth.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
+  onUploadProgress: (progressEvent) => {
+    if (progressEvent.total) {
+      const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
+      onProgress(progress)
+    }
+  },
+});
+
 
       return response.data
     } catch (error) {
