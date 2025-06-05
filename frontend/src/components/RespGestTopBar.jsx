@@ -109,10 +109,17 @@ const RespGestTopBar = () => {
           {userMenuOpen && (
             <ul className="menu-dropdown">
               <li>
+                <Link to="/respGest/MiPerfil">Mi perfil</Link>
+              </li>
+              <li>
+                <Link to="/respGest/Configuracion">Configuración</Link>
+              </li>
+              <li>
                 <a onClick={handleLogout}>Cerrar Sesión</a>
               </li>
             </ul>
           )}
+
         </li>
       </ul>
     </nav>
