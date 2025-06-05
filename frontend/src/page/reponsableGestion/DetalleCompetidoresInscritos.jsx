@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+
 function DetalleCompetidoresInscritos() {
   const [competidores, setCompetidores] = useState([]);
   const [busqueda, setBusqueda] = useState("");
@@ -17,7 +18,7 @@ function DetalleCompetidoresInscritos() {
   );
 
   return (
-    <div>
+    <div className="container-detallesCompetidores">
       <h1>Detalle Competidores Inscritos</h1>
       <div className="buscador">
         <input

@@ -131,7 +131,7 @@ const VerRecibos = () => {
                   </div>
 
                   <div className="boletaFooter">
-                    <button className="button button-secondary" onClick={() => handleVerBoleta(boleta)}>
+                    <button className="buttonVerReci button-secondary" onClick={() => handleVerBoleta(boleta)}>
                       Ver Recibo
                     </button>
                   </div>
