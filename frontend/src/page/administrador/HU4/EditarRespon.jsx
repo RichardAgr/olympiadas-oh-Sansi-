@@ -158,7 +158,7 @@ function EditarRespon() {
         <div className="form-row2Hu42">
           <div className="form-group2Hu42">
             <label>Correo electrónico</label>
-            <input type="email" value={correo} onChange={(e) => setCorreo(e.target.value)} />
+            <input type="text" value={correo} onChange={(e) => setCorreo(e.target.value)} />
             {errores.correo && <small className="errorHu42">{errores.correo}</small>}
           </div>
 
