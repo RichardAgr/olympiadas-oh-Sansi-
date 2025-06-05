@@ -151,7 +151,7 @@ useEffect(() => {
         sessionStorage.setItem('hasSeenLoading', 'true');
       }
 
-      const response = await axios.get(`http://127.0.0.1:8000/api/documento-convocatoria/${2024}/descargar`);
+      const response = await axios.get(`http://127.0.0.1:8000/api/documento-convocatoria/${2025}/descargar`);
       const data = response.data;
       if (data.success) {
         setConvocatoria( data.data.url_pdf)
@@ -210,7 +210,7 @@ const response = await axios.get(convocatoria, {
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `convocatoria-${convocatoria.año || '2024'}.pdf`);
+    link.setAttribute('download', `convocatoria-${convocatoria.año || '2025'}.pdf`);
     document.body.appendChild(link);
     link.click();
     link.parentNode.removeChild(link);
