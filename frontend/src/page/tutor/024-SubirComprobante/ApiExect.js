@@ -5,10 +5,19 @@ export const processReceipt = async (imageFile) => {
   const formData = new FormData();
   formData.append('image', imageFile);
 
+
+
   try {
+      const token = getAuthToken();
+if (!token) {
+  console.warn("⚠️ No se encontró un token en localStorage. El usuario no está logueado.");
+} else {
+  console.log("✅ Token obtenido:", token);
+}
     const response = await axios.post("http://127.0.0.1:8000/api/processReceipt", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
       },
       onUploadProgress: (progressEvent) => {
         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);

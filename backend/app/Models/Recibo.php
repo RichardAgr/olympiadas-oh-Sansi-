@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Recibo extends Model{
     use HasFactory;
 
-    protected $table = 'RECIBO';
+    protected $table = 'recibo';
     protected $primaryKey = 'recibo_id';
     public $timestamps = false;
 

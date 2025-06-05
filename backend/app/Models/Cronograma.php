@@ -17,7 +17,6 @@ class Cronograma extends Model
     protected $fillable = [
         'area_id',
         'competencia_id',
-        'nombre_evento',
         'descripcion',
         'fecha_inicio',
         'fecha_fin',

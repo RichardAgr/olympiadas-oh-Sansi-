@@ -6,7 +6,6 @@
   background-color: white;
   padding: 10px 20px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  margin-bottom: 20px;
   border-bottom: 1px solid #eee;
 }
 
@@ -220,11 +219,8 @@
 
 .admin-content {
   margin: 0 auto;        
-  padding: 0 30px;        
-  width: 100%; 
-  /*display: flex;
-  justify-content: center;   /* 🠈 Centra horizontalmente */
-  /*align-items: center;       /* 🠇 Centra verticalmente */          
+  padding: 0;        
+  width: 100%;     
 }
 
 .admin-welcome-container {
@@ -722,24 +718,6 @@
   }
 }
 
-
-
-footer {
-  background: #000;
-  color: #fff;
-  display: flex;
-  justify-content: space-between;
-  padding: 20px 50px;
-}
-
-footer p {
-  margin: 5px 0;
-}
-
-.footer-left a img {
-  margin-top: 10px;
-}
-
 .form-container {
   width: 40%;
   margin: 40px auto;
@@ -896,4 +874,18 @@ footer p {
   opacity: 0.4;
   cursor: default;
 }
+.titulo-editar-area,
+.etiqueta-campo-area,
+.campo-entrada-area,
+.campo-textarea-area,
+.btn-guardar-area,
+.btn-cancelar-area {
+  font-family: 'Comfortaa', sans-serif;
+}
+.campo-entrada-area,
+.campo-textarea-area,
+.campo-select-area {
+  font-family: 'Comfortaa', sans-serif;
+}
+
 

@@ -1,0 +1,295 @@
+.home-container3Hu43 {
+  padding: 40px 60px;
+  font-family: 'Comfortaa', sans-serif;
+  background-color: #ffffff;
+}
+
+.admin-contentHu43 {
+ 
+  margin: 0;         /* Lo centra horizontalmente */
+  padding: 0 40px;        /* Espacio a los lados */
+  width: 100%;            /* Asegura que ocupe todo el ancho posible */
+  box-sizing: border-box; /* Incluye padding en el cálculo del ancho */
+}
+
+.boton-buscarHu43 {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.search-inputHu43:focus {
+  border-color: #384FD6;
+}
+
+.buscadorHu43 input,
+.filtro-selectHu43 {
+  width: 600px; /* mismo ancho que input */
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: 'Comfortaa', sans-serif;
+  font-size: 15px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+/* Botones principales */
+.botones_excel_agregarHu43 {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
+  margin-top: 20px;      /* <--- separación del elemento anterior */
+}
+
+/* Botones principales */
+.boton-excelHu43,
+.boton-addUserHu43 {
+  background-color: #384FD6;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.2s;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.boton-excelHu43:hover,
+.boton-addUserHu43:hover {
+  background-color: #061f66;
+  transform: scale(1.05);
+}
+
+.icono-botonHu43,
+.icono-boton2Hu43 {
+  width: 18px;
+  height: 18px;
+}
+
+/* Tabla */
+.contenedor-tablaHu43 {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .tablaHu43 {
+    min-width: 600px;
+  }
+}
+
+
+.tablaHu43 {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.tablaHu43 th {
+  background-color: #f2f2f2;
+  padding: 14px;
+  text-align: center;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+}
+
+.tablaHu43 td {
+  padding: 14px;
+  text-align: center;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
+}
+
+.tablaHu43 tbody tr {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Estado */
+.estado-activoHu43 {
+  color: #2ecc71;
+  font-weight: bold;
+}
+.estado-inactivoHu43 {
+  color: #888;
+  font-weight: bold;
+}
+
+/* Botones de íconos */
+.botones-tablaHu43 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.boton-iconoHu43 {
+  background-color: #384FD6;
+  border: none;
+  border-radius: 15px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.boton-iconoHu43:hover {
+  transform: scale(1.05);
+}
+
+.icono-blancoHu43 {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+}
+
+/* Paginación */
+.paginationHu43 {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  gap: 10px;
+}
+
+.paginationHu43 button {
+  background-color: #eee;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.paginationHu43 button:hover {
+  background-color: #d9d9d9;
+}
+
+.paginationHu43 button.active {
+  background-color: #384FD6;
+  color: white;
+}
+.input-busquedaHu43 {
+  width: 250px; /* <- aquí ajustas el tamaño deseado */
+  padding: 12px 12px 12px 34px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-family: 'Comfortaa', sans-serif;
+  outline: none;
+  transition: border-color 0.3s;
+  margin-bottom: 15px; /* separación con el siguiente elemento */
+}
+
+.filtros-fecha-y-botonHu43 {
+  display: flex;
+  align-items: flex-end; /* 📏 Alínea los inputs y botón a la base */
+  gap: 20px;              /* Espaciado entre cada bloque */
+  margin-bottom: 20px;
+  flex-wrap: wrap;        /* 💡 Hace que se acomode bien en pantallas chicas */
+}
+
+.filtro-fechaHu43 {
+  display: flex;
+  flex-direction: column;
+}
+
+.filtro-fechaHu43 label {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.filtro-fechaHu43 input[type="date"] {
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  min-width: 160px;
+}
+
+.btn-limpiarHu43 {
+  padding: 10px 20px;
+  background-color: #d1d1d1;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  height: fit-content; /* Hace que el botón se alinee con los inputs */
+  margin-top: auto;    /* Fuerza que se alinee abajo */
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.btn-limpiarHu43:hover {
+  background-color: #bcbcbc;
+}
+/* Texto de contador */
+.contador-resultadosHu43 {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+/* Responsive: tablet y mobile */
+@media (max-width: 992px) {
+  .home-container3Hu43 {
+    padding: 30px 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container3Hu43 {
+    padding: 20px;
+  }
+
+  .buscadorHu43 {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+
+  .boton-excelHu43,
+  .boton-addUserHu43 {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .tablaHu43 th,
+  .tablaHu43 td {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .paginationHu43 {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .paginationHu43 button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .filtros-fecha-y-botonHu43 {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-limpiarHu43 {
+    width: 100%;
+  }
+}

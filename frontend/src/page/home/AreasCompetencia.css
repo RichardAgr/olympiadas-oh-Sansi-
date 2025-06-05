@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600&display=swap');
+
+/* Contenedor principal */
+.area-container {
+  height: 100vh;
+  padding: 30px;
+  background: #F6FAFF;
+  color: #222; /* texto oscuro para contraste con fondo claro */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Comfortaa', cursive;
+}
+
+/* Título principal */
+.area-title {
+  margin: 0 0 20px 0; /* elimina margin-top negativo */
+  font-size: 40px;
+  font-weight: 1000; /* peso de fuente más grueso */
+  text-align: center;
+  color:#ffffff /* color que destaca en fondos oscuros */
+  
+}
+
+/* Botón descargar PDF */
+.pdf-button {
+  white-space: nowrap; /* evita que el texto se divida en varias líneas */
+  background: linear-gradient(135deg, #5c6477, #1d283a, #334155);
+  color: white;
+  border: none;
+  padding: 8px 14px; 
+  border-radius: 6px; 
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-top: 20px; /* espacio entre la tabla y el botón */
+}
+
+.pdf-button:hover {
+  background-color: var(--primary-dark);;
+}
+
+/* Notificación */
+.notificationAreaCom {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 20px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Eventos: container y cards (con la nomenclatura corregida) */
+.eventoH-grid-container {
+  background-color: #0000008e;
+  padding: 2rem 0;
+  min-height: 100vh;
+  color: white;
+  text-align: center;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.imagen-AreasCompetencia {
+ background-size: cover !important;
+  background-position: center !important;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 8px 25px rgba(14, 165, 233, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(14, 165, 233, 0.3);
+}
+
+
+
+.eventoH-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  color: white;
+}
+
+.eventoH-card-grid {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.eventoH-card {
+  background-color: rgba(32, 30, 80, 0.753);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.5rem;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  position: relative;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.eventoH-nombre {
+  font-size: 1.3rem;
+  color: #facc15;
+  font-weight: 600;
+  text-align: center;
+}
+
+
+.eventoH-info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.eventoH-icon {
+  color: white;
+  min-width: 20px;
+  cursor: default;
+}
+
+.eventoH-icon.clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.eventoH-icon.clickable:hover {
+  transform: scale(1.1);
+  color: #facc15;
+}
+
+.eventoH-info-label {
+  font-weight: 600;
+  margin-right: 4px;
+  color: #e2e8f0;
+}
+
+.eventoH-info-value {
+  color: #fff;
+}
+
+.eventoH-info-value.location {
+  margin-left: 0.5rem;
+}
+
+.eventoH-info-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.eventoH-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.eventoH-info-label {
+  font-size: 0.7rem;
+  color: #f0f0f0;
+  margin-bottom: 4px;
+  font-weight: 700;
+  padding-left: 34px;
+}
+
+.eventoH-info-value {
+  font-size: 0.9rem;
+  color: white;
+  padding-top: 2px; /* 👈 Pushes it slightly downward */
+  position: relative;
+  top: 1px; /* Optional: adds even finer control */
+}
+.eventoH-location-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* 🧭 aligns left */
+  gap: 3px;
+  margin-left: 7px; /* aligns it with other labels */
+  width: 100%;
+}
+.eventoH-icon.calendar {
+  color: #f07ec0; /* 🌸 Change to whatever color you'd like */
+}
+
+.buscadorHomePage-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+  
+}
+
+.buscadorHomePage-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.buscadorHomePage-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+  transform: scale(1.02);
+}
+
+.no-resultsBuscadorHomePage {
+  text-align: center;
+  color: #888;
+  font-size: 18px;
+  margin-top: 20px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+   

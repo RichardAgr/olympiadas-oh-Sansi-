@@ -63,7 +63,8 @@ export async function extractDataFromImage(file) {
   try {
     const response = await api.post('/processReceipt', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
       },
       // Opcional: barra de progreso
       onUploadProgress: (progressEvent) => {

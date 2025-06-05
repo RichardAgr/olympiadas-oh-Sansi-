@@ -7,18 +7,44 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Models\Area;
+use App\Models\Cronograma;
 
-class AreaController extends Controller
-{
-    /**
-     * Mostrar todas las áreas.
-     * GET /api/areas
-     */
-    public function index()
-    {
-        $areas = Area::all();
-        return response()->json($areas, 200);
+class AreaController extends Controller{
+    public function ObtenerAreasRegistradas(Request $request): JsonResponse{
+         try {
+            $areas = Area::select('area_id', 'costo', 'nombre', 'descripcion', 'estado', 'created_at', 'updated_at')
+                         ->distinct()
+                         ->orderBy('nombre', 'asc')
+                         ->get();
+
+            if ($areas->isEmpty()) {
+                return response()->json([], 200);
+            }
+
+            $areasFormatted = $areas->map(function ($area) {
+                return [
+                    'area_id' => $area->area_id,
+                    'costo' => (float) $area->costo,
+                    'nombre' => $area->nombre,
+                    'descripcion' => $area->descripcion,
+                    'estado' => (int) $area->estado,
+                    'created_at' => $area->created_at->toISOString(),
+                    'updated_at' => $area->updated_at->toISOString()
+                ];
+            });
+
+            return response()->json($areasFormatted->toArray(), 200);
+
+        } catch (Exception $e) {
+            Log::error('Error al obtener áreas: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Error interno del servidor'
+            ], 500);
+        }
     }
 
     /**
@@ -61,143 +87,484 @@ class AreaController extends Controller
 }
 
 
-    /**
-     * Registrar una nueva área.
-     * POST /api/areas
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:50|unique:area,nombre',
-            'descripcion' => 'required|string',
-            'costo' => 'required|numeric|min:0',
-            'estado' => 'nullable|boolean'
-        ]);
-
-        $area = Area::create([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'costo' => $request->costo,
-            'estado' => $request->estado ?? true
-        ]);
-
-        return response()->json([
-            'message' => 'Área registrada con éxito',
-            'area' => $area
-        ], 201);
-    }
-
-    /**
-     * Mostrar un área específica.
-     * GET /api/areas/{id}
-     */
-    public function show($id)
-    {
-        $area = Area::findOrFail($id);
-        return response()->json($area, 200);
-    }
-
-    /**
-     * Actualizar un área.
-     * PUT /api/areas/{id}
-     */
-    public function update(Request $request, $id)
-    {
-        $area = Area::findOrFail($id);
-
-        $request->validate([
-            'nombre' => 'required|string|max:50|unique:area,nombre,' . $id . ',area_id',
-            'descripcion' => 'required|string',
-            'costo' => 'required|numeric|min:0',
-            'estado' => 'required|boolean'
-        ]);
-
-        $area->update($request->all());
-
-        return response()->json([
-            'message' => 'Área actualizada correctamente',
-            'area' => $area
-        ]);
-    }
-
-    /**
-     * Eliminar un área.
-     * DELETE /api/areas/{id}
-     */
-    public function destroy($id)
-    {
-        $area = Area::findOrFail($id);
-        $area->delete();
-
-        return response()->json([
-            'message' => 'Área eliminada exitosamente'
-        ]);
-    }
-
-    public function getAreasWithCategoriasGrados()
-    {
+public function RegistrarNuevaArea(Request $request){
+        DB::beginTransaction();
         try {
-            // Obtener todas las áreas con sus categorías y relaciones de grados
-            $areas = Area::with([
-                'nivelCategoria',
-                'nivelCategoria.gradoInicial',
-                'nivelCategoria.gradoFinal',
-                'nivelCategoria.gradoInicial.nivelEducativo',
-                'nivelCategoria.gradoFinal.nivelEducativo'
-            ])
-            ->where('estado', true)
-            ->get();
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:255|unique:area,nombre',
+                'descripcion' => 'required|string|max:1000',
+                'costo' => 'required|numeric|min:0|max:999999.99'
+            ]);
 
-            $result = [];
+            $area = Area::create([
+                'nombre' => strtoupper(trim($validated['nombre'])), 
+                'descripcion' => trim($validated['descripcion']),
+                'costo' => $validated['costo'],
+                'estado' => 1, // Por defecto activo
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
 
-            foreach ($areas as $area) {
-                $categorias = [];
+            $tiposEvento = ['Inscripcion', 'Competencia', 'Fin'];
+            $fechaPorDefecto = '1000-00-00'; // Fecha por defecto
+            
+            // Verificar si existe la competencia con ID 1
+            $competenciaExiste = DB::table('competencia')->where('competencia_id', 1)->exists();
+            
+            if (!$competenciaExiste) {
+                throw new Exception("La competencia con ID 1 no existe. Debes crear esta competencia primero.");
+            }
+            
+            foreach ($tiposEvento as $tipoEvento) {
+                Cronograma::create([
+                    'area_id' => $area->area_id,
+                    'competencia_id' => 1, 
+                    'descripcion' => '', 
+                    'fecha_inicio' => $fechaPorDefecto,
+                    'fecha_fin' => $fechaPorDefecto,
+                    'tipo_evento' => $tipoEvento,
+                    'anio_olimpiada' => 0 
+                ]);
+            }
+            DB::commit();
 
-                // Procesar cada categoría del área
-                foreach ($area->nivelCategoria as $categoria) {
-                    $gradoInicialNombre = $categoria->gradoInicial->nombre;
-                    $gradoFinalNombre = $categoria->gradoFinal->nombre;
-                    
-                    // Crear el rango_grado
-                    $rangoGrado = $gradoInicialNombre;
-                    if ($categoria->grado_id_inicial !== $categoria->grado_id_final) {
-                        $rangoGrado .= ' a ' . $gradoFinalNombre;
-                    }
-                    
-                    $categoriaData = [
-                        'nivel_categoria_id' => $categoria->nivel_categoria_id,
-                        'nombre' => $categoria->nombre,
-                        'rango_grado' => $rangoGrado
-                    ];
+            $areaFormatted = [
+                'area_id' => $area->area_id,
+                'costo' => (float) $area->costo,
+                'nombre' => $area->nombre,
+                'descripcion' => $area->descripcion,
+                'estado' => (int) $area->estado,
+                'created_at' => $area->created_at->toISOString(),
+                'updated_at' => $area->updated_at->toISOString()
+            ];
 
-                    $categorias[] = $categoriaData;
-                }
+            return response()->json($areaFormatted, 201);
 
-                // Solo agregar áreas que tengan categorías
-                if (count($categorias) > 0) {
-                    $result[] = [
-                        'area_id' => $area->area_id,
-                        'nombre' => $area->nombre,
-                        'costo' => $area->costo,
-                        'categorias' => $categorias
-                    ];
-                }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => 'Datos de entrada inválidos',
+                'details' => $e->errors()
+            ], 422);
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            
+            if ($e->getCode() == 23000) { 
+                return response()->json([
+                    'error' => 'El nombre del área ya existe o hay un problema con claves foráneas',
+                    'details' => $e->getMessage()
+                ], 409); // Conflict
             }
 
+            Log::error('Error de base de datos al crear área: ' . $e->getMessage());
+
             return response()->json([
-                'success' => true,
-                'data' => $result,
-                'message' => 'Áreas con categorías y grados obtenidas correctamente'
+                'error' => 'Error de base de datos',
+                'details' => $e->getMessage(), 
+                'code' => $e->getCode()
+            ], 500);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error al crear área: ' . $e->getMessage(), [
+                'request_data' => $request->all(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'error' => 'Error interno del servidor',
+                'details' => $e->getMessage() 
+            ], 500);
+        }
+    }
+
+    public function DatosAreaId(int $areaId): JsonResponse {
+        try {
+            $area = Area::select('area_id', 'costo', 'nombre', 'descripcion', 'estado', 'created_at', 'updated_at')
+                       ->where('area_id', $areaId)
+                       ->first();
+            if (!$area) {
+                return response()->json([
+                    'error' => 'Área no encontrada'
+                ], 404);
+            }
+
+            $areaFormatted = [
+                'area_id' => $area->area_id,
+                'costo' => (float) $area->costo,
+                'nombre' => $area->nombre,
+                'descripcion' => $area->descripcion,
+                'estado' => (int) $area->estado,
+                'created_at' => $area->created_at->toISOString(),
+                'updated_at' => $area->updated_at->toISOString()
+            ];
+
+            return response()->json($areaFormatted, 200);
+
+        } catch (Exception $e) {
+            Log::error('Error al obtener área: ' . $e->getMessage(), [
+                'area_id' => $areaId,
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'error' => 'Error interno del servidor'
+            ], 500);
+        }
+    }
+
+
+
+    public function actualizarArea(Request $request, int $areaId): JsonResponse{
+        try {
+            $area = Area::where('area_id', $areaId)->first();
+
+            if (!$area) {
+                return response()->json([
+                    'error' => 'Área no encontrada'
+                ], 404);
+            }
+
+            // Validar los datos de entrada
+            $validated = $request->validate([
+                'nombre' => 'sometimes|string|max:255|unique:area,nombre,' . $areaId . ',area_id',
+                'descripcion' => 'sometimes|string|max:1000',
+                'costo' => 'sometimes|numeric|min:0|max:999999.99',
+                'estado' => 'sometimes|boolean'
+            ]);
+
+            // Preparar los datos para actualizar
+            $dataToUpdate = [];
+
+            if (isset($validated['nombre'])) {
+                $dataToUpdate['nombre'] = strtoupper(trim($validated['nombre']));
+            }
+
+            if (isset($validated['descripcion'])) {
+                $dataToUpdate['descripcion'] = trim($validated['descripcion']);
+            }
+
+            if (isset($validated['costo'])) {
+                $dataToUpdate['costo'] = $validated['costo'];
+            }
+
+            if (isset($validated['estado'])) {
+                $dataToUpdate['estado'] = $validated['estado'] ? 1 : 0;
+            }
+
+            $dataToUpdate['updated_at'] = now();
+
+            // Actualizar el área
+            $area->update($dataToUpdate);
+
+            // Recargar el área para obtener los datos actualizados
+            $area->refresh();
+
+            // Formatear la respuesta
+            $areaFormatted = [
+                'area_id' => $area->area_id,
+                'costo' => (float) $area->costo,
+                'nombre' => $area->nombre,
+                'descripcion' => $area->descripcion,
+                'estado' => (int) $area->estado,
+                'created_at' => $area->created_at->toISOString(),
+                'updated_at' => $area->updated_at->toISOString()
+            ];
+
+            return response()->json($areaFormatted, 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => 'Datos de entrada inválidos',
+                'details' => $e->errors()
+            ], 422);
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == 23000) { // Integrity constraint violation si hay datos duplicados
+                return response()->json([
+                    'error' => 'El nombre del área ya existe'
+                ], 409); // Conflict
+            }
+
+            Log::error('Error de base de datos al actualizar área: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Error de base de datos'
+            ], 500);
+
+        } catch (Exception $e) {
+            Log::error('Error al actualizar área: ' . $e->getMessage(), [
+                'area_id' => $areaId,
+                'request_data' => $request->all(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'error' => 'Error interno del servidor'
+            ], 500);
+        }
+    }
+
+
+ public function EliminarArea(int $areaId): JsonResponse{
+        DB::beginTransaction();
+        
+        try {
+            $area = Area::where('area_id', $areaId)->first();
+
+            // Verificar si el área existe
+            if (!$area) {
+                DB::rollBack();
+                return response()->json([
+                    'error' => 'Área no encontrada'
+                ], 404);
+            }
+
+            $areaData = [
+                'area_id' => $area->area_id,
+                'costo' => (float) $area->costo,
+                'nombre' => $area->nombre,
+                'descripcion' => $area->descripcion,
+                'estado' => (int) $area->estado,
+                'created_at' => $area->created_at->toISOString(),
+                'updated_at' => $area->updated_at->toISOString()
+            ];
+
+            $cronogramasCount = Cronograma::where('area_id', $areaId)->count();
+
+            Cronograma::where('area_id', $areaId)->delete();
+
+            $area->delete();
+
+            DB::commit();
+
+            $response = array_merge($areaData, [
+                'cronogramas_eliminados' => $cronogramasCount,
+                'message' => 'Área y cronogramas asociados eliminados exitosamente'
+            ]);
+
+            return response()->json($response, 200);
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            
+            Log::error('Error de base de datos al eliminar área: ' . $e->getMessage(), [
+                'area_id' => $areaId,
+                'error_code' => $e->getCode()
+            ]);
+
+            return response()->json([
+                'error' => 'Error de base de datos al eliminar',
+                'details' => $e->getMessage()
+            ], 500);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            
+            Log::error('Error al eliminar área: ' . $e->getMessage(), [
+                'area_id' => $areaId,
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'error' => 'Error interno del servidor',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+       public function getAreasWithCategoriasGrados()
+{
+    try {
+        $areas = Area::with([
+            'nivelCategoria',
+            'nivelCategoria.gradoInicial',
+            'nivelCategoria.gradoFinal',
+            'nivelCategoria.gradoInicial.nivelEducativo',
+            'nivelCategoria.gradoFinal.nivelEducativo',
+            'cronograma' // Relación del área hacia sus cronogramas
+        ])
+        ->where('estado', true)
+        ->get();
+
+        $result = [];
+
+        foreach ($areas as $area) {
+            $categorias = [];
+
+            foreach ($area->nivelCategoria as $categoria) {
+                $gradoInicialNombre = $categoria->gradoInicial->nombre;
+                $gradoFinalNombre = $categoria->gradoFinal->nombre;
+
+                $rangoGrado = $gradoInicialNombre;
+                if ($categoria->grado_id_inicial !== $categoria->grado_id_final) {
+                    $rangoGrado .= ' a ' . $gradoFinalNombre;
+                }
+
+                $categorias[] = [
+                    'nivel_categoria_id' => $categoria->nivel_categoria_id,
+                    'nombre' => $categoria->nombre,
+                    'rango_grado' => $rangoGrado
+                ];
+            }
+
+            if (count($categorias) > 0) {
+                // Obtener fechas de cronograma según tipo_evento
+                $inscripcion = $area->cronograma->firstWhere('tipo_evento', 'Inscripcion');
+                $fin = $area->cronograma->firstWhere('tipo_evento', 'Fin');
+                $competencia = $area->cronograma->firstWhere('tipo_evento', 'Competencia');
+
+                $result[] = [
+                    'area_id' => $area->area_id,
+                    'nombre' => $area->nombre,
+                    'costo' => $area->costo,
+                    'fecha_inscripcion_inicio' => $inscripcion ? \Carbon\Carbon::parse($inscripcion->fecha_inicio)->format('d-m-Y') : null,
+                    'fecha_inscripcion_fin' => $inscripcion ? \Carbon\Carbon::parse($inscripcion->fecha_fin)->format('d-m-Y') : null,
+                    'fecha_fin_inicio' => $fin ? \Carbon\Carbon::parse($fin->fecha_inicio)->format('d-m-Y') : null,
+                    'fecha_fin_fin' => $fin ? \Carbon\Carbon::parse($fin->fecha_fin)->format('d-m-Y') : null,
+                    'fecha_competencia_inicio' => $competencia ? \Carbon\Carbon::parse($competencia->fecha_inicio)->format('d-m-Y') : null,
+                    'fecha_competencia_fin' => $competencia ? \Carbon\Carbon::parse($competencia->fecha_fin)->format('d-m-Y') : null,
+                    'categorias' => $categorias
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $result,
+            'message' => 'Áreas con categorías, grados y cronogramas obtenidos correctamente'
+        ], 200);
+
+    } catch (\Exception $e) {
+        Log::error('Error al obtener áreas con cronogramas: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener las áreas con cronogramas',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+    public function DatosAreasCompleto(Request $request): JsonResponse{
+        try {
+            $validated = $request->validate([
+                'search' => 'sometimes|string|max:255',
+                'fecha_desde' => 'sometimes|date',
+                'fecha_hasta' => 'sometimes|date|after_or_equal:fecha_desde',
+                'area_id' => 'sometimes|integer|exists:area,area_id',
+                'tipo_evento' => 'sometimes|string'
+            ]);
+            $query = DB::table('area as a')
+                ->join('cronograma as cr', 'a.area_id', '=', 'cr.area_id')
+                ->leftJoin('nivel_categoria as nc', 'a.area_id', '=', 'nc.area_id')
+                ->leftJoin('grado as gi', 'nc.grado_id_inicial', '=', 'gi.grado_id')
+                ->leftJoin('grado as gf', 'nc.grado_id_final', '=', 'gf.grado_id')
+                ->select([
+                    'a.area_id',
+                    'a.nombre as area',
+                    'a.descripcion as area_descripcion',
+                    'a.costo',
+                    'a.estado',
+                    'a.created_at as area_created_at',
+                    'a.updated_at as area_updated_at',
+                    'cr.cronograma_id',
+                    'cr.descripcion as cronograma_descripcion',
+                    'cr.fecha_inicio',
+                    'cr.fecha_fin',
+                    'cr.tipo_evento',
+                    'cr.anio_olimpiada',
+                    'cr.competencia_id',
+                    'nc.nombre as nivel_categoria',
+                    'nc.descripcion as nivel_descripcion',
+                    DB::raw("CASE 
+                        WHEN gi.nombre IS NOT NULL AND gf.nombre IS NOT NULL AND gi.grado_id != gf.grado_id
+                        THEN CONCAT(gi.nombre, ' - ', gf.nombre)
+                        WHEN gi.nombre IS NOT NULL 
+                        THEN gi.nombre
+                        ELSE '-'
+                    END as grado"),
+                    'gi.nombre as grado_inicial',
+                    'gf.nombre as grado_final'
+                ])
+                ->where('a.estado', 1); // Solo áreas activas
+
+            if (isset($validated['fecha_desde'])) {
+                $query->where('cr.fecha_inicio', '>=', $validated['fecha_desde']);
+            }
+
+            if (isset($validated['fecha_hasta'])) {
+                $query->where('cr.fecha_inicio', '<=', $validated['fecha_hasta']);
+            }
+
+            if (isset($validated['area_id'])) {
+                $query->where('a.area_id', $validated['area_id']);
+            }
+
+            if (isset($validated['tipo_evento'])) {
+                $query->where('cr.tipo_evento', $validated['tipo_evento']);
+            }
+
+            // Ordenar por área y fecha de inicio
+            $query->orderBy('a.nombre', 'asc')
+                  ->orderBy('cr.fecha_inicio', 'asc');
+
+            $areasRegistradas = $query->get();
+
+            // Verificar si hay datos
+            if ($areasRegistradas->isEmpty()) {
+                return response()->json([
+                    'data' => []
+                ], 200);
+            }
+
+            // Formatear los datos para el frontend
+            $dataFormatted = $areasRegistradas->map(function ($item) {
+                return [
+                    'area_id' => $item->area_id,
+                    'cronograma_id' => $item->cronograma_id,
+                    'area' => $item->area,
+                    'nivel_categoria' => $item->nivel_categoria ?: '-',
+                    'grado' => $item->grado ?: '-',
+                    'grado_inicial' => $item->grado_inicial ?: '-',
+                    'grado_final' => $item->grado_final ?: '-',
+                    'costo' => (float) $item->costo,
+                    'tipo_evento' => $item->tipo_evento ?: '-',
+                    'fecha_inicio' => $item->fecha_inicio ?: null,
+                    'fecha_fin' => $item->fecha_fin ?: null,
+                    'descripcion' => $item->cronograma_descripcion ?: $item->area_descripcion ?: '-',
+                    'anio_olimpiada' => $item->anio_olimpiada ?: '-',
+                    'competencia_id' => $item->competencia_id ?: null,
+                    'nivel_descripcion' => $item->nivel_descripcion ?: '-'
+                ];
+            });
+
+            return response()->json([
+                'data' => $dataFormatted->toArray()
             ], 200);
 
-        } catch (\Exception $e) {
-            Log::error('Error al obtener áreas con categorías y grados: ' . $e->getMessage());
-            
+        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
-                'success' => false,
-                'message' => 'Error al obtener las áreas con categorías y grados',
-                'error' => $e->getMessage()
+                'error' => 'Parámetros inválidos',
+                'details' => $e->errors()
+            ], 422);
+
+        } catch (Exception $e) {
+            Log::error('Error al obtener áreas registradas: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'request' => $request->all()
+            ]);
+
+            return response()->json([
+                'error' => 'Error interno del servidor'
             ], 500);
         }
     }
 }
+

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import './SegundoPaso.css';
+import { useEffect, useState } from "react";
+import "./SegundoPaso.css";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -13,18 +13,26 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
   const [selectedRango, setSelectedRango] = useState("");
   const { id } = useParams(); // ID del tutor
   const gradoId = Number(formData.grado_id);
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // Estado para controlar el modal
 
-    useEffect(() => {
-       // Reinicia la selección cuando cambia el área
-      setSelectedCategoria(null);
-       setSelectedRango('');
-    }, [selectedAreaId]);
-
+  useEffect(() => {
+    // Reinicia la selección cuando cambia el área
+    setSelectedCategoria(null);
+    setSelectedRango("");
+  }, [selectedAreaId]);
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/tutor/competidor/datos-competencia");
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/tutor/competidor/datos-competencia",
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+          }
+        );
         setAreas(response.data.areas);
         setCategorias(response.data.categorias);
         setGrados(response.data.grados);
@@ -45,8 +53,8 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
   const handleNext = async () => {
     if (selectedAreaId && selectedCategoria && selectedRango) {
       const areaNombre = areas.find((a) => a.id === selectedAreaId)?.nombre;
-      const gradoSeleccionado = grados.find(g => g.id === gradoId);
-    const cursoCompleto = gradoSeleccionado?.nombre || '';
+      const gradoSeleccionado = grados.find((g) => g.id === gradoId);
+      const cursoCompleto = gradoSeleccionado?.nombre || "";
 
       const datosCompetidor = {
         competidor: {
@@ -55,7 +63,7 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
           area: areaNombre,
           categoria: selectedCategoria.nombre,
           rango: selectedRango,
-        }
+        },
       };
 
       try {
@@ -64,31 +72,53 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
           datosCompetidor,
           {
             headers: {
-              'Content-Type': 'application/json',
-            }
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem('authToken')}`
+            },
           }
         );
 
-        const nuevoCompetidorId = response.data.competidor_id;// Ajusta si el backend devuelve el ID con otra clave
+        const nuevoCompetidorId = response.data.competidor_id; // Ajusta si el backend devuelve el ID con otra clave
 
-        alert("Competidor registrado correctamente.");
-        onNext(datosCompetidor.competidor, nuevoCompetidorId);
+        setShowSuccessModal(true); // Mostrar modal de éxito
+
+        // Ocultar el modal después de 3 segundos y continuar
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          onNext(datosCompetidor.competidor, nuevoCompetidorId);
+        }, 1500);
       } catch (error) {
         console.error("Error al registrar al competidor:", error);
         if (error.response) {
-          alert("Error del servidor: " + JSON.stringify(error.response.data));
+          //alert("Error del servidor: " + JSON.stringify(error.response.data));
         } else {
-          alert("Error al registrar al competidor.");
+          //alert("Error al registrar al competidor.");
         }
-      
       }
     } else {
-      alert("Por favor, selecciona todos los campos.");
+      //alert("Por favor, selecciona todos los campos.");
     }
   };
 
   return (
     <div className="inscribir-manual-container">
+      {/* Modal de éxito */}
+      {showSuccessModal && (
+        <div className="Ins-success-modal-overlay">
+          <div className="Ins-success-modal-content">
+            <div className="Ins-success-checkmark">
+              <div className="Ins-check-icon"></div>
+            </div>
+            <h3 className="Ins-success-message">
+              Competidor registrado correctamente
+            </h3>
+            <div className="Ins-progress-bar-container">
+              <div className="Ins-progress-bar"></div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <h2 className="inscribir-manual-title">Datos de competencia</h2>
 
       <div className="inscribir-manual-form">
@@ -96,14 +126,16 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
         <div className="form-group">
           <label>Área: </label>
           <div className="grid-options">
-            {areas.map(area => (
+            {areas.map((area) => (
               <button
                 key={area.id}
-                className={`option-button ${selectedAreaId === area.id ? 'selected' : ''}`}
+                className={`option-button ${
+                  selectedAreaId === area.id ? "selected" : ""
+                }`}
                 onClick={() => {
                   setSelectedAreaId(area.id);
                   setSelectedCategoria(null);
-                  setSelectedRango('');
+                  setSelectedRango("");
                 }}
               >
                 {area.nombre}
@@ -112,69 +144,97 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
           </div>
         </div>
 
-      {/* Categoría */}
-<div className="form-group">
-  <label>Categoría: </label>
-  <div className="grid-options">
-    {categorias
-      .filter(categoria => categoria.area_id === selectedAreaId) // 🔁 Mostrar todas de esa área
-      .map(categoria => {
-        const dentroDelRango = gradoId >= categoria.grado_id_inicial && gradoId <= categoria.grado_id_final;
+        {/* Categoría */}
+        <div className="form-group">
+          <label>Categoría: </label>
+          <div className="grid-options">
+            {categorias
+              .filter((categoria) => categoria.area_id === selectedAreaId) // 🔁 Mostrar todas de esa área
+              .map((categoria) => {
+                const dentroDelRango =
+                  gradoId >= categoria.grado_id_inicial &&
+                  gradoId <= categoria.grado_id_final;
 
-        return (
-          <button
-            key={categoria.nivel_categoria_id}
-            className={`option-button ${selectedCategoria?.nivel_categoria_id === categoria.nivel_categoria_id ? 'selected' : ''}`}
-            onClick={() => {
-              if (dentroDelRango) {
-                setSelectedCategoria(categoria);
-                const rango = generarRango(categoria.grado_id_inicial, categoria.grado_id_final);
-                setSelectedRango(rango);
-              }
-            }}
-            disabled={!dentroDelRango}
-            title={!dentroDelRango ? 'Tu grado no corresponde a esta categoría' : ''}
-          >
-            {categoria.nombre}
-          </button>
-        );
-      })}
-  </div>
-</div>
+                return (
+                  <button
+                    key={categoria.nivel_categoria_id}
+                    className={`option-button ${
+                      selectedCategoria?.nivel_categoria_id ===
+                      categoria.nivel_categoria_id
+                        ? "selected"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      if (dentroDelRango) {
+                        setSelectedCategoria(categoria);
+                        const rango = generarRango(
+                          categoria.grado_id_inicial,
+                          categoria.grado_id_final
+                        );
+                        setSelectedRango(rango);
+                      }
+                    }}
+                    disabled={!dentroDelRango}
+                    title={
+                      !dentroDelRango
+                        ? "Tu grado no corresponde a esta categoría"
+                        : ""
+                    }
+                  >
+                    {categoria.nombre}
+                  </button>
+                );
+              })}
+          </div>
+        </div>
 
+        {/* Rango */}
+        <div className="form-group">
+          <label>Rango: </label>
+          <div className="grid-options">
+            {categorias
+              .filter((categoria) => categoria.area_id === selectedAreaId)
+              .map((categoria) => {
+                const esSeleccionado =
+                  selectedCategoria?.nivel_categoria_id ===
+                  categoria.nivel_categoria_id;
 
-{/* Rango */}
-<div className="form-group">
-  <label>Rango: </label>
-  <div className="grid-options">
-    {categorias
-      .filter(categoria => categoria.area_id === selectedAreaId)
-      .map(categoria => {
-        const esSeleccionado =
-          selectedCategoria?.nivel_categoria_id === categoria.nivel_categoria_id;
+                const dentroDelRango =
+                  gradoId >= categoria.grado_id_inicial &&
+                  gradoId <= categoria.grado_id_final;
+                const rangoTexto = generarRango(
+                  categoria.grado_id_inicial,
+                  categoria.grado_id_final
+                );
 
-        const dentroDelRango = gradoId >= categoria.grado_id_inicial && gradoId <= categoria.grado_id_final;
-        const rangoTexto = generarRango(categoria.grado_id_inicial, categoria.grado_id_final);
-
-        return (
-          <button
-            key={`rango-${categoria.nivel_categoria_id}`}
-            className={`option-button ${esSeleccionado ? 'selected-rango' : ''} ${!dentroDelRango ? 'disabled-rango' : ''}`}
-            disabled
-            title={!dentroDelRango ? 'Tu grado no corresponde a esta categoría' : ''}
-          >
-            {rangoTexto}
-          </button>
-        );
-      })}
-  </div>
-</div>
-
+                return (
+                  <button
+                    key={`rango-${categoria.nivel_categoria_id}`}
+                    className={`option-button ${
+                      esSeleccionado ? "selected-rango" : ""
+                    } ${!dentroDelRango ? "disabled-rango" : ""}`}
+                    disabled
+                    title={
+                      !dentroDelRango
+                        ? "Tu grado no corresponde a esta categoría"
+                        : ""
+                    }
+                  >
+                    {rangoTexto}
+                  </button>
+                );
+              })}
+          </div>
+        </div>
 
         {/* Botones */}
         <div className="submit-button-container">
-          <button className="submit-button cancel" onClick={onBack}>Volver</button>
-          <button className="submit-button" onClick={handleNext}>Siguiente</button>
+          <button className="submit-button cancel" onClick={onBack}>
+            Volver
+          </button>
+          <button className="submit-button" onClick={handleNext}>
+            Siguiente
+          </button>
         </div>
       </div>
     </div>
@@ -184,7 +244,7 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
 SegundoPaso.propTypes = {
   onBack: PropTypes.func.isRequired,
   onNext: PropTypes.func.isRequired,
-  formData: PropTypes.object.isRequired
+  formData: PropTypes.object.isRequired,
 };
 
 export default SegundoPaso;
