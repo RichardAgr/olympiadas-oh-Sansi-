@@ -251,16 +251,16 @@
   }
 }
 
+.buscadorHu43 {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 @media (max-width: 768px) {
   .home-container3Hu43 {
     padding: 20px;
   }
-
-  .buscadorHu43 {
-    flex-direction: column;
-    gap: 10px;
-  }
-
 
   .boton-excelHu43,
   .boton-addUserHu43 {
