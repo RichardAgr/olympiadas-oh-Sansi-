@@ -163,4 +163,58 @@ class ResponsableGestionController extends Controller{
             ], 500); // Error interno
         }
     }
+
+    use Illuminate\Support\Facades\Hash;
+
+    public function verMiPerfil($id)
+    {
+        try {
+            $responsable = ResponsableGestion::find($id);
+
+            if (!$responsable) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Responsable de Gestión no encontrado'
+                ], 404);
+            }
+
+            return response()->json([
+                'responsable_id' => $responsable->responsable_id,
+                'nombres' => $responsable->nombres,
+                'apellidos' => $responsable->apellidos,
+                'correo_electronico' => $responsable->correo_electronico,
+                'telefono' => $responsable->telefono,
+                'ci' => $responsable->ci,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener el perfil',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function cambiarPassword(Request $request, $id)
+    {
+        $request->validate([
+            'password_actual' => 'required|string',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $responsable = ResponsableGestion::find($id);
+        if (!$responsable) {
+            return response()->json(['success' => false, 'message' => 'Responsable de Gestión no encontrado.'], 404);
+        }
+
+        if (!Hash::check($request->password_actual, $responsable->password)) {
+            return response()->json(['success' => false, 'message' => 'La contraseña actual es incorrecta.'], 401);
+        }
+
+        $responsable->password = Hash::make($request->password);
+        $responsable->save();
+
+        return response()->json(['success' => true, 'message' => 'Contraseña actualizada correctamente.']);
+    }
+
 }
