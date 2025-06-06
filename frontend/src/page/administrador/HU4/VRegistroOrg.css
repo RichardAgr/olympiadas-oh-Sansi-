@@ -325,3 +325,19 @@
 }
 
 
+.boton-estadoHu43 {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.boton-estadoHu43.habilitar {
+  background-color: #28a745; /* verde */
+}
+
+.boton-estadoHu43.deshabilitar {
+  background-color: #dc3545; /* rojo */
+}

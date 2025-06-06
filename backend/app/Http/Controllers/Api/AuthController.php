@@ -59,20 +59,29 @@ class AuthController extends Controller
         }
 
         // Intentar login como ResponsableGestion
-        $responsable = ResponsableGestion::where('correo_electronico', $correo)->first();
-        if ($responsable && Hash::check($clave, $responsable->password)) {
-            $token = $responsable->createToken('auth_token')->plainTextToken;
-            return response()->json([
-                'token' => $token,
-                'rol' => 'responsable',  
-                'usuario' => [
-                    'id' => $responsable->id,
-                    'nombres' => $responsable->nombres,
-                    'apellidos' => $responsable->apellidos,
-                    'correo_electronico' => $responsable->correo_electronico
-                ]
-            ]);
-        }
+$responsable = ResponsableGestion::where('correo_electronico', $correo)->first();
+if ($responsable && Hash::check($clave, $responsable->password)) {
+
+    if (!$responsable->estado) {
+        return response()->json([
+            'mensaje' => 'Tu cuenta ha sido desactivada. Contacta con el administrador.'
+        ], 403);
+    }
+
+    $token = $responsable->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'token' => $token,
+        'rol' => 'responsable',  
+        'usuario' => [
+            'id' => $responsable->id,
+            'nombres' => $responsable->nombres,
+            'apellidos' => $responsable->apellidos,
+            'correo_electronico' => $responsable->correo_electronico
+        ]
+    ]);
+}
+
 
         // Si ninguno coincide
         return response()->json(['mensaje' => 'Credenciales inválidas'], 401);

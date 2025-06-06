@@ -52,7 +52,7 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::get('/VerMiPerfil/{id}/Responsable', [ResponsableGestionController::class, 'VerMiPerfil']);
     Route::post('/responsable/cambiar-password/{id}', [ResponsableGestionController::class, 'cambiarPassword']);
     Route::post('/enviarCredencialesResponsable/{id}', [ResponsableGestionController::class, 'reenviarCredenciales']);
-
+    Route::post('/responsables/{id}/cambiar-estado', [ResponsableGestionController::class, 'cambiarEstadoResponsable']);
 
     // Eventos
     Route::get('/area/{areaId}/cronogramas', [EventoController::class, 'ObtenerCronogramasPorArea']);

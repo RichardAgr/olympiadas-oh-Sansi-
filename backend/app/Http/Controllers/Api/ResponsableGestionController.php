@@ -15,84 +15,67 @@ use Illuminate\Support\Facades\Mail;
 class ResponsableGestionController extends Controller
 {
     public function obtenerResponsableGestion()
-{
-    $responsables = ResponsableGestion::all()->map(function ($responsable) {
-        $responsable->ya_enviado = !empty($responsable->password);
-        return $responsable;
-    });
+    {
+        $responsables = ResponsableGestion::all()->map(function ($responsable) {
+            $responsable->ya_enviado = !empty($responsable->password);
+            return $responsable;
+        });
 
-    return response()->json($responsables, 200);
-}
-
+        return response()->json($responsables, 200);
+    }
 
     public function registrarResponsableGestion(Request $request)
-{
-    try {
-        // Validación
-        $request->validate([
-            'nombres' => 'required|string|max:100',
-            'apellidos' => 'required|string|max:100',
-            'ci' => 'required|string|max:20|unique:responsable_gestion,ci',
-            'correo_electronico' => 'required|email|max:100',
-            'telefono' => 'required|string|max:100',
-        ]);
-
-        // Generar contraseña una única vez
-        $passwordPlano = Str::random(10);
-
-        // Crear responsable con hash correcto
-        $responsable = ResponsableGestion::create([
-            'ci' => $request->ci,
-            'nombres' => $request->nombres,
-            'apellidos' => $request->apellidos,
-            'correo_electronico' => $request->correo_electronico,
-            'telefono' => $request->telefono,
-            'fecha_asignacion' => now(),
-            'estado' => true,
-            'password' => Hash::make($passwordPlano),
-        ]);
-
-        // LOG PARA VERIFICACIÓN
-        Log::info("Contraseña enviada a {$responsable->correo_electronico}: {$passwordPlano}");
-
-        if (Hash::check($passwordPlano, $responsable->password)) {
-            Log::info(" Hash y contraseña coinciden correctamente para {$responsable->correo_electronico}");
-        } else {
-            Log::error("El hash no coincide con la contraseña enviada por correo para {$responsable->correo_electronico}");
-        }
-
+    {
         try {
-            Mail::raw(
-                "Hola {$responsable->nombres},\n\nTus credenciales de acceso a O! SanSi son:\nUsuario: {$responsable->correo_electronico}\nContraseña: {$passwordPlano}\n\nTe recomendamos cambiarla al iniciar sesión.",
-                function ($message) use ($responsable) {
-                    $message->to($responsable->correo_electronico)
-                            ->subject('Credenciales de acceso - O! SanSi');
-                }
-            );
+            $request->validate([
+                'nombres' => 'required|string|max:100',
+                'apellidos' => 'required|string|max:100',
+                'ci' => 'required|string|max:20|unique:responsable_gestion,ci',
+                'correo_electronico' => 'required|email|max:100',
+                'telefono' => 'required|string|max:100',
+            ]);
+
+            $passwordPlano = Str::random(10);
+
+            $responsable = ResponsableGestion::create([
+                'ci' => $request->ci,
+                'nombres' => $request->nombres,
+                'apellidos' => $request->apellidos,
+                'correo_electronico' => $request->correo_electronico,
+                'telefono' => $request->telefono,
+                'fecha_asignacion' => now(),
+                'estado' => true,
+                'password' => Hash::make($passwordPlano),
+            ]);
+
+            Log::info("Contraseña enviada a {$responsable->correo_electronico}: {$passwordPlano}");
+
+            try {
+                Mail::raw(
+                    "Hola {$responsable->nombres},\n\nTus credenciales de acceso a O! SanSi son:\nUsuario: {$responsable->correo_electronico}\nContraseña: {$passwordPlano}\n\nTe recomendamos cambiarla al iniciar sesión.",
+                    function ($message) use ($responsable) {
+                        $message->to($responsable->correo_electronico)
+                                ->subject('Credenciales de acceso - O! SanSi');
+                    }
+                );
+            } catch (\Exception $e) {
+                Log::error("Error enviando correo a {$responsable->correo_electronico}: " . $e->getMessage());
+            }
+
+            return response()->json([
+                'message' => 'Responsable registrado con éxito',
+                'responsable' => $responsable
+            ], 201);
 
         } catch (\Exception $e) {
-            Log::error("Error enviando correo a {$responsable->correo_electronico}: " . $e->getMessage());
+            Log::error('Error al registrar responsable: ' . $e->getMessage());
 
-            if (app()->environment('local')) {
-                Log::debug("Password generado: {$passwordPlano}");
-            }
+            return response()->json([
+                'message' => 'Hubo un error al registrar al responsable',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Responsable registrado con éxito',
-            'responsable' => $responsable
-        ], 201);
-
-    } catch (\Exception $e) {
-        Log::error('Error al registrar responsable: ' . $e->getMessage());
-
-        return response()->json([
-            'message' => 'Hubo un error al registrar al responsable',
-            'error' => $e->getMessage(),
-        ], 500);
     }
-}
-
 
     public function obtenerDatosRespGestionId(int $responsableId): JsonResponse
     {
@@ -243,36 +226,68 @@ class ResponsableGestionController extends Controller
         }
     }
 
+    public function reenviarCredenciales($id)
+    {
+        try {
+            $responsable = ResponsableGestion::findOrFail($id);
+            $passwordPlano = Str::random(10);
+            $responsable->password = Hash::make($passwordPlano);
+            $responsable->save();
 
-public function reenviarCredenciales($id)
-{
-    try {
-        $responsable = ResponsableGestion::findOrFail($id);
+            Mail::raw(
+                "Hola {$responsable->nombres},\n\nTus nuevas credenciales de acceso a O! SanSi son:\nUsuario: {$responsable->correo_electronico}\nContraseña: {$passwordPlano}\n\nTe recomendamos cambiarla al iniciar sesión.",
+                function ($message) use ($responsable) {
+                    $message->to($responsable->correo_electronico)
+                            ->subject('Nuevas credenciales de acceso - O! SanSi');
+                }
+            );
 
+            return response()->json(['message' => 'Credenciales enviadas con éxito.']);
+        } catch (\Exception $e) {
+            Log::error('Error al reenviar credenciales: ' . $e->getMessage());
 
-        //Generar nueva contraseña
-        $passwordPlano = Str::random(10);
-        $responsable->password = Hash::make($passwordPlano);
-        $responsable->save();
-
-        // Enviar correo
-        Mail::raw(
-            "Hola {$responsable->nombres},\n\nTus credenciales de acceso a O! SanSi son:\nUsuario: {$responsable->correo_electronico}\nContraseña: {$passwordPlano}\n\nTe recomendamos cambiarla al iniciar sesión.",
-            function ($message) use ($responsable) {
-                $message->to($responsable->correo_electronico)
-                        ->subject('Credenciales de acceso - O! SanSi');
-            }
-        );
-
-        return response()->json(['message' => 'Credenciales enviadas con éxito.']);
-
-    } catch (\Exception $e) {
-        Log::error('Error al reenviar credenciales: ' . $e->getMessage());
-
-        return response()->json([
-            'message' => 'Error al enviar las credenciales.',
-            'error' => $e->getMessage()
-        ], 500);
+            return response()->json([
+                'message' => 'Error al enviar las credenciales.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
+
+    public function cambiarEstadoResponsable($id)
+    {
+        try {
+            $responsable = ResponsableGestion::findOrFail($id);
+            $responsable->estado = !$responsable->estado;
+            $responsable->save();
+
+            if (!$responsable->estado) {
+                Mail::raw(
+                    "Hola {$responsable->nombres},\n\nTu cuenta en O! SanSi ha sido desactivada. Ya no puedes iniciar sesión en la plataforma.",
+                    function ($message) use ($responsable) {
+                        $message->to($responsable->correo_electronico)
+                                ->subject('Cuenta desactivada - O! SanSi');
+                    }
+                );
+            } else {
+                $passwordPlano = Str::random(10);
+                $responsable->password = Hash::make($passwordPlano);
+                $responsable->save();
+
+                Mail::raw(
+                    "Hola {$responsable->nombres},\n\nTu cuenta ha sido reactivada. Tus nuevas credenciales son:\nUsuario: {$responsable->correo_electronico}\nContraseña: {$passwordPlano}\n\nTe recomendamos cambiarla al iniciar sesión.",
+                    function ($message) use ($responsable) {
+                        $message->to($responsable->correo_electronico)
+                                ->subject('Cuenta reactivada - O! SanSi');
+                    }
+                );
+            }
+
+            return response()->json(['message' => 'Estado actualizado correctamente.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al cambiar el estado.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
