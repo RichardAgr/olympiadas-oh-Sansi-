@@ -1,8 +1,10 @@
 import { useState } from "react"
+import axios from "axios"
 import "./componenteCompetenciaForm.css"
+import "../notificacionCompetencia/notificacionCompetencia.css"
 
-const ComponenteCompetenciaForm = () => {
-    const [formData, setFormData] = useState({
+const ComponenteCompetenciaForm = ({ onCompetenciaCreada }) => {
+const [formData, setFormData] = useState({
     nombre_competencia: "",
     descripcion: "",
     fecha_inicio: "",
@@ -12,6 +14,17 @@ const ComponenteCompetenciaForm = () => {
 
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [notifications, setNotifications] = useState([])
+
+  const showNotification = (message, type = "success") => {
+    const id = Date.now()
+    const notification = { id, message, type }
+    setNotifications((prev) => [...prev, notification])
+  }
+
+  const removeNotification = (id) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id))
+  }
 
   // Función para validar solo letras y números
   const validateAlphanumeric = (value) => {
@@ -98,10 +111,7 @@ const ComponenteCompetenciaForm = () => {
     setIsSubmitting(true)
 
     try {
-      // AQUÍ DEBES IMPLEMENTAR LA LLAMADA A LA API
-      // Ejemplo de cómo sería la llamada con axios:
-      /*
-      const response = await axios.post('http://tu-api-url/competencias', {
+      const response = await axios.post('http://localhost:8000/api/crearCompetencia', {
         nombre_competencia: formData.nombre_competencia,
         descripcion: formData.descripcion,
         fecha_inicio: formData.fecha_inicio,
@@ -110,10 +120,9 @@ const ComponenteCompetenciaForm = () => {
       });
       
       if (response.status === 201) {
-        alert('Competencia creada exitosamente');
-        // Llamar callback si existe
+        showNotification('Competencia creada exitosamente');
         if (onCompetenciaCreada) {
-          onCompetenciaCreada(response.data);
+          onCompetenciaCreada(response.data.data);
         }
         // Resetear formulario
         setFormData({
@@ -124,37 +133,9 @@ const ComponenteCompetenciaForm = () => {
           estado: true
         });
       }
-      */
-
-      // Simulación de envío exitoso (remover cuando implementes la API real)
-      setTimeout(() => {
-        const nuevaCompetencia = {
-          competencia_id: Date.now(), // ID temporal
-          ...formData,
-        }
-        console.log(nuevaCompetencia)
-
-        alert("Competencia creada exitosamente")
-
-        // Llamar callback si existe
-        if (onCompetenciaCreada) {
-          onCompetenciaCreada(nuevaCompetencia)
-        }
-
-        // Resetear formulario
-        setFormData({
-          nombre_competencia: "",
-          descripcion: "",
-          fecha_inicio: "",
-          fecha_fin: "",
-          estado: true,
-        })
-        setIsSubmitting(false)
-      }, 1000)
     } catch (error) {
-      // MANEJO DE ERRORES DE LA API
       console.error("Error al crear competencia:", error)
-      alert("Error al crear la competencia. Por favor, intenta nuevamente.")
+      showNotification("Error al crear la competencia. Por favor, intenta nuevamente.", "error")
       setIsSubmitting(false)
     }
   }
@@ -272,6 +253,14 @@ const ComponenteCompetenciaForm = () => {
           </button>
         </div>
       </form>
+      {notifications.map((notification) => (
+        <Notification
+          key={notification.id}
+          message={notification.message}
+          type={notification.type}
+          onClose={() => removeNotification(notification.id)}
+        />
+      ))}
     </div>
   )
 }

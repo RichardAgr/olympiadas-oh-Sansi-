@@ -60,6 +60,7 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::get('/obtenerCompetencias', [CompetenciaController::class, 'ObtenerCompetencias']);
     Route::patch('/{id}/estado', [CompetenciaController::class, 'cambiarEstado']);
     Route::put('/editarCompetencia/{id}', [CompetenciaController::class, 'ActualizarCompetencia']);
+        Route::post('/crearCompetencia', [CompetenciaController::class, 'CrearCompetencia']);
     
 
 

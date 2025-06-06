@@ -55,8 +55,7 @@ class CompetenciaController extends Controller{
     }
     }
 
-       public function cambiarEstado(Request $request, $id): JsonResponse
-    {
+       public function cambiarEstado(Request $request, $id): JsonResponse{
         try {
             $request->validate([
                 'estado' => 'required|boolean'
@@ -212,6 +211,66 @@ class CompetenciaController extends Controller{
             return response()->json([
                 'success' => false,
                 'message' => 'Error interno del servidor al actualizar la competencia',
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], 500);
+        }
+    }
+
+    public function CrearCompetencia(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'nombre_competencia' => 'required|string|max:50',
+                'descripcion' => 'required|string',
+                'fecha_inicio' => 'required|date|after_or_equal:today',
+                'fecha_fin' => 'required|date|after:fecha_inicio',
+                'estado' => 'required|boolean',
+            ]);
+
+            $competencia = new Competencia();
+            $competencia->nombre_competencia = $request->input('nombre_competencia');
+            $competencia->descripcion = $request->input('descripcion');
+            $competencia->fecha_inicio = $request->input('fecha_inicio');
+            $competencia->fecha_fin = $request->input('fecha_fin');
+            $competencia->estado = $request->input('estado');
+        
+            $competencia->save();
+
+
+            $competenciaFormateada = [
+                'competencia_id' => $competencia->competencia_id,
+                'nombre_competencia' => $competencia->nombre_competencia,
+                'descripcion' => $competencia->descripcion,
+                'fecha_inicio' => $competencia->fecha_inicio ? $competencia->fecha_inicio->format('Y-m-d') : null,
+                'fecha_fin' => $competencia->fecha_fin ? $competencia->fecha_fin->format('Y-m-d') : null,
+                'estado' => (bool) $competencia->estado,
+                'fecha_creacion' => now()->format('Y-m-d H:i:s')
+            ];
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Competencia creada exitosamente',
+                'data' => $competenciaFormateada
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (Exception $e) {
+            Log::error('Error al crear competencia: ' . $e->getMessage(), [
+                'datos_enviados' => $request->all(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno del servidor al crear la competencia',
                 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
         }

@@ -78,8 +78,7 @@ const CrearCompetenciaAdmin = () => {
   }
 
   const handleViewDetails = (competenciaId) => {
-    // Aquí puedes usar Next.js router para navegar
-    window.location.href = `/competencia/${competenciaId}`
+    console.log(`/competencia/${competenciaId}`)
   }
 
   // Filtrar competencias
