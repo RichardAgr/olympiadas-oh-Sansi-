@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "./AgregarCategoria.css";
 import SelectorGrado from "./SelectorGrado";
@@ -22,6 +22,8 @@ function AgregarCategoria() {
     mensaje: "",
     esExito: false,
   });
+    const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
   const navigate = useNavigate();
 
@@ -142,7 +144,7 @@ function AgregarCategoria() {
   const cerrarModalHu2 = () => {
     setMostrarModalHu2(false);
     if (modalDataHu2.esExito) {
-      navigate("/admin/registro-categorias");
+      navigate(routeTo("admin/registro-categorias"));
     }
   };
 

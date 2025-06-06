@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { Pencil, Trash2 } from "lucide-react";
 import ModalConfirmDelete from "../../../components/ModalesAdmin/ModalConfirmDelete";
@@ -15,6 +15,9 @@ const AreasList = () => {
   const [loading, setLoading] = useState(true);
   const [mensaje, setMensaje] = useState("");
 const [tipoMensaje, setTipoMensaje] = useState(""); // "exito" o "error"
+  const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
+
 
 
   const areasPerPage = 15;
@@ -153,7 +156,7 @@ setAreaToDelete(null);
           />
         </div>
 
-        <Link to="/admin/areas/nueva" className="add-area-buttonHu1">
+        <Link to={routeTo("areas/nueva")} className="add-area-buttonHu1">
           + Agregar Nueva Área
         </Link>
       </div>
@@ -185,7 +188,7 @@ setAreaToDelete(null);
                   </div>
                   <div className="area-buttonsHu1">
                     <Link
-                      to={`/admin/areas/editar/${area.area_id}`}
+                      to={routeTo(`areas/editar/${area.area_id}`)}
                       className="edit-btnHu1"
                       aria-label={`Editar área ${area.nombre}`}
                       onClick={(e) => e.stopPropagation()} // 👈 evita que abra modal

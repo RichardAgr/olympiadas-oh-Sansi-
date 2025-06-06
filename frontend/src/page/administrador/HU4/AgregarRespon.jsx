@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./AgregarRespon.css";
 import api from '../../../components/Tokens/api';
 
@@ -14,6 +14,8 @@ function AgregarRespon() {
   const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
   const [mensaje, setMensaje] = useState("");
   const [tipoMensaje, setTipoMensaje] = useState(""); // "exito" o "error"
+    const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
   const navigate = useNavigate();
 
@@ -99,7 +101,7 @@ function AgregarRespon() {
       setTimeout(() => {
         setMensaje("");
         setTipoMensaje("");
-        navigate("/admin/visualizarRegistro");
+        navigate(routeTo("visualizarRegistro"));
       }, 1500);
 
   } catch (error) {
@@ -121,7 +123,7 @@ const handleCancel = () => {
 };
 
 const confirmarCancelacion = () => {
-  navigate("/admin/visualizarRegistro");
+  navigate(routeTo("visualizarRegistro"));
 };
 
 const cerrarModal = () => {
