@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import ComponenteCompetenciaForm from "./componentesCompe/crearCompetencia/ComponenteCompetenciaForm"
 import FormEditar from "./componentesCompe/modalEditar/FormEditar"
 import NotificacionCompetencia from "./componentesCompe/notificacionCompetencia/NotificacionCompetencia"
@@ -18,6 +19,26 @@ const CrearCompetenciaAdmin = () => {
     competencia: null,
     action: null,
   })
+  const navigate = useNavigate()
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://127.0.0.1:8000/api/logout", {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`
+        }
+      });
+
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("rol");
+
+      navigate("/homePrincipal");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      localStorage.clear();
+      navigate("/homePrincipal");
+    }
+  };
 
   useEffect(() => {
     cargarCompetencias()
@@ -95,8 +116,8 @@ const CrearCompetenciaAdmin = () => {
   }
 
   const handleViewDetails = (competenciaId) => {
-    console.log(`/competencia/${competenciaId}`)
-  }
+  navigate(`/admin/HomeAdmin/${competenciaId}`)
+}
 
     const handleDeleteClick = (competencia) => {
     setConfirmModal({
@@ -177,6 +198,7 @@ const formatearFecha = (fecha) => {
           <span className="tabIconCompCrear">➕</span>
           Crear Competencia
         </button>
+        <button className="tabButtonCompCrear" onClick={handleLogout} > 🚪 Cerrar Sesión </button>
       </div>
 
       {/* Content */}

@@ -18,6 +18,8 @@ function EditarCategoria() {
     grado_id_final: "",
     estado: true,
   })
+    const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
   const [gradosCompletos, setGradosCompletos] = useState({
     grado_inicial: null,
@@ -171,7 +173,7 @@ function EditarCategoria() {
   const cerrarModalCat = () => {
     setMostrarModalCat(false)
     if (modalDataCat.esExito) {
-      navigate("/admin/registro-categorias")
+      navigate(routeTo("/admin/registro-categorias"))
     }
   }
 
