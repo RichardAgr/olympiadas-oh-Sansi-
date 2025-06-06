@@ -29,6 +29,7 @@ function AppRouteRespGest() {
         <Route path="EstadoCompetidores" element={<CompetidoresPage />} />
         <Route path="DatosCompetidor/:id" element={< InformacionCompetidor />}/>
         <Route path="MiPerfil/:id" element={<MiPerfilRespGestion />} />
+
       </Route>
     </Routes>
   );

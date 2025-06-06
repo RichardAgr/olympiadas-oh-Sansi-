@@ -1,69 +1,60 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import perfilDefault from '../../assets/perfil-default.png';
-import correoIcon from '../../assets/email.png';
-import telefonoIcon from '../../assets/telefono.png';
-import ciIcon from '../../assets/ci.png';
-import axios from 'axios';
-import './MiPerfilRespGestion.css';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import "./MiPerfilRespGestion.css";
 
 function MiPerfilRespGestion() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [datosResp, setDatosResp] = useState(null);
-  
+  const [perfil, setPerfil] = useState(null);
+  const [error, setError] = useState(null);
+
+  const { id } = useParams(); // Get ID from URL
+
   useEffect(() => {
-    try {
-      const getDataResp = async () => {
-        const response = await axios.get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Responsable`);
-        setDatosResp(response.data);
-      };
-      getDataResp();
-    } catch (error) {
-      console.log('Error cargando datos del responsable:', error);
+    if (!id) {
+      setError("No se encontró el ID del usuario.");
+      return;
     }
+
+    axios.get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Responsable`)
+      .then((res) => setPerfil(res.data))
+      .catch((err) => {
+        console.error("❌ Error:", err);
+        setError("Error al cargar el perfil.");
+      });
   }, [id]);
 
-  if (!datosResp) {
-    return <p>Cargando datos del responsable...</p>;
-  }
+  if (error) return <p>{error}</p>;
+  if (!perfil) return <p>Cargando perfil...</p>;
 
   return (
     <div className="perfil-container">
-      <h1 className="titulo-pagina">Detalles del Perfil</h1>
+      <h2 className="titulo-pagina">Mi Perfil</h2>
       <div className="card-perfil">
-        <img src={perfilDefault} alt="Foto de perfil" className="imagen-perfil" />
+        <img
+          src="/default-user.png"
+          alt="Imagen de perfil"
+          className="imagen-perfil"
+        />
         <div className="info-personal">
           <div className="campo">
-            <label>Nombre :</label>
-            <div className="valor">{datosResp.nombres}</div>
+            <label>Nombre:</label>
+            <div className="valor">{perfil.nombres}</div>
           </div>
           <div className="campo">
-            <label>Apellido :</label>
-            <div className="valor">{datosResp.apellidos}</div>
+            <label>Apellido:</label>
+            <div className="valor">{perfil.apellidos}</div>
           </div>
-        </div>
-      </div>
-      <div className="card-perfil vertical">
-        <div className="campo">
-          <label>Correo :</label>
-          <div className="valor">
-            <img src={correoIcon} alt="Correo" className="icono" />
-            {datosResp.correo_electronico}
+          <div className="campo">
+            <label>Correo:</label>
+            <div className="valor">{perfil.correo_electronico}</div>
           </div>
-        </div>
-        <div className="campo">
-          <label>Teléfono :</label>
-          <div className="valor">
-            <img src={telefonoIcon} alt="Teléfono" className="icono" />
-            {datosResp.telefono}
+          <div className="campo">
+            <label>Teléfono:</label>
+            <div className="valor">{perfil.telefono}</div>
           </div>
-        </div>
-        <div className="campo">
-          <label>Número de Carnet :</label>
-          <div className="valor">
-            <img src={ciIcon} alt="Carnet de Identidad" className="icono" />
-            {datosResp.ci}
+          <div className="campo">
+            <label>CI:</label>
+            <div className="valor">{perfil.ci}</div>
           </div>
         </div>
       </div>
