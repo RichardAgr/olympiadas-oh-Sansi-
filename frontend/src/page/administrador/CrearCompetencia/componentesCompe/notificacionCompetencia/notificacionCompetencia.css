@@ -1,0 +1,88 @@
+.notificationCompCrear {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  min-width: 300px;
+  max-width: 500px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.showNotificationCompCrear {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.hideNotificationCompCrear {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.successNotificationCompCrear {
+  background: var(--success-color);
+  border-left: 4px solid #4a9660;
+}
+
+.errorNotificationCompCrear {
+  background: var(--error-color);
+  border-left: 4px solid #c82333;
+}
+
+.warningNotificationCompCrear {
+  background: var(--pending-color);
+  border-left: 4px solid #e0a800;
+}
+
+.infoNotificationCompCrear {
+  background: var(--primary-color);
+  border-left: 4px solid var(--primary-dark);
+}
+
+.notificationContentCompCrear {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  color: var(--white);
+}
+
+.notificationIconCompCrear {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.notificationMessageCompCrear {
+  flex: 1;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.notificationCloseCompCrear {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.notificationCloseCompCrear:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+  .notificationCompCrear {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    min-width: auto;
+    max-width: none;
+  }
+}
