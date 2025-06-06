@@ -54,4 +54,66 @@ class CompetenciaController extends Controller{
         ], 500);
     }
     }
+
+       public function cambiarEstado(Request $request, $id): JsonResponse
+    {
+        try {
+            $request->validate([
+                'estado' => 'required|boolean'
+            ]);
+
+            $competencia = Competencia::find($id);
+
+            if (!$competencia) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Competencia no encontrada',
+                    'data' => null
+                ], 404);
+            }
+
+            $estadoAnterior = $competencia->estado;
+            $nuevoEstado = $request->input('estado');
+
+            $competencia->estado = $nuevoEstado;
+            $competencia->save();
+
+            $mensaje = $nuevoEstado ? 'Competencia activada exitosamente' : 'Competencia desactivada exitosamente';
+
+            return response()->json([
+                'success' => true,
+                'message' => $mensaje,
+                'data' => [
+                    'competencia_id' => $competencia->competencia_id,
+                    'nombre_competencia' => $competencia->nombre_competencia,
+                    'estado_anterior' => (bool) $estadoAnterior,
+                    'estado_actual' => (bool) $competencia->estado,
+                    'fecha_actualizacion' => now()->format('Y-m-d H:i:s')
+                ]
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (Exception $e) {
+            Log::error('Error al cambiar estado de competencia: ' . $e->getMessage(), [
+                'competencia_id' => $id,
+                'estado_solicitado' => $request->input('estado'),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno del servidor al cambiar el estado de la competencia',
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], 500);
+        }
+    }
+
 }

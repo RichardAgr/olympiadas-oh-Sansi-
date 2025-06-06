@@ -43,16 +43,10 @@ const CrearCompetenciaAdmin = () => {
   // Cambiar estado de competencia (activar/desactivar)
   const toggleEstadoCompetencia = async (competenciaId, nuevoEstado) => {
     try {
-      // AQUÍ DEBES IMPLEMENTAR LA LLAMADA A LA API PARA ACTUALIZAR EL ESTADO
-      // Ejemplo de cómo sería la llamada con axios:
-      /*
-      await axios.patch(`http://tu-api-url/competencias/${competenciaId}`, {
+      await axios.patch(`http://localhost:8000/api/${competenciaId}/estado`, {
         estado: nuevoEstado
       });
-      */
      console.log(competenciaId,nuevoEstado)
-
-      // Actualizar estado local (simulación)
       setCompetencias((prev) =>
         prev.map((comp) => (comp.competencia_id === competenciaId ? { ...comp, estado: nuevoEstado } : comp)),
       )
