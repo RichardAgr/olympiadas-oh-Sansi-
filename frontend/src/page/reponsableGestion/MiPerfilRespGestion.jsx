@@ -7,7 +7,7 @@ function MiPerfilRespGestion() {
   const [perfil, setPerfil] = useState(null);
   const [error, setError] = useState(null);
 
-  const { id } = useParams(); // Get ID from URL
+  const { id } = useParams(); 
 
   useEffect(() => {
     if (!id) {
@@ -18,7 +18,7 @@ function MiPerfilRespGestion() {
     axios.get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Responsable`)
       .then((res) => setPerfil(res.data))
       .catch((err) => {
-        console.error("❌ Error:", err);
+        console.error(" Error:", err);
         setError("Error al cargar el perfil.");
       });
   }, [id]);
