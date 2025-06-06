@@ -1,0 +1,89 @@
+.perfil-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Comfortaa', cursive;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.titulo-pagina {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.card-perfil {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: flex-start;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem auto;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  background-color: #fff;
+  width: 100%;
+  max-width: 800px;
+  min-height: 200px;
+  box-sizing: border-box;
+}
+
+.card-perfil.vertical {
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.imagen-perfil {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+.info-personal {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+  max-width: 600px; /* ✅ Limits width of fields section */
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  width: 100%;
+  align-items: flex-start; /* ✅ Ensures labels and values align */
+}
+
+.campo label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 20px;
+}
+
+.valor {
+  background-color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 20px;
+  border: 1px solid black; 
+  width: 100%;
+  max-width: 400px; /* ✅ Prevents stretching too far */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icono {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+  margin-right: 0.5em;
+}

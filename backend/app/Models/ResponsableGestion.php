@@ -33,9 +33,6 @@ class ResponsableGestion extends Authenticatable
     public $timestamps = true;
 
     
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = \Hash::make($value);
-    }
+    
 }
 
