@@ -314,8 +314,21 @@
   flex: 0.8;
 }
 
+
 .editButtonCompCrear:hover {
   background: #0f560b;
+  transform: translateY(-1px);
+}
+
+.destroyButtonCompCrear{
+  background: #ae3317;
+  border-radius: var(--border-radius);
+  color: var(--white);
+  flex: 0.8;
+}
+
+.destroyButtonCompCrear:hover {
+  background: #822611;
   transform: translateY(-1px);
 }
 

@@ -276,4 +276,79 @@ class CompetenciaController extends Controller{
         }
     }
 
+    public function EliminarCompetencia($id): JsonResponse
+    {
+        try {
+            $competencia = Competencia::find($id);
+
+            if (!$competencia) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Competencia no encontrada',
+                    'data' => null
+                ], 404);
+            }
+
+/*             // Verificar si hay inscripciones antes de eliminar
+            $inscripcionesActivas = $competencia->inscripciones()->count();
+        
+            if ($inscripcionesActivas > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede eliminar la competencia porque tiene inscripciones activas',
+                    'data' => [
+                        'competencia_id' => $competencia->competencia_id,
+                        'nombre_competencia' => $competencia->nombre_competencia,
+                        'total_inscripciones' => $inscripcionesActivas
+                    ]
+                ], 400);
+        }
+
+        // Verificar si hay cronogramas asociados
+        $cronogramas = $competencia->cronograma()->count();
+        
+        if ($cronogramas > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede eliminar la competencia porque tiene cronogramas asociados',
+                'data' => [
+                    'competencia_id' => $competencia->competencia_id,
+                    'nombre_competencia' => $competencia->nombre_competencia,
+                    'total_cronogramas' => $cronogramas
+                ]
+            ], 400);
+        } */
+
+        $nombreCompetencia = $competencia->nombre_competencia;
+        $competenciaId = $competencia->competencia_id;
+
+        // Eliminar la competencia
+        $competencia->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Competencia eliminada exitosamente',
+            'data' => [
+                'competencia_id' => $competenciaId,
+                'nombre_competencia' => $nombreCompetencia,
+                'fecha_eliminacion' => now()->format('Y-m-d H:i:s')
+            ]
+        ], 200);
+
+    } catch (Exception $e) {
+        Log::error('Error al eliminar competencia: ' . $e->getMessage(), [
+            'competencia_id' => $id,
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error interno del servidor al eliminar la competencia',
+            'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+        ], 500);
+    }
+}
+
 }

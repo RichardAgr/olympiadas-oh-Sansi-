@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import ComponenteCompetenciaForm from "./componentesCompe/crearCompetencia/ComponenteCompetenciaForm"
 import FormEditar from "./componentesCompe/modalEditar/FormEditar"
 import NotificacionCompetencia from "./componentesCompe/notificacionCompetencia/NotificacionCompetencia"
+import ModalDelete from "./componentesCompe/modalDelete/ModalDelete"
 import axios from "axios"
 import "./crearCompetenciaAdmin.css"
 
@@ -12,6 +13,11 @@ const CrearCompetenciaAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [notifications, setNotifications] = useState([])
   const [editModal, setEditModal] = useState({ isOpen: false, competencia: null })
+    const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    competencia: null,
+    action: null,
+  })
 
   useEffect(() => {
     cargarCompetencias()
@@ -61,6 +67,17 @@ const CrearCompetenciaAdmin = () => {
     setEditModal({ isOpen: true, competencia })
   }
 
+  const eliminarCompetencia= async (competenciaId)=>{
+    try {
+      await axios.delete(`http://localhost:8000/api/eliminarCompetencia/${competenciaId}`)
+      setCompetencias((prev) => prev.filter((comp) => comp.competencia_id !== competenciaId))
+    showNotification("Competencia eliminada exitosamente")
+    } catch (error) {
+      console.error("Error al eliminar competencia:", error)
+      showNotification("Error al eliminar la competencia", "error")      
+    }
+  }
+
   const handleCloseModal = () => {
     setEditModal({ isOpen: false, competencia: null })
   }
@@ -79,6 +96,25 @@ const CrearCompetenciaAdmin = () => {
 
   const handleViewDetails = (competenciaId) => {
     console.log(`/competencia/${competenciaId}`)
+  }
+
+    const handleDeleteClick = (competencia) => {
+    setConfirmModal({
+      isOpen: true,
+      competencia,
+      action: "delete",
+    })
+  }
+
+    const handleConfirmDelete = () => {
+    if (confirmModal.competencia) {
+      eliminarCompetencia(confirmModal.competencia.competencia_id)
+    }
+    setConfirmModal({ isOpen: false, competencia: null, action: null })
+  }
+
+  const handleCloseConfirmModal = () => {
+    setConfirmModal({ isOpen: false, competencia: null, action: null })
   }
 
   // Filtrar competencias
@@ -215,6 +251,9 @@ const formatearFecha = (fecha) => {
                         <button onClick={() => handleEdit(competencia)} className="editButtonCompCrear">
                           Editar
                         </button>
+                        <button onClick={() => handleDeleteClick(competencia)} className="destroyButtonCompCrear">
+                          Eliminar
+                        </button>
 
                         <button
                           onClick={() => handleViewDetails(competencia.competencia_id)}
@@ -252,6 +291,17 @@ const formatearFecha = (fecha) => {
         onClose={handleCloseModal}
         onSave={handleSaveEdit}
       /> 
+
+      <ModalDelete
+        isOpen={confirmModal.isOpen}
+        onClose={handleCloseConfirmModal}
+        onConfirm={handleConfirmDelete}
+        title="¿Eliminar Competencia?"
+        message={`¿Estás seguro de que deseas eliminar la competencia "${confirmModal.competencia?.nombre_competencia}"? Esta acción no se puede deshacer.`}
+        confirmText="Sí, Eliminar"
+        cancelText="Cancelar"
+        type="danger"
+      />
     </div>
   )
 }
