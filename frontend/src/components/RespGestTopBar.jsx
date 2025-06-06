@@ -118,7 +118,10 @@ const RespGestTopBar = () => {
               <li>
                 <Link to={`/respGest/MiPerfil/${userId}`}>Mi perfil</Link>
               </li>
-              <li><Link to="/respGest/Configuracion">Configuración</Link></li>
+              <li>
+              <Link to={`/respGest/Configuracion/${userId}`}>Configuración</Link>
+            </li>
+
               <li><a onClick={handleLogout}>Cerrar Sesión</a></li>
             </ul>
           )}
