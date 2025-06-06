@@ -44,13 +44,44 @@ function RegistrarOrganizador() {
   const indiceInicio = (paginaActual - 1) * filasPorPagina;
   const datosPagina = datosFiltrados.slice(indiceInicio, indiceInicio + filasPorPagina);
 
-  const exportarExcel = () => {
-    const hojaDatos = datosFiltrados.map(({ responsable_id, ...rest }) => rest);
-    const ws = XLSX.utils.json_to_sheet(hojaDatos);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Registros");
-    XLSX.writeFile(wb, "Registros.xlsx");
-  };
+ const exportarExcel = () => {
+  if (datosFiltrados.length === 0) {
+    alert("No hay datos para exportar.");
+    return;
+  }
+
+  const hojaDatos = datosFiltrados.map((dato) => ({
+    "ID": dato.responsable_id,
+    "Nombre Completo": `${dato.nombres} ${dato.apellidos}`,
+    "CI": dato.ci,
+    "Correo Electrónico": dato.correo_electronico,
+    "Teléfono": dato.telefono,
+    "Estado": dato.estado === 1 ? "Activo" : "Inactivo",
+    "Fecha de Registro": dato.created_at ? new Date(dato.created_at).toLocaleDateString() : '',
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(hojaDatos);
+
+  const rango = XLSX.utils.decode_range(ws['!ref']);
+  for (let R = rango.s.r; R <= rango.e.r; ++R) {
+    for (let C = rango.s.c; C <= rango.e.c; ++C) {
+      const celda = ws[XLSX.utils.encode_cell({ r: R, c: C })];
+      if (!celda) continue;
+      if (!celda.s) celda.s = {};
+      celda.s.border = {
+        top: { style: "thin", color: { auto: 1 } },
+        right: { style: "thin", color: { auto: 1 } },
+        bottom: { style: "thin", color: { auto: 1 } },
+        left: { style: "thin", color: { auto: 1 } },
+      };
+    }
+  }
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Responsables de Gestión");
+  XLSX.writeFile(wb, "Registros.xlsx");
+};
+
 
   const abrirModal = (responsable) => {
     setItemSeleccionado(responsable);
