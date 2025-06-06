@@ -47,32 +47,35 @@ useEffect(() => {
 }, [id]);
 
 
-  const validarFormulario = () => {
-    const nuevosErrores = {};
-  
-    if (!nombre.trim()) {
-      nuevosErrores.nombre = "El nombre es obligatorio.";
-    } else if (nombre.length < 3) {
-      nuevosErrores.nombre = "Debe tener al menos 3 caracteres.";
-    } else if (/\d/.test(nombre)) {
-      nuevosErrores.nombre = "El nombre no puede contener números.";
-    }
-  
-    if (!descripcion.trim()) {
-      nuevosErrores.descripcion = "La descripción es obligatoria.";
-    } else if (descripcion.length < 5) {
-      nuevosErrores.descripcion = "Debe tener al menos 5 caracteres.";
-    }
-  
-    if (!costo) {
-      nuevosErrores.costo = "El costo es obligatorio.";
-    } else if (isNaN(costo) || parseFloat(costo) <= 0) {
-      nuevosErrores.costo = "Debe ser un número mayor a 0.";
-    }
-  
-    setErrores(nuevosErrores);
-    return Object.keys(nuevosErrores).length === 0;
-  };  
+const validarFormulario = () => {
+  const nuevosErrores = {};
+
+  if (!nombre.trim()) {
+    nuevosErrores.nombre = "El nombre es obligatorio.";
+  } else if (nombre.length < 3) {
+    nuevosErrores.nombre = "Debe tener al menos 3 caracteres.";
+  } else if (/\d/.test(nombre)) {
+    nuevosErrores.nombre = "El nombre no puede contener números.";
+  }
+
+  if (!descripcion.trim()) {
+    nuevosErrores.descripcion = "La descripción es obligatoria.";
+  } else if (descripcion.length < 5) {
+    nuevosErrores.descripcion = "Debe tener al menos 5 caracteres.";
+  }
+
+  if (!costo) {
+    nuevosErrores.costo = "El costo es obligatorio.";
+  } else if (isNaN(costo) || parseFloat(costo) <= 0) {
+    nuevosErrores.costo = "Debe ser un número mayor a 0.";
+  } else if (parseFloat(costo) < 10) {     // <-- Esta validación nueva
+    nuevosErrores.costo = "El costo debe ser al menos 10.";
+  }
+
+  setErrores(nuevosErrores);
+  return Object.keys(nuevosErrores).length === 0;
+};
+
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -148,13 +151,13 @@ await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
         />
-        {errores.descripcion && <small className="error-campo-area">{errores.descripcion}</small>}
+        {errores.descripcion && <small className="error-text-area">{errores.descripcion}</small>}
+
 
         <label className="etiqueta-campo-area">Costo (Bs)</label>
         <input
           type="number"
           value={costo}
-          min="10"
           onChange={(e) => setCosto(e.target.value)}
           className="campo-entrada-area"
         />

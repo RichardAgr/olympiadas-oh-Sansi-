@@ -102,8 +102,8 @@
   border-top: 1px solid var(--gray);
 }
 
-button,
-.button {
+
+.buttonVerReci {
   background-color: var(--primary-color);
   color: white;
   border: none;
@@ -115,7 +115,6 @@ button,
   font-family: "Comfortaa", sans-serif;
 }
 
-button:hover,
 .button:hover {
   background-color: var(--primary-dark);
 }

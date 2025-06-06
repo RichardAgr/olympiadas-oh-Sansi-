@@ -14,12 +14,14 @@ import EditarCategoria from "../page/administrador/HU2/EditarCategoria";
 import AgregarCategoria from "../page/administrador/HU2/AgregarCategoria";
 import AppRouteRespGest from "./AppRouteRespGest";
 import ConfigurarDatosCompetencia from "../page/administrador/configurarDatosCompetencia/ConfigurarDatosCompetencia";
+import AdminCrearComp from "../components/adminCrearCompetencia/AdminCrearComp";
 
 const AppRouter = () => {
   return (
       <Routes>
         {/* Redirect root path '/' to '/admin' */}
         <Route path="/" element={<Navigate to="/admin" />} />
+        <Route index element={<AdminCrearComp />}/>
 
         <Route path="" element={<AdminLayout />}>
           <Route index element={<HomeAdmin />} />

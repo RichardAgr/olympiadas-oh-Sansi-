@@ -162,7 +162,7 @@ export default function InformacionCompetidor() {
 
       <div className="receipt-section">
         <p className="receipt-label">Comprobante de pago:</p>
-        <button className="show-receipt-button" onClick={handleShowReceipt}>
+        <button className="show-receipt-buttonInfoComp" onClick={handleShowReceipt}>
           <Eye size={16} /> Mostrar Comprobante
         </button>
       </div>
@@ -275,7 +275,7 @@ export default function InformacionCompetidor() {
         </div>
 
         <div className="form-actions">
-          <button className="submit-button" onClick={handleSubmit}>
+          <button className="submit-buttonInfComp" onClick={handleSubmit}>
             Terminar
           </button>
           <button className="cancel-button" onClick={handleGoBack}>
@@ -304,7 +304,7 @@ export default function InformacionCompetidor() {
               </div>
             </div>
 
-            <div className="notification-form">
+            <div className="notification-formInfoComp">
               <label>Descripción de la Observación:</label>
               <textarea
                 value={notificationReason}
@@ -332,7 +332,7 @@ export default function InformacionCompetidor() {
       {showReceipt && competitor.ruta_imagen && (
         <div className="receipt-image-modal">
           <div className="receipt-image-container">
-            <button className="close-receipt" onClick={() => setShowReceipt(false)}>
+            <button className="close-receiptInforCompe" onClick={() => setShowReceipt(false)}>
               <X size={20} />
             </button>
             <h3>Comprobante de Pago</h3>
@@ -348,7 +348,7 @@ export default function InformacionCompetidor() {
   <div className="receipt-image-modal">
     <div className="receipt-image-container" style={{ maxWidth: '400px', textAlign: 'center' }}>
       <button 
-        className="close-receipt" 
+        className="close-receiptInforCompe" 
         onClick={() => setShowNoReceiptAlert(false)}
         style={{ position: 'absolute', right: '10px', top: '10px' }}
       >

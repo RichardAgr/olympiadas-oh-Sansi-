@@ -216,8 +216,6 @@
   box-shadow: 0 3px 6px rgba(45, 66, 200, 0.15);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-  width: 40px;
-  height: 40px;
 }
 
 .boton-iconoLi:hover {
