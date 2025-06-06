@@ -35,3 +35,13 @@
     cursor: pointer;
     font-weight: bold;
   }
+
+  .btn-cancelar2ConfirmDelete {
+    background-color: #0A2E8C;
+    color: white;
+    border: none;
+    padding: 8px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+  }
