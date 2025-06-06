@@ -1,27 +1,26 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 import "./MiPerfilRespGestion.css";
 
 function MiPerfilRespGestion() {
   const [perfil, setPerfil] = useState(null);
   const [error, setError] = useState(null);
 
-  const { id } = useParams(); 
+  const userId = JSON.parse(localStorage.getItem("user"))?.responsable_id;
 
   useEffect(() => {
-    if (!id) {
+    if (!userId) {
       setError("No se encontró el ID del usuario.");
       return;
     }
 
-    axios.get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Responsable`)
+    axios.get(`http://127.0.0.1:8000/api/VerMiPerfil/${userId}/Responsable`)
       .then((res) => setPerfil(res.data))
       .catch((err) => {
         console.error(" Error:", err);
         setError("Error al cargar el perfil.");
       });
-  }, [id]);
+  }, [userId]);
 
   if (error) return <p>{error}</p>;
   if (!perfil) return <p>Cargando perfil...</p>;
