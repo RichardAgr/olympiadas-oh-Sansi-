@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { UserCircle } from "lucide-react";
 import axios from "axios";
@@ -8,12 +8,37 @@ import "./estilos/estilosTopBar.css";
 const RespGestTopBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [userId, setUserId] = useState(1); // Default fallback value
+
   const timeoutRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { id } = useParams();
-  const userId = JSON.parse(localStorage.getItem("user"))?.responsable_id;
+  useEffect(() => {
+    let storedUser = null;
+    try {
+      storedUser = JSON.parse(localStorage.getItem("user"));
+    } catch (err) {
+      console.error("❌ Could not parse user from localStorage:", err);
+    }
+
+    if (!storedUser) {
+      console.warn("⚠️ No user found in localStorage. Using fallback ID 1.");
+      setUserId(1);
+      return;
+    }
+
+    if (storedUser.responsable_id) {
+      setUserId(storedUser.responsable_id);
+    } else if (storedUser.id) {
+      setUserId(storedUser.id);
+      localStorage.setItem("user", JSON.stringify({ ...storedUser, responsable_id: storedUser.id }));
+      console.log("🛠️ responsable_id patched from id");
+    } else {
+      console.warn("⚠️ No valid ID found in user. Using fallback ID 1.");
+      setUserId(1);
+    }
+  }, []);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -66,7 +91,7 @@ const RespGestTopBar = () => {
           </Link>
         </li>
 
-        <li className="roles-dropdown">
+        <li>
           <Link
             to="/respGest/ListIns"
             className={location.pathname === "/respGest/ListIns" ? "active" : ""}
@@ -93,8 +118,6 @@ const RespGestTopBar = () => {
               <li>
                 <Link to={`/respGest/MiPerfil/${userId}`}>Mi perfil</Link>
               </li>
-
-              
               <li><Link to="/respGest/Configuracion">Configuración</Link></li>
               <li><a onClick={handleLogout}>Cerrar Sesión</a></li>
             </ul>
