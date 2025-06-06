@@ -7,7 +7,7 @@ import axios from "axios";
 
 const RespGestTopBar = () => {
   const [showRolesMenu, setShowRolesMenu] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); // 👉 responsive menu
+  const [menuOpen, setMenuOpen] = useState(false); 
   const timeoutRef = useRef(null);
   const location = useLocation();
    const [userMenuOpen, setUserMenuOpen] = useState(false); 
@@ -108,12 +108,8 @@ const RespGestTopBar = () => {
           </div>
           {userMenuOpen && (
             <ul className="menu-dropdown">
-              <li>
-                <Link to="/respGest/MiPerfil">Mi perfil</Link>
-              </li>
-              <li>
-                <Link to="/respGest/Configuracion">Configuración</Link>
-              </li>
+              <li><Link to={`/respGest/MiPerfil/${userId}`}>Mi perfil</Link></li>
+              <li><Link to="/respGest/Configuracion">Configuración</Link></li>
               <li>
                 <a onClick={handleLogout}>Cerrar Sesión</a>
               </li>
