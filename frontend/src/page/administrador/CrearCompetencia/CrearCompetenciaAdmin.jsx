@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import ComponenteCompetenciaForm from "./componentesCompe/crearCompetencia/ComponenteCompetenciaForm"
 import FormEditar from "./componentesCompe/modalEditar/FormEditar"
 import NotificacionCompetencia from "./componentesCompe/notificacionCompetencia/NotificacionCompetencia"
+import axios from "axios"
 import "./crearCompetenciaAdmin.css"
 
 const CrearCompetenciaAdmin = () => {
@@ -9,59 +10,20 @@ const CrearCompetenciaAdmin = () => {
   const [competencias, setCompetencias] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
-  const [filterEstado, setFilterEstado] = useState("todos") // 'todos', 'activo', 'inactivo'
   const [notifications, setNotifications] = useState([])
   const [editModal, setEditModal] = useState({ isOpen: false, competencia: null })
 
-  // Datos de ejemplo (remover cuando implementes la API real)
-  const competenciasEjemplo = [
-    {
-      competencia_id: 1,
-      nombre_competencia: "Olimpiada de Matematicas 2024",
-      descripcion: "Competencia nacional de matemáticas para estudiantes de secundaria",
-      fecha_inicio: "2024-03-15",
-      fecha_fin: "2024-03-20",
-      estado: true,
-    },
-    {
-      competencia_id: 2,
-      nombre_competencia: "Concurso de Ciencias 2024",
-      descripcion: "Competencia de ciencias naturales y experimentales",
-      fecha_inicio: "2024-04-10",
-      fecha_fin: "2024-04-15",
-      estado: false,
-    },
-    {
-      competencia_id: 3,
-      nombre_competencia: "Festival de Robotica 2024",
-      descripcion: "Competencia de robótica y programación para jóvenes innovadores",
-      fecha_inicio: "2024-05-01",
-      fecha_fin: "2024-05-05",
-      estado: true,
-    },
-  ]
-
-  // Cargar competencias al montar el componente
   useEffect(() => {
     cargarCompetencias()
-
   }, [])
 
   const cargarCompetencias = async () => {
     setLoading(true)
     try {
-      // AQUÍ DEBES IMPLEMENTAR LA LLAMADA A LA API PARA OBTENER COMPETENCIAS
-      // Ejemplo de cómo sería la llamada con axios:
-      /*
-      const response = await axios.get('http://tu-api-url/competencias');
-      setCompetencias(response.data);
-      */
-
-      // Simulación de carga (remover cuando implementes la API real)
-      setTimeout(() => {
-        setCompetencias(competenciasEjemplo)
-        setLoading(false)
-      }, 1000)
+      const response = await axios.get('http://localhost:8000/api/obtenerCompetencias');
+      console.log(response.data.data)
+      setCompetencias(response.data.data);
+      setLoading(false)
     } catch (error) {
       console.error("Error al cargar competencias:", error)
       setLoading(false)
@@ -88,6 +50,7 @@ const CrearCompetenciaAdmin = () => {
         estado: nuevoEstado
       });
       */
+     console.log(competenciaId,nuevoEstado)
 
       // Actualizar estado local (simulación)
       setCompetencias((prev) =>
@@ -143,7 +106,6 @@ const CrearCompetenciaAdmin = () => {
     })
   }
 
-  // Callback cuando se crea una nueva competencia
   const onCompetenciaCreada = (nuevaCompetencia) => {
     setCompetencias((prev) => [...prev, nuevaCompetencia])
     setActiveTab("lista")
@@ -151,13 +113,11 @@ const CrearCompetenciaAdmin = () => {
 
   return (
     <div className="containerHomeCompCrear">
-      {/* Header */}
       <div className="headerHomeCompCrear">
         <h1 className="titleHomeCompCrear">Gestión de Competencias</h1>
         <p className="subtitleHomeCompCrear">Administra y supervisa todas las competencias</p>
       </div>
 
-      {/* Navigation Tabs */}
       <div className="tabsContainerCompCrear">
         <button
           className={`tabButtonCompCrear ${activeTab === "lista" ? "activeTabCompCrear" : ""}`}
@@ -179,7 +139,6 @@ const CrearCompetenciaAdmin = () => {
       <div className="contentContainerCompCrear">
         {activeTab === "lista" ? (
           <div className="listaContainerCompCrear">
-            {/* Filters and Search */}
             <div className="filtersContainerCompCrear">
               <div className="searchContainerCompCrear">
                 <input
@@ -193,7 +152,6 @@ const CrearCompetenciaAdmin = () => {
               </div>
             </div>
 
-            {/* Loading */}
             {loading && (
               <div className="loadingContainerCompCrear">
                 <div className="loadingSpinnerCompCrear"></div>

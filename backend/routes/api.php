@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\EstadisticasController;
 use App\Http\Controllers\Api\OcrPagoController;
 use App\Http\Controllers\Api\ReciboController;
+use App\Http\Controllers\Api\CompetenciaController;
 use App\Http\Controllers\Api\DatosExcel;
 use App\Http\Controllers\Api\DocumentoController;
 use App\Http\Controllers\Api\UsuarioTutor\CompetidorController as UsuarioTutorCompetidorController;
@@ -54,6 +55,10 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::get('/area/{areaId}/cronogramas', [EventoController::class, 'ObtenerCronogramasPorArea']);
     Route::get('/cronogramasAreas', [EventoController::class, 'ObtenerCronogramasPorArea2']);
     Route::put('/editarCronograma/{areaId}', [EventoController::class, 'EditarCronograma']);
+    
+    //competencias
+    Route::get('/obtenerCompetencias', [CompetenciaController::class, 'ObtenerCompetencias']);
+    
 
 
     // Áreas

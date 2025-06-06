@@ -222,22 +222,6 @@ const FormEditar = ({ competencia, isOpen, onClose, onSave }) => {
             </div>
           </div>
 
-          <div className="inputGroupCompCrear">
-            <label htmlFor="edit_estado" className="labelCompCrear">
-              Estado *
-            </label>
-            <select
-              id="edit_estado"
-              name="estado"
-              value={formData.estado}
-              onChange={handleInputChange}
-              className="selectCompCrear"
-            >
-              <option value={true}>Activo</option>
-              <option value={false}>Inactivo</option>
-            </select>
-          </div>
-
           <div className="modalActionsCompCrear">
             <button type="button" onClick={handleClose} className="buttonSecondaryCompCrear" disabled={isSubmitting}>
               Cancelar
