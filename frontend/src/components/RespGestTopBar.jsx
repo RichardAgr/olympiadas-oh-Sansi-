@@ -1,41 +1,27 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate,Link, NavLink, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import { UserCircle, Bell } from "lucide-react";
-import "./estilos/estilosTopBar.css";
+import { UserCircle } from "lucide-react";
 import axios from "axios";
+import "./estilos/estilosTopBar.css";
 
 const RespGestTopBar = () => {
-  const [showRolesMenu, setShowRolesMenu] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); 
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const timeoutRef = useRef(null);
   const location = useLocation();
-   const [userMenuOpen, setUserMenuOpen] = useState(false); 
-
   const navigate = useNavigate();
 
-
-  const handleMouseEnter = () => {
-    clearTimeout(timeoutRef.current);
-    setShowRolesMenu(true);
-  };
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => setShowRolesMenu(false), 150);
-  };
+  const { id } = useParams();
+  const userId = JSON.parse(localStorage.getItem("user"))?.responsable_id;
 
   useEffect(() => {
-    setShowRolesMenu(false);
-    setMenuOpen(false); // Cierra el menú al cambiar de ruta
+    setMenuOpen(false);
   }, [location.pathname]);
 
-  const isRolesRoute =
-    location.pathname.includes("/respGest/ListIns") ||
-    location.pathname.includes("/respGest/ListaTutores")||
-    location.pathname.includes("/respGest/ValidarPagos");
   const toggleUserMenu = () => {
-    setUserMenuOpen(!userMenuOpen)
-  }
+    setUserMenuOpen(!userMenuOpen);
+  };
 
   const handleLogout = async () => {
     try {
@@ -61,7 +47,6 @@ const RespGestTopBar = () => {
     <nav className="topbar">
       <div className="topbar-left">
         <img src={logo} alt="Logo" className="logo" />
-
         <button
           className="hamburger-btn"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -73,7 +58,7 @@ const RespGestTopBar = () => {
 
       <ul className={`topbar-menu ${menuOpen ? "show" : ""}`}>
         <li>
-        <Link
+          <Link
             to="/respGest"
             className={location.pathname === "/respGest" ? "active" : ""}
           >
@@ -82,40 +67,38 @@ const RespGestTopBar = () => {
         </li>
 
         <li className="roles-dropdown">
-        <Link to="/respGest/ListIns" className={location.pathname === "/homeRespGestion/ListIns" ? "active" : ""}>
+          <Link
+            to="/respGest/ListIns"
+            className={location.pathname === "/respGest/ListIns" ? "active" : ""}
+          >
             Inscripción
           </Link>
         </li>
 
-
-
-        <li className={location.pathname === "/respGest" ? "active" : ""}>
-          <NavLink to="/respGest/ValidarPagos">Validacion de Pagos</NavLink>
+        <li className={location.pathname === "/respGest/ValidarPagos" ? "active" : ""}>
+          <Link to="/respGest/ValidarPagos">Validación de Pagos</Link>
         </li>
 
-        <li  className={location.pathname === "/respGest" ? "active" : ""}>
-        <NavLink
-        to="/respGest/VisualListTutor"
-       
-            >
-            Tutores
-          </NavLink>
+        <li className={location.pathname === "/respGest/VisualListTutor" ? "active" : ""}>
+          <Link to="/respGest/VisualListTutor">Tutores</Link>
         </li>
 
         <li className="user-menu" onClick={toggleUserMenu}>
           <div className="menu-toggle">
             <UserCircle size={22} color="white" />
+            <span>Tu</span>
           </div>
           {userMenuOpen && (
             <ul className="menu-dropdown">
-              <li><Link to={`/respGest/MiPerfil/${userId}`}>Mi perfil</Link></li>
-              <li><Link to="/respGest/Configuracion">Configuración</Link></li>
               <li>
-                <a onClick={handleLogout}>Cerrar Sesión</a>
+                <Link to={`/respGest/MiPerfil/${userId}`}>Mi perfil</Link>
               </li>
+
+              
+              <li><Link to="/respGest/Configuracion">Configuración</Link></li>
+              <li><a onClick={handleLogout}>Cerrar Sesión</a></li>
             </ul>
           )}
-
         </li>
       </ul>
     </nav>
