@@ -132,6 +132,7 @@ const ComponenteCompetenciaForm = () => {
           competencia_id: Date.now(), // ID temporal
           ...formData,
         }
+        console.log(nuevaCompetencia)
 
         alert("Competencia creada exitosamente")
 

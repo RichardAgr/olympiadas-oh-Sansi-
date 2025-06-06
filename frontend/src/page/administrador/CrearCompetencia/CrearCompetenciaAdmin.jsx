@@ -46,7 +46,6 @@ const CrearCompetenciaAdmin = () => {
       await axios.patch(`http://localhost:8000/api/${competenciaId}/estado`, {
         estado: nuevoEstado
       });
-     console.log(competenciaId,nuevoEstado)
       setCompetencias((prev) =>
         prev.map((comp) => (comp.competencia_id === competenciaId ? { ...comp, estado: nuevoEstado } : comp)),
       )
@@ -92,13 +91,29 @@ const CrearCompetenciaAdmin = () => {
   })
 
   // Formatear fecha para mostrar
-  const formatearFecha = (fecha) => {
-    return new Date(fecha).toLocaleDateString("es-ES", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+const formatearFecha = (fecha) => {
+  if (!fecha) return "Fecha no definida"; 
+  
+  const opciones = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC' 
+  };
+
+  try {
+    const fechaObj = new Date(fecha);
+    
+    if (isNaN(fechaObj.getTime())) {
+      throw new Error('Fecha inválida');
+    }
+    
+    return fechaObj.toLocaleDateString('es-ES', opciones);
+  } catch (error) {
+    console.error('Error al formatear fecha:', error);
+    return "Fecha inválida";
   }
+}
 
   const onCompetenciaCreada = (nuevaCompetencia) => {
     setCompetencias((prev) => [...prev, nuevaCompetencia])

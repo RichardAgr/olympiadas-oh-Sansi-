@@ -116,4 +116,105 @@ class CompetenciaController extends Controller{
         }
     }
 
+    public function ActualizarCompetencia(Request $request, $id): JsonResponse{
+        try {
+            // Buscar la competencia
+            $competencia = Competencia::find($id);
+
+            if (!$competencia) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Competencia no encontrada',
+                    'data' => null
+                ], 404);
+            }
+
+            // Validar los datos de entrada
+            $request->validate([
+                'nombre_competencia' => 'required|string|max:50',
+                'descripcion' => 'required|string',
+                'fecha_inicio' => 'required|date',
+                'fecha_fin' => 'required|date|after:fecha_inicio',
+                'estado' => 'required|boolean',
+            ]);
+
+            // Verificar si hay inscripciones activas antes de permitir ciertos cambios
+            $inscripcionesActivas = $competencia->inscripciones()->count();
+        
+            if ($inscripcionesActivas > 0) {
+                // Si hay inscripciones, no permitir cambiar fechas que ya pasaron
+                $fechaInicioNueva = \Carbon\Carbon::parse($request->input('fecha_inicio'));
+                $fechaFinNueva = \Carbon\Carbon::parse($request->input('fecha_fin'));
+            
+                if ($fechaInicioNueva->isPast() && $fechaInicioNueva->format('Y-m-d') !== $competencia->fecha_inicio->format('Y-m-d')) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No se puede cambiar la fecha de inicio a una fecha pasada cuando hay inscripciones activas',
+                        'data' => [
+                            'total_inscripciones' => $inscripcionesActivas
+                        ]
+                    ], 400);
+                }
+            }
+
+            // Guardar datos anteriores para el log
+            $datosAnteriores = [
+                'nombre_competencia' => $competencia->nombre_competencia,
+                'descripcion' => $competencia->descripcion,
+                'fecha_inicio' => $competencia->fecha_inicio ? $competencia->fecha_inicio->format('Y-m-d') : null,
+                'fecha_fin' => $competencia->fecha_fin ? $competencia->fecha_fin->format('Y-m-d') : null,
+                'estado' => (bool) $competencia->estado,
+            ];
+
+            // Actualizar los campos
+            $competencia->nombre_competencia = $request->input('nombre_competencia');
+            $competencia->descripcion = $request->input('descripcion');
+            $competencia->fecha_inicio = $request->input('fecha_inicio');
+            $competencia->fecha_fin = $request->input('fecha_fin');
+            $competencia->estado = $request->input('estado');
+        
+            $competencia->save();
+
+
+            $competenciaFormateada = [
+                'competencia_id' => $competencia->competencia_id,
+                'nombre_competencia' => $competencia->nombre_competencia,
+                'descripcion' => $competencia->descripcion,
+                'fecha_inicio' => $competencia->fecha_inicio ? $competencia->fecha_inicio->format('Y-m-d') : null,
+                'fecha_fin' => $competencia->fecha_fin ? $competencia->fecha_fin->format('Y-m-d') : null,
+                'estado' => (bool) $competencia->estado,
+                'fecha_actualizacion' => now()->format('Y-m-d H:i:s'),
+                'datos_anteriores' => $datosAnteriores
+            ];
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Competencia actualizada exitosamente',
+                'data' => $competenciaFormateada
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (Exception $e) {
+            Log::error('Error al actualizar competencia: ' . $e->getMessage(), [
+                'competencia_id' => $id,
+                'datos_enviados' => $request->all(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno del servidor al actualizar la competencia',
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], 500);
+        }
+    }
+
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import axios from "axios"
 import "./formEditar.css"
 
 const FormEditar = ({ competencia, isOpen, onClose, onSave }) => {
@@ -26,7 +27,6 @@ const FormEditar = ({ competencia, isOpen, onClose, onSave }) => {
     }
   }, [competencia, isOpen])
 
-  // Función para validar solo letras y números
   const validateAlphanumeric = (value) => {
     const regex = /^[a-zA-Z0-9\s]*$/
     return regex.test(value)
@@ -38,30 +38,21 @@ const FormEditar = ({ competencia, isOpen, onClose, onSave }) => {
     return new Date(fechaInicio) < new Date(fechaFin)
   }
 
-  // Manejar cambios en los inputs
-  const handleInputChange = (e) => {
-    const { name, value, type } = e.target
 
-    // Validación en tiempo real para campos alfanuméricos
-    if ((name === "nombre_competencia" || name === "descripcion") && !validateAlphanumeric(value)) {
-      return
-    }
+const handleInputChange = (e) => {
+  const { name, value, type } = e.target
 
-    const newValue = type === "select-one" ? value === "true" : value
+  const newValue = type === "select-one" ? value === "true" : value
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: newValue,
-    }))
+  setFormData(prev => ({
+    ...prev,
+    [name]: newValue
+  }))
 
-    // Limpiar errores cuando el usuario empiece a escribir
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }))
-    }
+  if (errors[name]) {
+    setErrors(prev => ({ ...prev, [name]: "" }))
   }
+}
 
   // Validar formulario
   const validateForm = () => {
@@ -95,7 +86,6 @@ const FormEditar = ({ competencia, isOpen, onClose, onSave }) => {
     return Object.keys(newErrors).length === 0
   }
 
-  // Manejar envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -106,10 +96,7 @@ const FormEditar = ({ competencia, isOpen, onClose, onSave }) => {
     setIsSubmitting(true)
 
     try {
-      // AQUÍ DEBES IMPLEMENTAR LA LLAMADA A LA API PARA ACTUALIZAR
-      // Ejemplo de cómo sería la llamada con axios:
-      /*
-      const response = await axios.put(`http://tu-api-url/competencias/${competencia.competencia_id}`, {
+      const response = await axios.put(`http://localhost:8000/api/editarCompetencia/${competencia.competencia_id}`, {
         nombre_competencia: formData.nombre_competencia,
         descripcion: formData.descripcion,
         fecha_inicio: formData.fecha_inicio,
@@ -118,19 +105,9 @@ const FormEditar = ({ competencia, isOpen, onClose, onSave }) => {
       });
       
       if (response.status === 200) {
-        onSave(response.data, 'Competencia actualizada exitosamente');
-      }
-      */
-
-      // Simulación de actualización exitosa
-      setTimeout(() => {
-        const competenciaActualizada = {
-          ...competencia,
-          ...formData,
-        }
-        onSave(competenciaActualizada, "Competencia actualizada exitosamente")
+        onSave(response.data.data, 'Competencia actualizada exitosamente');
         setIsSubmitting(false)
-      }, 1000)
+      }
     } catch (error) {
       console.error("Error al actualizar competencia:", error)
       onSave(null, "Error al actualizar la competencia", "error")
