@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator; 
 
 class ResponsableGestionController extends Controller
 {
@@ -286,6 +287,63 @@ class ResponsableGestionController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al cambiar el estado.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function ActualizarMiPerfil(Request $request, $id)
+    {
+        try {
+            $responsable = ResponsableGestion::find($id);
+
+            if (!$responsable) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Responsable de Gestión no encontrado'
+                ], 404);
+            }
+
+            // Validar los datos del formulario
+            $validator = Validator::make($request->all(), [
+                'nombres' => 'required|string|max:255',
+                'apellidos' => 'required|string|max:255',
+                'correo_electronico' => 'required|email|max:255',
+                'telefono' => 'required|string|min:7|max:20',
+                'ci' => 'required|string|min:7|max:20',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error de validación',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Guardar los nuevos datos
+            $responsable->nombres = $request->nombres;
+            $responsable->apellidos = $request->apellidos;
+            $responsable->correo_electronico = $request->correo_electronico;
+            $responsable->telefono = $request->telefono;
+            $responsable->ci = $request->ci;
+            $responsable->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Perfil actualizado correctamente',
+                'data' => [
+                    'responsable_id' => $responsable->responsable_id,
+                    'nombres' => $responsable->nombres,
+                    'apellidos' => $responsable->apellidos,
+                    'correo_electronico' => $responsable->correo_electronico,
+                    'telefono' => $responsable->telefono,
+                    'ci' => $responsable->ci,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el perfil',
                 'error' => $e->getMessage()
             ], 500);
         }
