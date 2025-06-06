@@ -293,3 +293,35 @@
     width: 100%;
   }
 }
+
+
+.boton-iconoHu43.enviar {
+  background-color: #2ECC71;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  padding: 8px;
+  border-radius: 15px;
+}
+
+.boton-iconoHu43.enviar:hover {
+  background-color: #27ae60;
+  transform: scale(1.08);
+}
+
+.botones2-tablaHu43 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+}
+
+.boton-iconoHu43.reenviar {
+  background-color: #f39c12; 
+  transition: all 0.2s ease-in-out;
+}
+.boton-iconoHu43.reenviar:hover {
+  background-color: #d68910;
+  transform: scale(1.08);
+}
+
+
