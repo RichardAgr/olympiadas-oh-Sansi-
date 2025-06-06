@@ -12,6 +12,8 @@ function AgregarRespon() {
   const [telefono, setTelefono] = useState("");
   const [errores, setErrores] = useState({});
   const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
+  const [mensaje, setMensaje] = useState("");
+  const [tipoMensaje, setTipoMensaje] = useState(""); // "exito" o "error"
 
   const navigate = useNavigate();
 
@@ -37,9 +39,9 @@ function AgregarRespon() {
     if (!ci.trim()) {
       nuevosErrores.ci = "El carnet de identidad es obligatorio.";
     } else if (ci.length < 7) {
-      nuevosErrores.ci = "El CI debe tener al menos 7 caracteres.";
-    } else if (!/^[A-Za-z0-9-]+$/.test(ci)) {
-      nuevosErrores.ci = "El CI solo puede contener letras, números y el carácter '-'";
+      nuevosErrores.ci = "El CI debe tener al menos 7 dígitos.";
+    } else if (!/^\d+$/.test(ci)) {
+      nuevosErrores.ci = "El CI solo debe contener números.";
     }
   
     if (!correo.trim()) {
@@ -91,10 +93,25 @@ function AgregarRespon() {
   
     await api.post("http://localhost:8000/api/registrarResponGestion", data, config);
     console.log("Datos enviados con éxito.");
-    navigate("/admin/visualizarRegistro");
+    setMensaje("Responsable registrado con éxito ✅");
+      setTipoMensaje("exito");
+
+      setTimeout(() => {
+        setMensaje("");
+        setTipoMensaje("");
+        navigate("/admin/visualizarRegistro");
+      }, 1500);
 
   } catch (error) {
     console.error("Error al registrar al responsable:", error.response || error.message);
+
+    setMensaje("Hubo un error al registrar al responsable");
+    setTipoMensaje("error");
+
+    setTimeout(() => {
+      setMensaje("");
+      setTipoMensaje("");
+    }, 1500);
   }
 };
 
@@ -114,6 +131,13 @@ const cerrarModal = () => {
   return (
     <div className="form-container2Hu41">
       <h2>Registrar Nuevo Responsable de Gestión</h2>
+      {mensaje && (
+  <div className="modal-overlay">
+    <div className={`modal-mensajehu41 ${tipoMensaje}`}>
+      <h2>{mensaje}</h2>
+    </div>
+  </div>
+)}
       <form onSubmit={handleSubmit}>
         <div className="section-titleHu41">Datos del Responsable</div>
 
@@ -157,7 +181,7 @@ const cerrarModal = () => {
           <div className="form-group2Hu41">
             <label>Correo electrónico</label>
             <input
-              type="email"
+              type="text"
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
             />

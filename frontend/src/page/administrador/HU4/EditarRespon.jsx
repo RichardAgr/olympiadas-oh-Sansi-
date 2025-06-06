@@ -16,6 +16,8 @@ function EditarRespon() {
   const [errores, setErrores] = useState({});
   const [modalGuardarVisible, setModalGuardarVisible] = useState(false);
   const [modalCancelarVisible, setModalCancelarVisible] = useState(false);
+  const [mensaje, setMensaje] = useState("");
+  const [tipoMensaje, setTipoMensaje] = useState(""); // "exito" o "error"
 
   useEffect(() => {
     api.get(`http://localhost:8000/api/datosResponsableId/${id}`)
@@ -53,9 +55,9 @@ function EditarRespon() {
     if (!ci.trim()) {
       erroresNuevos.ci = "El CI es obligatorio.";
     } else if (ci.length < 7) {
-      erroresNuevos.ci = "El CI debe tener al menos 7 caracteres.";
-    } else if (!/^[A-Za-z0-9-]+$/.test(ci)) {
-      erroresNuevos.ci = "El CI solo puede contener letras, números y el carácter '-'";
+      erroresNuevos.ci = "El CI debe tener al menos 7 dígitos.";
+    } else if (!/^\d+$/.test(ci)) {
+      erroresNuevos.ci = "El CI solo debe contener números.";
     }
 
     if (!correo.trim()) {
@@ -93,11 +95,27 @@ function EditarRespon() {
         correo_electronico: correo,
         telefono,
       });
+      console.log("Datos actualizados con éxito.");
+    setMensaje("Responsable actualizado con éxito ✅");
+    setTipoMensaje("exito");
+
+    setTimeout(() => {
+      setMensaje("");
+      setTipoMensaje("");
       navigate("/admin/visualizarRegistro");
+    }, 1500);
     } catch (error) {
-      console.error("Error al actualizar:", error);
-    }
-  };
+      console.error("Error al actualizar:", error.response || error.message);
+
+    setMensaje("Hubo un error al actualizar al responsable");
+    setTipoMensaje("error");
+
+    setTimeout(() => {
+      setMensaje("");
+      setTipoMensaje("");
+    }, 1500);
+  }
+};
 
   const cancelarEdicion = () => {
     setModalCancelarVisible(true);
@@ -140,7 +158,7 @@ function EditarRespon() {
         <div className="form-row2Hu42">
           <div className="form-group2Hu42">
             <label>Correo electrónico</label>
-            <input type="email" value={correo} onChange={(e) => setCorreo(e.target.value)} />
+            <input type="text" value={correo} onChange={(e) => setCorreo(e.target.value)} />
             {errores.correo && <small className="errorHu42">{errores.correo}</small>}
           </div>
 
@@ -177,6 +195,14 @@ function EditarRespon() {
           </div>
         </div>
       )}
+
+{mensaje && (
+  <div className="modal-overlay">
+    <div className={`modal-mensajehu42 ${tipoMensaje}`}>
+      <h2>{mensaje}</h2>
+    </div>
+  </div>
+)}
 
       {/* Modal Confirmar Cancelar */}
       {modalCancelarVisible && (
