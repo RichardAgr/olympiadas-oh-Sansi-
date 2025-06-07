@@ -1,0 +1,79 @@
+/* Contenedor principal */
+.container-detallesCompetidores {
+  max-width: 1400px;
+  margin: 2rem auto;    
+  padding: 0 1rem;      
+}
+
+/* Título */
+.container-detallesCompetidores > h1 {
+  text-align: left;
+  font-size: 38px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Barra de búsqueda */
+.buscador {
+  margin-bottom: 20px;
+}
+
+.buscador input {
+  width: 50%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* Contenedor tabla */
+.contenedor-tabla {
+  margin-top: 20px;
+  overflow-x: auto; 
+}
+
+/* Tabla */
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ccc; /* borde externo */
+}
+
+/* Encabezado tabla */
+.tabla thead th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  border: 1px solid #999; /* líneas de separación */
+  padding: 12px;
+  text-align: left;
+}
+
+/* Celdas de la tabla */
+.tabla tbody td {
+  padding: 12px;
+  border: 1px solid #ddd; /* líneas de separación */
+  text-align: left;
+}
+
+/* Filas pares con color diferente */
+.tabla tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Mensaje cuando no hay resultados */
+.tabla td[colspan] {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .buscador input {
+    width: 100%;
+  }
+
+  .container-detallesCompetidores {
+    padding: 0 0.5rem;
+  }
+}

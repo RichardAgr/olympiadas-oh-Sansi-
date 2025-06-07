@@ -47,6 +47,8 @@ function VisualListTutor() {
 
   return (
     <div className="prueba-container">
+      <h1 className="titulo-lista-tutores">Lista de Tutores</h1>
+
       <div className="header-actions">
         <div className="buscador2">
           <input
@@ -80,7 +82,7 @@ function VisualListTutor() {
           <tbody>
             {filteredData.length === 0 ? (
               <tr>
-                <td colSpan="6" className="no-datos">
+                <td colSpan="7" className="no-datos">
                   <p>No se encontraron registros</p>
                 </td>
               </tr>

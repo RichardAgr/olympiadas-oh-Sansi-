@@ -1,32 +1,98 @@
-   .payment-container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-  
-  .loading,
-  .error {
-    text-align: center;
-    padding: 2rem;
-    font-size: 1.2rem;
-  }
-  
-  .error {
-    color: var(--error-color);
+  /* Contenedor principal */
+.payment-container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Título alineado a la izquierda */
+.title {
+  font-size: 38px;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+/* Barra de búsqueda debajo del título */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  width: 50%;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* Tabla */
+.pagos-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  table-layout: auto;
+}
+
+.pagos-table th,
+.pagos-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+.pagos-table th {
+  background-color: #e0e0e0; /* gris claro */
+  font-weight: bold;
+  color: #333;
+}
+
+.pagos-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Mensajes */
+.loading,
+.error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: var(--error-color);
+}
+
+.no-result {
+  background-color: rgb(240, 240, 240);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin: 2rem 0;
+}
+
+.no-result h3 {
+  color: #929191;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .search-bar {
+    width: 100%;
   }
 
-  .no-resut {
-    background-color: rgb(240, 240, 240);
-    border-radius: 8px;
-    padding: 2rem;
-    text-align: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    margin: 2rem 0;
+  .payment-container {
+    padding: 0 0.5rem;
   }
-
-  .no-resut h3 {
-    color: #929191;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-  }
+}

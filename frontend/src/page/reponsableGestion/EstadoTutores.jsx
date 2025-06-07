@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./estilosResponsable.css";
+import "./EstadoTutores.css";
 
 function EstadoTutores() {
   const [estadoTutores, setEstadoTutores] = useState([]);
@@ -137,7 +138,7 @@ function EstadoTutores() {
           value={filtroEstado}
           onChange={(e) => setFiltroEstado(e.target.value)}
         >
-          <option value="">-- Todos --</option>
+          <option value="">  Todos   </option>
           <option value="activo">Activos</option>
           <option value="inactivo">Inactivos</option>
         </select>

@@ -4,7 +4,7 @@
    }
    
    /* Título */
-   .liesta-Incritos-tituloX {
+   h1 {
      text-align: left;
      font-size: 38px;
      color: #333;
@@ -17,7 +17,7 @@
    }
    
    .search-bar input {
-     width: 50%;
+     width: 100%;
      padding: 10px;
      font-size: 16px;
      border-radius: 8px;
@@ -61,7 +61,7 @@
    .inscritos-table {
      width: 100%;
      border-collapse: collapse;
-     margin-top: 20px;
+     margin-top: 10px;
    }
    
    .inscritos-table th, .inscritos-table td {

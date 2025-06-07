@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "./DetalleCompetidoresInscritos.css";
 
 
 function DetalleCompetidoresInscritos() {
@@ -18,7 +19,7 @@ function DetalleCompetidoresInscritos() {
   );
 
   return (
-    <div className="container-detallesCompetidores">
+    <div>
       <h1>Detalle Competidores Inscritos</h1>
       <div className="buscador">
         <input
