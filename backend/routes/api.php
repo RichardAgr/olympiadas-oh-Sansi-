@@ -45,7 +45,7 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
     //responsable de gestion
-    Route::get('/datosResponsableGestion', [ResponsableGestionController::class, 'obtenerResponsableGestion']);
+    Route::get('/datosResponsableGestion/{id_competencia}', [ResponsableGestionController::class, 'obtenerResponsableGestion']);
     Route::get('/datosResponsableId/{responsableId}', [ResponsableGestionController::class, 'obtenerDatosRespGestionId']);
     Route::delete('/eliminarResponsableGestion/{id}', [ResponsableGestionController::class, 'eliminarResponsableGestion']);
     Route::put('/editarResponsableGestion/{id}', [ResponsableGestionController::class, 'editarResponsableGestion']);

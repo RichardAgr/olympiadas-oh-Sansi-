@@ -24,9 +24,9 @@ function RegistrarOrganizador() {
   const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
   useEffect(() => {
-    api.get("http://localhost:8000/api/datosResponsableGestion")
+    api.get(`http://localhost:8000/api/datosResponsableGestion/${id_competencia}`)
       .then((response) => {
-        setData(response.data);
+        setData(response.data.data);
       })
       .catch((error) => {
         console.error("Error al traer responsables:", error);
@@ -38,8 +38,8 @@ function RegistrarOrganizador() {
     const coincideNombre = nombreCompleto.includes(search.toLowerCase());
     const coincideEstado =
       filtroEstado === "todos" ||
-      (filtroEstado === "activos" && dato.estado === 1) ||
-      (filtroEstado === "inactivos" && dato.estado === 0);
+      (filtroEstado === "Activo" && dato.estado === 1) ||
+      (filtroEstado === "Inactivo" && dato.estado === 0);
     return coincideNombre && coincideEstado;
   });
 
@@ -145,8 +145,8 @@ function RegistrarOrganizador() {
         <input type="text" placeholder="Buscar por nombre" value={search} onChange={(e) => setSearch(e.target.value)} className="input-busquedaHu43 search-inputHu43" />
         <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)} className="filtro-selectHu43">
           <option value="todos">Todos</option>
-          <option value="activos">Activos</option>
-          <option value="inactivos">Inactivos</option>
+          <option value="Activo">Activos</option>
+          <option value="Inactivo">Inactivos</option>
         </select>
       </div>
 

@@ -12,18 +12,58 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator; 
+use Carbon\Carbon;
 
-class ResponsableGestionController extends Controller
-{
-    public function obtenerResponsableGestion()
-    {
-        $responsables = ResponsableGestion::all()->map(function ($responsable) {
-            $responsable->ya_enviado = !empty($responsable->password);
-            return $responsable;
-        });
+class ResponsableGestionController extends Controller{
+public function obtenerResponsableGestion($id_competencia){
+       try {
+        validator(['id_competencia' => $id_competencia], [
+            'id_competencia' => 'required|integer|exists:competencia,competencia_id'
+        ])->validate();
 
-        return response()->json($responsables, 200);
+        $responsables = ResponsableGestion::where('competencia_id', $id_competencia)
+            ->get()
+            ->map(function ($responsable) {
+                $fechaAsignacion = is_string($responsable->fecha_asignacion) 
+                    ? Carbon::parse($responsable->fecha_asignacion)
+                    : $responsable->fecha_asignacion;
+                return [
+                    'responsable_id' => $responsable->responsable_id,
+                    'competencia_id' => $responsable->competencia_id,
+                    'ci' => $responsable->ci,
+                    'nombres' => $responsable->nombres,
+                    'apellidos' => $responsable->apellidos,
+                    'correo_electronico' => $responsable->correo_electronico,
+                    'telefono' => $responsable->telefono,
+                    'fecha_asignacion' => $fechaAsignacion?->format('Y-m-d'),
+                    'estado' => $responsable->estado,
+                    'ya_enviado' => !empty($responsable->password),
+                    'tiene_acceso' => $responsable->estado && !empty($responsable->password)
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $responsables,
+            'message' => 'Responsables de gestión obtenidos correctamente',
+        ], 200);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'error' => 'ID de competencia inválido',
+            'details' => $e->errors()
+        ], 422);
+
+    } catch (\Exception $e) {
+        Log::error('Error al obtener responsables: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'error' => 'Error al obtener responsables de gestión',
+            'details' => $e->getMessage()
+        ], 500);
     }
+}
 
     public function registrarResponsableGestion(Request $request)
     {
