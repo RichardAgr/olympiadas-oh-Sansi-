@@ -125,6 +125,7 @@ public function registrarResponsableGestion(Request $request){
             $responsable = DB::table('responsable_gestion')
                 ->select([
                     'responsable_id',
+                    'competencia_id',
                     'nombres',
                     'apellidos',
                     'ci',
@@ -155,6 +156,7 @@ public function registrarResponsableGestion(Request $request){
     {
         return [
             'responsable_id' => (int) $responsable->responsable_id,
+            'competencia_id'=>(int)$responsable->competencia_id,
             'nombre' => (string) $responsable->nombres,
             'apellido' => (string) $responsable->apellidos,
             'ci' => (string) $responsable->ci,
@@ -388,4 +390,6 @@ public function registrarResponsableGestion(Request $request){
             ], 500);
         }
     }
+
+
 }

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route,useParams } from "react-router-dom";
 import HomeResponsable from "../page/reponsableGestion/HomeResponsable/HomeRespGest";
 import RespGestLayout from "../components/RespGestLayout";
 import ListIns from "../page/reponsableGestion/HU8-ListaCompetidores/ListaInscritos";
@@ -11,10 +11,13 @@ import CompetidoresPage from "../page/reponsableGestion/HU10-HabilitarDeshabilit
 import InformacionCompetidor from "../components/informacionCompetidor/InformacionCompetidor";
 import MiPerfilRespGestion from "../page/reponsableGestion/PerfilResponsable/MiPerfilRespGestion";
 import ConfiguracionRespGestion from "../page/reponsableGestion/EditarPerfilResponsable/ConfiguracionRespGestion";
+import { CompetenciaProvider } from "../context/ContextIdCompetencia/idCompetencia";
 
 
 function AppRouteRespGest() {
+    const { id_respGest } = useParams()
   return (
+    <CompetenciaProvider id_respGest={id_respGest}>
     <Routes>
       <Route path="" element={<RespGestLayout />}>
         <Route index element={<HomeResponsable />} />
@@ -33,6 +36,7 @@ function AppRouteRespGest() {
 
       </Route>
     </Routes>
+    </CompetenciaProvider>
   );
 }
 
