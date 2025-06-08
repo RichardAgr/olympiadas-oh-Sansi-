@@ -77,7 +77,8 @@ class AuthController extends Controller
                     'responsable_id' => $responsable->responsable_id, // 🔧 CAMBIO CRÍTICO
                     'nombres' => $responsable->nombres,
                     'apellidos' => $responsable->apellidos,
-                    'correo_electronico' => $responsable->correo_electronico
+                    'correo_electronico' => $responsable->correo_electronico,
+                    'competencia_id' => $responsable->competencia_id
                 ]
             ]);
         }

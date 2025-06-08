@@ -11,6 +11,7 @@ use App\Models\Tutor;
 use App\Models\CompetidorCompetencia;
 use App\Models\TutorCompetidor;
 use App\Models\Competidor;
+use App\Models\Competencia;
 use App\Models\NivelCategoria;
 use App\Http\Resources\PagoCollection;
 use App\Models\Area;
@@ -22,20 +23,29 @@ use Carbon\Carbon;
 
 
 class BoletaController extends Controller{
-    public function index()
-    {
-        $boletas = Boleta::with(['tutor'])->get();
-        foreach ($boletas as $boleta) {
-            $imagen = ImagenBoleta::where('boleta_id', $boleta->boleta_id)
-                ->orderBy('fecha_subida', 'desc')
-                ->first();
+    public function index($competenciaId){
+      if (!Competencia::where('competencia_id', $competenciaId)->exists()) {
+        return response()->json(['error' => 'Competencia no encontrada'], 404);
+    }
 
-            // Asig            nar la imagen a la boleta
-            $boleta->imagen_manual = $imagen;
-        }
+    // Filtrar boletas por competencia_id a través de la relación con tutor
+    $boletas = Boleta::with(['tutor'])
+        ->whereHas('tutor', function ($query) use ($competenciaId) {
+            $query->where('competencia_id', $competenciaId);
+        })
+        ->get();
 
-        // Devolver la colección formateada como JSON
-        return new PagoCollection($boletas);
+    foreach ($boletas as $boleta) {
+        $imagen = ImagenBoleta::where('boleta_id', $boleta->boleta_id)
+            ->orderBy('fecha_subida', 'desc')
+            ->first();
+
+        // Asignar la imagen a la boleta
+        $boleta->imagen_manual = $imagen;
+    }
+
+    // Devolver la colección formateada como JSON
+    return new PagoCollection($boletas);
     }
 
     public function boletasPorTutor($id){

@@ -5,12 +5,13 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 function ListaInscritos() {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
   const [inscritos, setInscritos] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("Todos los cursos");
-
   useEffect(() => {
-    axios.get("http://localhost:8000/api/detallesCompetidor")
+    axios.get(`http://localhost:8000/api/detallesCompetidor/${competenciaId}`)
       .then(response => {
         setInscritos(response.data);
       })

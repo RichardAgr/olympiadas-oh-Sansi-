@@ -103,7 +103,7 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::get('/tutores/{id}/competidores-filtrados', [TutorController::class, 'competidoresFiltrados']);
 
     // Boletas
-    Route::get('/pagos', [BoletaController::class, 'index']);
+    Route::get('/pagos/{competenciaId}', [BoletaController::class, 'index']);
     Route::post('/tutor/{tutor_id}/boleta/generar', [BoletaController::class, 'generarBoleta']);
     Route::get('/tutor/{tutor_id}/boleta/generar', [BoletaController::class, 'generarBoletaDesdeQuery']);
     Route::post('/boleta/generar/{competidorId}', [BoletaController::class, 'generarBoleta']);
@@ -115,7 +115,7 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::get('/competidores', [CompetidorController::class, 'index']);
     Route::get('/informacionCompetidores/{id}/competidor', [CompetidorController::class, 'getDetallesCompetidor']);
     Route::put('/competidor/{id}/estado', [CompetidorController::class, 'actualizarEstadoCompetidor']);
-    Route::get('/detallesCompetidor', [CompetidorController::class, 'obtenerDetallesCompetidor']);
+    Route::get('/detallesCompetidor/{competenciaId}', [CompetidorController::class, 'obtenerDetallesCompetidor']);
     Route::get('/competidor/{id}', [CompetidorController::class, 'getDetallesCompetidor']);
     Route::put('/competidor/{id}', [CompetidorController::class, 'update']);
     Route::post('/tutores/{tutor_id}/competidor', [TutorController::class, 'inscribirCompetidor']);
