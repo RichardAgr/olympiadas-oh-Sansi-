@@ -25,7 +25,7 @@ const authToken = localStorage.getItem("authToken");
   useEffect(() => {
   const fetchAreas = async () => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/areasRegistradas`, {
+      const response = await axios.get(`http://127.0.0.1:8000/api/areasRegistradas/${id_competencia}`, {
         timeout: 5000, // timeout para evitar requests colgados
         headers: {
           'Content-Type': 'application/json',

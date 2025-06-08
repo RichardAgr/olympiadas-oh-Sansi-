@@ -13,12 +13,16 @@ use App\Models\Area;
 use App\Models\Cronograma;
 
 class AreaController extends Controller{
-    public function ObtenerAreasRegistradas(Request $request): JsonResponse{
+    public function ObtenerAreasRegistradas($id_competencia): JsonResponse{
          try {
+            validator(['id_competencia' => $id_competencia], [
+            'id_competencia' => 'required|integer|exists:competencia,competencia_id'
+            ])->validate();
+
             $areas = Area::select('area_id', 'costo', 'nombre', 'descripcion', 'estado', 'created_at', 'updated_at')
-                         ->distinct()
-                         ->orderBy('nombre', 'asc')
-                         ->get();
+                     ->where('competencia_id', $id_competencia)
+                     ->orderBy('nombre', 'asc')
+                     ->get();
 
             if ($areas->isEmpty()) {
                 return response()->json([], 200);

@@ -65,7 +65,7 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
 
 
     // Áreas
-    Route::get('/areasRegistradas', [AreaController::class,'ObtenerAreasRegistradas']);
+    Route::get('/areasRegistradas/{id_competencia}', [AreaController::class,'ObtenerAreasRegistradas']);
     Route::delete('/eliminarArea/{areaId}', [AreaController::class,'EliminarArea']);
     Route::get('/obtenerDatosArea/{areaId}', [AreaController::class,'DatosAreaId']);
     Route::post('/registrarArea', [AreaController::class,'RegistrarNuevaArea']);
