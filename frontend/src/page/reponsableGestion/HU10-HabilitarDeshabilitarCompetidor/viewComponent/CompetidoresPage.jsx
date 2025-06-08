@@ -16,7 +16,7 @@ export default function CompetidoresPage() {
     const fetchCompetitors = async () => {
       try {
         setIsLoading(true)
-        const res = await axios.get("http://127.0.0.1:8000/api/competidores")
+        const res = await axios.get("http://localhost:8000/api/competidores")
         
         if (res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`); 

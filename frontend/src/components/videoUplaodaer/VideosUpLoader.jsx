@@ -15,7 +15,7 @@ export default function VideoUploader({ title, type }) {
     const fetchVideoData = async () => {
       try {
         setIsLoading(true)
-        const response = await axios.get("http://127.0.0.1:8000/api/Mostrarvideos")
+        const response = await axios.get("http://localhost:8000/api/Mostrarvideos")
 
         if (response.data?.data) {
         // Busca el video que coincida con el tipo (type)
@@ -67,7 +67,7 @@ export default function VideoUploader({ title, type }) {
 
       showNotification("Guardando URL de video...", "info")
 
-     const res = await axios.post("http://127.0.0.1:8000/api/Guardarvideos", payload)
+     const res = await axios.post("http://localhost:8000/api/Guardarvideos", payload)
 
       if (res.status === 200 || res.status === 201) {
         showNotification("URL de video guardada correctamente", "success")
@@ -76,7 +76,7 @@ export default function VideoUploader({ title, type }) {
         if (res.data && res.data.data) {
           setVideoData(res.data.data)
         } else {
-          const updatedResponse = await axios.get("http://127.0.0.1:8000/api/Mostrarvideos")
+          const updatedResponse = await axios.get("http://localhost:8000/api/Mostrarvideos")
           if (updatedResponse.data && updatedResponse.data.data && updatedResponse.data.data[type]) {
             setVideoData(updatedResponse.data.data[type])
           }
@@ -102,7 +102,7 @@ export default function VideoUploader({ title, type }) {
   const handleDelete = async () => {
     if (videoData) {
       try {
-        const res = await axios.delete(`http://127.0.0.1:8000/api/Eliminarvideos/${type}`)
+        const res = await axios.delete(`http://localhost:8000/api/Eliminarvideos/${type}`)
 
         if (res.status === 200) {
           setVideoData(null)

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 import "./AgregarCategoria.css";
 import SelectorGrado from "./SelectorGrado";
 import api from '../../../components/Tokens/api';
@@ -22,6 +21,8 @@ function AgregarCategoria() {
     mensaje: "",
     esExito: false,
   });
+    const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
   const navigate = useNavigate();
 
@@ -29,7 +30,7 @@ function AgregarCategoria() {
   const authToken = localStorage.getItem("authToken");
 
   api
-    .get("http://localhost:8000/api/areasRegistradas", {
+    .get(`http://localhost:8000/api/areasRegistradas/${id_competencia}`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
         'Accept': 'application/json',
@@ -142,7 +143,7 @@ function AgregarCategoria() {
   const cerrarModalHu2 = () => {
     setMostrarModalHu2(false);
     if (modalDataHu2.esExito) {
-      navigate("/admin/registro-categorias");
+      navigate(routeTo("registro-categorias"));
     }
   };
 

@@ -31,7 +31,7 @@ Route::post('/password/email', [PasswordResetController::class, 'enviarCodigo'])
 Route::post('/password/verify', [PasswordResetController::class, 'verificarCodigo']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetearPassword']);
 Route::get('/Mostrarvideos', [VideoController::class, 'mostrarDetalleVideo']);
-Route::get('/areasCategoriasGrados', [AreaController::class, 'getAreasWithCategoriasGrados']);
+Route::get('/areasCategoriasGrados/{id_competencia}', [AreaController::class, 'getAreasWithCategoriasGrados']);
 // DocumentosHome
     Route::post('/documentos/tipoPortal', [DocumentoController::class, 'guardarDocumentos']);
     Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
@@ -72,11 +72,11 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
 
 
     // Áreas
-    Route::get('/areasRegistradas', [AreaController::class,'ObtenerAreasRegistradas']);
+    Route::get('/areasRegistradas/{id_competencia}', [AreaController::class,'ObtenerAreasRegistradas']);
     Route::delete('/eliminarArea/{areaId}', [AreaController::class,'EliminarArea']);
     Route::get('/obtenerDatosArea/{areaId}', [AreaController::class,'DatosAreaId']);
     Route::post('/registrarArea', [AreaController::class,'RegistrarNuevaArea']);
-    Route::get('/datosAreaCompleto', [AreaController::class,'DatosAreasCompleto']);
+    Route::get('/datosAreaCompleto/{id_competencia}', [AreaController::class,'DatosAreasCompleto']);
     Route::put('/actualizarArea/{areaId}', [AreaController::class,'actualizarArea']);
 /*     Route::get('/areasRegistradas', [AreaController::class, 'getEventosCronograma']); */
 

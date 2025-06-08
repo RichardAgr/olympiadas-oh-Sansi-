@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate,Link, NavLink, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState  } from "react";
+import { useNavigate,Link, NavLink, useLocation, useParams } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { UserCircle, Bell } from "lucide-react";
 import "./estilos/estilosTopBar.css";
@@ -11,6 +11,7 @@ const AdminTopBar = () => {
   const timeoutRef = useRef(null);
   const location = useLocation();
   const [userMenuOpen, setUserMenuOpen] = useState(false); 
+  const { id_competencia } = useParams();
 
   const navigate = useNavigate();
 
@@ -37,7 +38,7 @@ const AdminTopBar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://127.0.0.1:8000/api/logout", {}, {
+      await axios.post("http://localhost:8000/api/logout", {}, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`
         }
@@ -72,8 +73,8 @@ const AdminTopBar = () => {
       <ul className={`topbar-menu ${menuOpen ? "show" : ""}`}>
         <li>
           <Link
-            to="/admin"
-            className={location.pathname === "/admin" ? "active" : ""}
+            to={`/admin/HomeAdmin/${id_competencia}`}
+            className={location.pathname === `/admin/HomeAdmin/${id_competencia}` ? "active" : ""}
           >
             Inicio
           </Link>
@@ -83,7 +84,7 @@ const AdminTopBar = () => {
 
         <li>
           <NavLink
-            to="/admin/Evento"
+            to={`/admin/HomeAdmin/${id_competencia}/Evento`} 
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Evento
@@ -91,7 +92,7 @@ const AdminTopBar = () => {
         </li>
         <li>
           <Link
-            to="/admin/visualizarRegistro"
+            to={`/admin/HomeAdmin/${id_competencia}/visualizarRegistro`} 
             className={location.pathname === "/admin/visualizarRegistro" ? "active-option": ""}
           >
             Responsable de Gestion

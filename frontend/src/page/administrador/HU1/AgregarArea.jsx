@@ -1,5 +1,5 @@
 import  { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "../../../App.css";
 import "./hu1.css"; // Asegúrate de que este archivo CSS exista y tenga los estilos necesarios
@@ -15,6 +15,8 @@ const AgregarArea = () => {
   const [costoError, setCostoError] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [tipoMensaje, setTipoMensaje] = useState(""); // 'exito' o 'error'
+  const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
 
   const handleNombreChange = (e) => {
@@ -63,6 +65,7 @@ const handleSubmit = async (e) => {
 
   if (!validarFormulario()) return;
   const data ={
+      id_competencia,
       nombre,
       descripcion,
       costo,
@@ -84,7 +87,7 @@ await axios.post("http://localhost:8000/api/registrarArea", data, {
     setTimeout(() => {
       setMensaje("");
       setTipoMensaje("");
-      navigate("/admin/areas");
+      navigate(routeTo("areas"));
     }, 2500); // Opcional: espera 2.5s antes de redirigir
   } catch (error) {
   console.error("Error al registrar el área:", error);
@@ -143,7 +146,7 @@ await axios.post("http://localhost:8000/api/registrarArea", data, {
         <div className="botones-form-area">
           <button
             type="button"
-            onClick={() => navigate("/admin/areas")}
+            onClick={() => navigate(routeTo("areas"))}
             className="btn-cancelar-area"
           >
             Cancelar

@@ -151,7 +151,7 @@ useEffect(() => {
         sessionStorage.setItem('hasSeenLoading', 'true');
       }
 
-      const response = await axios.get(`http://127.0.0.1:8000/api/documento-convocatoria/${2025}/descargar`);
+      const response = await axios.get(`http://localhost:8000/api/documento-convocatoria/${2025}/descargar`);
       const data = response.data;
       if (data.success) {
         setConvocatoria( data.data.url_pdf)
@@ -159,7 +159,7 @@ useEffect(() => {
         setConvocatoria(null);
       }
 
-      const videosResponse = await axios.get('http://127.0.0.1:8000/api/Mostrarvideos');
+      const videosResponse = await axios.get('http://localhost:8000/api/Mostrarvideos');
       const videosData = videosResponse.data.data;
 
       // Actualizar los tutoriales con los videos de la API

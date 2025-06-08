@@ -42,7 +42,7 @@ function Configuracion() {
   useEffect(() => {
     const getDataTutor = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Tutor`)
+        const response = await axios.get(`http://localhost:8000/api/VerMiPerfil/${id}/Tutor`)
         setDatosTutor(response.data)
       } catch (error) {
         console.error("Error cargando datos del tutor:", error)
@@ -172,14 +172,14 @@ const validarCampo = (name, value) => {
 
     // Actualiza perfil
     await axios.put(
-      `http://127.0.0.1:8000/api/tutor/ActualizarMiPerfil/${id}`,
+      `http://localhost:8000/api/tutor/ActualizarMiPerfil/${id}`,
       datosEnviar
     );
 
     // Actualiza contraseña si fue ingresada
     if (datosTutor.contrasenaActual && datosTutor.nuevaContrasena && datosTutor.confirmarContrasena) {
       await axios.post(
-        `http://127.0.0.1:8000/api/tutor/${id}/cambiar-password`,
+        `http://localhost:8000/api/tutor/${id}/cambiar-password`,
         {
           password_actual: datosTutor.contrasenaActual,
           password: datosTutor.nuevaContrasena,
@@ -204,7 +204,7 @@ const validarCampo = (name, value) => {
 
   const cancelarEdicion = () => {
     axios
-      .get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Tutor`)
+      .get(`http://localhost:8000/api/VerMiPerfil/${id}/Tutor`)
       .then((response) => {
         setDatosTutor(response.data)
         // Limpiar errores al cancelar

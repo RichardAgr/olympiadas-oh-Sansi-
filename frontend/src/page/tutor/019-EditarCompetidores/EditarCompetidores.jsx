@@ -28,7 +28,7 @@ function EditarCompetidores() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/informacionCompetidores/${idCompetidor}/competidor`
+          `http://localhost:8000/api/informacionCompetidores/${idCompetidor}/competidor`
         );
         const competidorEncontrado = response.data.informacion_competidor;
 
@@ -102,7 +102,7 @@ function EditarCompetidores() {
       const formattedDate = formatDateForAPI(competidor.fecha_nacimiento);
       
       await axios.put(
-        `http://127.0.0.1:8000/api/tutor/editarCompetidor/${idCompetidor}`,
+        `http://localhost:8000/api/tutor/editarCompetidor/${idCompetidor}`,
         {
           nombres: competidor.nombres,
           apellidos: competidor.apellidos,

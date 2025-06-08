@@ -5,7 +5,7 @@ import axios from "axios";
 import "./hu1.css";
 
 const EditArea = () => {
-  const { id } = useParams();
+  const { id, id_competencia } = useParams();
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [costo, setCosto] = useState("");
@@ -13,6 +13,7 @@ const EditArea = () => {
   const navigate = useNavigate();
   const [mensaje, setMensaje] = useState("");
   const [tipoMensaje, setTipoMensaje] = useState(""); // 'exito' o 'error'
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
 
 
@@ -92,7 +93,7 @@ const handleSubmit = async (e) => {
   try {
     const authToken = localStorage.getItem("authToken");
 
-await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
+await axios.put(`http://localhost:8000/api/actualizarArea/${id}`, data, {
   headers: {
     Authorization: `Bearer ${authToken}`,
     'Content-Type': 'application/json',
@@ -107,7 +108,7 @@ await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
     setTimeout(() => {
       setMensaje("");
       setTipoMensaje("");
-      navigate("/admin/areas");
+      navigate(routeTo("areas"));
     }, 3000);
   } catch (error) {
     setMensaje("Hubo un error al actualizar el área ❌");
@@ -166,7 +167,7 @@ await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
         <div className="botones-form-area">
           <button
             type="button"
-            onClick={() => navigate("/admin/areas")}
+            onClick={() => navigate(routeTo('areas'))}
             className="btn-cancelar-area"
           >
             Cancelar

@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import buscador from "../../../assets/buscador.svg";
 import excel from "../../../assets/excel.svg";
 import addUsuario from "../../../assets/perfil_usuario_add.svg";
+import { Link, useParams } from "react-router-dom";
 import { Edit, Trash2, Mail } from "lucide-react";
-import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 import ModalConfirmDelete from "../../../components/ModalesAdmin/ModalConfirmDelete";
 import ModalConfirmEstado from "../../../components/ModalesAdmin/ModalConfirmEstado";
@@ -20,6 +20,8 @@ function RegistrarOrganizador() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modalEstadoAbierto, setModalEstadoAbierto] = useState(false);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
+    const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
   useEffect(() => {
     api.get("http://localhost:8000/api/datosResponsableGestion")
@@ -152,8 +154,14 @@ function RegistrarOrganizador() {
         <button className="boton-excelHu43" onClick={exportarExcel}>
           <img src={excel} alt="Excel" className="icono-botonHu43" /> Descargar Excel
         </button>
-        <button className="boton-addUserHu43" onClick={() => (window.location.href = "/admin/visualizarRegistro/agregarRegistro")}> 
-          <img src={addUsuario} alt="Agregar Usuario" className="icono-boton2Hu43" /> Agregar
+        <button
+          className="boton-addUserHu43"
+          onClick={() =>
+            (window.location.href = routeTo("visualizarRegistro/agregarRegistro"))
+          }
+        >
+          <img src={addUsuario} alt="Agregar Usuario" className="icono-boton2Hu43" />
+          Agregar
         </button>
       </div>
 
@@ -195,7 +203,11 @@ function RegistrarOrganizador() {
                     </span>
                   </td>
                   <td className="botones-tablaHu43">
-                    <Link to={`/admin/visualizarRegistro/editarRegistro/${dato.responsable_id}`} className="boton-iconoHu43" title="Editar">
+                    <Link
+                      to={routeTo(`visualizarRegistro/editarRegistro/${dato.responsable_id}`)}
+                      className="boton-iconoHu43"
+                      title="Editar"
+                    >
                       <Edit size={20} color="white" />
                     </Link>
                     <button className="boton-iconoHu43" onClick={() => abrirModal(dato)} title="Eliminar">

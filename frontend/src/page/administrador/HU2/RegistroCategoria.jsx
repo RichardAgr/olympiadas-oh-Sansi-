@@ -1,9 +1,8 @@
 
 import { useEffect, useState } from "react"
-import axios from "axios"
 import "./RegistroCategoria.css"
 import { Edit, Trash2, Plus } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import ModalEliminarCategoria from "../../../components/ModalEliminarCategoria"
 import api from '../../../components/Tokens/api';
 
@@ -18,6 +17,8 @@ function RegistroCategoria() {
   const [modalAbierto, setModalAbierto] = useState(false)
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
   // Función para aplanar las categorías
   const aplanarCategorias = (data) => {
@@ -39,7 +40,7 @@ function RegistroCategoria() {
 
   useEffect(() => {
     api
-      .get("http://localhost:8000/api/areasCategoriasGrados")
+      .get(`http://localhost:8000/api/areasCategoriasGrados/${id_competencia}`)
       .then((response) => {
 
         if (response.data.success && response.data.data) {
@@ -125,7 +126,7 @@ function RegistroCategoria() {
       </div>
 
       <div className="tabla-categorias-wrapperLi">
-        <button className="btn-agregarLi" onClick={() => navigate("/admin/registro-categorias/nueva")}>
+        <button className="btn-agregarLi" onClick={() => navigate(routeTo("registro-categorias/nueva"))}>
           <Plus size={18} />
           Agregar
         </button>
@@ -147,7 +148,7 @@ function RegistroCategoria() {
                   <td className="accionesLi2">{cat.nombre}</td>
                   <td>{cat.rango_grado}</td>
                   <td className="accionesLi">
-                    <Link to={`/admin/registro-categorias/editar/${cat.nivel_categoria_id}`} className="boton-iconoLi">
+                    <Link to={routeTo(`registro-categorias/editar/${cat.nivel_categoria_id}`)} className="boton-iconoLi">
                       <Edit size={20} color="white" />
                     </Link>
                     <button className="boton-iconoLi" onClick={() => abrirModal(cat)}>

@@ -18,6 +18,8 @@ function EditarRespon() {
   const [modalCancelarVisible, setModalCancelarVisible] = useState(false);
   const [mensaje, setMensaje] = useState("");
   const [tipoMensaje, setTipoMensaje] = useState(""); // "exito" o "error"
+    const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
   useEffect(() => {
     api.get(`http://localhost:8000/api/datosResponsableId/${id}`)
@@ -88,7 +90,7 @@ function EditarRespon() {
   const confirmarGuardar = async () => {
     setModalGuardarVisible(false);
     try {
-      await api.put(`http://127.0.0.1:8000/api/editarResponsableGestion/${id}`, {
+      await api.put(`http://localhost:8000/api/editarResponsableGestion/${id}`, {
         nombres,
         apellidos,
         ci,
@@ -102,7 +104,7 @@ function EditarRespon() {
     setTimeout(() => {
       setMensaje("");
       setTipoMensaje("");
-      navigate("/admin/visualizarRegistro");
+      navigate(routeTo("visualizarRegistro"));
     }, 1500);
     } catch (error) {
       console.error("Error al actualizar:", error.response || error.message);
@@ -123,7 +125,7 @@ function EditarRespon() {
 
   const confirmarCancelar = () => {
     setModalCancelarVisible(false);
-    navigate("/admin/visualizarRegistro");
+    navigate(routeTo("visualizarRegistro"));
   };
 
   return (

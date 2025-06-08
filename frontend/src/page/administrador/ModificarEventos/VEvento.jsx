@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { Calendar, Settings } from "lucide-react"
+import {useParams } from "react-router-dom"
 import AreaCard from "./areaCard/AreaCard"
 import EditCronograma from "./formularioEdicion/EditCronograma"
 import Notificacion from "./notificacion/Notificacion"
@@ -7,6 +8,7 @@ import api from "../../../components/Tokens/api"
 import "./VEvento.css"
 
 const VEvento = () => {
+  const { id_competencia } = useParams();
   const [areas, setAreas] = useState([])
   const [selectedArea, setSelectedArea] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -25,8 +27,7 @@ const VEvento = () => {
   const loadAreas = async () => {
     try {
       setLoading(true)
-
-      const response = await api.get('http://localhost:8000/api/areasRegistradas')
+      const response = await api.get(`http://localhost:8000/api/areasRegistradas/${id_competencia}`)
       const areasData = response.data
 
       const areasWithCronogramas = await Promise.all(

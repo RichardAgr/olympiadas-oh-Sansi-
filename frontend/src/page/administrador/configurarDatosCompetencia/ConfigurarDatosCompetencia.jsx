@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import {useParams } from "react-router-dom";
 import { GraduationCap, Megaphone, Video,  FileSpreadsheet } from "lucide-react"
  import PdfUploader from "../../../components/pdfConfiguracionData/pdfUploader"
 import VideoUploader from "../../../components/videoUplaodaer/VideosUpLoader"
@@ -6,6 +7,7 @@ import axios from "axios";
 import "./ConfigurarDatosCompetencia.css"
 
 export default function ConfigurarDatosCompetencia() {
+  const { id_competencia } = useParams();
   const [areas, setAreas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +15,7 @@ export default function ConfigurarDatosCompetencia() {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/areasCategoriasGrados");
+        const response = await axios.get(`http://localhost:8000/api/areasCategoriasGrados/${id_competencia}`);
         if (response.data.success) {
           setAreas(response.data.data);
         }

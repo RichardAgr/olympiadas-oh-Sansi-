@@ -27,7 +27,7 @@ export default function InformacionCompetidor() {
     const fetchCompetitorDetail = async () => {
       try {
         setIsLoading(true)
-        const data = await axios.get(`http://127.0.0.1:8000/api/informacionCompetidores/${id}/competidor`)
+        const data = await axios.get(`http://localhost:8000/api/informacionCompetidores/${id}/competidor`)
 /*          if (!data.ok) {
             throw new Error("No se pudo cargar la información del competidor")
         }  */
@@ -62,7 +62,7 @@ export default function InformacionCompetidor() {
   }
 
   const handleSubmit = () => {
-    axios.put(`http://127.0.0.1:8000/api/competidor/${competitor.id}/estado`, {
+    axios.put(`http://localhost:8000/api/competidor/${competitor.id}/estado`, {
       estado: selectedStatus
   })
   .then(response => console.log(response.data))
@@ -102,7 +102,7 @@ export default function InformacionCompetidor() {
       motivo: notificationReason
     }
 
-    axios.post('http://127.0.0.1:8000/api/notificaciones', data)
+    axios.post('http://localhost:8000/api/notificaciones', data)
     .then(response => {
         console.log('Notificación creada:', response.data);
     })

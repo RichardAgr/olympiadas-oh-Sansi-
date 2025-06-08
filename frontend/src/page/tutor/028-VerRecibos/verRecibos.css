@@ -119,7 +119,6 @@
   background-color: var(--primary-dark);
 }
 
-button:disabled,
 .button:disabled {
   background-color: var(--dark-gray);
   cursor: not-allowed;

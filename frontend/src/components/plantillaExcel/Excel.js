@@ -9,7 +9,7 @@ export const  cargarDatos = async ()=> {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 segundos de timeout
 
-    const response = await axios.get("http://127.0.0.1:8000/api/areasCategoriasGrados", {
+    const response = await axios.get("http://localhost:8000/api/areasCategoriasGrados", {
       signal: controller.signal,
     })
 

@@ -15,7 +15,7 @@ function HomeRespGest() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/estadisticasRespoGestion")
+    axios.get("http://localhost:8000/api/estadisticasRespoGestion")
       .then(response => {
         if (response.data.success) {
           setDashboardData(prev => ({

@@ -79,7 +79,7 @@ const AreasCompetencia = () => {
 
   const handleDownloadPdf = async (areaId, areaNombre) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/documentos-areas/${areaId}`);
+      const response = await axios.get(`http://localhost:8000/api/documentos-areas/${areaId}`);
       
       if (response.data.success && response.data.url_pdf) {
         const link = document.createElement('a');
@@ -105,7 +105,7 @@ const AreasCompetencia = () => {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/areasCategoriasGrados")
+      .get("http://localhost:8000/api/areasCategoriasGrados")
       .then((res) => {
         if (res.data && res.data.success && Array.isArray(res.data.data)) {
           setAreas(res.data.data);

@@ -15,7 +15,7 @@ function TutorHome () {
   useEffect(() => {
     const fetchTutorData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/tutor/perfil/${id}`)
+        const response = await axios.get(`http://localhost:8000/api/tutor/perfil/${id}`)
         setTutor(response.data)
         setLoading(false)
       } catch (err) {

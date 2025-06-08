@@ -17,7 +17,7 @@ function BoletasView() {
   useEffect(() => {
     const fetchTutorData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/tutor/${id}/boletas`);
+        const response = await axios.get(`http://localhost:8000/api/tutor/${id}/boletas`);
         setBoletas(response.data.boletas);
         setNombreTutor(response.data.tutor.nombre_completo);
         setLoading(false);
