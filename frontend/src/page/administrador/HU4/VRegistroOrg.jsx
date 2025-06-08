@@ -5,6 +5,7 @@ import excel from "../../../assets/excel.svg";
 import addUsuario from "../../../assets/perfil_usuario_add.svg";
 import { Link, useParams } from "react-router-dom";
 import { Edit, Trash2, Mail } from "lucide-react";
+import Swal from 'sweetalert2';
 import * as XLSX from "xlsx";
 import ModalConfirmDelete from "../../../components/ModalesAdmin/ModalConfirmDelete";
 import ModalConfirmEstado from "../../../components/ModalesAdmin/ModalConfirmEstado";
@@ -127,16 +128,49 @@ function RegistrarOrganizador() {
 };
 
 
-  const enviarCredenciales = async (responsable) => {
-    if (!responsable?.responsable_id) return;
-    try {
-      await api.post(`http://localhost:8000/api/enviarCredencialesResponsable/${responsable.responsable_id}`);
-      alert(`Credenciales enviadas a ${responsable.correo_electronico}`);
-    } catch (error) {
-      console.error("Error al enviar credenciales:", error);
-      alert("Error al enviar credenciales. Revisa consola.");
-    }
-  };
+ const enviarCredenciales = async (responsable) => {
+  if (!responsable?.responsable_id) return;
+
+  const confirmacion = await Swal.fire({
+    title: '¿Enviar credenciales?',
+    text: `Se enviarán credenciales a: ${responsable.correo_electronico}`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, enviar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (!confirmacion.isConfirmed) return;
+
+  try {
+    await api.post(`http://localhost:8000/api/enviarCredencialesResponsable/${responsable.responsable_id}`);
+    
+    Swal.fire({
+      icon: 'success',
+      title: '¡Enviado!',
+      text: `Credenciales enviadas a ${responsable.correo_electronico}`
+    });
+
+    // ✅ Actualiza el estado local para reflejar "ya enviado"
+    setData(prevData =>
+      prevData.map(item =>
+        item.responsable_id === responsable.responsable_id
+          ? { ...item, ya_enviado: true }
+          : item
+      )
+    );
+  } catch (error) {
+    console.error("Error al enviar credenciales:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudieron enviar las credenciales.'
+    });
+  }
+};
+
+
+
 
   return (
     <div className="home-container3Hu43">
