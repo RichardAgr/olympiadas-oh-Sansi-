@@ -148,7 +148,7 @@ function RegistroCategoria() {
                   <td className="accionesLi2">{cat.nombre}</td>
                   <td>{cat.rango_grado}</td>
                   <td className="accionesLi">
-                    <Link to={routeTo(`/admin/registro-categorias/editar/${cat.nivel_categoria_id}`)} className="boton-iconoLi">
+                    <Link to={routeTo(`registro-categorias/editar/${cat.nivel_categoria_id}`)} className="boton-iconoLi">
                       <Edit size={20} color="white" />
                     </Link>
                     <button className="boton-iconoLi" onClick={() => abrirModal(cat)}>

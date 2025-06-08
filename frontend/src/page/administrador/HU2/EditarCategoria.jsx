@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import axios from "axios"
 import "./EditarCategoria.css"
 import SelectorGrado from "./SelectorGrado"
 import api from '../../../components/Tokens/api';
@@ -173,7 +172,7 @@ function EditarCategoria() {
   const cerrarModalCat = () => {
     setMostrarModalCat(false)
     if (modalDataCat.esExito) {
-      navigate(routeTo("/admin/registro-categorias"))
+      navigate(routeTo("registro-categorias"))
     }
   }
 
