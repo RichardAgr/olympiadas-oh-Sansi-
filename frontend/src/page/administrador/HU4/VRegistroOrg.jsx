@@ -4,7 +4,7 @@ import buscador from "../../../assets/buscador.svg"
 import excel from "../../../assets/excel.svg";
 import addUsuario from "../../../assets/perfil_usuario_add.svg";
 import { Edit, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import * as XLSX from "xlsx";
 import ModalConfirmDelete from "../../../components/ModalesAdmin/ModalConfirmDelete"
 import axios from "axios";
@@ -19,6 +19,8 @@ function RegistrarOrganizador() {
   const [paginaActual, setPaginaActual] = useState(1);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
+    const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
 useEffect(() => {
   api.get("http://localhost:8000/api/datosResponsableGestion")
@@ -116,7 +118,7 @@ useEffect(() => {
         <button
           className="boton-addUserHu43"
           onClick={() =>
-            (window.location.href = "/admin/visualizarRegistro/agregarRegistro")
+            (window.location.href = routeTo("visualizarRegistro/agregarRegistro"))
           }
         >
           <img src={addUsuario} alt="Agregar Usuario" className="icono-boton2Hu43" />
@@ -156,7 +158,7 @@ useEffect(() => {
                   </td>
                   <td className="botones-tablaHu43">
                     <Link
-                      to={`/admin/visualizarRegistro/editarRegistro/${dato.responsable_id}`}
+                      to={routeTo(`visualizarRegistro/editarRegistro/${dato.responsable_id}`)}
                       className="boton-iconoHu43"
                       title="Editar"
                     >
