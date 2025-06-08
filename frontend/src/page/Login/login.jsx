@@ -54,7 +54,7 @@ const Login = () => {
           navigate("/admin");
           break;
         case "responsable":
-          navigate("/respGest");
+          navigate("/respGest/" + data.usuario.responsable_id + "/Home");
           break;
         case "tutor":
           if (data.usuario && data.usuario.tutor_id) {

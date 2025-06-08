@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { UserCircle } from "lucide-react";
 import axios from "axios";
 import "./estilos/estilosTopBar.css";
 
 const RespGestTopBar = () => {
+  const { id_respGest } = useParams();
+  const routeTo=(subruta)=>`/respGest/${id_respGest}/Home/${subruta}`;
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [userId, setUserId] = useState(1); // Default fallback value
@@ -84,8 +86,8 @@ const RespGestTopBar = () => {
       <ul className={`topbar-menu ${menuOpen ? "show" : ""}`}>
         <li>
           <Link
-            to="/respGest"
-            className={location.pathname === "/respGest" ? "active" : ""}
+            to= {`/respGest/${id_respGest}/Home`}
+            className={location.pathname === `/respGest/${id_respGest}/Home` ? "active" : ""}
           >
             Inicio
           </Link>
@@ -93,19 +95,19 @@ const RespGestTopBar = () => {
 
         <li>
           <Link
-            to="/respGest/ListIns"
-            className={location.pathname === "/respGest/ListIns" ? "active" : ""}
+            to={routeTo("ListIns")}
+            className={location.pathname === routeTo("ListIns") ? "active" : ""}
           >
             Inscripción
           </Link>
         </li>
 
-        <li className={location.pathname === "/respGest/ValidarPagos" ? "active" : ""}>
-          <Link to="/respGest/ValidarPagos">Validación de Pagos</Link>
+        <li className={location.pathname === routeTo("ValidarPagos") ? "active" : ""}>
+          <Link to={routeTo("ValidarPagos")}>Validación de Pagos</Link>
         </li>
 
-        <li className={location.pathname === "/respGest/VisualListTutor" ? "active" : ""}>
-          <Link to="/respGest/VisualListTutor">Tutores</Link>
+        <li className={location.pathname === routeTo("VisualListTutor") ? "active" : ""}>
+          <Link to={routeTo("VisualListTutor")}>Tutores</Link>
         </li>
 
         <li className="user-menu" onClick={toggleUserMenu}>
@@ -116,10 +118,10 @@ const RespGestTopBar = () => {
           {userMenuOpen && (
             <ul className="menu-dropdown">
               <li>
-                <Link to={`/respGest/MiPerfil/${userId}`}>Mi perfil</Link>
+                <Link to={routeTo(`MiPerfil`)}>Mi perfil</Link>
               </li>
               <li>
-              <Link to={`/respGest/Configuracion/${userId}`}>Configuración</Link>
+              <Link to={routeTo("Configuracion")}>Configuración</Link>
             </li>
 
               <li><a onClick={handleLogout}>Cerrar Sesión</a></li>

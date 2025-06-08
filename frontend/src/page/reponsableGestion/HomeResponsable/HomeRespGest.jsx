@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import "./HomeRespGest.css";
 
 function HomeRespGest() {
+    const { id_respGest } = useParams();
+  const routeTo=(subruta)=>`/respGest/${id_respGest}/Home/${subruta}`;
   const [dashboardData, setDashboardData] = useState({
     totalPagos: "0.00",
     competenciasActivas: 0,
@@ -73,7 +75,7 @@ function HomeRespGest() {
 
           {/* Botón: Habilitar/Deshabilitar Tutores */}
           <div className="button-boxR">
-            <Link to={"/respGest/EstadoTutores"}>
+            <Link to={routeTo("EstadoTutores")}>
               <button className="buttonR">Habilitar/Deshabilitar Tutores</button>
             </Link>
             <p>Administre el estado de los tutores</p>
@@ -81,7 +83,7 @@ function HomeRespGest() {
 
           {/* Botón: Habilitar/Deshabilitar Competidores */}
           <div className="button-boxR">
-            <Link to={"/respGest/EstadoCompetidores"}>
+            <Link to={routeTo("EstadoCompetidores")}>
               <button className="buttonR">Habilitar/Deshabilitar Competidores</button>
             </Link>
             <p>Administre el estado de los Competidores.</p>
@@ -104,7 +106,7 @@ function HomeRespGest() {
 
           {/* Botón: Detalle de Competidores */}
           <div className="button-boxR">
-            <Link to={"/respGest/DetalleCompetidoresInscritos"}>
+            <Link to={routeTo("DetalleCompetidoresInscritos")}>
               <button className="buttonR">Detalle de Competidores</button>
             </Link>
             <p>Visualiza detalles de competidores inscritos en competencia</p>

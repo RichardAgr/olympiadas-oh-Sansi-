@@ -27,8 +27,8 @@ function AppRouteRespGest() {
         <Route path="VisualListTutor" element={<Tutores />} />
         <Route path="EstadoCompetidores" element={<CompetidoresPage />} />
         <Route path="DatosCompetidor/:id" element={< InformacionCompetidor />}/>
-        <Route path="MiPerfil/:id" element={<MiPerfilRespGestion />} />
-        <Route path="Configuracion/:id" element={<ConfiguracionRespGestion />} />
+        <Route path="MiPerfil" element={<MiPerfilRespGestion />} />
+        <Route path="Configuracion" element={<ConfiguracionRespGestion />} />
         
 
       </Route>
