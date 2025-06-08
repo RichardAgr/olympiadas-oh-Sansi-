@@ -27,28 +27,28 @@ class AuthController extends Controller
         $correo = $request->correo_electronico;
         $clave = $request->password;
 
-        // Intentar login como Admin
+        // Login como Admin
         $admin = Admin::where('correo_electronico', $correo)->first();
         if ($admin && Hash::check($clave, $admin->password)) {
             $token = $admin->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'token' => $token,
-                'rol' => 'admin',  
+                'rol' => 'admin',
                 'usuario' => [
                     'id' => $admin->id,
-                    'nombre' => $admin->nombre,  
+                    'nombre' => $admin->nombre,
                     'correo_electronico' => $admin->correo_electronico
                 ]
             ]);
         }
 
-        // Intentar login como Tutor
+        // Login como Tutor
         $tutor = Tutor::where('correo_electronico', $correo)->first();
         if ($tutor && Hash::check($clave, $tutor->password)) {
             $token = $tutor->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'token' => $token,
-                'rol' => 'tutor',  
+                'rol' => 'tutor',
                 'usuario' => [
                     'tutor_id' => $tutor->tutor_id,
                     'nombres' => $tutor->nombres,
@@ -58,15 +58,23 @@ class AuthController extends Controller
             ]);
         }
 
-        // Intentar login como ResponsableGestion
+        // Login como Responsable de Gestión
         $responsable = ResponsableGestion::where('correo_electronico', $correo)->first();
         if ($responsable && Hash::check($clave, $responsable->password)) {
+
+            if (!$responsable->estado) {
+                return response()->json([
+                    'mensaje' => 'Tu cuenta ha sido desactivada. Contacta con el administrador.'
+                ], 403);
+            }
+
             $token = $responsable->createToken('auth_token')->plainTextToken;
+
             return response()->json([
                 'token' => $token,
-                'rol' => 'responsable',  
+                'rol' => 'responsable',
                 'usuario' => [
-                    'id' => $responsable->id,
+                    'responsable_id' => $responsable->responsable_id, // 🔧 CAMBIO CRÍTICO
                     'nombres' => $responsable->nombres,
                     'apellidos' => $responsable->apellidos,
                     'correo_electronico' => $responsable->correo_electronico
@@ -74,13 +82,12 @@ class AuthController extends Controller
             ]);
         }
 
-        // Si ninguno coincide
+        // Ningún usuario coincide
         return response()->json(['mensaje' => 'Credenciales inválidas'], 401);
     }
 
     public function registrarTutor(Request $request)
     {
-        // Validación completa
         $request->validate([
             'nombres' => 'required|string|max:100',
             'apellidos' => 'required|string|max:100',
@@ -94,7 +101,6 @@ class AuthController extends Controller
             'password.confirmed' => 'Las contraseñas no coinciden.'
         ]);
 
-        // Crear tutor (password será hasheado automáticamente por el mutator)
         $tutor = Tutor::create([
             'nombres' => $request->nombres,
             'apellidos' => $request->apellidos,
@@ -113,8 +119,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // Revocar todos los tokens para el usuario autenticado
-        $request->user()->tokens()->delete();
+        $request->user()?->tokens()?->delete();
 
         return response()->json([
             'mensaje' => 'Sesión cerrada exitósamente.'
@@ -123,16 +128,15 @@ class AuthController extends Controller
 
     public function updatePassword(Request $request)
     {
-        // Validar los campos ingresados
         $request->validate([
             'current_password' => 'required',
             'new_password' => [
                 'required',
                 'string',
                 'min:8',
-                'regex:/[A-Z]/', 
-                'regex:/[0-9]/', 
-                'regex:/[@$!%*#?&]/', 
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/',
                 'different:current_password',
                 'confirmed'
             ],
@@ -144,12 +148,10 @@ class AuthController extends Controller
 
         $usuario = $request->user();
 
-        // Verificar la contraseña actual
         if (!Hash::check($request->current_password, $usuario->password)) {
             return response()->json(['mensaje' => 'La contraseña actual es incorrecta.'], 422);
         }
 
-        // Actualizar la contraseña
         $usuario->password = $request->new_password;
         $usuario->save();
 

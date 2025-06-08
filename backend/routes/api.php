@@ -50,7 +50,14 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::delete('/eliminarResponsableGestion/{id}', [ResponsableGestionController::class, 'eliminarResponsableGestion']);
     Route::put('/editarResponsableGestion/{id}', [ResponsableGestionController::class, 'editarResponsableGestion']);
     Route::post('/registrarResponGestion', [ResponsableGestionController::class, 'registrarResponsableGestion']);
-    
+    Route::get('/VerMiPerfil/{id}/Responsable', [ResponsableGestionController::class, 'VerMiPerfil']);
+    Route::post('/responsable/{id}/cambiar-password', [ResponsableGestionController::class, 'cambiarPassword']);
+
+    Route::post('/enviarCredencialesResponsable/{id}', [ResponsableGestionController::class, 'reenviarCredenciales']);
+    Route::post('/responsables/{id}/cambiar-estado', [ResponsableGestionController::class, 'cambiarEstadoResponsable']);
+    Route::put('/responsable/ActualizarMiPerfil/{id}', [ResponsableGestionController::class, 'ActualizarMiPerfil']);
+
+
     // Eventos
     Route::get('/area/{areaId}/cronogramas', [EventoController::class, 'ObtenerCronogramasPorArea']);
     Route::get('/cronogramasAreas', [EventoController::class, 'ObtenerCronogramasPorArea2']);
