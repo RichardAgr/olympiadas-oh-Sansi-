@@ -53,7 +53,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
     try {
       if (datosCargados) return; // evita recarga innecesaria
 
-      const response = await axios.get(`http://127.0.0.1:8000/api/datosTutor/${id}`);
+      const response = await axios.get(`http://localhost:8000/api/datosTutor/${id}`);
       console.log("Respuesta Axios tutor:", response.data);
 
       const tutorData = response.data.data; // ✅ CORREGIDO AQUÍ
@@ -102,7 +102,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
   // Función para obtener los datos de la boleta
   const obtenerDatosBoleta = async () => {
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/api/boleta/generar/${competidorId}`)
+      const response = await axios.post(`http://localhost:8000/api/boleta/generar/${competidorId}`)
       const data = response.data.boleta
 
       setBoletaData(data)
@@ -324,7 +324,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
     console.log("Enviando datos al backend:", data);
 
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/guardarDatos/recibosInscripcionManual",
+      "http://localhost:8000/api/guardarDatos/recibosInscripcionManual",
       data,
       {
         headers: {

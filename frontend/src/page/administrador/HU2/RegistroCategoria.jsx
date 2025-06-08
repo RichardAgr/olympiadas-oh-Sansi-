@@ -1,6 +1,5 @@
 
 import { useEffect, useState } from "react"
-import axios from "axios"
 import "./RegistroCategoria.css"
 import { Edit, Trash2, Plus } from "lucide-react"
 import { Link, useNavigate, useParams } from "react-router-dom"
@@ -41,7 +40,7 @@ function RegistroCategoria() {
 
   useEffect(() => {
     api
-      .get("http://localhost:8000/api/areasCategoriasGrados")
+      .get(`http://localhost:8000/api/areasCategoriasGrados`)
       .then((response) => {
 
         if (response.data.success && response.data.data) {

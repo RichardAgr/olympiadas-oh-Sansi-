@@ -19,7 +19,7 @@ function EstadoTutores() {
 
   const cargarTutores = () => {
     setLoading(true);
-    axios.get("http://127.0.0.1:8000/api/tutoresInformacion")
+    axios.get("http://localhost:8000/api/tutoresInformacion")
       .then((response) => {
         if (Array.isArray(response.data)) {
           setEstadoTutores(response.data);
@@ -54,7 +54,7 @@ function EstadoTutores() {
     try {
       setLoading(true);
       
-      await axios.put(`http://127.0.0.1:8000/api/tutores/${tutorId}/estado`, {
+      await axios.put(`http://localhost:8000/api/tutores/${tutorId}/estado`, {
         estado: nuevoEstado==="activo"?true:false
       });
 
@@ -67,7 +67,7 @@ function EstadoTutores() {
           asunto: "Deshabilitación de tutor",
           motivo: descripcion
         };
-        await axios.post("http://127.0.0.1:8000/api/notificaciones", notificacionData); 
+        await axios.post("http://localhost:8000/api/notificaciones", notificacionData); 
       }
 
       setEstadoTutores(prev => 

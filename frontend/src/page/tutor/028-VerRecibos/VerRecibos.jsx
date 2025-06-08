@@ -15,7 +15,7 @@ const VerRecibos = () => {
     const fetchBoletas = async () => {
       try {
         setIsLoading(true)
-        const response = await axios.get(`http://127.0.0.1:8000/api/recibos/tutor/${id}`)
+        const response = await axios.get(`http://localhost:8000/api/recibos/tutor/${id}`)
         
         if (response.data && response.data.success) {
           const boletasFormateadas = response.data.data.map(recibo => ({

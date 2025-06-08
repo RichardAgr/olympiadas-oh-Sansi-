@@ -27,7 +27,7 @@ export default function VerDetallesPago(){
           const getPaymentDetails = async () => {
             try {
                 setIsLoadingStudents(true)
-                const studentsData = await axios.get(`http://127.0.0.1:8000/api/tutores/${tutor_id}/competidores`)
+                const studentsData = await axios.get(`http://localhost:8000/api/tutores/${tutor_id}/competidores`)
 
                 setStudents(studentsData.data.data.estudiantes)
                 setIsLoadingStudents(false)

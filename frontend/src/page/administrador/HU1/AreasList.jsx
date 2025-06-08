@@ -25,7 +25,7 @@ const authToken = localStorage.getItem("authToken");
   useEffect(() => {
   const fetchAreas = async () => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/areasRegistradas/${id_competencia}`, {
+      const response = await axios.get(`http://localhost:8000/api/areasRegistradas/${id_competencia}`, {
         timeout: 5000, // timeout para evitar requests colgados
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ const filteredAreas = onlyLettersRegex.test(searchTerm)
   try {
     const authToken = localStorage.getItem("authToken");
 
-await axios.delete(`http://127.0.0.1:8000/api/eliminarArea/${areaToDelete.area_id}`, {
+await axios.delete(`http://localhost:8000/api/eliminarArea/${areaToDelete.area_id}`, {
   headers: {
     Authorization: `Bearer ${authToken}`,
     'Accept': 'application/json',

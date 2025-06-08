@@ -16,7 +16,7 @@ export default function VisualizarListaPagos(){
         const getPayments = async () =>{
             try {
                 setIsLoading(true)           
-                const res = await axios.get('http://127.0.0.1:8000/api/pagos')
+                const res = await axios.get('http://localhost:8000/api/pagos')
                 
                 if(res.status !== 200){
                     throw new Error(`HTTP error! status: ${res.status}`)

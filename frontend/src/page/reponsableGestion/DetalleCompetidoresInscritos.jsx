@@ -8,7 +8,7 @@ function DetalleCompetidoresInscritos() {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/detallesCompetidor")
+      .get("http://localhost:8000/api/detallesCompetidor")
       .then((res) => setCompetidores(res.data))
       .catch((err) => console.error("Error cargando datos:", err));
   }, []);

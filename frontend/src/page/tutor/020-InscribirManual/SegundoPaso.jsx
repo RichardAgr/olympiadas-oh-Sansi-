@@ -25,7 +25,7 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
     const cargarDatos = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/tutor/competidor/datos-competencia",
+          "http://localhost:8000/api/tutor/competidor/datos-competencia",
           {
             headers: {
               'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
 
       try {
         const response = await axios.post(
-          `http://127.0.0.1:8000/api/tutor/${id}/inscribir-competidor`,
+          `http://localhost:8000/api/tutor/${id}/inscribir-competidor`,
           datosCompetidor,
           {
             headers: {

@@ -90,7 +90,7 @@ function EditarRespon() {
   const confirmarGuardar = async () => {
     setModalGuardarVisible(false);
     try {
-      await api.put(`http://127.0.0.1:8000/api/editarResponsableGestion/${id}`, {
+      await api.put(`http://localhost:8000/api/editarResponsableGestion/${id}`, {
         nombres,
         apellidos,
         ci,

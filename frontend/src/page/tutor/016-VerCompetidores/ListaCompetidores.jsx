@@ -20,7 +20,7 @@ const ListComp = () => {
       try {
         setCargando(true);
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/tutores/${id}/competidoresTutor`
+          `http://localhost:8000/api/tutores/${id}/competidoresTutor`
         );
         const competidoresDelTutor = response.data.data;
 

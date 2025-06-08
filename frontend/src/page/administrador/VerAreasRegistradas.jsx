@@ -19,7 +19,7 @@ function RegistrarOrganizador() {
   const cargarAreas = async () => {
     try {
       setLoading(true)
-      const response = await api.get("http://127.0.0.1:8000/api/datosAreaCompleto")
+      const response = await api.get("http://localhost:8000/api/datosAreaCompleto")
       setAreas(response.data.data || [])
       setError(null)
     } catch (err) {

@@ -10,7 +10,7 @@ function ListaInscritos() {
   const [selectedCourse, setSelectedCourse] = useState("Todos los cursos");
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/detallesCompetidor")
+    axios.get("http://localhost:8000/api/detallesCompetidor")
       .then(response => {
         setInscritos(response.data);
       })

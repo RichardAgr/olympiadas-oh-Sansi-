@@ -93,7 +93,7 @@ const handleSubmit = async (e) => {
   try {
     const authToken = localStorage.getItem("authToken");
 
-await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
+await axios.put(`http://localhost:8000/api/actualizarArea/${id}`, data, {
   headers: {
     Authorization: `Bearer ${authToken}`,
     'Content-Type': 'application/json',
