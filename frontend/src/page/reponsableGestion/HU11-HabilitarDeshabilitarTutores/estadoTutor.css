@@ -110,3 +110,55 @@
    .switch input:checked + .slider:before {
      transform: translateX(26px);
    }
+
+   .buscador-Habilitar-desabilitar-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+  
+}
+
+.buscador-Habilitar-desabilitar-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.buscador-Habilitar-desabilitar-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+  transform: scale(1.02);
+}
+
+.no-resultsbuscador-Habilitar-desabilitar {
+  text-align: center;
+  color: #888;
+  font-size: 18px;
+  margin-top: 20px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.contenedor-tabla-Responsable {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  overflow-x: auto; /* Permite el desplazamiento horizontal si es necesario */
+}

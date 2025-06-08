@@ -123,28 +123,43 @@ function EstadoTutores() {
 
       {loading && <div className="loading">Cargando...</div>}
 
-      <div className="buscador">
-        <input
-          type="text"
-          placeholder="Buscar por nombre"
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-        />
-      </div>
+      <div
+  className="buscador-Habilitar-desabilitar-warpper"
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+    gap: "10px" // separación entre input y select
+  }}
+> 
+  <input
+    type="text"
+    placeholder="Buscar por nombre"
+    value={busqueda}
+    onChange={(e) => setBusqueda(e.target.value)}
+    className="buscador-Habilitar-desabilitar-input"
+    style={{
+      flexGrow: 1,
+      maxWidth: "70%",
+    }}
+  />
 
-      <div className="filtro-estado">
-        <select
-          className="seleccionadorDesplegable"
-          value={filtroEstado}
-          onChange={(e) => setFiltroEstado(e.target.value)}
-        >
-          <option value="">  Todos   </option>
-          <option value="activo">Activos</option>
-          <option value="inactivo">Inactivos</option>
-        </select>
-      </div>
+  <div className="filtro-estado" style={{ minWidth: "150px" }}>
+    <select
+      className="seleccionadorDesplegable"
+      value={filtroEstado}
+      onChange={(e) => setFiltroEstado(e.target.value)}
+      style={{ width: "100%" }}
+    >
+      <option value="">Todos</option>
+      <option value="activo">Activos</option>
+      <option value="inactivo">Inactivos</option>
+    </select>
+  </div>
+</div>
 
-      <div className="contenedor-tabla">
+      <div className="contenedor-tabla-Responsable">
         <table className="tabla">
           <thead>
             <tr>
