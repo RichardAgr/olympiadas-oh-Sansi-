@@ -108,7 +108,7 @@ await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
     setTimeout(() => {
       setMensaje("");
       setTipoMensaje("");
-      navigate(routeTo("admin/areas"));
+      navigate(routeTo("areas"));
     }, 3000);
   } catch (error) {
     setMensaje("Hubo un error al actualizar el área ❌");
@@ -167,7 +167,7 @@ await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
         <div className="botones-form-area">
           <button
             type="button"
-            onClick={() => navigate(routeTo("admin/areas"))}
+            onClick={() => navigate(routeTo('areas'))}
             className="btn-cancelar-area"
           >
             Cancelar

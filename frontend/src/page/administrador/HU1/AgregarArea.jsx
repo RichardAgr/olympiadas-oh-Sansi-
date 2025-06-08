@@ -73,7 +73,6 @@ const handleSubmit = async (e) => {
 
   try {
     const authToken = localStorage.getItem("authToken");
-    console.log(data)
 await axios.post("http://localhost:8000/api/registrarArea", data, {
   headers: {
     Authorization: `Bearer ${authToken}`,
