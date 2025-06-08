@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from 'sweetalert2';
 import "./estilosResponsable.css";
 import "./estadoTutor.css";
 
@@ -51,42 +52,54 @@ function EstadoTutores() {
     return text.trim().split(/\s+/).filter(word => word.length > 0).length;
   };
 
-  const actualizarEstadoTutor = async (tutorId, nuevoEstado, descripcion) => {
-    try {
-      setLoading(true);
-      
-      await axios.put(`http://127.0.0.1:8000/api/tutores/${tutorId}/estado`, {
-        estado: nuevoEstado==="activo"?true:false
-      });
+ const actualizarEstadoTutor = async (tutorId, nuevoEstado, descripcion) => {
+  try {
+    setLoading(true);
+    
+    await axios.put(`http://127.0.0.1:8000/api/tutores/${tutorId}/estado`, {
+      estado: nuevoEstado === "activo" ? true : false
+    });
 
-      // 2. Si es deshabilitar, enviar notificación
-      if (nuevoEstado === "inactivo" && descripcion) {
-        const notificacionData = {
-          id_responsable: 1, // ID del responsable actual (ajustar según tu sistema)
-          id_tutorPrincipal: tutorId,
-          id_competidor: null,
-          asunto: "Deshabilitación de tutor",
-          motivo: descripcion
-        };
-        await axios.post("http://127.0.0.1:8000/api/notificaciones", notificacionData); 
-      }
-
-      setEstadoTutores(prev => 
-        prev.map(tutor => 
-          tutor.tutor_id === tutorId 
-            ? { ...tutor, estado: nuevoEstado } 
-            : tutor
-        )
-      );
-
-      handleCloseModal();
-    } catch (error) {
-      console.error("Error al actualizar el tutor:", error);
-      alert("Ocurrió un error al actualizar el tutor");
-    } finally {
-      setLoading(false);
+    if (nuevoEstado === "inactivo" && descripcion) {
+      const notificacionData = {
+        id_responsable: 1,
+        id_tutorPrincipal: tutorId,
+        id_competidor: null,
+        asunto: "Deshabilitación de tutor",
+        motivo: descripcion
+      };
+      await axios.post("http://127.0.0.1:8000/api/notificaciones", notificacionData); 
     }
-  };
+
+    setEstadoTutores(prev =>
+      prev.map(tutor =>
+        tutor.tutor_id === tutorId
+          ? { ...tutor, estado: nuevoEstado }
+          : tutor
+      )
+    );
+
+    // ✅ ALERTA de éxito
+    Swal.fire({
+      icon: 'success',
+      title: `Tutor ${nuevoEstado === 'activo' ? 'habilitado' : 'deshabilitado'} correctamente`,
+      showConfirmButton: false,
+      timer: 2000
+    });
+
+    handleCloseModal();
+  } catch (error) {
+    console.error("Error al actualizar el tutor:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Ocurrió un error al actualizar el tutor'
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const filteredTutores = estadoTutores.filter((tutor) => {
     const nombreMatch = tutor.nombres.toLowerCase().includes(busqueda.toLowerCase());
