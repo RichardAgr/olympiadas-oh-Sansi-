@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import perfilDefault from "../../assets/perfil-default.png";
-import correoIcon from "../../assets/email.png";
-import telefonoIcon from "../../assets/telefono.png";
-import ciIcon from "../../assets/ci.png";
+import perfilDefault from "../../../assets/perfil-default.png";
+import correoIcon from "../../../assets/email.png";
+import telefonoIcon from "../../../assets/telefono.png";
+import ciIcon from "../../../assets/ci.png";
 import axios from "axios";
 import "./MiPerfilRespGestion.css";
 

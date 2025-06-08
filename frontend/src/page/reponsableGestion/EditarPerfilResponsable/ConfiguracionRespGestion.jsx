@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import perfilDefault from "../../assets/perfil-default.png";
-import correoIcon from "../../assets/email.png";
-import telefonoIcon from "../../assets/telefono.png";
-import ciIcon from "../../assets/ci.png";
-import AceptarCambiosIcon from "../../assets/AceptarCambios.png";
-import ConfirmacionIcon from "../../assets/Confirmacion.png";
+import perfilDefault from "../../../assets/perfil-default.png";
+import correoIcon from "../../../assets/email.png";
+import telefonoIcon from "../../../assets/telefono.png";
+import ciIcon from "../../../assets/ci.png";
+import AceptarCambiosIcon from "../../../assets/AceptarCambios.png";
+import ConfirmacionIcon from "../../../assets/Confirmacion.png";
 import "./ConfiguracionRespGestion.css"; // o "./Configuracion.css" si es compartido
 
 function ConfiguracionRespGestion() {

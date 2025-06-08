@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import axios from "axios";
-import excelIcon from "../../assets/excel.svg";
+import excelIcon from "../../../assets/excel.svg";
 import "./VisualListTutor.css";
 
 function VisualListTutor() {

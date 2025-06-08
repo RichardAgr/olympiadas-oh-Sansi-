@@ -1,0 +1,113 @@
+.estado-tutores-container {
+     max-width: 1400px;
+  margin: 2rem auto;    
+  padding: 0 1rem;   
+   }
+   
+   /* Tabla principal */
+   .estado-tutores-table {
+     width: 100%;
+     border-collapse: collapse;
+     margin-top: 15px;
+     font-size: 18px;
+     border-radius: 8px;
+     overflow: hidden;
+     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+   }
+   
+   .estado-tutores-table thead {
+     background-color: #2D42C8;
+     color: white;
+     text-align: center;
+   }
+   
+   .estado-tutores-table th,
+   .estado-tutores-table td {
+     padding: 12px 16px;
+     border-bottom: 1px solid #ddd;
+   }
+   
+   .estado-tutores-table tr:last-child td {
+     border-bottom: none;
+   }
+   
+   .estado-tutores-table tbody tr:nth-child(even) {
+     background-color: #f9f9f9;
+   }
+   
+   .estado-tutores-table tbody tr:hover {
+     background-color: #e6f0ff;
+     cursor: pointer;
+   }
+   
+   .estado-tutores-table td {
+     vertical-align: middle;
+   }
+   
+   /* Columna de acciones */
+   .estado-tutores-acciones {
+     text-align: center;
+   }
+   
+   /* Botones dentro de la tabla */
+   .btn-tabla-estado {
+     background-color: #2196F3;
+     color: white;
+     border: none;
+     border-radius: 15px;
+     padding: 6px 12px;
+     font-size: 12px;
+     cursor: pointer;
+     transition: background-color 0.3s ease;
+   }
+   
+   .btn-tabla-estado:hover {
+     background-color: #1976D2;
+   }
+   
+   /* Switch personalizado si lo usas aquí */
+   .switch {
+     position: relative;
+     display: inline-block;
+     width: 50px;
+     height: 24px;
+   }
+   
+   .switch input {
+     opacity: 0;
+     width: 0;
+     height: 0;
+   }
+   
+   .switch .slider {
+     position: absolute;
+     cursor: pointer;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     background-color: #ccc;
+     transition: 0.4s;
+     border-radius: 24px;
+   }
+   
+   .switch .slider:before {
+     position: absolute;
+     content: "";
+     height: 18px;
+     width: 18px;
+     left: 3px;
+     bottom: 3px;
+     background-color: white;
+     transition: 0.4s;
+     border-radius: 50%;
+   }
+   
+   .switch input:checked + .slider {
+     background-color: #2D42C8;
+   }
+   
+   .switch input:checked + .slider:before {
+     transform: translateX(26px);
+   }
+   
