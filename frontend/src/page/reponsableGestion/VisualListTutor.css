@@ -261,6 +261,7 @@
   .btn-limpiar {
     padding: 10px 20px;
     background-color: #3a7ca5;
+    color:#fff;
     border: none;
     border-radius: 10px;
     cursor: pointer;

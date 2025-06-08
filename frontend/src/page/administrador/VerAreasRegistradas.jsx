@@ -1,12 +1,12 @@
 import "../administrador/HU4/VRegistroOrg.css"
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import axios from "axios"
+import { useNavigate, useParams } from "react-router-dom"
 import "../../App.css"
 import api from '../../components/Tokens/api';
 
 function RegistrarOrganizador() {
   const navigate = useNavigate()
+  const { id_competencia } = useParams();
   const [search, setSearch] = useState("")
   const [fechaDesde, setFechaDesde] = useState("")
   const [fechaHasta, setFechaHasta] = useState("")
@@ -19,7 +19,7 @@ function RegistrarOrganizador() {
   const cargarAreas = async () => {
     try {
       setLoading(true)
-      const response = await api.get("http://localhost:8000/api/datosAreaCompleto")
+      const response = await api.get(`http://localhost:8000/api/datosAreaCompleto/${id_competencia}`)
       setAreas(response.data.data || [])
       setError(null)
     } catch (err) {

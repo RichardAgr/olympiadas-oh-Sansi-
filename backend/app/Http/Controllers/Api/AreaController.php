@@ -462,8 +462,12 @@ public function getAreasWithCategoriasGrados($id_competencia){
     }
 }
 
-    public function DatosAreasCompleto(Request $request): JsonResponse{
+public function DatosAreasCompleto($id_competencia,Request $request): JsonResponse{
         try {
+            validator(['id_competencia' => $id_competencia], [
+                'id_competencia' => 'required|integer|exists:competencia,competencia_id'
+            ])->validate();
+
             $validated = $request->validate([
                 'search' => 'sometimes|string|max:255',
                 'fecha_desde' => 'sometimes|date',
@@ -503,7 +507,8 @@ public function getAreasWithCategoriasGrados($id_competencia){
                     'gi.nombre as grado_inicial',
                     'gf.nombre as grado_final'
                 ])
-                ->where('a.estado', 1); // Solo áreas activas
+                ->where('a.estado', 1) // Solo áreas activas
+                ->where('cr.competencia_id', $id_competencia);
 
             if (isset($validated['fecha_desde'])) {
                 $query->where('cr.fecha_inicio', '>=', $validated['fecha_desde']);
