@@ -27,8 +27,7 @@ const VEvento = () => {
   const loadAreas = async () => {
     try {
       setLoading(true)
-
-      const response = await api.get(`http://localhost:8000/api/areasRegistradas/${id_competencia}}`)
+      const response = await api.get(`http://localhost:8000/api/areasRegistradas/${id_competencia}`)
       const areasData = response.data
 
       const areasWithCronogramas = await Promise.all(
