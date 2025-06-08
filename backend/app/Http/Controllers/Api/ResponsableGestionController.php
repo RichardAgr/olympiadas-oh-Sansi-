@@ -197,8 +197,7 @@ public function registrarResponsableGestion(Request $request){
         }
     }
 
-    public function eliminarResponsableGestion($id)
-    {
+    public function eliminarResponsableGestion($id){
         try {
             $responsable = ResponsableGestion::findOrFail($id);
             $responsable->delete();

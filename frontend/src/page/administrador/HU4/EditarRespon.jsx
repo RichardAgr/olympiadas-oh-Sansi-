@@ -25,7 +25,6 @@ function EditarRespon() {
     api.get(`http://localhost:8000/api/datosResponsableId/${id}`)
       .then((res) => {
         const data = res.data.data;
-        console.log("Datos del responsable obtenidos:", data);
         setNombres(data.nombre);
         setApellidos(data.apellido);
         setCi(data.ci);
@@ -97,7 +96,6 @@ function EditarRespon() {
         correo_electronico: correo,
         telefono,
       });
-      console.log("Datos actualizados con éxito.");
     setMensaje("Responsable actualizado con éxito ✅");
     setTipoMensaje("exito");
 
