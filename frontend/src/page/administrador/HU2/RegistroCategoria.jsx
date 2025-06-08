@@ -40,7 +40,7 @@ function RegistroCategoria() {
 
   useEffect(() => {
     api
-      .get(`http://localhost:8000/api/areasCategoriasGrados`)
+      .get(`http://localhost:8000/api/areasCategoriasGrados/${id_competencia}`)
       .then((response) => {
 
         if (response.data.success && response.data.data) {

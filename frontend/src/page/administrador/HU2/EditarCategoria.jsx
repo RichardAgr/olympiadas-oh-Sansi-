@@ -37,7 +37,7 @@ function EditarCategoria() {
   // Cargar áreas
   useEffect(() => {
     api
-      .get("http://localhost:8000/api/areasRegistradas")
+      .get(`http://localhost:8000/api/areasRegistradas/${id_competencia}`)
       .then((res) => {
         setAreas(res.data)
       })

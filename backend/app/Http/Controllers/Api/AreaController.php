@@ -385,18 +385,22 @@ public function DatosAreaId(int $areaId): JsonResponse {
         }
     }
 
-       public function getAreasWithCategoriasGrados()
-{
+public function getAreasWithCategoriasGrados($id_competencia){
     try {
+        validator(['id_competencia' => $id_competencia], [
+            'id_competencia' => 'required|integer|exists:competencia,competencia_id'
+        ])->validate();
+
         $areas = Area::with([
             'nivelCategoria',
             'nivelCategoria.gradoInicial',
             'nivelCategoria.gradoFinal',
             'nivelCategoria.gradoInicial.nivelEducativo',
             'nivelCategoria.gradoFinal.nivelEducativo',
-            'cronograma' // Relación del área hacia sus cronogramas
+            'cronograma'
         ])
         ->where('estado', true)
+        ->where('competencia_id', $id_competencia)
         ->get();
 
         $result = [];

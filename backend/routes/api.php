@@ -31,7 +31,7 @@ Route::post('/password/email', [PasswordResetController::class, 'enviarCodigo'])
 Route::post('/password/verify', [PasswordResetController::class, 'verificarCodigo']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetearPassword']);
 Route::get('/Mostrarvideos', [VideoController::class, 'mostrarDetalleVideo']);
-Route::get('/areasCategoriasGrados', [AreaController::class, 'getAreasWithCategoriasGrados']);
+Route::get('/areasCategoriasGrados/{id_competencia}', [AreaController::class, 'getAreasWithCategoriasGrados']);
 // DocumentosHome
     Route::post('/documentos/tipoPortal', [DocumentoController::class, 'guardarDocumentos']);
     Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
