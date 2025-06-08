@@ -77,6 +77,7 @@ function AgregarRespon() {
 
   try {
     const data = {
+      id_competencia,
       nombres,
       apellidos,
       ci,
@@ -92,9 +93,8 @@ function AgregarRespon() {
         "Content-Type": "application/json",
       },
     };
-  
+ 
     await api.post("http://localhost:8000/api/registrarResponGestion", data, config);
-    console.log("Datos enviados con éxito.");
     setMensaje("Responsable registrado con éxito ✅");
       setTipoMensaje("exito");
 

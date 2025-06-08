@@ -21,6 +21,7 @@ class ResponsableGestion extends Authenticatable
         'correo_electronico',
         'telefono',
         'fecha_asignacion',
+        'competencia_id',
         'estado',
         'password'  
     ];

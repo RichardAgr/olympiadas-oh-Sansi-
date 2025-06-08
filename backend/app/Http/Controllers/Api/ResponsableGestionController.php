@@ -65,8 +65,7 @@ public function obtenerResponsableGestion($id_competencia){
     }
 }
 
-    public function registrarResponsableGestion(Request $request)
-    {
+public function registrarResponsableGestion(Request $request){
         try {
             $request->validate([
                 'nombres' => 'required|string|max:100',
@@ -74,6 +73,7 @@ public function obtenerResponsableGestion($id_competencia){
                 'ci' => 'required|string|max:20|unique:responsable_gestion,ci',
                 'correo_electronico' => 'required|email|max:100',
                 'telefono' => 'required|string|max:100',
+                'id_competencia' => 'required|integer|exists:competencia,competencia_id'
             ]);
 
             $passwordPlano = Str::random(10);
@@ -84,6 +84,7 @@ public function obtenerResponsableGestion($id_competencia){
                 'apellidos' => $request->apellidos,
                 'correo_electronico' => $request->correo_electronico,
                 'telefono' => $request->telefono,
+                'competencia_id' => $request->id_competencia,
                 'fecha_asignacion' => now(),
                 'estado' => true,
                 'password' => Hash::make($passwordPlano),
