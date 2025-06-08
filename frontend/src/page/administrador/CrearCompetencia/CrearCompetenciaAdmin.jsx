@@ -48,7 +48,6 @@ const CrearCompetenciaAdmin = () => {
     setLoading(true)
     try {
       const response = await axios.get('http://localhost:8000/api/obtenerCompetencias');
-      console.log(response.data.data)
       setCompetencias(response.data.data);
       setLoading(false)
     } catch (error) {

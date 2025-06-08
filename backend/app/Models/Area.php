@@ -19,6 +19,7 @@ class Area extends Model
     protected $fillable = [
         'nombre',
         'descripcion',
+        'competencia_id',
         'costo',
         'estado',
     ];
