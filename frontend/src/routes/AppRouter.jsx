@@ -23,7 +23,7 @@ const AppRouter = () => {
         <Route path="/" element={<Navigate to="/admin" />} />
         <Route index element={<AdminCrearComp />}/>
 
-        <Route path="/xx" element={<AdminLayout />}>
+        <Route path="" element={<AdminLayout />}>
           <Route index element={<HomeAdmin />} />
           <Route path="areas" element={<AreasList />} />
           <Route path="verAreasRegistradas" element={<AreasRegistradas />} />
