@@ -87,7 +87,7 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
 
     // Tutor
     Route::get('/tutores/{tutorId}/competidoresTutor', [TutorController::class, 'competidoresTutor']);
-    Route::get('/tutoresInformacion', [TutorController::class, 'obtenerInformacionTutores']);
+    Route::get('/tutoresInformacion/{competenciaId}', [TutorController::class, 'obtenerInformacionTutores']);
     Route::put('/tutores/{id}/estado', [TutorController::class, 'actualizarEstadoTutor']);
     Route::post('/tutor/{tutor_id}/inscribir-competidor', [TutorController::class, 'inscribirCompetidor']);
     Route::get('/tutor/competidor/datos-competencia', [TutorController::class, 'getOpcionesCompetencia']);

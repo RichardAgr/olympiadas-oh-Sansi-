@@ -11,7 +11,7 @@ import "./ConfiguracionRespGestion.css"; // o "./Configuracion.css" si es compar
 
 function ConfiguracionRespGestion() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id_respGest  } = useParams();
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [exito, setExito] = useState(false);
 
@@ -39,10 +39,10 @@ function ConfiguracionRespGestion() {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Responsable`)
+      .get(`http://127.0.0.1:8000/api/VerMiPerfil/${id_respGest }/Responsable`)
       .then((res) => setDatosResponsable(res.data))
       .catch((err) => console.error("Error al obtener datos:", err));
-  }, [id]);
+  }, [id_respGest ]);
 
   const validarCampo = (name, value) => {
     let error = "";

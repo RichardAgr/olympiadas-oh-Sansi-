@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Tutor;
 use App\Models\Competidor;
+use App\Models\Competencia;
 use App\Models\TutorCompetidor;
 use App\Models\Colegio;
 use App\Models\Curso;
@@ -84,13 +85,17 @@ class TutorController extends Controller{
 
 
 
-    public function obtenerInformacionTutores(Request $request){
+    public function obtenerInformacionTutores($competenciaId,Request $request){
         try {
-                // En esta parte deberia ir la paginacion si es que se tiene mas de 100 tutores
-                //se recomiendo que sea de 15 en 15
+        // Validar que la competencia existe
+        if (!Competencia::where('competencia_id', $competenciaId)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Competencia no encontrada'
+            ], 404);
+        }
 
-
-            $tutores = Tutor::select([
+        $tutores = Tutor::select([
                 'tutor.tutor_id',
                 'tutor.nombres',
                 'tutor.apellidos',
@@ -100,6 +105,7 @@ class TutorController extends Controller{
                 'tutor.estado',
                 'tutor.created_at'
             ])
+            ->where('tutor.competencia_id', $competenciaId) // Filtrar por competencia
             ->withCount(['competidores' => function ($query) {
             }])
             ->withCount(['competidores as competidores_habilitados_count' => function ($query) {
@@ -112,42 +118,41 @@ class TutorController extends Controller{
                 $query->where('competidor.estado', 'Pendiente');
             }]);
 
+        // Ordenar resultados
+        $ordenarPor = $request->input('ordenar_por', 'tutor_id');
+        $orden = $request->input('orden', 'asc');
+        $tutores->orderBy($ordenarPor, $orden);
 
-            // Ordenar resultados
-            $ordenarPor = $request->input('ordenar_por', 'tutor_id');
-            $orden = $request->input('orden', 'asc');
-            $tutores->orderBy($ordenarPor, $orden);
-
-            // Obtener todos los resultados
-            $tutoresResultados = $tutores->get();
-            $tutoresFormateados = $tutoresResultados->map(function ($tutor) {
+        // Obtener todos los resultados
+        $tutoresResultados = $tutores->get();
+        $tutoresFormateados = $tutoresResultados->map(function ($tutor) {
             $estadoFormateado = $tutor->estado ? 'activo' : 'inactivo';
             $fechaRegistro = $tutor->created_at ? Carbon::parse($tutor->created_at)->format('d/m/Y') : null;
 
-                return [
-                    'tutor_id' => $tutor->tutor_id,
-                    'nombres' => $tutor->nombres,
-                    'apellidos' => $tutor->apellidos,
-                    'ci' => $tutor->ci,
-                    'competidores' => $tutor->competidores_count,
-                    'competidores_habilitados' => $tutor->competidores_habilitados_count,
-                    'competidores_deshabilitados' => $tutor->competidores_deshabilitados_count,
-                    'competidores_pendientes' => $tutor->competidores_pendientes_count,
-                    'telefono' => $tutor->telefono,
-                    'correo' => $tutor->correo,
-                    'estado' => $estadoFormateado,
-                    'fechaRegistro' => $fechaRegistro
-                ];
-            });
+            return [
+                'tutor_id' => $tutor->tutor_id,
+                'nombres' => $tutor->nombres,
+                'apellidos' => $tutor->apellidos,
+                'ci' => $tutor->ci,
+                'competidores' => $tutor->competidores_count,
+                'competidores_habilitados' => $tutor->competidores_habilitados_count,
+                'competidores_deshabilitados' => $tutor->competidores_deshabilitados_count,
+                'competidores_pendientes' => $tutor->competidores_pendientes_count,
+                'telefono' => $tutor->telefono,
+                'correo' => $tutor->correo,
+                'estado' => $estadoFormateado,
+                'fechaRegistro' => $fechaRegistro,
+            ];
+        });
 
-            return response()->json($tutoresFormateados);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al obtener los tutores',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json($tutoresFormateados);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener los tutores',
+            'error' => $e->getMessage()
+        ], 500);
+    }
     }
 
     

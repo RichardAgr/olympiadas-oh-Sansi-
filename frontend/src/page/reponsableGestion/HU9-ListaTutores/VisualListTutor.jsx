@@ -7,11 +7,13 @@ import "./VisualListTutor.css";
 function VisualListTutor() {
   const [search, setSearch] = useState("");
   const [tableData, setTableData] = useState([]);
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
 
   useEffect(() => {
     const fetchTutores = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/tutoresInformacion"); // Carga desde public/
+        const response = await axios.get(`http://localhost:8000/api/tutoresInformacion/${competenciaId}`); // Carga desde public/
         setTableData(response.data);
       } catch (error) {
         console.error("Error al cargar tutores:", error);
