@@ -94,7 +94,7 @@ const CrearCompetenciaAdmin = () => {
     showNotification("Competencia eliminada exitosamente")
     } catch (error) {
       console.error("Error al eliminar competencia:", error)
-      showNotification("Error al eliminar la competencia", "error")      
+      showNotification("Error al eliminar la competencia, tiene inscritos o error de servidor", "error")      
     }
   }
 
