@@ -95,14 +95,14 @@ function AgregarRespon() {
     };
  
     await api.post("http://localhost:8000/api/registrarResponGestion", data, config);
-    setMensaje("Responsable registrado con éxito ✅");
+    setMensaje("Responsable registrado con éxito, se enviaron tus credenciales, revisa tu correo✅");
       setTipoMensaje("exito");
 
       setTimeout(() => {
         setMensaje("");
         setTipoMensaje("");
         navigate(routeTo("visualizarRegistro"));
-      }, 1500);
+      }, 6000);
 
   } catch (error) {
     console.error("Error al registrar al responsable:", error.response || error.message);

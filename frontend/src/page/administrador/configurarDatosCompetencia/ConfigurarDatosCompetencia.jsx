@@ -65,7 +65,7 @@ export default function ConfigurarDatosCompetencia() {
           <Megaphone className="section-icon" /> Convocatoria
         </h2>
         <div className="cards-container">
-          <PdfUploader idArchivo={1} title="Convocatoria Oficial" type="convocatoria"/>
+          <PdfUploader idArchivo={id_competencia} title="Convocatoria Oficial" type="convocatoria"/>
         </div>
       </section>
 
