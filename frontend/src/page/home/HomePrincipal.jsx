@@ -151,7 +151,7 @@ useEffect(() => {
     }
 
     // Paso 1: Obtener competencia activa
-    const compResponse = await axios.get('http://127.0.0.1:8000/api/info-competencia-activa');
+    const compResponse = await axios.get('http://localhost:8000/api/info-competencia-activa');
     const competencia = compResponse.data.data[0]; // Asegúrate de que es un array
 
     if (!competencia || !competencia.competencia_id) {
@@ -161,7 +161,7 @@ useEffect(() => {
     const id_competencia = competencia.competencia_id;
 
     // Paso 2: Usar el id_competencia para obtener el PDF de la convocatoria
-    const response = await axios.get(`http://127.0.0.1:8000/api/documento-convocatoria/${id_competencia}/descargar`);
+    const response = await axios.get(`http://localhost:8000/api/documento-convocatoria/${id_competencia}/descargar`);
     const data = response.data;
 
     if (data.success) {
@@ -171,7 +171,7 @@ useEffect(() => {
     }
 
     // Paso 3: Obtener videos
-    const videosResponse = await axios.get('http://127.0.0.1:8000/api/Mostrarvideos');
+    const videosResponse = await axios.get('http://localhost:8000/api/Mostrarvideos');
     const videosData = videosResponse.data.data;
 
     setTutoriales(prevTutoriales =>

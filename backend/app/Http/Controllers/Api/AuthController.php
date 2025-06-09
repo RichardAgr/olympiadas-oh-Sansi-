@@ -96,6 +96,7 @@ class AuthController extends Controller
             'correo_electronico' => 'required|email|unique:tutor,correo_electronico',
             'telefono' => 'required|string|max:15',
             'ci' => 'required|string|max:15|unique:tutor,ci',
+            'competencia_id'=>'required|integer|exists:competencia,competencia_id',
             'password' => 'required|string|min:6|confirmed',
         ], [
             'correo_electronico.unique' => 'Este correo ya está registrado.',
@@ -106,6 +107,7 @@ class AuthController extends Controller
         $tutor = Tutor::create([
             'nombres' => $request->nombres,
             'apellidos' => $request->apellidos,
+            'competencia_id'=>$request->competencia_id,
             'correo_electronico' => $request->correo_electronico,
             'telefono' => $request->telefono,
             'ci' => $request->ci,

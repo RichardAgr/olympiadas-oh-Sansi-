@@ -19,7 +19,7 @@ function MiPerfilRespGestion() {
     }
 
     axios
-      .get(`http://127.0.0.1:8000/api/VerMiPerfil/${userId}/Responsable`)
+      .get(`http://localhost:8000/api/VerMiPerfil/${userId}/Responsable`)
       .then((res) => setPerfil(res.data))
       .catch((err) => {
         console.error("Error al obtener el perfil:", err);

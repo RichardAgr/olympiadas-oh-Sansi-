@@ -105,7 +105,7 @@ const AreasCompetencia = () => {
   };
    const loadData = async () => {
     try {
-      const compResponse = await axios.get('http://127.0.0.1:8000/api/info-competencia-activa');
+      const compResponse = await axios.get('http://localhost:8000/api/info-competencia-activa');
       const competencia = compResponse.data.data[0];
       if (!competencia || !competencia.competencia_id) {
         throw new Error('No se encontró una competencia activa válida.');

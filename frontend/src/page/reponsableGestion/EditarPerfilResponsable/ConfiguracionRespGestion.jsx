@@ -39,7 +39,7 @@ function ConfiguracionRespGestion() {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/VerMiPerfil/${id_respGest }/Responsable`)
+      .get(`http://localhost:8000/api/VerMiPerfil/${id_respGest }/Responsable`)
       .then((res) => setDatosResponsable(res.data))
       .catch((err) => console.error("Error al obtener datos:", err));
   }, [id_respGest ]);
@@ -140,13 +140,13 @@ function ConfiguracionRespGestion() {
       }
 
       await axios.put(
-        `http://127.0.0.1:8000/api/responsable/ActualizarMiPerfil/${id}`,
+        `http://localhost:8000/api/responsable/ActualizarMiPerfil/${id}`,
         payload
       );
 
       if (datosResponsable.contrasenaActual) {
         await axios.post(
-          `http://127.0.0.1:8000/api/responsable/${id}/cambiar-password`,
+          `http://localhost:8000/api/responsable/${id}/cambiar-password`,
           {
             password_actual: datosResponsable.contrasenaActual,
             password: datosResponsable.nuevaContrasena,
