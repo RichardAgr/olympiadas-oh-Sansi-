@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\HomePage\AreasController;
 
 // Rutas públicas
+Route::get('/info-competencia-activa', [CompetenciaController::class, 'getCompetenciaActiva']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/registrar-tutor', [AuthController::class, 'registrarTutor']);
 Route::post('/password/email', [PasswordResetController::class, 'enviarCodigo']);
@@ -37,7 +38,7 @@ Route::get('/areasCategoriasGrados/{id_competencia}', [AreaController::class, 'g
     Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
     Route::delete('/documentos/{type}/{id}', [DocumentoController::class, 'deleteDocumento']);
 //DocumentosHome Convocatoria
-Route::get('/documento-convocatoria/{competenciaId}/descargar', [DocumentoController::class, 'descargarDocumentoConvocatoria']);
+Route::get('/documento-convocatoria/{id_competencia}/descargar', [DocumentoController::class, 'descargarDocumentoConvocatoria']);
 //DocumentosHome Areas
 Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocumentacionPorArea']);
 // Rutas protegidas con Sanctum

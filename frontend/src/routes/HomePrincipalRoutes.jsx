@@ -17,7 +17,7 @@ function HomePrincipalRoutes() {
       <Route path="/" element={<Navigate to="/homePrincipal" />} />
 
       {/* Layout principal con login */}
-      <Route path="/homePrincipal/:id_competencia" element={<LayautHomePrincipal />}>
+      <Route path="/homePrincipal" element={<LayautHomePrincipal />}>
       <Route path="areasCompetencia" element={<AreasCompetencia />}/>
       <Route index element={<HomePrincipal />} />
         <Route path="login/*" element={<AppRouteLogin />} />

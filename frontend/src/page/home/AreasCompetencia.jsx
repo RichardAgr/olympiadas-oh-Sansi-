@@ -5,6 +5,7 @@ import { CalendarDays, MapPin } from "lucide-react";
 import "./AreasCompetencia.css";
 
 const AreasCompetencia = () => {
+   const [idCompetencia, setIdCompetencia] = useState(null);
   const [areas, setAreas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -102,10 +103,30 @@ const AreasCompetencia = () => {
       });
     }
   };
+   const loadData = async () => {
+    try {
+      const compResponse = await axios.get('http://127.0.0.1:8000/api/info-competencia-activa');
+      const competencia = compResponse.data.data[0];
+      if (!competencia || !competencia.competencia_id) {
+        throw new Error('No se encontró una competencia activa válida.');
+      }
+      setIdCompetencia(competencia.competencia_id);
+    } catch (err) {
+      setError("Error al cargar los datos de la competencia");
+      console.error(err);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
+    loadData();
+  }, []);
+
+  useEffect(() => {     if (!idCompetencia) return; // Esperar a tener el id
+
+    setLoading(true);// Cargar áreas desde la API
     axios
-      .get("http://localhost:8000/api/areasCategoriasGrados/1")
+      .get(`http://localhost:8000/api/areasCategoriasGrados/${idCompetencia}`)
       .then((res) => {
         if (res.data && res.data.success && Array.isArray(res.data.data)) {
           setAreas(res.data.data);
@@ -123,7 +144,7 @@ const AreasCompetencia = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [idCompetencia]);
 
   useEffect(() => {
     if (notification.show) {

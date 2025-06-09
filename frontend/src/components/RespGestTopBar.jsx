@@ -62,11 +62,11 @@ const RespGestTopBar = () => {
       localStorage.removeItem("user");
       localStorage.removeItem("rol");
 
-      navigate(`/homePrincipal/${id_competencia}`);
+      navigate(`/homePrincipal`);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
       localStorage.clear();
-      navigate(`/homePrincipal/${id_competencia}`);
+      navigate(`/homePrincipal`);
     }
   };
 

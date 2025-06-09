@@ -271,7 +271,7 @@ public function getDocumento($type, $id){
 
     // Buscar el documento de convocatoria para esta competencia
     $documento = DocumentoConvocatoria::where('competencia_id', $competenciaId)
-        ->select('documeto_convocatoria_id', 'url_pdf', 'fecha_creacion', 'estado')
+        ->select('documento_convocatoria_id', 'url_pdf', 'fecha_creacion', 'estado')
         ->where('estado', true) // Solo documentos activos
         ->first();
 
@@ -286,7 +286,7 @@ public function getDocumento($type, $id){
         'success' => true,
         'message' => 'Documento encontrado',
         'data' => [
-            'documento_id' => $documento->documeto_convocatoria_id,
+            'documento_id' => $documento->documento_convocatoria_id,
             'url_pdf' => $documento->url_pdf,
             'fecha_creacion' => $documento->fecha_creacion,
             'competencia' => [

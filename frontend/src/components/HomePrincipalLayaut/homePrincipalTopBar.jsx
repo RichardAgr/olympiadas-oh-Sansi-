@@ -44,8 +44,8 @@ const homePrincipalTopBar = () => {
       <ul className={`topbar-menu ${menuOpen ? "show" : ""}`}>
         <li>
           <Link
-            to={`/homePrincipal/${id_competencia}`}
-            className={location.pathname == (`/homePrincipal/${id_competencia}`) ? "active" : ""}
+            to={`/homePrincipal`}
+            className={location.pathname == (`/homePrincipal`) ? "active" : ""}
           >
             Inicio
           </Link>
@@ -53,7 +53,7 @@ const homePrincipalTopBar = () => {
 
         <li className="roles-dropdown">
             <NavLink
-            to={`/homePrincipal/${id_competencia}/areasCompetencia`}
+            to={`/homePrincipal/areasCompetencia`}
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Áreas en Competencia
