@@ -15,8 +15,11 @@ function HomeRespGest() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+    const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
+
   useEffect(() => {
-    axios.get("http://localhost:8000/api/estadisticasRespoGestion")
+    axios.get(`http://localhost:8000/api/estadisticasRespoGestion/${competenciaId}`)
       .then(response => {
         if (response.data.success) {
           setDashboardData(prev => ({

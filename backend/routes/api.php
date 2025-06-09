@@ -126,7 +126,8 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::post('/notificaciones', [NotificacionController::class, 'crearNotificacion']);
 
     // Estadísticas
-    Route::get('/estadisticasRespoGestion', [EstadisticasController::class, 'obtenerEstadisticasGenerales']);
+   Route::get('/estadisticasRespoGestion/{competenciaId}', [EstadisticasController::class, 'obtenerEstadisticasGenerales']);
+
 
     // OCR
     Route::post('/processReceipt', [OcrPagoController::class, 'processReceipt']);
