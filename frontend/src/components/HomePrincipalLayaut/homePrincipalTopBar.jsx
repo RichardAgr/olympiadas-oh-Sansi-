@@ -12,10 +12,10 @@ const homePrincipalTopBar = () => {
  
 
   // ID temporal estático desde el backend
-  const {id}= useParams();
+  const {id, id_competencia}= useParams();
   const navigate = useNavigate(); // Para manejar la navegación programáticamente
   const [userMenuOpen, setUserMenuOpen] = useState(false); 
-
+ 
   
 
   useEffect(() => {
@@ -44,8 +44,8 @@ const homePrincipalTopBar = () => {
       <ul className={`topbar-menu ${menuOpen ? "show" : ""}`}>
         <li>
           <Link
-            to={`/homePrincipal`}
-            className={location.pathname == (`/homePrincipal`) ? "active" : ""}
+            to={`/homePrincipal/${id_competencia}`}
+            className={location.pathname == (`/homePrincipal/${id_competencia}`) ? "active" : ""}
           >
             Inicio
           </Link>
@@ -53,7 +53,7 @@ const homePrincipalTopBar = () => {
 
         <li className="roles-dropdown">
             <NavLink
-            to="/homePrincipal/areasCompetencia"
+            to={`/homePrincipal/${id_competencia}/areasCompetencia`}
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Áreas en Competencia

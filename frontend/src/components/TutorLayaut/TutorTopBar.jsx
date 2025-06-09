@@ -14,7 +14,7 @@ const TutorTopBar = () => {
   const location = useLocation();
  
   // 👉 ID temporal estático desde el backend
-  const {id} = useParams();
+  const {id, id_competencia} = useParams();
   const navigate = useNavigate(); // Para manejar la navegación programáticamente
   const [userMenuOpen, setUserMenuOpen] = useState(false); 
 
@@ -68,11 +68,11 @@ const TutorTopBar = () => {
       localStorage.removeItem("user");
       localStorage.removeItem("rol");
 
-      navigate("/homePrincipal");
+      navigate(`/homePrincipal/${id_competencia}`);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
       localStorage.clear();
-      navigate("/homePrincipal");
+      navigate(`/homePrincipal/${id_competencia}`);
     }
   };
 
