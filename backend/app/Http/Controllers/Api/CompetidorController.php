@@ -150,37 +150,53 @@ class CompetidorController extends Controller{
         ]);
     }
 
-    public function obtenerDetallesCompetidor(Request $request){
-         $query = Competidor::with(['colegio', 'curso', 'ubicacion', 'competencias']);
+public function obtenerDetallesCompetidor($competenciaId, Request $request){
 
-        $competidores = $query->get();
-
-        $result = $competidores->flatMap(function ($competidor) {
-            return $competidor->competencias->map(function ($competencia) use ($competidor) {
-                $areaNombre = null;
-                if (!empty($competencia->pivot->area_id)) {
-                    $area = Area::find($competencia->pivot->area_id);
-                    $areaNombre = $area ? $area->nombre : '';
-                }
-
-                return [
-                    'id' => $competidor->competidor_id,
-                    'nombre' => $competidor->nombres,
-                    'apellido' => $competidor->apellidos,
-                    'ci' => $competidor->ci,
-                    'colegio' => $competidor->colegio->nombre ?? '',
-                    'curso' => $competidor->curso->grado->nombre ?? '',
-                    'estado' => $competidor->estado ?? '',
-                    'area' => $areaNombre, 
-                    'departamento' => $competidor->ubicacion->departamento, 
-                    'provincia' => $competidor->ubicacion->provincia,
-                    'fecha' => $competencia->pivot->fecha_inscripcion ?? '',
-                ];
-            });
-        });
-
-        return response()->json($result->values());
+    $competencia = Competencia::find($competenciaId);
+    if (!$competencia) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Competencia no encontrada'
+        ], 404);
     }
+
+    $query = Competidor::with(['colegio', 'curso', 'ubicacion'])
+        ->whereHas('competencias', function ($q) use ($competenciaId) {
+            $q->where('competidor_competencia.competencia_id', $competenciaId);
+        })
+        ->with(['competencias' => function ($q) use ($competenciaId) {
+            $q->where('competidor_competencia.competencia_id', $competenciaId);
+        }]);
+
+    $competidores = $query->get();
+
+    $result = $competidores->flatMap(function ($competidor) {
+        return $competidor->competencias->map(function ($competencia) use ($competidor) {
+            $areaNombre = null;
+            if (!empty($competencia->pivot->area_id)) {
+                $area = Area::find($competencia->pivot->area_id);
+                $areaNombre = $area ? $area->nombre : '';
+            }
+
+            return [
+                'id' => $competidor->competidor_id,
+                'nombre' => $competidor->nombres,
+                'apellido' => $competidor->apellidos,
+                'ci' => $competidor->ci,
+                'colegio' => $competidor->colegio->nombre ?? '',
+                'curso' => $competidor->curso->grado->nombre ?? '',
+                'estado' => $competidor->estado ?? '',
+                'area' => $areaNombre, 
+                'departamento' => $competidor->ubicacion->departamento ?? '', 
+                'provincia' => $competidor->ubicacion->provincia ?? '',
+                'fecha' => $competencia->pivot->fecha_inscripcion ?? '',
+                'competencia_id' => $competencia->competencia_id,
+            ];
+        });
+    });
+
+    return response()->json($result->values());
+}
 
     public function update(Request $request, $id)
     {

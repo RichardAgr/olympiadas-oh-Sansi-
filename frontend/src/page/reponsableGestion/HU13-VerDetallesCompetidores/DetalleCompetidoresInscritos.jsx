@@ -6,10 +6,12 @@ import axios from "axios";
 function DetalleCompetidoresInscritos() {
   const [competidores, setCompetidores] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/detallesCompetidor")
+      .get(`http://localhost:8000/api/detallesCompetidor/${competenciaId}`)
       .then((res) => setCompetidores(res.data))
       .catch((err) => console.error("Error cargando datos:", err));
   }, []);
