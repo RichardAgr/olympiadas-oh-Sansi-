@@ -9,6 +9,7 @@ import ExcelPreview from "../../../components/excelPreview/ExcelPreview"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
 import BoletaView from "../../../components/BoletaView/BoletaView"
 import { useParams } from "react-router-dom"
+import Swal from "sweetalert2"
 import "./inscripcionExcel.css"
 import axios from "axios"
 
@@ -58,6 +59,7 @@ const InscripcionMasiva = () => {
   const [isUploading, setIsUploading] = useState(false)
   const user = JSON.parse(localStorage.getItem('user'));
   const competenciaId = user?.competencia_id;
+  const idTutor = user?.tutor_id;
 
   const guardarRecibo = async (reciboData) => {
     try {
@@ -283,15 +285,27 @@ const InscripcionMasiva = () => {
         formData.append("numero_recibo", boletaGenerada.numero)
         formData.append("archivo_excel", file)
         formData.append("competencia_id", competenciaId)
+        formData.append("tutor_id", idTutor)
         const response = await axios.post("http://localhost:8000/api/guardarDatos/excel", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         })
       }
+          Swal.fire({
+            icon: 'success',
+            title: `Excel subido con exito`,
+            showConfirmButton: false,
+            timer: 2000
+          });
     } catch (error) {
       console.error("Error al enviar el Excel:", error)
       setError("Error al enviar los datos: " + error.message)
+      Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al subir el excel'
+          });
     } finally {
       setIsLoading(false)
       setStep(1)
