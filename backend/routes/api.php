@@ -37,7 +37,7 @@ Route::get('/areasCategoriasGrados/{id_competencia}', [AreaController::class, 'g
     Route::get('/documentos/{type}/{id}', [DocumentoController::class, 'getDocumento']);
     Route::delete('/documentos/{type}/{id}', [DocumentoController::class, 'deleteDocumento']);
 //DocumentosHome Convocatoria
-Route::get('/documento-convocatoria/{año_competencia}/descargar', [DocumentoController::class, 'descargarDocumentoConvocatoria']);
+Route::get('/documento-convocatoria/{competenciaId}/descargar', [DocumentoController::class, 'descargarDocumentoConvocatoria']);
 //DocumentosHome Areas
 Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocumentacionPorArea']);
 // Rutas protegidas con Sanctum
