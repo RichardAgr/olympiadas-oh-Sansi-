@@ -72,7 +72,7 @@ const loadIdCompetencia = async () => {
         }
         break;
       case "ci":
-        if (!/^\d{8,15}$/.test(value)) {
+        if (!/^\d{3,15}$/.test(value)) {
           error = "Formato: 12345678 o 87654321";
         }
         break;

@@ -140,13 +140,13 @@ function ConfiguracionRespGestion() {
       }
 
       await axios.put(
-        `http://localhost:8000/api/responsable/ActualizarMiPerfil/${id}`,
+        `http://localhost:8000/api/responsable/ActualizarMiPerfil/${id_respGest}`,
         payload
       );
 
       if (datosResponsable.contrasenaActual) {
         await axios.post(
-          `http://localhost:8000/api/responsable/${id}/cambiar-password`,
+          `http://localhost:8000/api/responsable/${id_respGest}/cambiar-password`,
           {
             password_actual: datosResponsable.contrasenaActual,
             password: datosResponsable.nuevaContrasena,
@@ -164,7 +164,7 @@ function ConfiguracionRespGestion() {
   };
 
   const volverHome = () => {
-    navigate("/respGest");
+    navigate(`/respGest/${id_respGest}/Home`);
   };
 
   return (
