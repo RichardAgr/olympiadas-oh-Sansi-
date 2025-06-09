@@ -5,6 +5,7 @@ import rect28 from "../../assets/Rectangle28.png"
 import rect32 from "../../assets/Rectangle32.png"
 import rect33 from "../../assets/Rectangle33.png"
 import iconVideo from "../../assets/image16.png"
+import {useParams } from "react-router-dom";
 import axios from 'axios'
 import "./HomePrincipal.css"
 
@@ -40,7 +41,7 @@ const HomePrincipal = () => {
   })
   const [showVideoAlert, setShowVideoAlert] = useState(false)
   const [showConvocatoriaAlert, setShowConvocatoriaAlert] = useState(false)
-
+  const { id_competencia } = useParams();
   const observerRef = useRef(null)
   const cardsRef = useRef([])
   const heroRef = useRef(null)
@@ -151,7 +152,7 @@ useEffect(() => {
         sessionStorage.setItem('hasSeenLoading', 'true');
       }
 
-      const response = await axios.get(`http://localhost:8000/api/documento-convocatoria/${2025}/descargar`);
+      const response = await axios.get(`http://localhost:8000/api/documento-convocatoria/${id_competencia}}/descargar`);
       const data = response.data;
       if (data.success) {
         setConvocatoria( data.data.url_pdf)
