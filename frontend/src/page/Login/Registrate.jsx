@@ -31,6 +31,17 @@ const Registrate = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  //obtener id comeptencia
+ // Paso 1: Obtener competencia activa
+    const compResponse =  axios.get('http://127.0.0.1:8000/api/info-competencia-activa');
+    const competencia = compResponse.data.data[0]; // Asegúrate de que es un array
+
+    if (!competencia || !competencia.competencia_id) {
+      throw new Error('No se encontró una competencia activa válida.');
+    }
+
+    const competencia_id = competencia.competencia_id;
+
   // Validaciones en tiempo real
   const validateField = (name, value) => {
     let error = "";
@@ -111,7 +122,8 @@ const Registrate = () => {
 
     try {
       // Preparar los datos para la API
-      const dataToSend = {
+        const dataToSend = {
+        competencia_id: competencia_id, // Cambia esto según tu lógica
         nombres: formData.nombres,
         apellidos: formData.apellidos,
         correo_electronico: formData.email,
