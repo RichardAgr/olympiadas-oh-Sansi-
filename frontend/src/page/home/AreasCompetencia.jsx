@@ -105,7 +105,7 @@ const AreasCompetencia = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/areasCategoriasGrados")
+      .get("http://localhost:8000/api/areasCategoriasGrados/1")
       .then((res) => {
         if (res.data && res.data.success && Array.isArray(res.data.data)) {
           setAreas(res.data.data);

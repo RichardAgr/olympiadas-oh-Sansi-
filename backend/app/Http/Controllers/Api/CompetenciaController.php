@@ -289,7 +289,7 @@ class CompetenciaController extends Controller{
                 ], 404);
             }
 
-/*             // Verificar si hay inscripciones antes de eliminar
+            // Verificar si hay inscripciones antes de eliminar
             $inscripcionesActivas = $competencia->inscripciones()->count();
         
             if ($inscripcionesActivas > 0) {
@@ -317,7 +317,7 @@ class CompetenciaController extends Controller{
                     'total_cronogramas' => $cronogramas
                 ]
             ], 400);
-        } */
+        }
 
         $nombreCompetencia = $competencia->nombre_competencia;
         $competenciaId = $competencia->competencia_id;

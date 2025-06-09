@@ -53,7 +53,8 @@ class AuthController extends Controller
                     'tutor_id' => $tutor->tutor_id,
                     'nombres' => $tutor->nombres,
                     'apellidos' => $tutor->apellidos,
-                    'correo_electronico' => $tutor->correo_electronico
+                    'correo_electronico' => $tutor->correo_electronico,
+                    'competencia_id'=>$tutor->competencia_id
                 ]
             ]);
         }

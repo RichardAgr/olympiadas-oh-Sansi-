@@ -3,13 +3,15 @@ import * as XLSX from "xlsx"
 import axios from "axios"
 
 export const  cargarDatos = async ()=> {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
   try {
     console.log("Intentando cargar datos desde la API...")
     // Usamos un timeout para evitar que la petición se quede colgada
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 segundos de timeout
 
-    const response = await axios.get("http://localhost:8000/api/areasCategoriasGrados", {
+    const response = await axios.get(`http://localhost:8000/api/areasCategoriasGrados/${competenciaId}`, {
       signal: controller.signal,
     })
 
