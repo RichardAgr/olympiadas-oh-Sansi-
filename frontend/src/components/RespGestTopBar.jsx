@@ -6,7 +6,7 @@ import axios from "axios";
 import "./estilos/estilosTopBar.css";
 
 const RespGestTopBar = () => {
-  const { id_respGest } = useParams();
+  const { id_respGest, id_competencia } = useParams();
   const routeTo=(subruta)=>`/respGest/${id_respGest}/Home/${subruta}`;
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -62,11 +62,11 @@ const RespGestTopBar = () => {
       localStorage.removeItem("user");
       localStorage.removeItem("rol");
 
-      navigate("/homePrincipal");
+      navigate(`/homePrincipal/${id_competencia}`);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
       localStorage.clear();
-      navigate("/homePrincipal");
+      navigate(`/homePrincipal/${id_competencia}`);
     }
   };
 
