@@ -112,7 +112,7 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::post('/boletas/pagoInscripcion', [BoletaController::class, 'procesarPagoOCR']);
 
     // Competidores
-    Route::get('/competidores', [CompetidorController::class, 'index']);
+    Route::get('/competidores/{competenciaId}', [CompetidorController::class, 'index']);
     Route::get('/informacionCompetidores/{id}/competidor', [CompetidorController::class, 'getDetallesCompetidor']);
     Route::put('/competidor/{id}/estado', [CompetidorController::class, 'actualizarEstadoCompetidor']);
     Route::get('/detallesCompetidor/{competenciaId}', [CompetidorController::class, 'obtenerDetallesCompetidor']);

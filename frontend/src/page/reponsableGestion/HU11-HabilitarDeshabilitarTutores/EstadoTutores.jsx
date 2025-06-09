@@ -13,14 +13,16 @@ function EstadoTutores() {
   const [esDeshabilitar, setEsDeshabilitar] = useState(true);
   const [loading, setLoading] = useState(false);
   const [descripcionError, setDescripcionError] = useState("");
-
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
   useEffect(() => {
     cargarTutores();
   }, []);
 
   const cargarTutores = () => {
+
     setLoading(true);
-    axios.get("http://127.0.0.1:8000/api/tutoresInformacion")
+    axios.get(`http://127.0.0.1:8000/api/tutoresInformacion/${competenciaId}`)
       .then((response) => {
         if (Array.isArray(response.data)) {
           setEstadoTutores(response.data);
