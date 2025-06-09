@@ -56,7 +56,8 @@ const InscripcionMasiva = () => {
   const [pdfUploaded, setPdfUploaded] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
-
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
 
   const guardarRecibo = async (reciboData) => {
     try {
@@ -281,7 +282,7 @@ const InscripcionMasiva = () => {
         const formData = new FormData()
         formData.append("numero_recibo", boletaGenerada.numero)
         formData.append("archivo_excel", file)
-
+        formData.append("competencia_id", competenciaId)
         const response = await axios.post("http://localhost:8000/api/guardarDatos/excel", formData, {
           headers: {
             "Content-Type": "multipart/form-data",

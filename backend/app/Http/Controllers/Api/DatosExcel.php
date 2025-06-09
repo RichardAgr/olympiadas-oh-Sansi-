@@ -29,6 +29,7 @@ class DatosExcel extends Controller{
             $validator = Validator::make($request->all(), [
                 'archivo_excel' => 'required|file|mimes:xlsx,xls',
                 'numero_recibo' => 'required|string|max:20|exists:recibo,numero_recibo',
+                'competencia_id'=> 'required|integer|exists:competencia,competencia_id'
             ], [
                 'archivo_excel.required' => 'Debe seleccionar un archivo Excel',
                 'archivo_excel.file' => 'El archivo debe ser un archivo válido',
@@ -89,7 +90,7 @@ class DatosExcel extends Controller{
             DB::beginTransaction();
             
             try {
-                $resultado = $this->procesarDatos($competidores, $tutores, $relaciones, $recibo);
+                $resultado = $this->procesarDatos($competidores, $tutores, $relaciones, $recibo,$request->competencia_id);
 
                 DB::commit();
                 
@@ -322,7 +323,7 @@ class DatosExcel extends Controller{
     /**
      * Procesa los datos y los guarda en la base de datos
      */
-    private function procesarDatos($competidores, $tutores, $relaciones, $recibo){
+    private function procesarDatos($competidores, $tutores, $relaciones, $recibo,$competencia_id){
         $resultado = [
             'competidores_registrados' => 0,
             'tutores_registrados' => 0,
@@ -339,6 +340,7 @@ class DatosExcel extends Controller{
                 [
                     'nombres' => $tutor_data['nombres'],
                     'apellidos' => $tutor_data['apellidos'],
+                    'competencia_id' => $competencia_id,
                     'correo_electronico' => $tutor_data['correo_electronico'],
                     'telefono' => $tutor_data['telefono'],
                     'estado' => true
