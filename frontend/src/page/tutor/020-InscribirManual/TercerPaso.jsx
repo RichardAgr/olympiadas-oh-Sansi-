@@ -56,7 +56,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
       if (datosCargados) return; // evita recarga innecesaria
 
       const response = await axios.get(`http://localhost:8000/api/datosTutor/${id}`);
-      console.log("Respuesta Axios tutor:", response.data);
+/*       console.log("Respuesta Axios tutor:", response.data); */
 
       const tutorData = response.data.data; // ✅ CORREGIDO AQUÍ
 
@@ -204,7 +204,6 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
   }
 
   const generarPDFBlob = async (data) => {
-    console.log(data)
     const boletaInfo = data || (boletaData ? { ...boletaData } : await obtenerDatosBoleta())
 
     // Asegurarse de que boletaData tiene los datos necesarios
@@ -322,8 +321,6 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
       estado: "Pendiente",
     };
 
-    // Añade logs para depuración
-    console.log("Enviando datos al backend:", data);
 
     const response = await axios.post(
       "http://localhost:8000/api/guardarDatos/recibosInscripcionManual",
@@ -335,7 +332,6 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
       }
     );
 
-    console.log("Respuesta del backend:", response.data);
     return response.data;
 
   } catch (error) {
