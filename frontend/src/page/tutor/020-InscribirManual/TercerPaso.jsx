@@ -41,9 +41,11 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
   /* console.log("ID del competidor en el tercer paso:", competidorId); */
   const [datosCargados, setDatosCargados] = useState(false)
   const [cantidadTutores, setCantidadTutores] = useState(1)
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
   const [tutores, setTutores] = useState([
-    { nombres: "", apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" },
-    { nombres: "", apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" }
+    { nombres: "",competencia_id:competenciaId, apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" },
+    { nombres: "",competencia_id:competenciaId, apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" }
   ])
   const { id } = useParams()
  useEffect(() => {
@@ -115,7 +117,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
 
   const handleTutorChange = (index, e) => {
     const { name, value } = e.target
-      console.log(`Cambio tutor[${index}] campo '${name}':`, value);
+/*       console.log(`Cambio tutor[${index}] campo '${name}':`, value); */
     const nuevosTutores = [...tutores]
     nuevosTutores[index][name] = value
     setTutores(nuevosTutores)
@@ -196,7 +198,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
         await obtenerDatosBoleta()
       } catch (error) {
         console.error("Error al registrar tutores:", error.response?.data || error.message)
-        console.log("Detalles de error:", error.response?.data?.errors)
+        console.log("Detalles de error:", error/* .response?.data?.errors */)
       }
     }
   }
@@ -400,7 +402,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
 
   const renderTutorCard = (index) => {
     const tutor = tutores[index]
-    console.log(`Renderizando tutor[${index}]:`, tutor);
+/*     console.log(`Renderizando tutor[${index}]:`, tutor); */
     const err = errors[index] || {}
 
     return (

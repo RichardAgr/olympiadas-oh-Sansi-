@@ -656,6 +656,7 @@ public function registrarTutores(Request $request)
         'tutores' => 'required|array|min:1',
         'tutores.*.nombres' => 'required|string',
         'tutores.*.apellidos' => 'required|string',
+        'tutores.*.competencia_id' => 'required|integer|exists:competencia,competencia_id',
         'tutores.*.correo_electronico' => 'required|email',
         'tutores.*.telefono' => 'required|string',
         'tutores.*.ci' => 'required|string',
@@ -676,6 +677,7 @@ public function registrarTutores(Request $request)
                 [
                     'nombres' => $tutorData['nombres'],
                     'apellidos' => $tutorData['apellidos'],
+                    'competencia_id' => $tutorData['competencia_id'],
                     'correo_electronico' => $tutorData['correo_electronico'],
                     'telefono' => $tutorData['telefono'],
                     'relacion' => $tutorData['relacion'],
