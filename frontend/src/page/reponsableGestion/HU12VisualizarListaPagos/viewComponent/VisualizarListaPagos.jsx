@@ -10,13 +10,14 @@ export default function VisualizarListaPagos(){
     const [isLoading,setIsLoading] = useState(true)
     const [error,setError] = useState(null)
     const [searchPerformed, setSearchPerformed] = useState(false)
-
+    const user = JSON.parse(localStorage.getItem('user'));
+    const competenciaId = user?.competencia_id;
 
     useEffect(()=>{
         const getPayments = async () =>{
             try {
                 setIsLoading(true)           
-                const res = await axios.get('http://127.0.0.1:8000/api/pagos')
+                const res = await axios.get(`http://localhost:8000/api/pagos/${competenciaId}`)
                 
                 if(res.status !== 200){
                     throw new Error(`HTTP error! status: ${res.status}`)

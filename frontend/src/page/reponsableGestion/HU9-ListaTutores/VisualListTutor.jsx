@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import axios from "axios";
-import excelIcon from "../../assets/excel.svg";
+import excelIcon from "../../../assets/excel.svg";
 import "./VisualListTutor.css";
 
 function VisualListTutor() {
   const [search, setSearch] = useState("");
   const [tableData, setTableData] = useState([]);
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
 
   useEffect(() => {
     const fetchTutores = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/tutoresInformacion"); // Carga desde public/
+        const response = await axios.get(`http://localhost:8000/api/tutoresInformacion/${competenciaId}`); // Carga desde public/
         setTableData(response.data);
       } catch (error) {
         console.error("Error al cargar tutores:", error);

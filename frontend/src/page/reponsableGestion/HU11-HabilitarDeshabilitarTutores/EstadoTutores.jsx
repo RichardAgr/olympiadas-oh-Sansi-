@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from 'sweetalert2';
 import "./estilosResponsable.css";
+import "./estadoTutor.css";
 
 function EstadoTutores() {
   const [estadoTutores, setEstadoTutores] = useState([]);
@@ -12,14 +14,16 @@ function EstadoTutores() {
   const [esDeshabilitar, setEsDeshabilitar] = useState(true);
   const [loading, setLoading] = useState(false);
   const [descripcionError, setDescripcionError] = useState("");
-
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
   useEffect(() => {
     cargarTutores();
   }, []);
 
   const cargarTutores = () => {
+
     setLoading(true);
-    axios.get("http://127.0.0.1:8000/api/tutoresInformacion")
+    axios.get(`http://localhost:8000/api/tutoresInformacion/${competenciaId}`)
       .then((response) => {
         if (Array.isArray(response.data)) {
           setEstadoTutores(response.data);
@@ -50,42 +54,54 @@ function EstadoTutores() {
     return text.trim().split(/\s+/).filter(word => word.length > 0).length;
   };
 
-  const actualizarEstadoTutor = async (tutorId, nuevoEstado, descripcion) => {
-    try {
-      setLoading(true);
-      
-      await axios.put(`http://127.0.0.1:8000/api/tutores/${tutorId}/estado`, {
-        estado: nuevoEstado==="activo"?true:false
-      });
+ const actualizarEstadoTutor = async (tutorId, nuevoEstado, descripcion) => {
+  try {
+    setLoading(true);
+    
+    await axios.put(`http://localhost:8000/api/tutores/${tutorId}/estado`, {
+      estado: nuevoEstado === "activo" ? true : false
+    });
 
-      // 2. Si es deshabilitar, enviar notificación
-      if (nuevoEstado === "inactivo" && descripcion) {
-        const notificacionData = {
-          id_responsable: 1, // ID del responsable actual (ajustar según tu sistema)
-          id_tutorPrincipal: tutorId,
-          id_competidor: null,
-          asunto: "Deshabilitación de tutor",
-          motivo: descripcion
-        };
-        await axios.post("http://127.0.0.1:8000/api/notificaciones", notificacionData); 
-      }
-
-      setEstadoTutores(prev => 
-        prev.map(tutor => 
-          tutor.tutor_id === tutorId 
-            ? { ...tutor, estado: nuevoEstado } 
-            : tutor
-        )
-      );
-
-      handleCloseModal();
-    } catch (error) {
-      console.error("Error al actualizar el tutor:", error);
-      alert("Ocurrió un error al actualizar el tutor");
-    } finally {
-      setLoading(false);
+    if (nuevoEstado === "inactivo" && descripcion) {
+      const notificacionData = {
+        id_responsable: 1,
+        id_tutorPrincipal: tutorId,
+        id_competidor: null,
+        asunto: "Deshabilitación de tutor",
+        motivo: descripcion
+      };
+      await axios.post("http://localhost:8000/api/notificaciones", notificacionData); 
     }
-  };
+
+    setEstadoTutores(prev =>
+      prev.map(tutor =>
+        tutor.tutor_id === tutorId
+          ? { ...tutor, estado: nuevoEstado }
+          : tutor
+      )
+    );
+
+    // ✅ ALERTA de éxito
+    Swal.fire({
+      icon: 'success',
+      title: `Tutor ${nuevoEstado === 'activo' ? 'habilitado' : 'deshabilitado'} correctamente`,
+      showConfirmButton: false,
+      timer: 2000
+    });
+
+    handleCloseModal();
+  } catch (error) {
+    console.error("Error al actualizar el tutor:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Ocurrió un error al actualizar el tutor'
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const filteredTutores = estadoTutores.filter((tutor) => {
     const nombreMatch = tutor.nombres.toLowerCase().includes(busqueda.toLowerCase());
@@ -122,28 +138,43 @@ function EstadoTutores() {
 
       {loading && <div className="loading">Cargando...</div>}
 
-      <div className="buscador">
-        <input
-          type="text"
-          placeholder="Buscar por nombre"
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-        />
-      </div>
+      <div
+  className="buscador-Habilitar-desabilitar-warpper"
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+    gap: "10px" // separación entre input y select
+  }}
+> 
+  <input
+    type="text"
+    placeholder="Buscar por nombre"
+    value={busqueda}
+    onChange={(e) => setBusqueda(e.target.value)}
+    className="buscador-Habilitar-desabilitar-input"
+    style={{
+      flexGrow: 1,
+      maxWidth: "70%",
+    }}
+  />
 
-      <div className="filtro-estado">
-        <select
-          className="seleccionadorDesplegable"
-          value={filtroEstado}
-          onChange={(e) => setFiltroEstado(e.target.value)}
-        >
-          <option value="">-- Todos --</option>
-          <option value="activo">Activos</option>
-          <option value="inactivo">Inactivos</option>
-        </select>
-      </div>
+  <div className="filtro-estado" style={{ minWidth: "150px" }}>
+    <select
+      className="seleccionadorDesplegable"
+      value={filtroEstado}
+      onChange={(e) => setFiltroEstado(e.target.value)}
+      style={{ width: "100%" }}
+    >
+      <option value="">Todos</option>
+      <option value="activo">Activos</option>
+      <option value="inactivo">Inactivos</option>
+    </select>
+  </div>
+</div>
 
-      <div className="contenedor-tabla">
+      <div className="contenedor-tabla-Responsable">
         <table className="tabla">
           <thead>
             <tr>

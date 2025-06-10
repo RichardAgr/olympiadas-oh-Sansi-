@@ -60,7 +60,7 @@ const InscripcionMasiva = () => {
 
   const guardarRecibo = async (reciboData) => {
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/guardarDatos/recibos", reciboData)
+      const response = await axios.post("http://localhost:8000/api/guardarDatos/recibos", reciboData)
       /*  console.log('Recibo guardado en API:', response.data); */
       return response.data
     } catch (error) {
@@ -282,7 +282,7 @@ const InscripcionMasiva = () => {
         formData.append("numero_recibo", boletaGenerada.numero)
         formData.append("archivo_excel", file)
 
-        const response = await axios.post("http://127.0.0.1:8000/api/guardarDatos/excel", formData, {
+        const response = await axios.post("http://localhost:8000/api/guardarDatos/excel", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

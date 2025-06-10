@@ -11,13 +11,14 @@ export default function CompetidoresPage() {
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
 
   useEffect(() => {
     const fetchCompetitors = async () => {
       try {
         setIsLoading(true)
-        const res = await axios.get("http://127.0.0.1:8000/api/competidores")
-        
+        const res = await axios.get(`http://localhost:8000/api/competidores/${competenciaId}`)
         if (res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`); 
         }

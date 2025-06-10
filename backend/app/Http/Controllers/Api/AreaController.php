@@ -13,12 +13,16 @@ use App\Models\Area;
 use App\Models\Cronograma;
 
 class AreaController extends Controller{
-    public function ObtenerAreasRegistradas(Request $request): JsonResponse{
+    public function ObtenerAreasRegistradas($id_competencia): JsonResponse{
          try {
+            validator(['id_competencia' => $id_competencia], [
+            'id_competencia' => 'required|integer|exists:competencia,competencia_id'
+            ])->validate();
+
             $areas = Area::select('area_id', 'costo', 'nombre', 'descripcion', 'estado', 'created_at', 'updated_at')
-                         ->distinct()
-                         ->orderBy('nombre', 'asc')
-                         ->get();
+                     ->where('competencia_id', $id_competencia)
+                     ->orderBy('nombre', 'asc')
+                     ->get();
 
             if ($areas->isEmpty()) {
                 return response()->json([], 200);
@@ -93,13 +97,15 @@ public function RegistrarNuevaArea(Request $request){
             $validated = $request->validate([
                 'nombre' => 'required|string|max:255|unique:area,nombre',
                 'descripcion' => 'required|string|max:1000',
-                'costo' => 'required|numeric|min:0|max:999999.99'
+                'costo' => 'required|numeric|min:0|max:999999.99',
+                'id_competencia' => 'required|integer|exists:competencia,competencia_id'
             ]);
 
             $area = Area::create([
                 'nombre' => strtoupper(trim($validated['nombre'])), 
                 'descripcion' => trim($validated['descripcion']),
                 'costo' => $validated['costo'],
+                'competencia_id' => $validated['id_competencia'],
                 'estado' => 1, // Por defecto activo
                 'created_at' => now(),
                 'updated_at' => now()
@@ -109,16 +115,16 @@ public function RegistrarNuevaArea(Request $request){
             $fechaPorDefecto = '1000-00-00'; // Fecha por defecto
             
             // Verificar si existe la competencia con ID 1
-            $competenciaExiste = DB::table('competencia')->where('competencia_id', 1)->exists();
+            $competenciaExiste = DB::table('competencia')->where('competencia_id', $validated['id_competencia'])->exists();
             
             if (!$competenciaExiste) {
-                throw new Exception("La competencia con ID 1 no existe. Debes crear esta competencia primero.");
+                throw new Exception("La competencia no existe. Debes crear esta competencia primero.");
             }
             
             foreach ($tiposEvento as $tipoEvento) {
                 Cronograma::create([
                     'area_id' => $area->area_id,
-                    'competencia_id' => 1, 
+                    'competencia_id' => $validated['id_competencia'], 
                     'descripcion' => '', 
                     'fecha_inicio' => $fechaPorDefecto,
                     'fecha_fin' => $fechaPorDefecto,
@@ -130,6 +136,7 @@ public function RegistrarNuevaArea(Request $request){
 
             $areaFormatted = [
                 'area_id' => $area->area_id,
+                'competencia_id' => (int) $area->competencia_id, 
                 'costo' => (float) $area->costo,
                 'nombre' => $area->nombre,
                 'descripcion' => $area->descripcion,
@@ -178,9 +185,9 @@ public function RegistrarNuevaArea(Request $request){
                 'details' => $e->getMessage() 
             ], 500);
         }
-    }
+}
 
-    public function DatosAreaId(int $areaId): JsonResponse {
+public function DatosAreaId(int $areaId): JsonResponse {
         try {
             $area = Area::select('area_id', 'costo', 'nombre', 'descripcion', 'estado', 'created_at', 'updated_at')
                        ->where('area_id', $areaId)
@@ -378,18 +385,22 @@ public function RegistrarNuevaArea(Request $request){
         }
     }
 
-       public function getAreasWithCategoriasGrados()
-{
+public function getAreasWithCategoriasGrados($id_competencia){
     try {
+        validator(['id_competencia' => $id_competencia], [
+            'id_competencia' => 'required|integer|exists:competencia,competencia_id'
+        ])->validate();
+
         $areas = Area::with([
             'nivelCategoria',
             'nivelCategoria.gradoInicial',
             'nivelCategoria.gradoFinal',
             'nivelCategoria.gradoInicial.nivelEducativo',
             'nivelCategoria.gradoFinal.nivelEducativo',
-            'cronograma' // Relación del área hacia sus cronogramas
+            'cronograma'
         ])
         ->where('estado', true)
+        ->where('competencia_id', $id_competencia)
         ->get();
 
         $result = [];
@@ -451,8 +462,12 @@ public function RegistrarNuevaArea(Request $request){
     }
 }
 
-    public function DatosAreasCompleto(Request $request): JsonResponse{
+public function DatosAreasCompleto($id_competencia,Request $request): JsonResponse{
         try {
+            validator(['id_competencia' => $id_competencia], [
+                'id_competencia' => 'required|integer|exists:competencia,competencia_id'
+            ])->validate();
+
             $validated = $request->validate([
                 'search' => 'sometimes|string|max:255',
                 'fecha_desde' => 'sometimes|date',
@@ -492,7 +507,8 @@ public function RegistrarNuevaArea(Request $request){
                     'gi.nombre as grado_inicial',
                     'gf.nombre as grado_final'
                 ])
-                ->where('a.estado', 1); // Solo áreas activas
+                ->where('a.estado', 1) // Solo áreas activas
+                ->where('cr.competencia_id', $id_competencia);
 
             if (isset($validated['fecha_desde'])) {
                 $query->where('cr.fecha_inicio', '>=', $validated['fecha_desde']);

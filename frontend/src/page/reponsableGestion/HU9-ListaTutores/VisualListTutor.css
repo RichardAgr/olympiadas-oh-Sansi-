@@ -1,3 +1,7 @@
+.prueba-container{
+  margin: 30px;
+}
+
 .contenedor-tabla2 {
   width: 100%;
   overflow-x: auto;
@@ -61,7 +65,7 @@
     cursor: pointer;
     margin-right: 10px;
   }
-  .buscador input,
+  .buscador2 input,
   .filtro-select {
     padding: 10px;
     border-radius: 8px;
@@ -79,24 +83,24 @@
   /* Botones principales */
   .boton-excel,
   .boton-addUser {
-    background-color: #384FD6;
+    background-color: #2D42C8;
     color: white;
     border: none;
-    border-radius: 20px;
+    border-radius: 8px;
     padding: 10px 20px;
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 15px;
+    font-size: 16px;
     cursor: pointer;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+    transition: background-color 0.3s;
     text-decoration: none; 
   }
   
   .boton-excel:hover,
   .boton-addUser:hover {
-    transform: scale(1.03);
+    background-color: #061A8B;
   }
   
   .icono-boton,
@@ -257,6 +261,7 @@
   .btn-limpiar {
     padding: 10px 20px;
     background-color: #3a7ca5;
+    color:#fff;
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -267,7 +272,7 @@
   }
   
   .btn-limpiar:hover {
-    background-color: #bcbcbc;
+    background-color: #244c66;
   }
   /* 📊 Texto de contador */
   .contador-resultados {

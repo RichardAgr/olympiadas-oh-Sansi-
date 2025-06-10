@@ -1,5 +1,5 @@
 import  { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "../../../App.css";
 import "./hu1.css"; // Asegúrate de que este archivo CSS exista y tenga los estilos necesarios
@@ -15,6 +15,8 @@ const AgregarArea = () => {
   const [costoError, setCostoError] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [tipoMensaje, setTipoMensaje] = useState(""); // 'exito' o 'error'
+  const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
 
   const handleNombreChange = (e) => {
@@ -31,37 +33,39 @@ const AgregarArea = () => {
 
 
   const validarFormulario = () => {
-    const nuevosErrores = {};
-  
-    if (!nombre.trim()) {
-      nuevosErrores.nombre = "El nombre es obligatorio.";
-    } else if (nombre.length < 3) {
-      nuevosErrores.nombre = "Debe tener al menos 5 caracteres.";
-    } else if (/\d/.test(nombre)) { 
-      nuevosErrores.nombre = "El nombre no puede contener números.";
-    }
-  
-    if (!descripcion.trim()) {
-      nuevosErrores.descripcion = "La descripción es obligatoria.";
-    } else if (descripcion.length < 5) {
-      nuevosErrores.descripcion = "Debe tener al menos 5 caracteres.";
-    }
-  
-    if (!costo) {
-      nuevosErrores.costo = "El costo es obligatorio.";
-    } else if (isNaN(costo) || parseFloat(costo) <= 10) {
-      nuevosErrores.costo = "Debe ser un número mayor a 0.";
-    }
-  
-    setErrores(nuevosErrores);
-    return Object.keys(nuevosErrores).length === 0;
-  };  
+  const nuevosErrores = {};
+
+  if (!nombre.trim()) {
+    nuevosErrores.nombre = "El nombre es obligatorio.";
+  } else if (nombre.length < 5) {
+    nuevosErrores.nombre = "Debe tener al menos 5 caracteres.";
+  } else if (/\d/.test(nombre)) {
+    nuevosErrores.nombre = "El nombre no puede contener números.";
+  }
+
+  if (!descripcion.trim()) {
+    nuevosErrores.descripcion = "La descripción es obligatoria.";
+  } else if (descripcion.length < 5) {
+    nuevosErrores.descripcion = "Debe tener al menos 5 caracteres.";
+  }
+
+  if (!costo.trim()) {
+    nuevosErrores.costo = "El costo es obligatorio.";
+  } else if (isNaN(costo) || parseFloat(costo) < 9) {
+    nuevosErrores.costo = "El costo debe ser mayor o igual a 9.";
+  }
+
+  setErrores(nuevosErrores);
+  return Object.keys(nuevosErrores).length === 0;
+};
+
 
 const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!validarFormulario()) return;
   const data ={
+      id_competencia,
       nombre,
       descripcion,
       costo,
@@ -83,7 +87,7 @@ await axios.post("http://localhost:8000/api/registrarArea", data, {
     setTimeout(() => {
       setMensaje("");
       setTipoMensaje("");
-      navigate("/admin/areas");
+      navigate(routeTo("areas"));
     }, 2500); // Opcional: espera 2.5s antes de redirigir
   } catch (error) {
   console.error("Error al registrar el área:", error);
@@ -134,7 +138,6 @@ await axios.post("http://localhost:8000/api/registrarArea", data, {
         <input
         className="campo-entrada-area"
           type="number"
-          min="11"
           value={costo}
           onChange={(e) => setCosto(e.target.value)}
         />
@@ -143,7 +146,7 @@ await axios.post("http://localhost:8000/api/registrarArea", data, {
         <div className="botones-form-area">
           <button
             type="button"
-            onClick={() => navigate("/admin/areas")}
+            onClick={() => navigate(routeTo("areas"))}
             className="btn-cancelar-area"
           >
             Cancelar

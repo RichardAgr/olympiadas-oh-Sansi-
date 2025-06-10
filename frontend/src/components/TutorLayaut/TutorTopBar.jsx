@@ -14,7 +14,7 @@ const TutorTopBar = () => {
   const location = useLocation();
  
   // 👉 ID temporal estático desde el backend
-  const {id} = useParams();
+  const {id, id_competencia} = useParams();
   const navigate = useNavigate(); // Para manejar la navegación programáticamente
   const [userMenuOpen, setUserMenuOpen] = useState(false); 
 
@@ -22,7 +22,7 @@ const TutorTopBar = () => {
   useEffect(() => {
     const fetchNotificationCount = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/notificaciones/${id}`);
+        const response = await axios.get(`http://localhost:8000/api/notificaciones/${id}`);
         if (response.data.success && response.data.data) {
           setNotificationCount(response.data.data.total_activas);
         }
@@ -55,7 +55,7 @@ const TutorTopBar = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/logout",
+        "http://localhost:8000/api/logout",
         {},
         {
           headers: {
@@ -68,11 +68,11 @@ const TutorTopBar = () => {
       localStorage.removeItem("user");
       localStorage.removeItem("rol");
 
-      navigate("/homePrincipal");
+      navigate(`/homePrincipal`);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
       localStorage.clear();
-      navigate("/homePrincipal");
+      navigate(`/homePrincipal`);
     }
   };
 

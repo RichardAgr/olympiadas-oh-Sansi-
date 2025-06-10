@@ -44,7 +44,7 @@ const RecuperarContraseña = () => {
 
     try {
       // ⬇️ QUITAMOS withCredentials: true
-      await axios.post("http://127.0.0.1:8000/api/password/email", { correo_electronico: email });
+      await axios.post("http://localhost:8000/api/password/email", { correo_electronico: email });
       setPaso(2);
       setError("");
     } catch (error) {
@@ -69,7 +69,7 @@ const RecuperarContraseña = () => {
 
     try {
       // ⬇️ QUITAMOS withCredentials: true
-      await axios.post("http://127.0.0.1:8000/api/password/verify", {
+      await axios.post("http://localhost:8000/api/password/verify", {
         correo_electronico: email,
         token: codigo
       });
@@ -106,7 +106,7 @@ const RecuperarContraseña = () => {
 
     try {
       // ⬇️ QUITAMOS withCredentials: true
-      await axios.post("http://127.0.0.1:8000/api/password/reset", {
+      await axios.post("http://localhost:8000/api/password/reset", {
         correo_electronico: email,
         token: codigo,
         password: nuevaContraseña,

@@ -40,7 +40,6 @@ const HomePrincipal = () => {
   })
   const [showVideoAlert, setShowVideoAlert] = useState(false)
   const [showConvocatoriaAlert, setShowConvocatoriaAlert] = useState(false)
-
   const observerRef = useRef(null)
   const cardsRef = useRef([])
   const heroRef = useRef(null)
@@ -145,53 +144,68 @@ useEffect(() => {
   const hasSeenLoading = sessionStorage.getItem('hasSeenLoading');
   
   const loadData = async () => {
-    try {
-      if (!hasSeenLoading) {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        sessionStorage.setItem('hasSeenLoading', 'true');
-      }
-
-      const response = await axios.get(`http://127.0.0.1:8000/api/documento-convocatoria/${2024}/descargar`);
-      const data = response.data;
-      if (data.success) {
-        setConvocatoria( data.data.url_pdf)
-      } else {
-        setConvocatoria(null);
-      }
-
-      const videosResponse = await axios.get('http://127.0.0.1:8000/api/Mostrarvideos');
-      const videosData = videosResponse.data.data;
-
-      // Actualizar los tutoriales con los videos de la API
-      setTutoriales(prevTutoriales => 
-        prevTutoriales.map(tutorial => {
-          const videoEncontrado = videosData.find(v => v.tipo_video === tutorial.tipo_video);
-          return {
-            ...tutorial,
-            url: videoEncontrado?.url_video || "",
-            existe: videoEncontrado?.existe || false
-          };
-        })
-      );
-      
-      if (!hasSeenLoading) {
-        setLoading(false);
-        setShowTransition(true);
-        
-        setTimeout(() => {
-          setShowTransition(false);
-          setShowContent(true);
-        }, 2000);
-      } else {
-        setLoading(false);
-        setShowContent(true);
-      }
-    } catch (err) {
-      setError("Error al cargar los datos");
-      console.log(err)
-      setLoading(false);
+  try {
+    if (!hasSeenLoading) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      sessionStorage.setItem('hasSeenLoading', 'true');
     }
-  };
+
+    // Paso 1: Obtener competencia activa
+    const compResponse = await axios.get('http://localhost:8000/api/info-competencia-activa');
+    const competencia = compResponse.data.data[0]; // Asegúrate de que es un array
+
+    if (!competencia || !competencia.competencia_id) {
+      throw new Error('No se encontró una competencia activa válida.');
+    }
+
+    const id_competencia = competencia.competencia_id;
+
+    // Paso 2: Usar el id_competencia para obtener el PDF de la convocatoria
+    const response = await axios.get(`http://localhost:8000/api/documento-convocatoria/${id_competencia}/descargar`);
+    const data = response.data;
+
+    if (data.success) {
+      setConvocatoria(data.data.url_pdf);
+    } else {
+      setConvocatoria(null);
+    }
+
+    // Paso 3: Obtener videos
+    const videosResponse = await axios.get('http://localhost:8000/api/Mostrarvideos');
+    const videosData = videosResponse.data.data;
+
+    setTutoriales(prevTutoriales =>
+      prevTutoriales.map(tutorial => {
+        const videoEncontrado = videosData.find(v => v.tipo_video === tutorial.tipo_video);
+        return {
+          ...tutorial,
+          url: videoEncontrado?.url_video || "",
+          existe: videoEncontrado?.existe || false
+        };
+      })
+    );
+
+    // Paso 4: Finalizar carga
+    if (!hasSeenLoading) {
+      setLoading(false);
+      setShowTransition(true);
+
+      setTimeout(() => {
+        setShowTransition(false);
+        setShowContent(true);
+      }, 2000);
+    } else {
+      setLoading(false);
+      setShowContent(true);
+    }
+
+  } catch (err) {
+    setError("Error al cargar los datos");
+    console.error(err);
+    setLoading(false);
+  }
+};
+
   
   loadData();
 }, []);
@@ -210,7 +224,7 @@ const response = await axios.get(convocatoria, {
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `convocatoria-${convocatoria.año || '2024'}.pdf`);
+    link.setAttribute('download', `convocatoria-${convocatoria.año || '2025'}.pdf`);
     document.body.appendChild(link);
     link.click();
     link.parentNode.removeChild(link);

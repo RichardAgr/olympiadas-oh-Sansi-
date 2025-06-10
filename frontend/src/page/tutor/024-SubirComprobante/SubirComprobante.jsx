@@ -102,7 +102,7 @@ export default function App() {
 
       console.log(postData)
       
-    const response = await axios.post('http://127.0.0.1:8000/api/boletas/pagoInscripcion',postData,
+    const response = await axios.post('http://localhost:8000/api/boletas/pagoInscripcion',postData,
       {
          headers: {
           'Content-Type': 'application/json',

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
 import "./SelectorGrado.css"
 import api from '../../../components/Tokens/api';
 

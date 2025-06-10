@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios"; // Importar axios
 import "./Registrate.css";
 import { Eye, EyeOff } from "lucide-react";
@@ -6,6 +6,28 @@ import { useNavigate } from "react-router-dom"; // Para redireccionar después d
 
 const Registrate = () => {
   const navigate = useNavigate();
+  const [competencia_id, setCompetenciaId]=useState(0)
+
+const loadIdCompetencia = async () => {
+    try {
+        //obtener id comeptencia
+ // Paso 1: Obtener competencia activa
+    const compResponse =  await axios.get('http://localhost:8000/api/info-competencia-activa');
+    const competencia = compResponse.data.data[0]; // Asegúrate de que es un array
+
+    if (!competencia || !competencia.competencia_id) {
+      throw new Error('No se encontró una competencia activa válida.');
+    }
+    setCompetenciaId(competencia.competencia_id)
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadIdCompetencia();
+  }, [competencia_id]);
 
   const [formData, setFormData] = useState({
     nombres: "",
@@ -31,6 +53,8 @@ const Registrate = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  
+
   // Validaciones en tiempo real
   const validateField = (name, value) => {
     let error = "";
@@ -48,7 +72,7 @@ const Registrate = () => {
         }
         break;
       case "ci":
-        if (!/^\d{8,15}$/.test(value)) {
+        if (!/^\d{3,15}$/.test(value)) {
           error = "Formato: 12345678 o 87654321";
         }
         break;
@@ -111,7 +135,8 @@ const Registrate = () => {
 
     try {
       // Preparar los datos para la API
-      const dataToSend = {
+        const dataToSend = {
+        competencia_id: competencia_id, // Cambia esto según tu lógica
         nombres: formData.nombres,
         apellidos: formData.apellidos,
         correo_electronico: formData.email,
@@ -120,7 +145,6 @@ const Registrate = () => {
         password: formData.password,
         password_confirmation: formData.confirmPassword,
       };
-
       const response = await axios.post(
         "http://localhost:8000/api/registrar-tutor",
         dataToSend,
