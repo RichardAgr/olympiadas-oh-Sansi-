@@ -12,7 +12,7 @@ use App\Models\Curso;
 use App\Models\Ubicacion;
 use App\Models\NivelCategoria;
 use App\Models\CompetidorCompetencia;
-use App\Models\Area;;
+use App\Models\Area;
 use App\Http\Resources\CompetidoresTutorResource;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -64,6 +64,7 @@ class TutorController extends Controller{
             return [
                 'competidor_id' => $competidor->competidor_id,
                 'nombre_completo' => $nombreCompleto,
+                'colegio'=> $competidor->colegio,
                 'area' => $areas ?: 'No asignada',
                 'categoria' => $categoria,
                 'curso' => $competidor->curso,
