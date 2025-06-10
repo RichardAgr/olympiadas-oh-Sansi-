@@ -523,6 +523,7 @@ public function verPerfilTutor($id)
         'competidor.ci' => 'required|string|unique:competidor,ci',
         'competidor.fecha_nacimiento' => 'required|date',
         'competidor.colegio' => 'required|string',
+        'competidor.competencia_id'=> 'required|integer|exists:competidor,competidor_id',
         'competidor.curso' => 'required|string',
         'competidor.area' => 'required|string',
         'competidor.categoria' => 'required|string',
@@ -587,7 +588,7 @@ public function verPerfilTutor($id)
             'competidor_id' => $competidor->competidor_id,
             'area_id' => $area->area_id,
             'nivel_categoria_id' => $categoria->nivel_categoria_id,
-            'competencia_id' => 1,
+            'competencia_id' => $request->competidor['competencia_id'],
             'fecha_inscripcion' => now()
         ]);
 

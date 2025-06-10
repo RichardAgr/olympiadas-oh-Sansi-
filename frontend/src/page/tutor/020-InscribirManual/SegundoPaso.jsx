@@ -14,6 +14,8 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
   const { id } = useParams(); // ID del tutor
   const gradoId = Number(formData.grado_id);
   const [showSuccessModal, setShowSuccessModal] = useState(false); // Estado para controlar el modal
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
 
   useEffect(() => {
     // Reinicia la selección cuando cambia el área
@@ -61,6 +63,7 @@ const SegundoPaso = ({ onNext, onBack, formData }) => {
           ...formData,
           curso: cursoCompleto, // 👈 AQUI mandas el nombre completo del curso
           area: areaNombre,
+          competencia_id:competenciaId,
           categoria: selectedCategoria.nombre,
           rango: selectedRango,
         },
