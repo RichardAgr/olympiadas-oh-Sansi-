@@ -181,8 +181,8 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
     const errores = tutores.slice(0, cantidadTutores).map(validateTutor)
     setErrors(errores)
 
-     console.log("Datos a enviar:", tutoresFinal);
-  console.log("Errores de validación:", errores);
+    console.log("Datos a enviar:", tutoresFinal);
+    console.log("Errores de validación:", errores);
 
     const tieneErrores = errores.some((err) => Object.keys(err).length > 0)
     if (!tieneErrores) {
