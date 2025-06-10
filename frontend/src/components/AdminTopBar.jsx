@@ -79,7 +79,14 @@ const AdminTopBar = () => {
             Inicio
           </Link>
         </li>
-
+        <li>
+          <NavLink
+            to={`/admin`} 
+            className={({ isActive }) => (isActive ? "desactive" : "")}
+          >
+            Configurar Competencia
+          </NavLink>
+        </li>
         
 
         <li>
