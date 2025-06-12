@@ -18,9 +18,7 @@ const TutorTopBar = () => {
   const navigate = useNavigate(); // Para manejar la navegación programáticamente
   const [userMenuOpen, setUserMenuOpen] = useState(false); 
 
-  // Función para obtener el conteo de notificaciones
-  useEffect(() => {
-    const fetchNotificationCount = async () => {
+  const fetchNotificationCount = async () => {
       try {
         const response = await axios.get(`http://localhost:8000/api/notificaciones/${id}`);
         if (response.data.success && response.data.data) {
@@ -31,12 +29,22 @@ const TutorTopBar = () => {
       }
     };
 
+  // Función para obtener el conteo de notificaciones
+  useEffect(() => {
     fetchNotificationCount();
     
     // Opcional: Configurar un intervalo para actualizar las notificaciones periódicamente
-    const intervalId = setInterval(fetchNotificationCount, 60000); // Actualizar cada minuto
-    
-    return () => clearInterval(intervalId); // Limpiar el intervalo al desmontar
+    const intervalId = setInterval(fetchNotificationCount, 6000); 
+    const handleNotificationRead = () => {
+      fetchNotificationCount()
+    }
+
+    window.addEventListener("notificationRead", handleNotificationRead)
+
+    return () => {
+      clearInterval(intervalId) // Limpiar el intervalo al desmontar
+      window.removeEventListener("notificationRead", handleNotificationRead)
+    }
   }, [id]);
 
   const handleViewNotificacion = () => {
