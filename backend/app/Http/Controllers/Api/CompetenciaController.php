@@ -10,30 +10,44 @@ use Exception;
 use App\Models\Competencia;
 
 class CompetenciaController extends Controller{
-     public function getCompetenciaActiva()
-{
-    try {
-        // Obtener todas las competencias activas
-        $competencias = Competencia::where('estado', 1)->get(); // Asegúrate de usar el modelo correcto
+     public function getCompetenciaActiva(){
+        try {
+            // Obtener todas las competencias activas
+            $competencias = Competencia::where('estado', 1)->get(); // Asegúrate de usar el modelo correcto
 
-        if ($competencias->isEmpty()) {
+            if ($competencias->isEmpty()) {
+                return response()->json([
+                    'message' => 'No hay competencias activas en este momento.',
+                    'data' => []
+                ], 404);
+            }
+
+            $competenciasFormateadas = $competencias->map(function ($competencia) {
+                    return [
+                        'competencia_id' => $competencia->competencia_id,
+                        'nombre_competencia' => $competencia->nombre_competencia,
+                        'descripcion' => $competencia->descripcion,
+                        'fecha_inicio' => $competencia->fecha_inicio->format('Y-m-d'),
+                        'fecha_fin' => $competencia->fecha_fin->format('Y-m-d'),
+                        'anio_competencia' => $competencia->fecha_inicio->format('Y'),
+                        'estado' => $competencia->estado,
+                        'created_at' => $competencia->created_at->format('Y-m-d'),
+                        'updated_at' => $competencia->updated_at->format('Y-m-d'),
+                    ];
+            });
+
+
             return response()->json([
-                'message' => 'No hay competencias activas en este momento.',
-                'data' => []
-            ], 404);
+                'message' => 'Competencias activas encontradas.',
+                'data' => $competenciasFormateadas
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Ocurrió un error al obtener la competencia activa.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Competencias activas encontradas.',
-            'data' => $competencias  // Aquí devuelve TODOS los campos (id, nombre, descripción, fechas, etc.)
-        ], 200);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Ocurrió un error al obtener la competencia activa.',
-            'error' => $e->getMessage()
-        ], 500);
-    }
 }
     public function ObtenerCompetencias(): JsonResponse
     {
