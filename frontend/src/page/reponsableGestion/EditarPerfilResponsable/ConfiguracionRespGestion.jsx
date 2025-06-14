@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import perfilDefault from "../../../assets/perfil-default.png";
 import correoIcon from "../../../assets/email.png";
@@ -36,6 +37,11 @@ function ConfiguracionRespGestion() {
     nuevaContrasena: "",
     confirmarContrasena: ""
   });
+  const [mostrarContrasena, setMostrarContrasena] = useState({
+  actual: false,
+  nueva: false,
+  confirmacion: false
+});
 
   useEffect(() => {
     axios
@@ -43,6 +49,13 @@ function ConfiguracionRespGestion() {
       .then((res) => setDatosResponsable(res.data))
       .catch((err) => console.error("Error al obtener datos:", err));
   }, [id_respGest ]);
+
+  const toggleMostrarContrasena = (campo) => {
+  setMostrarContrasena(prev => ({
+    ...prev,
+    [campo]: !prev[campo]
+  }));
+};
 
   const validarCampo = (name, value) => {
     let error = "";
@@ -258,47 +271,80 @@ function ConfiguracionRespGestion() {
 
       <div className="card-perfil vertical">
         <div className="campo">
-          <label>Contraseña actual:</label>
-          <div className="input-con-icono">
-            <input
-              type="password"
-              name="contrasenaActual"
-              value={datosResponsable.contrasenaActual}
-              onChange={handleChange}
-              className={errores.contrasenaActual ? "input-error" : ""}
-            />
-          </div>
-          {errores.contrasenaActual && (
-            <span className="mensaje-error">{errores.contrasenaActual}</span>
-          )}
+              <label>Contraseña actual:</label>
+              <div className="input-con-icono">
+                <input
+                  type={mostrarContrasena.actual ? "text" : "password"}
+                  name="contrasenaActual"
+                  value={datosResponsable.contrasenaActual}
+                  onChange={handleChange}
+                  className={errores.contrasenaActual ? "input-error" : ""}
+                />
+                <button 
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => toggleMostrarContrasena('actual')}
+                >
+                  {mostrarContrasena.actual ? (
+                    <EyeOff size={20} className="text-gray-500" />
+                  ) : (
+                    <Eye size={20} className="text-gray-500" />
+                  )}
+                </button>
+              </div>
+              {errores.contrasenaActual && (
+                <span className="mensaje-error">{errores.contrasenaActual}</span>
+              )}
         </div>
 
         <div className="campo">
-          <label>Nueva contraseña:</label>
-          <div className="input-con-icono">
-            <input
-              type="password"
-              name="nuevaContrasena"
-              value={datosResponsable.nuevaContrasena}
-              onChange={handleChange}
-              className={errores.nuevaContrasena ? "input-error" : ""}
-            />
-          </div>
-          {errores.nuevaContrasena && (
-            <span className="mensaje-error">{errores.nuevaContrasena}</span>
-          )}
+            <label>Nueva contraseña:</label>
+            <div className="input-con-icono">
+              <input
+                type={mostrarContrasena.nueva ? "text" : "password"}
+                name="nuevaContrasena"
+                value={datosResponsable.nuevaContrasena}
+                onChange={handleChange}
+                className={errores.nuevaContrasena ? "input-error" : ""}
+              />
+              <button 
+                type="button"
+                className="password-toggle"
+                onClick={() => toggleMostrarContrasena('nueva')}
+              >
+                {mostrarContrasena.nueva ? (
+                  <EyeOff size={20} className="text-gray-500" />
+                ) : (
+                  <Eye size={20} className="text-gray-500" />
+                )}
+              </button>
+            </div>
+            {errores.nuevaContrasena && (
+              <span className="mensaje-error">{errores.nuevaContrasena}</span>
+            )}
         </div>
 
         <div className="campo">
           <label>Confirmar nueva contraseña:</label>
           <div className="input-con-icono">
             <input
-              type="password"
+              type={mostrarContrasena.confirmacion ? "text" : "password"}
               name="confirmarContrasena"
               value={datosResponsable.confirmarContrasena}
               onChange={handleChange}
               className={errores.confirmarContrasena ? "input-error" : ""}
             />
+            <button 
+              type="button"
+              className="password-toggle"
+              onClick={() => toggleMostrarContrasena('confirmacion')}
+            >
+              {mostrarContrasena.confirmacion ? (
+                <EyeOff size={20} className="text-gray-500" />
+              ) : (
+                <Eye size={20} className="text-gray-500" />
+              )}
+            </button>
           </div>
           {errores.confirmarContrasena && (
             <span className="mensaje-error">{errores.confirmarContrasena}</span>
