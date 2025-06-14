@@ -23,6 +23,120 @@ use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class DatosExcel extends Controller{
+
+    public function validarExcel(Request $request){
+        try {
+            // Validar la solicitud básica
+            $validator = Validator::make($request->all(), [
+                'archivo_excel' => 'required|file|mimes:xlsx,xls',
+                'numero_recibo' => 'required|string|max:20',
+                'competencia_id'=> 'required|integer|exists:competencia,competencia_id'
+            ], [
+                'archivo_excel.required' => 'Debe seleccionar un archivo Excel',
+                'archivo_excel.file' => 'El archivo debe ser un archivo válido',
+                'archivo_excel.mimes' => 'El archivo debe ser un archivo Excel (.xlsx, .xls)',
+                'numero_recibo.required' => 'El número de recibo es obligatorio',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'esValido' => false,
+                    'errores' => $validator->errors()->all()
+                ], 422);
+            }
+
+            // Obtener excel
+            $archivo = $request->file('archivo_excel');
+            
+            // Cargar el archivo Excel
+            $spreadsheet = IOFactory::load($archivo->getPathname());
+            
+            // Verificar que el archivo tenga las hojas necesarias
+            $hojas_requeridas = ['Competidores', 'Tutores', 'Relación Competidor-Tutor'];
+            foreach ($hojas_requeridas as $hoja) {
+                if (!in_array($hoja, $spreadsheet->getSheetNames())) {
+                    return response()->json([
+                        'esValido' => false,
+                        'errores' => ["El archivo Excel no contiene la hoja: {$hoja}. Asegúrate de usar la plantilla correcta."]
+                    ], 422);
+                }
+            }
+            
+            // Obtener los datos 
+            $competidores = $this->obtenerDatosCompetidores($spreadsheet->getSheetByName('Competidores'));
+            $tutores = $this->obtenerDatosTutores($spreadsheet->getSheetByName('Tutores'));
+            $relaciones = $this->obtenerDatosRelaciones($spreadsheet->getSheetByName('Relación Competidor-Tutor'));
+            
+            // Validar los datos extraídos
+            $this->validarDatosExtraidos($competidores, $tutores, $relaciones);
+            
+            // Validar que las áreas y niveles existan en la base de datos
+            $this->validarAreasYNiveles($competidores);
+            
+            // Si llegamos aquí, todo está válido
+            return response()->json([
+                'esValido' => true,
+                'mensaje' => 'El archivo Excel es válido y está listo para ser procesado',
+                'resumen' => [
+                    'total_competidores' => count($competidores),
+                    'total_tutores' => count($tutores),
+                    'total_relaciones' => count($relaciones)
+                ]
+            ], 200);
+            
+        } catch (\Exception $e) {
+            Log::error('Error al validar el archivo Excel: ' . $e->getMessage());
+            
+            return response()->json([
+                'esValido' => false,
+                'errores' => [$e->getMessage()]
+            ], 422);
+        }
+    }
+
+    /**
+     * NUEVO MÉTODO: Valida que las áreas y niveles existan en la base de datos
+     */
+    private function validarAreasYNiveles($competidores){
+        $errores = [];
+        
+        foreach ($competidores as $index => $competidor) {
+            // Validar área 1
+            $area1 = Area::where('nombre', $competidor['area1'])->first();
+            if (!$area1) {
+                $errores[] = "Competidor #{$index} (CI: {$competidor['ci']}): Área '{$competidor['area1']}' no existe en el sistema";
+            } else {
+                // Validar nivel 1
+                $nivel1 = NivelCategoria::where('nombre', $competidor['nivel1'])
+                    ->where('area_id', $area1->area_id)
+                    ->first();
+                if (!$nivel1) {
+                    $errores[] = "Competidor #{$index} (CI: {$competidor['ci']}): Nivel/Categoría '{$competidor['nivel1']}' no existe para el área '{$competidor['area1']}'";
+                }
+            }
+            
+            // Validar área 2 (si existe)
+            if (!empty($competidor['area2']) && !empty($competidor['nivel2'])) {
+                $area2 = Area::where('nombre', $competidor['area2'])->first();
+                if (!$area2) {
+                    $errores[] = "Competidor #{$index} (CI: {$competidor['ci']}): Área 2 '{$competidor['area2']}' no existe en el sistema";
+                } else {
+                    // Validar nivel 2
+                    $nivel2 = NivelCategoria::where('nombre', $competidor['nivel2'])
+                        ->where('area_id', $area2->area_id)
+                        ->first();
+                    if (!$nivel2) {
+                        $errores[] = "Competidor #{$index} (CI: {$competidor['ci']}): Nivel/Categoría 2 '{$competidor['nivel2']}' no existe para el área '{$competidor['area2']}'";
+                    }
+                }
+            }
+        }
+        
+        if (!empty($errores)) {
+            throw new \Exception(implode('; ', $errores));
+        }
+    }
+
     public function procesarExcel(Request $request){
         try {
             // Validar la solicitud

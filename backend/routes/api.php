@@ -140,6 +140,7 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
 
     // Excel
     Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
+    Route::post('/validarExcel', [DatosExcel::class, 'validarExcel']);
     
     
     // Videos Admin
