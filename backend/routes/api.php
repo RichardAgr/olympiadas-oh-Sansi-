@@ -87,6 +87,7 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::apiResource('nivel-categorias', NivelCategoriaController::class);
 
     // Tutor
+    Route::get('/tutor/{tutor_id}/competidoresBoleta', [TutorController::class, 'competidoresPorBoleta']);
     Route::get('/tutores/{tutorId}/competidoresTutor', [TutorController::class, 'competidoresTutor']);
     Route::get('/tutoresInformacion/{competenciaId}', [TutorController::class, 'obtenerInformacionTutores']);
     Route::put('/tutores/{id}/estado', [TutorController::class, 'actualizarEstadoTutor']);
