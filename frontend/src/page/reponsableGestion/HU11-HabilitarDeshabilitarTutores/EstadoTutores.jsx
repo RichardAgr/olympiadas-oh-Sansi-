@@ -25,8 +25,8 @@ function EstadoTutores() {
     setLoading(true);
     axios.get(`http://localhost:8000/api/tutoresInformacion/${competenciaId}`)
       .then((response) => {
-        if (Array.isArray(response.data)) {
-          setEstadoTutores(response.data);
+        if (Array.isArray(response.data.data)) {
+          setEstadoTutores(response.data.data);
         } else {
           console.error("La respuesta no es un arreglo");
         }

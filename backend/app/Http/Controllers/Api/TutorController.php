@@ -84,8 +84,8 @@ public function competidoresTutor($id){
 
 
 
-    public function obtenerInformacionTutores($competenciaId,Request $request){
-        try {
+public function obtenerInformacionTutores($competenciaId,Request $request){
+    try {
         // Validar que la competencia existe
         if (!Competencia::where('competencia_id', $competenciaId)->exists()) {
             return response()->json([
@@ -105,6 +105,8 @@ public function competidoresTutor($id){
                 'tutor.created_at'
             ])
             ->where('tutor.competencia_id', $competenciaId) // Filtrar por competencia
+            ->whereNotNull('tutor.password') // AGREGAR: Solo tutores con cuenta (que tienen contraseña)
+            ->where('tutor.password', '!=', '') // AGREGAR: Asegurar que la contraseña no esté vacía
             ->withCount(['competidores' => function ($query) {
             }])
             ->withCount(['competidores as competidores_habilitados_count' => function ($query) {
@@ -144,7 +146,11 @@ public function competidoresTutor($id){
             ];
         });
 
-        return response()->json($tutoresFormateados);
+        return response()->json([
+            'success' => true,
+            'data' => $tutoresFormateados,
+        ]);
+        
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -152,7 +158,7 @@ public function competidoresTutor($id){
             'error' => $e->getMessage()
         ], 500);
     }
-    }
+}
 
     
 
