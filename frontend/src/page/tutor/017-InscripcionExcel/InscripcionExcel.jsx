@@ -300,7 +300,9 @@ const InscripcionMasiva = () => {
           });
     } catch (error) {
       console.error("Error al enviar el Excel:", error)
-      setError("Error al enviar los datos: " + error.message)
+      setError("Error al enviar los datos: " + error.response.data?.error || 
+                          error.response.data?.message || 
+                          "Error desconocido al procesar el archivo")
       Swal.fire({
             icon: 'error',
             title: 'Error',
