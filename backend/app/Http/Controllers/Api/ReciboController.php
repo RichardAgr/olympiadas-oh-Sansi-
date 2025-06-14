@@ -22,7 +22,7 @@ class ReciboController extends Controller{
                 'tutor_id' => 'required|exists:tutor,tutor_id',
                 'numero_recibo' => 'required|string|max:20|unique:recibo,numero_recibo',
                 'monto_total' => 'required|numeric|min:0',
-                'fecha_emision' => 'required|date',
+/*                 'fecha_emision' => 'required|date', */
                 'ruta_pdf' => 'required|string',
                 'estado' => 'required|string|max:20',
             ], [

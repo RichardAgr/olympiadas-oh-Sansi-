@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class TutorController extends Controller{
-    public function competidoresTutor($id){
+public function competidoresTutor($id){
     try {
         $tutor = Tutor::find($id);
         if (!$tutor) {
@@ -32,42 +32,39 @@ class TutorController extends Controller{
             ], 404);
         }
 
-        $competidores = Competidor::select([
-            'competidor.competidor_id',
-            'competidor.nombres',
-            'competidor.apellidos',
-            'colegio.nombre as colegio',
-            'curso.nombre as curso',
-            'grado.nombre as grado',
-            'competidor.estado'  // Asumiendo que tienes esta columna
+        $competidores = Competidor::with([
+            'colegio:colegio_id,nombre',
+            'curso:curso_id,nombre,grado_id',
+            'curso.grado:grado_id,nombre',
+            'competidorCompetencias.area:area_id,nombre',
+            'competidorCompetencias.nivelCategoria:nivel_categoria_id,nombre'
         ])
-        ->join('tutor_competidor', 'competidor.competidor_id', '=', 'tutor_competidor.competidor_id')
-        ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
-        ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
-        ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
-        ->where('tutor_competidor.tutor_id', $id)
+        ->whereHas('tutores', function($query) use ($id) {
+            $query->where('tutor_competidor.tutor_id', $id);
+        })
         ->get();
 
         $competidoresFormateados = $competidores->map(function ($competidor) {
-            $areas = CompetidorCompetencia::select('area.nombre')
-                ->join('area', 'competidor_competencia.area_id', '=', 'area.area_id')
-                ->where('competidor_competencia.competidor_id', $competidor->competidor_id)
+            $areas = $competidor->competidorCompetencias
                 ->pluck('area.nombre')
                 ->unique()
+                ->filter()
                 ->implode(', ');
 
-            $nombreCompleto = $competidor->nombres . ' ' . $competidor->apellidos;
-
-            // Asumo que 'categoria' viene de alguna relación o tabla; si no, deja un valor fijo o vacío.
-            $categoria = 'Categoría X'; // Cambia esto según tu lógica
+            $categorias = $competidor->competidorCompetencias
+                ->pluck('nivelCategoria.nombre')
+                ->unique()
+                ->filter()
+                ->implode(', ');
 
             return [
                 'competidor_id' => $competidor->competidor_id,
-                'nombre_completo' => $nombreCompleto,
-                'colegio'=> $competidor->colegio,
+                'nombre_completo' => $competidor->nombres . ' ' . $competidor->apellidos,
+                'colegio' => $competidor->colegio->nombre ?? 'Sin colegio',
                 'area' => $areas ?: 'No asignada',
-                'categoria' => $categoria,
-                'curso' => $competidor->curso,
+                'categoria' => $categorias ?: 'Sin categoría',
+                'curso' => $competidor->curso->nombre ?? 'Sin curso',
+                'grado' => $competidor->curso->grado->nombre ?? 'Sin grado',
                 'estado' => $competidor->estado ?? 'Desconocido'
             ];
         });
@@ -81,7 +78,7 @@ class TutorController extends Controller{
             'message' => 'Error al obtener los competidores del tutor',
             'error' => $e->getMessage()
         ], 500);
-    }
+    }    
 }
 
 
