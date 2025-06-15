@@ -11,6 +11,7 @@ use App\Models\Colegio;
 use App\Models\Curso;
 use App\Models\Ubicacion;
 use App\Models\Recibo;
+use App\Models\Boleta;
 use App\Models\NivelCategoria;
 use App\Models\CompetidorCompetencia;
 use App\Models\Area;
@@ -188,115 +189,81 @@ public function cambiarPassword(Request $request, $id)
     return response()->json(['success' => true, 'message' => 'Contraseña actualizada correctamente.']);
 }
 
-public function competidoresPorBoleta(Request $request, $tutor_id)
-    {
-        try {
-            // Validar que el tutor existe
-            $tutor = Tutor::find($tutor_id);
-            if (!$tutor) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tutor no encontrado'
-                ], 404);
-            }
-
-            // Obtener el recibo_id del request o el más reciente del tutor
-            $recibo_id = $request->query('recibo_id');
-            
-            if ($recibo_id) {
-                // Verificar que el recibo pertenece al tutor
-                $recibo = Recibo::where('recibo_id', $recibo_id)
-                    ->where('tutor_id', $tutor_id)
-                    ->first();
-                    
-                if (!$recibo) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Recibo no encontrado o no pertenece al tutor'
-                    ], 404);
-                }
-            } else {
-                // Obtener el recibo más reciente del tutor
-                $recibo = Recibo::where('tutor_id', $tutor_id)
-                    ->orderBy('fecha_emision', 'desc')
-                    ->first();
-                    
-                if (!$recibo) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'No se encontraron recibos para este tutor'
-                    ], 404);
-                }
-            }
-
-            // Obtener los competidores asociados a la boleta
-            $competidores = Competidor::select([
-                'competidor.competidor_id',
-                'competidor.nombres',
-                'competidor.apellidos',
-                'colegio.nombre as colegio',
-                'curso.nombre as curso',
-                'grado.nombre as grado',
-                'competidor.estado'
-            ])
-            ->join('recibo_detalle', 'competidor.competidor_id', '=', 'recibo_detalle.competidor_id')
-            ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
-            ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
-            ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
-            ->where('recibo_detalle.recibo_id', $recibo->recibo_id)
-            ->get();
-
-            $competidoresFormateados = $competidores->map(function ($competidor) {
-                // Obtener las áreas del competidor
-                $areas = CompetidorCompetencia::select('area.nombre')
-                    ->join('area', 'competidor_competencia.area_id', '=', 'area.area_id')
-                    ->where('competidor_competencia.competidor_id', $competidor->competidor_id)
-                    ->pluck('area.nombre')
-                    ->unique()
-                    ->implode(', ');
-
-                // Obtener las categorías del competidor
-                $categorias = CompetidorCompetencia::select('nivel_categoria.nombre')
-                    ->join('nivel_categoria', 'competidor_competencia.nivel_categoria_id', '=', 'nivel_categoria.nivel_categoria_id')
-                    ->where('competidor_competencia.competidor_id', $competidor->competidor_id)
-                    ->pluck('nivel_categoria.nombre')
-                    ->unique()
-                    ->implode(', ');
-
-                $nombreCompleto = $competidor->nombres . ' ' . $competidor->apellidos;
-
-                return [
-                    'competidor_id' => $competidor->competidor_id,
-                    'nombre_completo' => $nombreCompleto,
-                    'colegio' => $competidor->colegio,
-                    'area' => $areas ?: 'No asignada',
-                    'categoria' => $categorias ?: 'Sin categoría',
-                    'curso' => $competidor->curso,
-                    'grado' => $competidor->grado,
-                    'estado' => $competidor->estado ?? 'Desconocido'
-                ];
-            });
-
-            return response()->json([
-                'success' => true,
-                'data' => $competidoresFormateados,
-                'recibo_info' => [
-                    'recibo_id' => $recibo->recibo_id,
-                    'numero_recibo' => $recibo->numero_recibo,
-                    'monto_total' => $recibo->monto_total,
-                    'fecha_emision' => $recibo->fecha_emision,
-                    'estado' => $recibo->estado
-                ]
-            ]);
-
-        } catch (\Exception $e) {
+public function competidoresPorBoleta($boleta_id){
+    try {
+        // Validar que la boleta existe
+        $boleta = Boleta::find($boleta_id);
+        if (!$boleta) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener los competidores de la boleta',
-                'error' => $e->getMessage()
-            ], 500);
+                'message' => 'Boleta no encontrada'
+            ], 404);
         }
+
+        // Obtener los competidores asociados a la boleta
+        $competidores = Competidor::select([
+            'competidor.competidor_id',
+            'competidor.nombres',
+            'competidor.apellidos',
+            'colegio.nombre as colegio',
+            'curso.nombre as curso',
+            'grado.nombre as grado',
+            'competidor.estado'
+        ])
+        ->join('competidor_competencia', 'competidor.competidor_id', '=', 'competidor_competencia.competidor_id')
+        ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
+        ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
+        ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
+        ->where('competidor_competencia.boleta_id', $boleta_id)
+        ->get();
+
+        $competidoresFormateados = $competidores->map(function ($competidor) use ($boleta_id) {
+            // Obtener las áreas del competidor para esta boleta específica
+            $areas = CompetidorCompetencia::select('area.nombre')
+                ->join('area', 'competidor_competencia.area_id', '=', 'area.area_id')
+                ->where('competidor_competencia.competidor_id', $competidor->competidor_id)
+                ->where('competidor_competencia.boleta_id', $boleta_id) // Filtrar por boleta
+                ->pluck('area.nombre')
+                ->unique()
+                ->implode(', ');
+
+            // Obtener las categorías del competidor para esta boleta específica
+            $categorias = CompetidorCompetencia::select('nivel_categoria.nombre')
+                ->join('nivel_categoria', 'competidor_competencia.nivel_categoria_id', '=', 'nivel_categoria.nivel_categoria_id')
+                ->where('competidor_competencia.competidor_id', $competidor->competidor_id)
+                ->where('competidor_competencia.boleta_id', $boleta_id) // Filtrar por boleta
+                ->pluck('nivel_categoria.nombre')
+                ->unique()
+                ->implode(', ');
+
+            $nombreCompleto = $competidor->nombres . ' ' . $competidor->apellidos;
+
+            return [
+                'id' => $competidor->competidor_id,
+                'nombre_completo' => $nombreCompleto,
+                'colegio' => $competidor->colegio,
+                'area' => $areas ?: 'No asignada',
+                'categoria' => $categorias ?: 'Sin categoría',
+                'curso' => $competidor->curso,
+                'grado' => $competidor->grado,
+                'estado' => $competidor->estado ?? 'Desconocido'
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $competidoresFormateados,
+            ]
+        );
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener los competidores de la boleta',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
 
     public function actualizarEstadoTutor(Request $request, $id){
