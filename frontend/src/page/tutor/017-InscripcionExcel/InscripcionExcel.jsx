@@ -82,7 +82,7 @@ const [isUploading, setIsUploading] = useState(false) */
   }
   const guardarRecibo = async (reciboData) => {
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/guardarDatos/recibos", reciboData)
+      const response = await axios.post("http://localhost:8000/api/guardarDatos/recibos", reciboData)
       /*  console.log('Recibo guardado en API:', response.data); */
       return response.data
     } catch (error) {
@@ -292,7 +292,7 @@ const handleNuevaInscripcion = async () => {
     formDataValidacion.append("competencia_id", competenciaId)
     formDataValidacion.append("tutor_id", idTutor)
 
-    const validationResponse = await axios.post("http://127.0.0.1:8000/api/validarExcel", formDataValidacion, {
+    const validationResponse = await axios.post("http://localhost:8000/api/validarExcel", formDataValidacion, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -314,7 +314,7 @@ const handleNuevaInscripcion = async () => {
     formDataFinal.append("competencia_id", competenciaId)
     formDataFinal.append("tutor_id", idTutor)
 
-    const response = await axios.post("http://127.0.0.1:8000/api/guardarDatos/excel", formDataFinal, {
+    const response = await axios.post("http://localhost:8000/api/guardarDatos/excel", formDataFinal, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -328,6 +328,7 @@ const handleNuevaInscripcion = async () => {
     });
 
   } catch (error) {
+    console.log(error)
     setError("Error al enviar los datos: " + (error.response?.data?.errores?.join(", ") || 
                         error.response?.data?.message || 
                         error.message ||

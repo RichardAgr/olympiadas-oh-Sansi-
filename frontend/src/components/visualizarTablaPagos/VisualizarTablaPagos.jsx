@@ -7,7 +7,8 @@ const VisualizarTablaPagos = ({payments}) => {
   const [alertOpen, setAlertOpen] = useState(false)
   const [alertMessage, setAlertMessage] = useState("")
   const navigate = useNavigate();
-  const id_respGest = useParams()
+  const {id_respGest} = useParams()
+
 
     const handleViewDetails = (payment) => {
         if (payment.estado === "Pendiente" || !payment.fecha_pago) {
