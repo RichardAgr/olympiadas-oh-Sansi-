@@ -41,7 +41,7 @@ function ConfiguracionRespGestion() {
   actual: false,
   nueva: false,
   confirmacion: false
-});
+})
 
   useEffect(() => {
     axios

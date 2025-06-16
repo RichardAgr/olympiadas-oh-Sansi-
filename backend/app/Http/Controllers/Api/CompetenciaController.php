@@ -343,21 +343,6 @@ class CompetenciaController extends Controller{
                 ], 400);
         }
 
-        // Verificar si hay cronogramas asociados
-        $cronogramas = $competencia->cronograma()->count();
-        
-        if ($cronogramas > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar la competencia porque tiene cronogramas asociados',
-                'data' => [
-                    'competencia_id' => $competencia->competencia_id,
-                    'nombre_competencia' => $competencia->nombre_competencia,
-                    'total_cronogramas' => $cronogramas
-                ]
-            ], 400);
-        }
-
         $nombreCompetencia = $competencia->nombre_competencia;
         $competenciaId = $competencia->competencia_id;
 
