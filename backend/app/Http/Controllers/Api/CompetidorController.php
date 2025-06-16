@@ -71,7 +71,7 @@ class CompetidorController extends Controller{
         ->filter()
         ->implode(', ');
 
-    $fechaNacimiento = Carbon::parse($competidor->fecha_nacimiento)->format('d/m/y');
+    $fechaNacimiento = Carbon::parse($competidor->fecha_nacimiento)->format('d/m/Y');
 
     // Obtener la ruta de la imagen de la boleta
     $rutaImagen = null;
@@ -131,7 +131,7 @@ class CompetidorController extends Controller{
     ];
 
     return response()->json($response);
-    }
+}
 
     public function actualizarEstadoCompetidor(Request $request, $id)
     {

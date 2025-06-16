@@ -75,7 +75,23 @@ function HomeRespGest() {
             </p>
           </div>
 
-          {/* Botón: Habilitar/Deshabilitar Tutores */}
+          <div className="info-box">
+            <h2>Competencias Activas</h2>
+            <p className="big-number">{competenciasActivas}</p>
+          </div>
+          {/* Total competidores habilitados */}
+          <div className="info-box">
+            <h2>Total Competidores Habilitados</h2>
+            <p className="big-number">{competidoresHabilitados}</p>
+          </div>
+          
+
+        </div>
+
+        {/* Columna derecha */}
+        <div className="right-column">
+          {/* Competencias activas */}
+        {/* Botón: Habilitar/Deshabilitar Tutores */}
           <div className="button-boxR">
             <Link to={routeTo("EstadoTutores")}>
               <button className="buttonR">Habilitar/Deshabilitar Tutores</button>
@@ -83,27 +99,13 @@ function HomeRespGest() {
             <p>Administre el estado de los tutores</p>
           </div>
 
+
           {/* Botón: Habilitar/Deshabilitar Competidores */}
           <div className="button-boxR">
             <Link to={routeTo("EstadoCompetidores")}>
               <button className="buttonR">Habilitar/Deshabilitar Competidores</button>
             </Link>
             <p>Administre el estado de los Competidores.</p>
-          </div>
-        </div>
-
-        {/* Columna derecha */}
-        <div className="right-column">
-          {/* Competencias activas */}
-          <div className="info-box">
-            <h2>Competencias Activas</h2>
-            <p className="big-number">{competenciasActivas}</p>
-          </div>
-
-          {/* Total competidores habilitados */}
-          <div className="info-box">
-            <h2>Total Competidores Habilitados</h2>
-            <p className="big-number">{competidoresHabilitados}</p>
           </div>
 
           {/* Botón: Detalle de Competidores */}
