@@ -140,8 +140,8 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::get('/recibos/tutor/{tutorId}', [ReciboController::class, 'obtenerRecibosPorTutor']);
 
     // Excel
-    /* Route::post('/validarExcelPrevio', [App\Http\Controllers\Api\DatosExcel::class, 'validarDatosExcelPrevio']); */
-    Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
+    /*     Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']); */
+    Route::post('/validarExcelPrevio', [App\Http\Controllers\Api\DatosExcel::class, 'validarDatosExcelPrevio']);
     Route::post('/validarExcel', [DatosExcel::class, 'validarExcel']);
     
     

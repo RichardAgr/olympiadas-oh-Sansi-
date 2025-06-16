@@ -292,7 +292,7 @@ const handleNuevaInscripcion = async () => {
     formDataValidacion.append("competencia_id", competenciaId)
     formDataValidacion.append("tutor_id", idTutor)
 
-    const validationResponse = await axios.post("http://localhost:8000/api/validarExcel", formDataValidacion, {
+    const validationResponse = await axios.post("http://localhost:8000/api/validarExcelPrevio", formDataValidacion, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

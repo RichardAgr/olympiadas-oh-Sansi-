@@ -200,61 +200,60 @@ public function competidoresPorBoleta($boleta_id){
             ], 404);
         }
 
-        // Obtener los competidores asociados a la boleta
-        $competidores = Competidor::select([
+        // Obtener los competidores con sus áreas específicas (un registro por área)
+        $competidoresAreas = CompetidorCompetencia::select([
             'competidor.competidor_id',
             'competidor.nombres',
             'competidor.apellidos',
             'colegio.nombre as colegio',
             'curso.nombre as curso',
             'grado.nombre as grado',
-            'competidor.estado'
+            'competidor.estado',
+            'area.nombre as area',
+            'nivel_categoria.nombre as categoria',
+            'competidor_competencia.fecha_inscripcion'
         ])
-        ->join('competidor_competencia', 'competidor.competidor_id', '=', 'competidor_competencia.competidor_id')
+        ->join('competidor', 'competidor_competencia.competidor_id', '=', 'competidor.competidor_id')
+        ->join('area', 'competidor_competencia.area_id', '=', 'area.area_id')
+        ->join('nivel_categoria', 'competidor_competencia.nivel_categoria_id', '=', 'nivel_categoria.nivel_categoria_id')
         ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
         ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
         ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
         ->where('competidor_competencia.boleta_id', $boleta_id)
+        ->orderBy('competidor.apellidos')
+        ->orderBy('competidor.nombres')
+        ->orderBy('area.nombre')
         ->get();
 
-        $competidoresFormateados = $competidores->map(function ($competidor) use ($boleta_id) {
-            // Obtener las áreas del competidor para esta boleta específica
-            $areas = CompetidorCompetencia::select('area.nombre')
-                ->join('area', 'competidor_competencia.area_id', '=', 'area.area_id')
-                ->where('competidor_competencia.competidor_id', $competidor->competidor_id)
-                ->where('competidor_competencia.boleta_id', $boleta_id) // Filtrar por boleta
-                ->pluck('area.nombre')
-                ->unique()
-                ->implode(', ');
-
-            // Obtener las categorías del competidor para esta boleta específica
-            $categorias = CompetidorCompetencia::select('nivel_categoria.nombre')
-                ->join('nivel_categoria', 'competidor_competencia.nivel_categoria_id', '=', 'nivel_categoria.nivel_categoria_id')
-                ->where('competidor_competencia.competidor_id', $competidor->competidor_id)
-                ->where('competidor_competencia.boleta_id', $boleta_id) // Filtrar por boleta
-                ->pluck('nivel_categoria.nombre')
-                ->unique()
-                ->implode(', ');
-
-            $nombreCompleto = $competidor->nombres . ' ' . $competidor->apellidos;
+        $competidoresFormateados = $competidoresAreas->map(function ($competidorArea) {
+            $nombreCompleto = $competidorArea->nombres . ' ' . $competidorArea->apellidos;
 
             return [
-                'id' => $competidor->competidor_id,
+                'competidor_id' => $competidorArea->competidor_id,
                 'nombre_completo' => $nombreCompleto,
-                'colegio' => $competidor->colegio,
-                'area' => $areas ?: 'No asignada',
-                'categoria' => $categorias ?: 'Sin categoría',
-                'curso' => $competidor->curso,
-                'grado' => $competidor->grado,
-                'estado' => $competidor->estado ?? 'Desconocido'
+                'colegio' => $competidorArea->colegio,
+                'area' => $competidorArea->area ?: 'No asignada',
+                'categoria' => $competidorArea->categoria ?: 'Sin categoría',
+                'curso' => $competidorArea->curso,
+                'grado' => $competidorArea->grado,
+                'estado' => $competidorArea->estado ?? 'Desconocido',
+                'fecha_inscripcion' => $competidorArea->fecha_inscripcion ? 
+                    Carbon::parse($competidorArea->fecha_inscripcion)->format('d/m/Y') : null
             ];
         });
 
         return response()->json([
             'success' => true,
             'data' => $competidoresFormateados,
-            ]
-        );
+            'boleta_info' => [
+                'boleta_id' => $boleta->boleta_id,
+                'numero_boleta' => $boleta->numero_boleta,
+                'nombre_pagador' => $boleta->nombre_pagador,
+                'monto_total' => $boleta->monto_total,
+                'fecha_pago' => $boleta->fecha_pago,
+                'estado' => $boleta->estado
+            ],
+        ]);
 
     } catch (\Exception $e) {
         return response()->json([

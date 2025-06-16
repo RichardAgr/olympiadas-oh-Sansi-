@@ -24,7 +24,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class DatosExcel extends Controller{
 
-    public function validarExcel(Request $request){
+    public function validarDatosExcelPrevio(Request $request){
         try {
             // Validar la solicitud básica
             $validator = Validator::make($request->all(), [

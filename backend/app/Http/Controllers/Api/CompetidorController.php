@@ -7,6 +7,7 @@ use App\Models\Competidor;
 use App\Models\CompetidorCompetencia;
 use App\Models\TutorCompetidor;
 use App\Models\Area;
+use App\Models\Tutor;
 use App\Models\Competencia;
 use App\Models\NivelCategoria;
 use Carbon\Carbon;
@@ -163,8 +164,7 @@ class CompetidorController extends Controller{
     }
 
 public function obtenerDetallesCompetidor($competenciaId, Request $request){
-
-    $competencia = Competencia::find($competenciaId);
+$competencia = Competencia::find($competenciaId);
     if (!$competencia) {
         return response()->json([
             'success' => false,
@@ -172,7 +172,12 @@ public function obtenerDetallesCompetidor($competenciaId, Request $request){
         ], 404);
     }
 
-    $query = Competidor::with(['colegio', 'curso', 'ubicacion'])
+    $query = Competidor::with([
+            'colegio', 
+            'curso', 
+            'ubicacion',
+            'tutores' // Cargar todos los tutores
+        ])
         ->whereHas('competencias', function ($q) use ($competenciaId) {
             $q->where('competidor_competencia.competencia_id', $competenciaId);
         })
@@ -190,6 +195,20 @@ public function obtenerDetallesCompetidor($competenciaId, Request $request){
                 $areaNombre = $area ? $area->nombre : '';
             }
 
+            $tutorPrincipal = $competidor->tutores->where('pivot.nivel_respansabilidad', 'Principal')->first();
+            $tutoresSecundarios = $competidor->tutores->where('pivot.nivel_respansabilidad', '!=', 'Principal');
+            
+            $tutorPrincipalNombre = '';
+            $tutoresSecundariosNombres = [];
+            
+            if ($tutorPrincipal) {
+                $tutorPrincipalNombre = $tutorPrincipal->nombres . ' ' . $tutorPrincipal->apellidos;
+            }
+            
+            foreach ($tutoresSecundarios as $tutorSec) {
+                $tutoresSecundariosNombres[] = $tutorSec->nombres . ' ' . $tutorSec->apellidos;
+            }
+
             return [
                 'id' => $competidor->competidor_id,
                 'nombre' => $competidor->nombres,
@@ -203,6 +222,9 @@ public function obtenerDetallesCompetidor($competenciaId, Request $request){
                 'provincia' => $competidor->ubicacion->provincia ?? '',
                 'fecha' => $competencia->pivot->fecha_inscripcion ?? '',
                 'competencia_id' => $competencia->competencia_id,
+                'tutor_principal' => $tutorPrincipalNombre, 
+                'tutores_secundarios' => implode(', ', $tutoresSecundariosNombres),
+                'tutor' => $tutorPrincipalNombre ?: (count($tutoresSecundariosNombres) > 0 ? $tutoresSecundariosNombres[0] : 'Sin tutor'),
             ];
         });
     });

@@ -10,6 +10,7 @@ function ListaInscritos() {
   const [inscritos, setInscritos] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("Todos los cursos");
+  
   useEffect(() => {
     axios.get(`http://localhost:8000/api/detallesCompetidor/${competenciaId}`)
       .then(response => {
@@ -32,41 +33,64 @@ function ListaInscritos() {
       selectedCourse === "Todos los cursos" ||
       inscrito.curso === selectedCourse;
 
-    return coincideBusqueda && coincideCurso;
+    // Filtra solo los inscritos habilitados
+    const estaHabilitado = inscrito.estado === "Habilitado";
+
+    return coincideBusqueda && coincideCurso && estaHabilitado;
   });
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("Lista de Inscritos", 14, 20);
+const exportToPDF = () => {
+  const doc = new jsPDF({
+    orientation: 'landscape',
+    unit: 'mm',
+    format: 'a4'
+  });
 
-    autoTable(doc, {
-      startY: 30,
-      head: [["Apellidos", "Nombres", "Colegio", "Departamento", "Provincia"]],
-      body: inscritosFiltrados.map((inscrito) => [
-        inscrito.apellido,
-        inscrito.nombre,
-        inscrito.colegio,
-        inscrito.departamento,
-        inscrito.provincia,
-      ]),
-      styles: { fontSize: 10, cellPadding: 3 },
-      headStyles: { fillColor: [255, 255, 255], textColor: 0 },
-    });
+  doc.setFontSize(16);
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const textWidth = doc.getStringUnitWidth("Lista de Inscritos Habilitados") * doc.internal.getFontSize() / doc.internal.scaleFactor;
+  const textX = (pageWidth - textWidth) / 2;
+  
+  doc.text("Lista de Inscritos Habilitados", textX, 20);
 
-    doc.save("lista_inscritos.pdf");
-  };
+  autoTable(doc, {
+    startY: 30,
+    head: [["Apellidos", "Nombres", "Colegio", "Departamento", "Provincia", "Tutor"]],
+    body: inscritosFiltrados.map((inscrito) => [
+      inscrito.apellido,
+      inscrito.nombre,
+      inscrito.colegio,
+      inscrito.departamento,
+      inscrito.provincia,
+      inscrito.tutor_principal || 'N/A'
+    ]),
+    styles: { 
+      fontSize: 10, 
+      cellPadding: 3,
+      overflow: 'linebreak'
+    },
+    headStyles: { 
+      fillColor: [255, 255, 255], 
+      textColor: 0,
+      fontStyle: 'bold'
+    },
+    margin: { top: 20 },
+    tableWidth: 'auto'
+  });
+
+  doc.save("lista_inscritos_habilitados.pdf");
+};
 
   return (
     <div className="lista-container">
-      <h1 className="liesta-Incritos-tituloX">Lista de inscritos</h1>
+      <h1 className="liesta-Incritos-tituloX">Lista de inscritos habilitados</h1>
 
       <div className="search-bar">
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Buscar"
+          placeholder="Buscar por nombre o apellido"
         />
       </div>
 
@@ -105,6 +129,8 @@ function ListaInscritos() {
             <th>Curso</th>
             <th>Departamento</th>
             <th>Provincia</th>
+            <th>Competencia</th>
+            <th>Tutor Principal</th>
           </tr>
         </thead>
         <tbody>
@@ -117,12 +143,14 @@ function ListaInscritos() {
                 <td>{inscrito.curso}</td>
                 <td>{inscrito.departamento}</td>
                 <td>{inscrito.provincia}</td>
+                <td>{inscrito.area}</td>
+                <td>{inscrito.tutor_principal}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="5" style={{ textAlign: "center" }}>
-                No se encontraron resultados.
+              <td colSpan="6" style={{ textAlign: "center" }}>
+                No se encontraron inscritos habilitados.
               </td>
             </tr>
           )}

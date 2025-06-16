@@ -14,8 +14,8 @@ const TablaCompetidores = ({students}) => {
           </tr>
         </thead>
         <tbody>
-          {students.map((student) => (
-            <tr key={student.id}>
+          {students.map((student, index) => (
+            <tr key={index}>
               <td className="icon-cell">
                 <div className="user-icon">
                   <span>{student.nombre_completo.charAt(0)}</span>
