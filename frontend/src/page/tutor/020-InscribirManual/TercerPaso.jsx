@@ -1,25 +1,23 @@
 import { useState, useEffect } from "react"
-import PropTypes from "prop-types"
-import { CheckCircle, Loader } from "lucide-react"
-import jsPDF from "jspdf"
-import autoTable from "jspdf-autotable"
-import "./TercerPaso.css"
 import { useParams } from "react-router-dom"
 import axios from "axios"
+import Swal from "sweetalert2"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
+import "./InscribirManual.css"
 
 // Función para subir a Cloudinary
 const uploadToCloudinary = async (file, onProgress = () => {}) => {
   try {
-    const uploadPreset = "veltrixImg" 
-    const cloudName = "dq5zw44wg" 
-    const axiosSinAuth = axios.create();
+    const uploadPreset = "veltrixImg"
+    const cloudName = "dq5zw44wg"
+    const axiosSinAuth = axios.create()
 
     const formData = new FormData()
     formData.append("file", file)
     formData.append("upload_preset", uploadPreset)
-    formData.append("resource_type", "auto") // Importante: esto permite a Cloudinary detectar automáticamente el tipo de archivo
+    formData.append("resource_type", "auto")
 
-    // Usar axios para la subida
     const response = await axiosSinAuth.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
       onUploadProgress: (progressEvent) => {
         if (progressEvent.total) {
@@ -36,63 +34,35 @@ const uploadToCloudinary = async (file, onProgress = () => {}) => {
   }
 }
 
-function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
-  // Ahora puedes usar el competidorId aquí
-  /* console.log("ID del competidor en el tercer paso:", competidorId); */
+function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
   const [datosCargados, setDatosCargados] = useState(false)
   const [cantidadTutores, setCantidadTutores] = useState(1)
-  const user = JSON.parse(localStorage.getItem('user'));
-  const competenciaId = user?.competencia_id;
+  const [competidorId, setCompetidorId] = useState(null) // Nuevo estado para el ID del competidor
+  const user = JSON.parse(localStorage.getItem("user"))
+  const competenciaId = user?.competencia_id
+
   const [tutores, setTutores] = useState([
-    { nombres: "",competencia_id:competenciaId, apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" },
-    { nombres: "",competencia_id:competenciaId, apellidos: "", correo_electronico: "", telefono: "", ci: "", relacion: "" }
+    {
+      nombres: "",
+      competencia_id: competenciaId,
+      apellidos: "",
+      correo_electronico: "",
+      telefono: "",
+      ci: "",
+      relacion: "",
+    },
+    {
+      nombres: "",
+      competencia_id: competenciaId,
+      apellidos: "",
+      correo_electronico: "",
+      telefono: "",
+      ci: "",
+      relacion: "",
+    },
   ])
+
   const { id } = useParams()
- useEffect(() => {
-  let isMounted = true;
-
-  const fetchTutorData = async () => {
-    try {
-      if (datosCargados) return; // evita recarga innecesaria
-
-      const response = await axios.get(`http://localhost:8000/api/datosTutor/${id}`);
-/*       console.log("Respuesta Axios tutor:", response.data); */
-
-      const tutorData = response.data.data; // ✅ CORREGIDO AQUÍ
-
-      if (isMounted) {
-        setTutores((prev) => {
-          const updated = [...prev];
-          updated[0] = {
-            ...updated[0],
-            nombres: tutorData.nombres || "",
-            apellidos: tutorData.apellidos || "",
-            correo_electronico: tutorData.correo_electronico || "",
-            telefono: tutorData.telefono || "",
-            ci: tutorData.ci || "",
-            relacion: "", 
-          };
-          return updated;
-        });
-        setDatosCargados(true); // ✅ marca como cargado
-      }
-    } catch (error) {
-      console.error("Error al cargar datos del tutor:", error);
-    }
-  };
-
-  fetchTutorData();
-
-  return () => {
-    isMounted = false;
-  };
-}, [id, datosCargados]);
-
-
-  const tutoresFinal = tutores.slice(0, cantidadTutores).map((t, i) => ({
-    ...t,
-    nivel_responsabilidad: i === 0 ? "principal" : "secundario",
-  }))
   const [errors, setErrors] = useState([{}, {}])
   const [exito, setExito] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
@@ -100,116 +70,248 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
   const [pdfUploaded, setPdfUploaded] = useState(false)
   const [cloudinaryUrl, setCloudinaryUrl] = useState("")
   const [boletaData, setBoletaData] = useState(null)
+  const [esNuevaInscripcion, setEsNuevaInscripcion] = useState(true) // Nuevo estado
 
-  // Función para obtener los datos de la boleta
-  const obtenerDatosBoleta = async () => {
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchTutorData = async () => {
+      try {
+        if (datosCargados) return
+
+        setIsLoading(true)
+        const response = await axios.get(`http://localhost:8000/api/datosTutor/${id}`)
+        const tutorData = response.data.data
+
+        if (isMounted) {
+          setTutores((prev) => {
+            const updated = [...prev]
+            updated[0] = {
+              ...updated[0],
+              nombres: tutorData.nombres || "",
+              apellidos: tutorData.apellidos || "",
+              correo_electronico: tutorData.correo_electronico || "",
+              telefono: tutorData.telefono || "",
+              ci: tutorData.ci || "",
+              relacion: "",
+            }
+            return updated
+          })
+          setDatosCargados(true)
+        }
+      } catch (error) {
+        console.error("Error al cargar datos del tutor:", error)
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudieron cargar los datos del tutor",
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchTutorData()
+
+    return () => {
+      isMounted = false
+    }
+  }, [id, datosCargados, setIsLoading])
+
+  const tutoresFinal = tutores.slice(0, cantidadTutores).map((t, i) => ({
+    ...t,
+    nivel_responsabilidad: i === 0 ? "principal" : "secundario",
+  }))
+
+  const obtenerDatosBoleta = async (competidorIdParam) => {
     try {
-      const response = await axios.post(`http://localhost:8000/api/boleta/generar/${competidorId}`)
+      const response = await axios.post(`http://localhost:8000/api/boleta/generar/${competidorIdParam}`)
       const data = response.data.boleta
-
       setBoletaData(data)
       return data
     } catch (error) {
-      console.error("Error al obtener datos de la recibo:", error)
+      console.error("Error al obtener datos de la boleta:", error)
       throw error
     }
   }
 
   const handleTutorChange = (index, e) => {
     const { name, value } = e.target
-/*       console.log(`Cambio tutor[${index}] campo '${name}':`, value); */
     const nuevosTutores = [...tutores]
     nuevosTutores[index][name] = value
     setTutores(nuevosTutores)
+
+    // Limpiar errores cuando el usuario empiece a escribir
+    if (errors[index][name]) {
+      const nuevosErrores = [...errors]
+      nuevosErrores[index] = { ...nuevosErrores[index], [name]: "" }
+      setErrors(nuevosErrores)
+    }
   }
 
   const validateTutor = (tutor) => {
-    const err = {};
-    const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
-    const soloNumerosRegex = /^[0-9]+$/;
-  
-    // Validación: nombres
+    const err = {}
+    const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/
+    const soloNumerosRegex = /^[0-9]+$/
+
     if (!tutor.nombres.trim()) {
-      err.nombres = "El nombre es obligatorio.";
+      err.nombres = "El nombre es obligatorio."
     } else if (tutor.nombres.trim().length < 3) {
-      err.nombres = "El nombre debe tener al menos 3 caracteres.";
+      err.nombres = "El nombre debe tener al menos 3 caracteres."
     } else if (!soloLetrasRegex.test(tutor.nombres)) {
-      err.nombres = "El nombre solo debe contener letras.";
+      err.nombres = "El nombre solo debe contener letras."
     }
-  
-    // Validación: apellidos
+
     if (!tutor.apellidos.trim()) {
-      err.apellidos = "El apellido es obligatorio.";
+      err.apellidos = "El apellido es obligatorio."
     } else if (tutor.apellidos.trim().length < 6) {
-      err.apellidos = "El apellido debe tener al menos 6 caracteres.";
+      err.apellidos = "El apellido debe tener al menos 6 caracteres."
     } else if (!soloLetrasRegex.test(tutor.apellidos)) {
-      err.apellidos = "El apellido solo debe contener letras.";
+      err.apellidos = "El apellido solo debe contener letras."
     }
-  
-    // Validación: correo electrónico
+
     if (!tutor.correo_electronico.trim()) {
-      err.correo = "El correo electrónico es obligatorio.";
+      err.correo_electronico = "El correo electrónico es obligatorio."
     } else if (!/\S+@\S+\.\S+/.test(tutor.correo_electronico)) {
-      err.correo = "Ingrese un correo electrónico válido.";
+      err.correo_electronico = "Ingrese un correo electrónico válido."
     }
-  
-    // Validación: teléfono
+
     if (!tutor.telefono.trim()) {
-      err.telefono = "El teléfono es obligatorio.";
+      err.telefono = "El teléfono es obligatorio."
     } else if (!soloNumerosRegex.test(tutor.telefono)) {
-      err.telefono = "El teléfono solo debe contener números.";
+      err.telefono = "El teléfono solo debe contener números."
     } else if (tutor.telefono.trim().length < 7) {
-      err.telefono = "El teléfono debe tener al menos 7 dígitos.";
+      err.telefono = "El teléfono debe tener al menos 7 dígitos."
     }
-  
-    // Validación: carnet de identidad
+
     if (!tutor.ci.trim()) {
-      err.ci = "El CI es obligatorio.";
+      err.ci = "El CI es obligatorio."
     } else if (!soloNumerosRegex.test(tutor.ci)) {
-      err.ci = "El CI solo debe contener números.";
+      err.ci = "El CI solo debe contener números."
     } else if (tutor.ci.trim().length < 7) {
-      err.ci = "El CI debe tener al menos 7 dígitos.";
+      err.ci = "El CI debe tener al menos 7 dígitos."
     }
-  
-    // Validación: relación
+
     if (!tutor.relacion) {
-      err.relacion = "Debe seleccionar una relación con el estudiante.";
+      err.relacion = "Debe seleccionar una relación con el estudiante."
     }
-  
-    return err;
-  };
+
+    return err
+  }
+
+  // Función para registrar el competidor
+  const registrarCompetidor = async () => {
+    try {
+      const datosCompetidor = {
+        competidor: {
+          nombres: formData.nombres,
+          apellidos: formData.apellidos,
+          ci: formData.ci,
+          fecha_nacimiento: formData.fecha_nacimiento,
+          colegio: formData.colegio,
+          curso: formData.curso_completo,
+          area: formData.area,
+          categoria: formData.categoria,
+          departamento: formData.departamento,
+          provincia: formData.provincia,
+          competencia_id: competenciaId,
+          rango: formData.rango,
+        },
+      }
+
+      const response = await axios.post(`http://localhost:8000/api/tutor/${id}/inscribir-competidor`, datosCompetidor, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
+
+      // Verificar si es una nueva inscripción o competidor existente
+      setEsNuevaInscripcion(response.data.es_nueva_inscripcion || false)
+
+      return response.data.competidor_id
+    } catch (error) {
+      console.error("Error al registrar competidor:", error)
+
+      // Manejar errores específicos
+      if (error.response?.status === 422) {
+        const errorMessage = error.response.data.message || "Error de validación"
+        throw new Error(errorMessage)
+      }
+
+      throw error
+    }
+  }
 
   const handleSubmit = async () => {
     const errores = tutores.slice(0, cantidadTutores).map(validateTutor)
     setErrors(errores)
 
-    console.log("Datos a enviar:", tutoresFinal);
-    console.log("Errores de validación:", errores);
-
     const tieneErrores = errores.some((err) => Object.keys(err).length > 0)
-    if (!tieneErrores) {
-      try {
-        const response = await axios.post(
-          `http://localhost:8000/api/tutor/${id}/registrar-tutores`,
-          { tutores: tutoresFinal, competidor_id: competidorId },
-        )
-        setExito(true)
 
-        await obtenerDatosBoleta()
-      } catch (error) {
-        console.error("Error al registrar tutores:", error.response?.data || error.message)
-        console.log("Detalles de error:", error/* .response?.data?.errors */)
+    if (tieneErrores) {
+      Swal.fire({
+        icon: "error",
+        title: "Errores en el formulario",
+        text: "Por favor, corrige los errores antes de continuar",
+      })
+      return
+    }
+
+    try {
+      setIsLoading(true)
+
+      // PASO 1: Registrar/Inscribir el competidor
+      const nuevoCompetidorId = await registrarCompetidor()
+      setCompetidorId(nuevoCompetidorId)
+
+      // PASO 2: Registrar tutores (solo si es un competidor completamente nuevo)
+      if (esNuevaInscripcion) {
+        await axios.post(`http://localhost:8000/api/tutor/${id}/registrar-tutores`, {
+          tutores: tutoresFinal,
+          competidor_id: nuevoCompetidorId,
+        })
       }
+
+      // PASO 3: Obtener datos de la boleta
+      await obtenerDatosBoleta(nuevoCompetidorId)
+
+      setExito(true)
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Inscripción completada!",
+        text: esNuevaInscripcion
+          ? "El competidor ha sido registrado exitosamente"
+          : "El competidor ha sido inscrito en una nueva área",
+        timer: 2000,
+        showConfirmButton: false,
+      })
+    } catch (error) {
+      console.error("Error en el proceso de inscripción:", error)
+
+      let errorMessage = "Error en el proceso de inscripción."
+      if (error.message) {
+        errorMessage = error.message
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      }
+
+      Swal.fire({
+        icon: "error",
+        title: "Error en el registro",
+        text: errorMessage,
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const generarPDFBlob = async (data) => {
-    const boletaInfo = data || (boletaData ? { ...boletaData } : await obtenerDatosBoleta())
+    const boletaInfo = data || boletaData
 
-    // Asegurarse de que boletaData tiene los datos necesarios
     if (!boletaInfo || !boletaInfo.numero_boleta || !boletaInfo.nombre_pagador || !boletaInfo.monto_total) {
-      console.error("Datos incompletos para generar la recibo:", boletaInfo)
-      throw new Error("Datos incompletos para generar la recibo")
+      throw new Error("Datos incompletos para generar la boleta")
     }
 
     const doc = new jsPDF()
@@ -230,17 +332,16 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
     doc.text(boletaInfo.area || "No especificado", 45, 52)
 
     doc.text("Nombre :", 14, 59)
-    doc.text(boletaInfo.nombre_pagador || "No especificado", 45, 59) // Nombre del tutor
+    doc.text(boletaInfo.nombre_pagador || "No especificado", 45, 59)
 
     doc.text("Monto Total (Bs) :", 14, 66)
     doc.text(boletaInfo.monto_total.toString() || "0", 60, 66)
 
-    // Preparar los datos de los competidores para la tabla
     const bodyData = boletaInfo.competidores.map((c, i) => [
       `${i + 1}.`,
-      c.nombre, // Nombre del competidor
-      c.categoria || "No especificada", // Si la categoría es nula o vacía, mostrar un valor por defecto
-      c.monto.toFixed(2), // Monto con 2 decimales
+      c.nombre,
+      c.categoria || "No especificada",
+      c.monto.toFixed(2),
     ])
 
     autoTable(doc, {
@@ -251,7 +352,6 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
       headStyles: { fillColor: [255, 255, 255], textColor: 0 },
     })
 
-    // Devolver el PDF como blob
     return doc.output("blob")
   }
 
@@ -260,25 +360,19 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
       setIsUploading(true)
       setUploadProgress(0)
 
-      // Generar el PDF como blob
       const pdfBlob = await generarPDFBlob()
-
-      // Crear un archivo a partir del blob
       const file = new File([pdfBlob], `recibo_${boletaData.numero_boleta}.pdf`, { type: "application/pdf" })
 
-      // Subir a Cloudinary
       const uploadResult = await uploadToCloudinary(file, (progress) => {
         setUploadProgress(progress)
       })
 
-      // Guardar la URL de Cloudinary
       setCloudinaryUrl(uploadResult.secure_url)
       setPdfUploaded(true)
 
-      // Guardar la URL en la base de datos y enviar datos a la API
       await guardarURLEnBaseDeDatos(uploadResult.secure_url)
 
-      // Descargar el PDF para el usuario
+      // Descargar el PDF
       const url = window.URL.createObjectURL(pdfBlob)
       const link = document.createElement("a")
       link.href = url
@@ -287,10 +381,23 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
       link.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(link)
-    } catch (error) {
-      console.error("Error al generar y subir la recibo:", error)
 
-      // Incluso si hay un error, intentar enviar los datos a la API con una URL predeterminada
+      Swal.fire({
+        icon: "success",
+        title: "¡Boleta generada!",
+        text: "La boleta se ha descargado y guardado correctamente",
+        timer: 2000,
+        showConfirmButton: false,
+      })
+    } catch (error) {
+      console.error("Error al generar y subir la boleta:", error)
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo generar la boleta",
+      })
+
       if (boletaData) {
         try {
           await guardarURLEnBaseDeDatos("https://res.cloudinary.com/dq5zw44wg/raw/upload/error_pdf.pdf")
@@ -303,74 +410,55 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
     }
   }
 
-  // Función para guardar la URL en la base de datos
   const guardarURLEnBaseDeDatos = async (url) => {
-  try {
-    // Verifica que todos los datos requeridos existen
-    if (!boletaData || !boletaData.numero_boleta || !boletaData.monto_total) {
-      throw new Error("Datos de la boleta incompletos");
-    }
-
-    const data = {
-      tutor_id: id, 
-      ci: competidorCI,
-      numero_recibo: boletaData.numero_boleta,
-      monto_total: boletaData.monto_total,
-      fecha_emision: new Date().toISOString().split("T")[0], 
-      ruta_pdf: url,
-      estado: "Pendiente",
-    };
-
-
-    const response = await axios.post(
-      "http://localhost:8000/api/guardarDatos/recibosInscripcionManual",
-      data,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        }
+    try {
+      if (!boletaData || !boletaData.numero_boleta || !boletaData.monto_total) {
+        throw new Error("Datos de la boleta incompletos")
       }
-    );
 
-    return response.data;
+      const data = {
+        tutor_id: id,
+        ci: competidorCI,
+        numero_recibo: boletaData.numero_boleta,
+        monto_total: boletaData.monto_total,
+        fecha_emision: new Date().toISOString().split("T")[0],
+        ruta_pdf: url,
+        estado: "Pendiente",
+      }
 
-  } catch (error) {
-    console.error("Error al guardar datos:", error);
-    if (error.response) {
-      console.error("Detalles del error:", error.response.data);
+      const response = await axios.post("http://localhost:8000/api/guardarDatos/recibosInscripcionManual", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      return response.data
+    } catch (error) {
+      console.error("Error al guardar datos:", error)
+      throw error
     }
-    throw error;
   }
-  };
 
   const handleNuevaInscripcion = async () => {
-    // Si el PDF no se ha subido aún, subirlo automáticamente
     if (!pdfUploaded && boletaData) {
       try {
         setIsUploading(true)
         setUploadProgress(0)
 
-
-        const pdfBlob = await generarPDFBlob(boletaData) 
-
-        // Crear un archivo a partir del blob
+        const pdfBlob = await generarPDFBlob(boletaData)
         const file = new File([pdfBlob], `recibo_${boletaData.numero_boleta}.pdf`, { type: "application/pdf" })
 
-        // Subir a Cloudinary
         const uploadResult = await uploadToCloudinary(file, (progress) => {
           setUploadProgress(progress)
         })
 
-        // Guardar la URL de Cloudinary
         setCloudinaryUrl(uploadResult.secure_url)
         setPdfUploaded(true)
 
-        // Guardar la URL en la base de datos y enviar datos a la API
         await guardarURLEnBaseDeDatos(uploadResult.secure_url)
       } catch (error) {
-        console.error("Error al subir automáticamente la recibo:", error)
+        console.error("Error al subir automáticamente la boleta:", error)
 
-        // Incluso si hay un error, intentar enviar los datos a la API con una URL predeterminada
         if (boletaData) {
           try {
             await guardarURLEnBaseDeDatos("https://res.cloudinary.com/dq5zw44wg/raw/upload/error_pdf.pdf")
@@ -380,7 +468,6 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
         }
       } finally {
         setIsUploading(false)
-        // Continuar con la nueva inscripción
         onReset()
       }
     } else if (pdfUploaded && cloudinaryUrl) {
@@ -398,90 +485,91 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
 
   const renderTutorCard = (index) => {
     const tutor = tutores[index]
-/*     console.log(`Renderizando tutor[${index}]:`, tutor); */
     const err = errors[index] || {}
 
     return (
-      <div className="tutor-card" key={index}>
-        <div className="form-group">
+      <div className="tutor-card-InscMan" key={index}>
+        <h3 style={{ marginBottom: "15px", color: "#333" }}>{index === 0 ? "Tutor Principal" : "Tutor Secundario"}</h3>
+
+        <div className="form-group-InscMan">
           <label>Nombres:</label>
-          <div className="form-control-wrapper">
+          <div className="form-control-wrapper-InscMan">
             <input
               type="text"
               name="nombres"
               value={tutor.nombres}
               onChange={(e) => handleTutorChange(index, e)}
-              className={err.nombres ? "input-error" : ""}
+              className={err.nombres ? "input-error-InscMan" : ""}
               disabled={index === 0}
             />
-            {err.nombres && <div className="errorpaso3">{err.nombres}</div>}
+            {err.nombres && <div className="error-message-InscMan">{err.nombres}</div>}
           </div>
         </div>
 
-        <div className="form-group">
+        <div className="form-group-InscMan">
           <label>Apellidos:</label>
-          <div className="form-control-wrapper">
+          <div className="form-control-wrapper-InscMan">
             <input
               type="text"
               name="apellidos"
               value={tutor.apellidos}
               onChange={(e) => handleTutorChange(index, e)}
-              className={err.apellidos ? "input-error" : ""}
+              className={err.apellidos ? "input-error-InscMan" : ""}
               disabled={index === 0}
             />
-            {err.apellidos && <div className="errorpaso3">{err.apellidos}</div>}
+            {err.apellidos && <div className="error-message-InscMan">{err.apellidos}</div>}
           </div>
         </div>
 
-        <div className="form-group">
+        <div className="form-group-InscMan">
           <label>Correo Electrónico:</label>
-          <div className="form-control-wrapper">
+          <div className="form-control-wrapper-InscMan">
             <input
               type="email"
               name="correo_electronico"
               value={tutor.correo_electronico}
               onChange={(e) => handleTutorChange(index, e)}
-              className={err.correo ? "input-error" : ""}
+              className={err.correo_electronico ? "input-error-InscMan" : ""}
               disabled={index === 0}
             />
-            {err.correo_electronico && <div className="errorpaso3">{err.correo_electronico}</div>}
+            {err.correo_electronico && <div className="error-message-InscMan">{err.correo_electronico}</div>}
           </div>
         </div>
 
-        <div className="form-group">
+        <div className="form-group-InscMan">
           <label>Teléfono:</label>
-          <div className="form-control-wrapper">
+          <div className="form-control-wrapper-InscMan">
             <input
               type="text"
               name="telefono"
               value={tutor.telefono}
               onChange={(e) => handleTutorChange(index, e)}
-              className={err.telefono ? "input-error" : ""}
+              className={err.telefono ? "input-error-InscMan" : ""}
               disabled={index === 0}
             />
-            {err.telefono && <div className="errorpaso3">{err.telefono}</div>}
+            {err.telefono && <div className="error-message-InscMan">{err.telefono}</div>}
           </div>
         </div>
 
-        <div className="form-group">
+        <div className="form-group-InscMan">
           <label>CI:</label>
-          <div className="form-control-wrapper">
+          <div className="form-control-wrapper-InscMan">
             <input
               type="text"
               name="ci"
               value={tutor.ci}
               onChange={(e) => handleTutorChange(index, e)}
-              className={err.ci ? "input-error" : ""}
+              className={err.ci ? "input-error-InscMan" : ""}
               disabled={index === 0}
             />
-            {err.ci && <div className="errorpaso3">{err.ci}</div>}
+            {err.ci && <div className="error-message-InscMan">{err.ci}</div>}
           </div>
         </div>
 
-        <div className="form-group">
+        <div className="form-group-InscMan">
           <label>Relación con el competidor:</label>
-          <div className="form-control-wrapper">
-            <div className="radio-group">
+          <div className="form-control-wrapper-InscMan">
+            <div className="radio-group-InscMan">
               {["Padre", "Madre", "Profesor"].map((rel) => (
                 <label key={rel}>
                   <input
@@ -499,7 +587,7 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
                 </label>
               ))}
             </div>
-            {err.relacion && <div className="errorpaso3">{err.relacion}</div>}
+            {err.relacion && <div className="error-message-InscMan">{err.relacion}</div>}
           </div>
         </div>
       </div>
@@ -507,28 +595,56 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
   }
 
   const renderExito = () => (
-    <div className="exito-container">
-      <CheckCircle size={80} color="#3b82f6" strokeWidth={2} />
-      <h2>¡Competidor inscrito con éxito!</h2>
+    <div className="exito-container-InscMan">
+      <div
+        style={{
+          width: "80px",
+          height: "80px",
+          borderRadius: "50%",
+          backgroundColor: "#3b82f6",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: "0 auto 20px",
+        }}
+      >
+        <div
+          style={{
+            width: "30px",
+            height: "50px",
+            borderRight: "5px solid white",
+            borderBottom: "5px solid white",
+            transform: "rotate(45deg)",
+            marginTop: "-10px",
+          }}
+        ></div>
+      </div>
+
+      <h2>{esNuevaInscripcion ? "¡Competidor registrado con éxito!" : "¡Competidor inscrito en nueva área!"}</h2>
 
       {isUploading ? (
-        <div className="upload-progress">
-          <Loader className="animate-spin" size={24} />
+        <div className="upload-progress-InscMan">
+          <div className="spinner-InscMan"></div>
           <p>Subiendo PDF a Cloudinary: {uploadProgress}%</p>
         </div>
       ) : (
         <>
-          <button className="descargar-button" onClick={generarBoletaPDF} disabled={isUploading}>
+          <button className="descargar-button-InscMan" onClick={generarBoletaPDF} disabled={isUploading}>
             {pdfUploaded ? "Descargar Recibo" : "Generar y Descargar Recibo"}
           </button>
-          <button className="descargar-button" onClick={handleNuevaInscripcion} disabled={isUploading}>
+          <button
+            className="descargar-button-InscMan"
+            onClick={handleNuevaInscripcion}
+            disabled={isUploading}
+            style={{ marginLeft: "10px" }}
+          >
             Nueva inscripción
           </button>
         </>
       )}
 
       {pdfUploaded && (
-        <div className="pdf-uploaded-info">
+        <div className="pdf-uploaded-info-InscMan">
           <p>PDF subido correctamente a Cloudinary</p>
         </div>
       )}
@@ -536,16 +652,17 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
   )
 
   return (
-    <div className="tercer-paso-container">
+    <div className="inscribir-manual-form-InscMan">
       {exito ? (
         renderExito()
       ) : (
         <>
-          <h2>Datos de Tutor (es)</h2>
-          <div className="form-group">
+          <h2 style={{ marginBottom: "20px", fontSize: "24px", fontWeight: "600" }}>Datos de Tutor(es)</h2>
+
+          <div className="form-group-InscMan">
             <label>Cantidad de tutores:</label>
             <select
-              className="short-select"
+              className="short-select-InscMan"
               value={cantidadTutores}
               onChange={(e) => setCantidadTutores(Number(e.target.value))}
             >
@@ -557,25 +674,18 @@ function TercerPaso({ competidorId,competidorCI, onBack, onSubmit, onReset }) {
           {renderTutorCard(0)}
           {cantidadTutores === 2 && renderTutorCard(1)}
 
-          <div className="submit-button-container">
-            <button className="submit-button cancel" onClick={onBack}>
+          <div className="submit-button-container-InscMan">
+            <button className="submit-button-InscMan cancel" onClick={onBack} type="button">
               Volver
             </button>
-            <button className="submit-button" onClick={handleSubmit}>
-              Guardar
+            <button className="submit-button-InscMan" onClick={handleSubmit} type="button">
+              Finalizar Inscripción
             </button>
           </div>
         </>
       )}
     </div>
   )
-}
-
-TercerPaso.propTypes = {
-  competidorId: PropTypes.number.isRequired,
-  onBack: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  onReset: PropTypes.func.isRequired,
 }
 
 export default TercerPaso

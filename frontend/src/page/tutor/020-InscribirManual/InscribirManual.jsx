@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import "./InscribirManual.css";
-import SegundoPaso from "./SegundoPaso";
-import TercerPaso from "./TercerPaso";
-import axios from "axios";
+import { useState } from "react"
+import { useParams } from "react-router-dom"
+import Swal from "sweetalert2"
+import SegundoPaso from "./SegundoPaso"
+import TercerPaso from "./TercerPaso"
+import "./InscribirManual.css"
 
 function InscribirManual() {
-  const {id}=useParams()
-  const [competidorId, setCompetidorId] = useState(null);
+  const { id } = useParams()
+  const [competidorId, setCompetidorId] = useState(null)
   const [formData, setFormData] = useState({
     nombres: "",
     apellidos: "",
@@ -18,220 +18,275 @@ function InscribirManual() {
     nivel: "",
     departamento: "",
     provincia: "",
-    //area: "",
-    //categoria: "",
-    //rango: "",
-  });
+  })
 
-  const [currentStep, setCurrentStep] = useState(1);
-  const [errors, setErrors] = useState({});
-  const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1)
+  const [errors, setErrors] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+
+    // Limpiar error del campo cuando el usuario empiece a escribir
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" })
+    }
+  }
+
+  const validateStep1 = () => {
+    const newErrors = {}
+    const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/
+    const soloNumerosRegex = /^[0-9]+$/
+
+    // Validación: nombres
+    if (!formData.nombres.trim()) {
+      newErrors.nombres = "El nombre es obligatorio."
+    } else if (formData.nombres.trim().length < 3) {
+      newErrors.nombres = "El nombre debe tener al menos 3 caracteres."
+    } else if (!soloLetrasRegex.test(formData.nombres)) {
+      newErrors.nombres = "El nombre solo debe contener letras."
+    }
+
+    // Validación: apellidos
+    if (!formData.apellidos.trim()) {
+      newErrors.apellidos = "El apellido es obligatorio."
+    } else if (formData.apellidos.trim().length < 3) {
+      newErrors.apellidos = "El apellido debe tener al menos 3 caracteres."
+    } else if (!soloLetrasRegex.test(formData.apellidos)) {
+      newErrors.apellidos = "El apellido solo debe contener letras."
+    }
+
+    // Validación: carnet de identidad (ci)
+    if (!formData.ci.trim()) {
+      newErrors.ci = "El CI es obligatorio."
+    } else if (!soloNumerosRegex.test(formData.ci)) {
+      newErrors.ci = "El CI solo debe contener números."
+    } else if (formData.ci.trim().length < 7) {
+      newErrors.ci = "El CI debe tener al menos 7 dígitos."
+    }
+
+    // Validación: colegio
+    if (!formData.colegio.trim()) {
+      newErrors.colegio = "El nombre del colegio es obligatorio."
+    } else if (formData.colegio.trim().length < 5) {
+      newErrors.colegio = "El nombre del colegio debe tener al menos 5 caracteres."
+    } else if (!soloLetrasRegex.test(formData.colegio)) {
+      newErrors.colegio = "El nombre del colegio solo debe contener letras."
+    }
+
+    // Validación: provincia
+    if (!formData.provincia.trim()) {
+      newErrors.provincia = "La provincia es obligatoria."
+    } else if (formData.provincia.trim().length < 4) {
+      newErrors.provincia = "La provincia debe tener al menos 4 caracteres."
+    } else if (!soloLetrasRegex.test(formData.provincia)) {
+      newErrors.provincia = "La provincia solo debe contener letras."
+    }
+
+    // Validación: curso
+    if (!formData.curso) {
+      newErrors.curso = "Debe seleccionar un curso."
+    }
+
+    // Validación: nivel educativo
+    if (!formData.nivel) {
+      newErrors.nivel = "Debe seleccionar un nivel educativo."
+    }
+
+    // Validación: departamento
+    if (!formData.departamento) {
+      newErrors.departamento = "Debe seleccionar un departamento."
+    }
+
+    // Validación: fecha de nacimiento
+    const selectedYear = new Date(formData.fecha_nacimiento).getFullYear()
+    const currentYear = new Date().getFullYear()
+
+    if (!formData.fecha_nacimiento) {
+      newErrors.fecha_nacimiento = "Debe ingresar una fecha de nacimiento."
+    } else if (selectedYear > currentYear - 5) {
+      newErrors.fecha_nacimiento = "La fecha de nacimiento indica que es demasiado joven (mínimo 5 años)."
+    }
+
+    return newErrors
+  }
+
+  const calcularGradoId = (nivel, curso) => {
+    if (nivel === "Primaria") return Number(curso)
+    if (nivel === "Secundaria") return 6 + Number(curso)
+    return null
+  }
 
   const handleSubmitStep1 = (e) => {
-    e.preventDefault();
-    const newErrors = {};
-
-const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
-const soloNumerosRegex = /^[0-9]+$/;
-
-// Validación: nombres
-if (!formData.nombres.trim()) {
-  newErrors.nombres = "El nombre es obligatorio.";
-} else if (formData.nombres.trim().length < 3) {
-  newErrors.nombres = "El nombre debe tener al menos 3 caracteres.";
-} else if (!soloLetrasRegex.test(formData.nombres)) {
-  newErrors.nombres = "El nombre solo debe contener letras.";
-}
-
-// Validación: apellidos
-if (!formData.apellidos.trim()) {
-  newErrors.apellidos = "El apellido es obligatorio.";
-} else if (formData.apellidos.trim().length < 6) {
-  newErrors.apellidos = "El apellido debe tener al menos 6 caracteres.";
-} else if (!soloLetrasRegex.test(formData.apellidos)) {
-  newErrors.apellidos = "El apellido solo debe contener letras.";
-}
-
-// Validación: carnet de identidad (ci)
-if (!formData.ci.trim()) {
-  newErrors.ci = "El CI es obligatorio.";
-} else if (!soloNumerosRegex.test(formData.ci)) {
-  newErrors.ci = "El CI solo debe contener números.";
-} else if (formData.ci.trim().length < 7) {
-  newErrors.ci = "El CI debe tener al menos 7 dígitos.";
-}
-
-// Validación: colegio
-if (!formData.colegio.trim()) {
-  newErrors.colegio = "El nombre del colegio es obligatorio.";
-} else if (formData.colegio.trim().length < 5) {
-  newErrors.colegio = "El nombre del colegio debe tener al menos 5 caracteres.";
-} else if (!soloLetrasRegex.test(formData.colegio)) {
-  newErrors.colegio = "El nombre del colegio solo debe contener letras.";
-}
-
-// Validación: provincia
-if (!formData.provincia.trim()) {
-  newErrors.provincia = "La provincia es obligatoria.";
-} else if (formData.provincia.trim().length < 4) {
-  newErrors.provincia = "La provincia debe tener al menos 4 caracteres.";
-} else if (!soloLetrasRegex.test(formData.provincia)) {
-  newErrors.provincia = "La provincia solo debe contener letras.";
-}
-
-// Validación: curso
-if (!formData.curso) {
-  newErrors.curso = "Debe seleccionar un curso.";
-}
-
-// Validación: nivel educativo
-if (!formData.nivel) {
-  newErrors.nivel = "Debe seleccionar un nivel educativo.";
-}
-
-// Validación: departamento
-if (!formData.departamento) {
-  newErrors.departamento = "Debe seleccionar un departamento.";
-}
-
-// Validación: fecha de nacimiento
-const selectedYear = new Date(formData.fecha_nacimiento).getFullYear();
-const currentYear = new Date().getFullYear();
-
-if (!formData.fecha_nacimiento) {
-  newErrors.fecha_nacimiento = "Debe ingresar una fecha de nacimiento.";
-} else if (selectedYear > currentYear - 5) {
-  newErrors.fecha_nacimiento = "La fecha de nacimiento indica que es demasiado joven (mínimo 5 años).";
-}
-
-setErrors(newErrors);
-
-    // Traducción básica de curso + nivel a grado_id (ajusta esto si tu backend usa otros ID)
-const calcularGradoId = (nivel, curso) => {
-  if (nivel === "Primaria") return Number(curso); // 1 a 6
-  if (nivel === "Secundaria") return 6 + Number(curso); // 7 a 12
-  return null;
-};
-
-const grado_id = calcularGradoId(formData.nivel, formData.curso);
-
-// Validación extra (por si acaso)
-//if (!grado_id) {
-  //alert("No se pudo determinar el grado escolar.");
-//  return;
-//}
-
-setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
+    e.preventDefault()
+    const newErrors = validateStep1()
+    setErrors(newErrors)
 
     if (Object.keys(newErrors).length === 0) {
-      setCurrentStep(2);
+      const grado_id = calcularGradoId(formData.nivel, formData.curso)
+      setFormData((prev) => ({ ...prev, grado_id }))
+      setCurrentStep(2)
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Datos guardados!",
+        text: "Procede a seleccionar el área de competencia",
+        timer: 1500,
+        showConfirmButton: false,
+      })
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error en los datos",
+        text: "Por favor, corrige los errores en el formulario",
+      })
     }
-  };
+  }
 
   const handleBack = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1));
-  };
+    setCurrentStep((prev) => Math.max(prev - 1, 1))
+  }
 
-  const handlePaso2Next = (paso2Data, nuevoCompetidorId) => {
-    setFormData((prev) => ({ ...prev, ...paso2Data }));
-    setCompetidorId(Number(nuevoCompetidorId));
-    setCurrentStep(3);
-  };
+  const handlePaso2Next = (datosCompetencia, nuevoCompetidorId) => {
+    // Combinar datos del competidor con datos de competencia
+    setFormData((prev) => ({
+      ...prev,
+      ...datosCompetencia,
+    }))
+    // competidorId será null hasta el paso 3
+    setCompetidorId(nuevoCompetidorId)
+    setCurrentStep(3)
+  }
 
-  const handleCancelarConfirmado = () => {
-    setMostrarModalCancelar(false);
-    window.history.back(); // O redirige a otra ruta si prefieres
-  };
+  const handleCancelar = () => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Se perderán todos los datos ingresados hasta ahora",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, cancelar",
+      cancelButtonText: "No, continuar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.history.back()
+      }
+    })
+  }
+
+  const handleReset = () => {
+    setCurrentStep(1)
+    setFormData({
+      nombres: "",
+      apellidos: "",
+      ci: "",
+      fecha_nacimiento: "",
+      colegio: "",
+      curso: "",
+      nivel: "",
+      departamento: "",
+      provincia: "",
+    })
+    setCompetidorId(null)
+    setErrors({})
+  }
 
   return (
-    <div className="inscribir-manual-container">
-      <h1 className="inscribir-manual-title">Inscripción Competidor</h1>
+    <div className="inscribir-manual-container-InscMan">
+      {isLoading && (
+        <div className="loading-overlay-InscMan">
+          <div className="loading-content-InscMan">
+            <div className="spinner-InscMan"></div>
+            <p>Procesando...</p>
+          </div>
+        </div>
+      )}
+
+      <h1 className="inscribir-manual-title-InscMan">Inscripción Competidor</h1>
 
       {/* Pasos */}
-      <div className="steps">
-        <div className="step">
-          <div className={`step-number ${currentStep === 1 ? "active" : ""}`}>01</div>
+      <div className="steps-InscMan">
+        <div className="step-InscMan">
+          <div className={`step-number-InscMan ${currentStep === 1 ? "active" : ""}`}>01</div>
         </div>
-        <div className="step-line"></div>
-        <div className="step">
-          <div className={`step-number ${currentStep === 2 ? "active" : ""}`}>02</div>
+        <div className="step-line-InscMan"></div>
+        <div className="step-InscMan">
+          <div className={`step-number-InscMan ${currentStep === 2 ? "active" : ""}`}>02</div>
         </div>
-        <div className="step-line"></div>
-        <div className="step">
-          <div className={`step-number ${currentStep === 3 ? "active" : ""}`}>03</div>
+        <div className="step-line-InscMan"></div>
+        <div className="step-InscMan">
+          <div className={`step-number-InscMan ${currentStep === 3 ? "active" : ""}`}>03</div>
         </div>
       </div>
 
       {currentStep === 1 && (
-        <form onSubmit={handleSubmitStep1} className="inscribir-manual-form">
-          <div className="form-group">
+        <form onSubmit={handleSubmitStep1} className="inscribir-manual-form-InscMan">
+          <div className="form-group-InscMan">
             <label>Nombres del competidor:</label>
             <input
               type="text"
               name="nombres"
               value={formData.nombres}
               onChange={handleChange}
-              className={errors.nombres ? "input-error" : ""}
+              className={errors.nombres ? "input-error-InscMan" : ""}
             />
-            {errors.nombres && <div className="errorins">{errors.nombres}</div>}
+            {errors.nombres && <div className="error-message-InscMan">{errors.nombres}</div>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-InscMan">
             <label>Apellidos del competidor:</label>
             <input
               type="text"
               name="apellidos"
               value={formData.apellidos}
               onChange={handleChange}
-              className={errors.apellidos ? "input-error" : ""}
+              className={errors.apellidos ? "input-error-InscMan" : ""}
             />
-            {errors.apellidos && <div className="errorins">{errors.apellidos}</div>}
+            {errors.apellidos && <div className="error-message-InscMan">{errors.apellidos}</div>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-InscMan">
             <label>CI del competidor:</label>
             <input
               type="text"
               name="ci"
               value={formData.ci}
               onChange={handleChange}
-              className={errors.ci ? "input-error" : ""}
+              className={errors.ci ? "input-error-InscMan" : ""}
             />
-            {errors.ci && <div className="errorins">{errors.ci}</div>}
+            {errors.ci && <div className="error-message-InscMan">{errors.ci}</div>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-InscMan">
             <label>Fecha de Nacimiento:</label>
             <input
               type="date"
               name="fecha_nacimiento"
               value={formData.fecha_nacimiento}
               onChange={handleChange}
+              className={errors.fecha_nacimiento ? "input-error-InscMan" : ""}
             />
-            {errors.fecha_nacimiento && <div className="errorins">{errors.fecha_nacimiento}</div>}
+            {errors.fecha_nacimiento && <div className="error-message-InscMan">{errors.fecha_nacimiento}</div>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-InscMan">
             <label>Colegio:</label>
             <input
               type="text"
               name="colegio"
               value={formData.colegio}
               onChange={handleChange}
-              className={errors.colegio ? "input-error" : ""}
+              className={errors.colegio ? "input-error-InscMan" : ""}
             />
-            {errors.colegio && <div className="errorins">{errors.colegio}</div>}
+            {errors.colegio && <div className="error-message-InscMan">{errors.colegio}</div>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-InscMan">
             <label>Curso:</label>
             <select name="curso" value={formData.curso} onChange={handleChange}>
-              <option value="">Ninguno</option>
+              <option value="">Seleccionar curso</option>
               <option value="1">1ro</option>
               <option value="2">2do</option>
               <option value="3">3ro</option>
@@ -239,13 +294,13 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
               <option value="5">5to</option>
               <option value="6">6to</option>
             </select>
-            {errors.curso && <div className="errorins">{errors.curso}</div>}
+            {errors.curso && <div className="error-message-InscMan">{errors.curso}</div>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-InscMan">
             <label>Nivel Educativo:</label>
-            <div className="vertical-radio-group">
-              <div className="radio-option-vertical">
+            <div className="vertical-radio-group-InscMan">
+              <div className="radio-option-vertical-InscMan">
                 <input
                   type="radio"
                   id="primaria"
@@ -256,7 +311,7 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
                 />
                 <label htmlFor="primaria">Primaria</label>
               </div>
-              <div className="radio-option-vertical">
+              <div className="radio-option-vertical-InscMan">
                 <input
                   type="radio"
                   id="secundaria"
@@ -268,17 +323,13 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
                 <label htmlFor="secundaria">Secundaria</label>
               </div>
             </div>
-            {errors.nivel && <div className="errorins">{errors.nivel}</div>}
+            {errors.nivel && <div className="error-message-InscMan">{errors.nivel}</div>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-InscMan">
             <label>Departamento:</label>
-            <select
-              name="departamento"
-              value={formData.departamento}
-              onChange={handleChange}
-            >
-              <option value="">Ninguno</option>
+            <select name="departamento" value={formData.departamento} onChange={handleChange}>
+              <option value="">Seleccionar departamento</option>
               <option value="Beni">Beni</option>
               <option value="Chuquisaca">Chuquisaca</option>
               <option value="Cochabamba">Cochabamba</option>
@@ -289,26 +340,26 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
               <option value="Santa Cruz">Santa Cruz</option>
               <option value="Tarija">Tarija</option>
             </select>
-            {errors.departamento && <div className="errorins">{errors.departamento}</div>}
+            {errors.departamento && <div className="error-message-InscMan">{errors.departamento}</div>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-InscMan">
             <label>Provincia:</label>
             <input
               type="text"
               name="provincia"
               value={formData.provincia}
               onChange={handleChange}
-              className={errors.provincia ? "input-error" : ""}
+              className={errors.provincia ? "input-error-InscMan" : ""}
             />
-            {errors.provincia && <div className="errorins">{errors.provincia}</div>}
+            {errors.provincia && <div className="error-message-InscMan">{errors.provincia}</div>}
           </div>
 
-          <div className="submit-button-container">
-            <button type="button" className="submit-button cancel" onClick={() => setMostrarModalCancelar(true)}>
+          <div className="submit-button-container-InscMan">
+            <button type="button" className="submit-button-InscMan cancel" onClick={handleCancelar}>
               Cancelar
             </button>
-            <button type="submit" className="submit-button">
+            <button type="submit" className="submit-button-InscMan">
               Siguiente
             </button>
           </div>
@@ -316,53 +367,20 @@ setFormData(prev => ({ ...prev, grado_id })); // Agregamos grado_id aquí
       )}
 
       {currentStep === 2 && (
-        <SegundoPaso
-          formData={formData}
-          //setFormData={setFormData}
-          onBack={handleBack}
-          onNext={handlePaso2Next}
-        />
+        <SegundoPaso formData={formData} onBack={handleBack} onNext={handlePaso2Next} setIsLoading={setIsLoading} />
       )}
 
       {currentStep === 3 && (
         <TercerPaso
-        step={setCurrentStep}
-        onBack={handleBack}
-        competidorId={competidorId} // Pasar competidorId aquí
-        competidorCI={formData.ci}
-        onReset={() => {
-          setCurrentStep(1);
-          setFormData({});
-          setCompetidorId(null);
-        }}
-        
-      />
+          formData={formData} // Pasar todos los datos del formulario
+          competidorCI={formData.ci}
+          onBack={handleBack}
+          onReset={handleReset}
+          setIsLoading={setIsLoading}
+        />
       )}
-      {mostrarModalCancelar && (
-  <div className="modal-overlayCancelarManual">
-    <div className="modalCancelarManual">
-      <h2>¿Estás seguro que deseas cancelar?</h2>
-      <p>Se perderán los datos ingresados hasta ahora.</p>
-      <div className="modal-buttonsCancelarManual">
-        <button
-          className="btn-eliminar2CancelarManual"
-          onClick={handleCancelarConfirmado}
-        >
-          Sí
-        </button>
-        <button
-          className="btn-eliminar2CancelarManual"
-          onClick={() => setMostrarModalCancelar(false)}
-        >
-          No
-        </button>
-      </div>
     </div>
-  </div>
-)}
-
-    </div>
-  );
+  )
 }
 
-export default InscribirManual;
+export default InscribirManual

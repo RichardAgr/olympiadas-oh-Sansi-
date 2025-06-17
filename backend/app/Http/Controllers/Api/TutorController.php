@@ -595,101 +595,150 @@ public function verPerfilTutor($id)
         }
     }
 
- public function inscribirCompetidor(Request $request, $tutor_id)
-{
-    $validator = Validator::make($request->all(), [
-        'competidor.nombres' => 'required|string',
-        'competidor.apellidos' => 'required|string',
-        'competidor.ci' => 'required|string|unique:competidor,ci',
-        'competidor.fecha_nacimiento' => 'required|date',
-        'competidor.colegio' => 'required|string',
-        'competidor.competencia_id'=> 'required|integer',
-        'competidor.curso' => 'required|string',
-        'competidor.area' => 'required|string',
-        'competidor.categoria' => 'required|string',
-        'competidor.departamento' => 'required|string',
-        'competidor.provincia' => 'required|string',
-        'tutores' => 'nullable|array|min:1',
-        'tutores.*.ci' => 'required|string',
-        'tutores.*.relacion' => 'required|string'
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-    }
-
-    DB::beginTransaction();
-    try {
-        // Buscar o crear ubicación
-        $ubicacion = Ubicacion::firstOrCreate(
-            [
-                'departamento' => $request->competidor['departamento'],
-                'provincia' => $request->competidor['provincia']
-            ]
-        );
-
-        // Colegio
-        $colegio = Colegio::firstOrCreate(
-            ['nombre' => $request->competidor['colegio']],
-            ['ubicacion_id' => $ubicacion->ubicacion_id, 'telefono' => '00000000']
-        );
-
-        // Curso
-        $curso = Curso::firstOrCreate(
-            ['nombre' => $request->competidor['curso']],
-            ['grado_id' => 1, 'estado' => 1]
-        );
-
-        // Crear competidor
-        $competidor = Competidor::create([
-            'nombres' => $request->competidor['nombres'],
-            'apellidos' => $request->competidor['apellidos'],
-            'ci' => $request->competidor['ci'],
-            'fecha_nacimiento' => $request->competidor['fecha_nacimiento'],
-            'colegio_id' => $colegio->colegio_id,
-            'curso_id' => $curso->curso_id,
-            'ubicacion_id' => $ubicacion->ubicacion_id,
-            'estado' => 'Pendiente'
-        ]);
-
-        // Validar área y categoría
-        $area = Area::whereRaw('LOWER(nombre) = ?', [strtolower($request->competidor['area'])])->first();
-        if (!$area) {
-            return response()->json(['success' => false, 'message' => 'Área inválida.', 'field' => 'area'], 422);
+public function inscribirCompetidor(Request $request, $tutor_id){
+        $competidorExistente = Competidor::where('ci', $request->competidor['ci'])->first();
+        
+        if ($competidorExistente) {
+            $validator = Validator::make($request->all(), [
+                'competidor.nombres' => 'required|string',
+                'competidor.apellidos' => 'required|string',
+                'competidor.ci' => 'required|string',
+                'competidor.fecha_nacimiento' => 'required|date',
+                'competidor.colegio' => 'required|string',
+                'competidor.competencia_id'=> 'required|integer',
+                'competidor.curso' => 'required|string',
+                'competidor.area' => 'required|string',
+                'competidor.categoria' => 'required|string',
+                'competidor.departamento' => 'required|string',
+                'competidor.provincia' => 'required|string',
+                'tutores' => 'nullable|array|min:1',
+                'tutores.*.ci' => 'required|string',
+                'tutores.*.relacion' => 'required|string'
+            ]);
+        } else {
+            // Si no existe, usamos la validación original con unique
+            $validator = Validator::make($request->all(), [
+                'competidor.nombres' => 'required|string',
+                'competidor.apellidos' => 'required|string',
+                'competidor.ci' => 'required|string|unique:competidor,ci',
+                'competidor.fecha_nacimiento' => 'required|date',
+                'competidor.colegio' => 'required|string',
+                'competidor.competencia_id'=> 'required|integer',
+                'competidor.curso' => 'required|string',
+                'competidor.area' => 'required|string',
+                'competidor.categoria' => 'required|string',
+                'competidor.departamento' => 'required|string',
+                'competidor.provincia' => 'required|string',
+                'tutores' => 'nullable|array|min:1',
+                'tutores.*.ci' => 'required|string',
+                'tutores.*.relacion' => 'required|string'
+            ]);
         }
 
-        $categoria = NivelCategoria::whereRaw('LOWER(nombre) = ?', [strtolower($request->competidor['categoria'])])->first();
-        if (!$categoria) {
-            return response()->json(['success' => false, 'message' => 'Categoría inválida.', 'field' => 'categoria'], 422);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        // Insertar en tabla de competencia
-        DB::table('competidor_competencia')->insert([
-            'competidor_id' => $competidor->competidor_id,
-            'area_id' => $area->area_id,
-            'nivel_categoria_id' => $categoria->nivel_categoria_id,
-            'competencia_id' => $request->competidor['competencia_id'],
-            'fecha_inscripcion' => now()
-        ]);
+        DB::beginTransaction();
+        try {
+            // Validar área y categoría primero
+            $area = Area::whereRaw('LOWER(nombre) = ?', [strtolower($request->competidor['area'])])->first();
+            if (!$area) {
+                return response()->json(['success' => false, 'message' => 'Área inválida.', 'field' => 'area'], 422);
+            }
 
-        DB::commit();
+            $categoria = NivelCategoria::whereRaw('LOWER(nombre) = ?', [strtolower($request->competidor['categoria'])])->first();
+            if (!$categoria) {
+                return response()->json(['success' => false, 'message' => 'Categoría inválida.', 'field' => 'categoria'], 422);
+            }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Competidor registrado correctamente.',
-            'competidor_id' => $competidor->competidor_id
-        ]);
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al registrar el competidor.',
-            'error' => $e->getMessage()
-        ], 500);
-    }
+            if ($competidorExistente) {
+                $inscripcionExistente = DB::table('competidor_competencia')
+                    ->where('competidor_id', $competidorExistente->competidor_id)
+                    ->where('area_id', $area->area_id)
+                    ->where('competencia_id', $request->competidor['competencia_id'])
+                    ->exists();
+
+                if ($inscripcionExistente) {
+                    return response()->json([
+                        'success' => false, 
+                        'message' => 'El competidor ya está inscrito en esta área para esta competencia.'
+                    ], 422);
+                }
+
+                $cantidadInscripciones = DB::table('competidor_competencia')
+                    ->where('competidor_id', $competidorExistente->competidor_id)
+                    ->where('competencia_id', $request->competidor['competencia_id'])
+                    ->count();
+
+                if ($cantidadInscripciones >= 2) {
+                    return response()->json([
+                        'success' => false, 
+                        'message' => 'El competidor ya está inscrito en el máximo de 2 áreas permitidas.'
+                    ], 422);
+                }
+
+                $competidor = $competidorExistente;
+            } else {
+                $ubicacion = Ubicacion::firstOrCreate(
+                    [
+                        'departamento' => $request->competidor['departamento'],
+                        'provincia' => $request->competidor['provincia']
+                    ]
+                );
+
+                // Colegio
+                $colegio = Colegio::firstOrCreate(
+                    ['nombre' => $request->competidor['colegio']],
+                    ['ubicacion_id' => $ubicacion->ubicacion_id, 'telefono' => '00000000']
+                );
+
+                // Curso
+                $curso = Curso::firstOrCreate(
+                    ['nombre' => $request->competidor['curso']],
+                    ['grado_id' => 1, 'estado' => 1]
+                );
+
+                // Crear competidor
+                $competidor = Competidor::create([
+                    'nombres' => $request->competidor['nombres'],
+                    'apellidos' => $request->competidor['apellidos'],
+                    'ci' => $request->competidor['ci'],
+                    'fecha_nacimiento' => $request->competidor['fecha_nacimiento'],
+                    'colegio_id' => $colegio->colegio_id,
+                    'curso_id' => $curso->curso_id,
+                    'ubicacion_id' => $ubicacion->ubicacion_id,
+                    'estado' => 'Pendiente'
+                ]);
+            }
+
+            DB::table('competidor_competencia')->insert([
+                'competidor_id' => $competidor->competidor_id,
+                'area_id' => $area->area_id,
+                'nivel_categoria_id' => $categoria->nivel_categoria_id,
+                'competencia_id' => $request->competidor['competencia_id'],
+                'fecha_inscripcion' => now()
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => $competidorExistente ? 
+                    'Competidor inscrito en nueva área correctamente.' : 
+                    'Competidor registrado correctamente.',
+                'competidor_id' => $competidor->competidor_id,
+                'es_nueva_inscripcion' => !$competidorExistente
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al registrar el competidor.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
 }
-
-
 
     public function getOpcionesCompetencia()
 {
@@ -730,6 +779,44 @@ public function verPerfilTutor($id)
         ], 500);
     }
 }
+
+public function verificarAreasRegistradas($ci, $competencia_id)
+{
+    try {
+        // Buscar el competidor por CI
+        $competidor = Competidor::where('ci', $ci)->first();
+        
+        if (!$competidor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Competidor no encontrado',
+                'areas_registradas' => []
+            ], 404);
+        }
+
+        // Obtener las áreas en las que ya está registrado este competidor para esta competencia
+        $areasRegistradas = DB::table('competidor_competencia as cc')
+            ->join('area as a', 'cc.area_id', '=', 'a.area_id')
+            ->where('cc.competidor_id', $competidor->competidor_id)
+            ->where('cc.competencia_id', $competencia_id)
+            ->select('a.area_id as id', 'a.nombre')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'competidor_id' => $competidor->competidor_id,
+            'areas_registradas' => $areasRegistradas->toArray()
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al verificar áreas registradas',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 public function registrarTutores(Request $request)
 {
     $validator = Validator::make($request->all(), [
