@@ -8,7 +8,7 @@ const SegundoPaso = ({ onNext, onBack, formData, setIsLoading }) => {
   const [areas, setAreas] = useState([])
   const [categorias, setCategorias] = useState([])
   const [grados, setGrados] = useState([])
-  const [areasRegistradas, setAreasRegistradas] = useState([]) // Nuevo estado para áreas ya registradas
+  const [areasRegistradas, setAreasRegistradas] = useState([]) 
   const [selectedAreaId, setSelectedAreaId] = useState(null)
   const [selectedCategoria, setSelectedCategoria] = useState(null)
   const [selectedRango, setSelectedRango] = useState("")
@@ -55,7 +55,7 @@ const SegundoPaso = ({ onNext, onBack, formData, setIsLoading }) => {
     cargarDatos()
   }, [setIsLoading, formData.ci, competenciaId])
 
-  // Nueva función para verificar si el competidor ya existe y obtener sus áreas registradas
+//si el competidor ya existe y obtener sus áreas registradas
   const verificarCompetidorExistente = async () => {
     try {
       const response = await axios.get(
