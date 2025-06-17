@@ -6,38 +6,60 @@ import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
 import "./InscribirManual.css"
 
-// Función para subir a Cloudinary
-const uploadToCloudinary = async (file, onProgress = () => {}) => {
-  try {
-    const uploadPreset = "veltrixImg"
-    const cloudName = "dq5zw44wg"
-    const axiosSinAuth = axios.create()
+// Función mejorada para subir a Cloudinary con reintentos
+const uploadToCloudinary = async (file, onProgress = () => {}, maxRetries = 3) => {
+  let lastError = null
 
-    const formData = new FormData()
-    formData.append("file", file)
-    formData.append("upload_preset", uploadPreset)
-    formData.append("resource_type", "auto")
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`Intento ${attempt} de subida a Cloudinary...`)
 
-    const response = await axiosSinAuth.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
-      onUploadProgress: (progressEvent) => {
-        if (progressEvent.total) {
-          const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
-          onProgress(progress)
-        }
-      },
-    })
+      const uploadPreset = "veltrixImg"
+      const cloudName = "dq5zw44wg"
+      const axiosSinAuth = axios.create({
+        timeout: 60000, // 60 segundos de timeout
+      })
 
-    return response.data
-  } catch (error) {
-    console.error("Error al subir a Cloudinary:", error)
-    throw error
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("upload_preset", uploadPreset)
+      formData.append("resource_type", "auto")
+
+      const response = await axiosSinAuth.post(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, formData, {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100)
+            onProgress(progress)
+          }
+        },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+
+      console.log("Subida exitosa a Cloudinary:", response.data.secure_url)
+      return response.data
+    } catch (error) {
+      lastError = error
+      console.error(`Error en intento ${attempt}:`, error.message)
+
+      if (attempt < maxRetries) {
+        // Esperar antes del siguiente intento (backoff exponencial)
+        const delay = Math.pow(2, attempt) * 1000
+        console.log(`Esperando ${delay}ms antes del siguiente intento...`)
+        await new Promise((resolve) => setTimeout(resolve, delay))
+      }
+    }
   }
+
+  console.error("Todos los intentos de subida fallaron")
+  throw lastError
 }
 
 function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
   const [datosCargados, setDatosCargados] = useState(false)
   const [cantidadTutores, setCantidadTutores] = useState(1)
-  const [competidorId, setCompetidorId] = useState(null) // Nuevo estado para el ID del competidor
+  const [competidorId, setCompetidorId] = useState(null)
   const user = JSON.parse(localStorage.getItem("user"))
   const competenciaId = user?.competencia_id
 
@@ -70,7 +92,7 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
   const [pdfUploaded, setPdfUploaded] = useState(false)
   const [cloudinaryUrl, setCloudinaryUrl] = useState("")
   const [boletaData, setBoletaData] = useState(null)
-  const [esNuevaInscripcion, setEsNuevaInscripcion] = useState(true) // Nuevo estado
+  const [esNuevaInscripcion, setEsNuevaInscripcion] = useState(true)
 
   useEffect(() => {
     let isMounted = true
@@ -123,12 +145,35 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
     nivel_responsabilidad: i === 0 ? "principal" : "secundario",
   }))
 
+  // Función mejorada para obtener datos de boleta con información del área
   const obtenerDatosBoleta = async (competidorIdParam) => {
     try {
-      const response = await axios.post(`http://localhost:8000/api/boleta/generar/${competidorIdParam}`)
+      console.log("Obteniendo datos de boleta para competidor:", competidorIdParam)
+      console.log("Datos del área:", formData.area, formData.area_id)
+
+      const response = await axios.post(`http://localhost:8000/api/boleta/generar/${competidorIdParam}`, {
+        area_id: formData.area_id,
+        area_nombre: formData.area,
+        categoria: formData.categoria,
+        tutor_principal: {
+          nombres: tutores[0].nombres,
+          apellidos: tutores[0].apellidos,
+        },
+      })
+
       const data = response.data.boleta
-      setBoletaData(data)
-      return data
+
+      // Asegurar que la boleta tenga la información del área y tutor principal
+      const boletaCompleta = {
+        ...data,
+        area: formData.area || data.area || "No especificado",
+        nombre_pagador:
+          `${tutores[0].nombres} ${tutores[0].apellidos}`.trim() || data.nombre_pagador || "No especificado",
+      }
+
+      console.log("Datos de boleta obtenidos:", boletaCompleta)
+      setBoletaData(boletaCompleta)
+      return boletaCompleta
     } catch (error) {
       console.error("Error al obtener datos de la boleta:", error)
       throw error
@@ -273,7 +318,7 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
         })
       }
 
-      // PASO 3: Obtener datos de la boleta
+      // PASO 3: Obtener datos de la boleta (después de tener los tutores registrados)
       await obtenerDatosBoleta(nuevoCompetidorId)
 
       setExito(true)
@@ -307,15 +352,19 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
     }
   }
 
+  // Función mejorada para generar PDF con información completa
   const generarPDFBlob = async (data) => {
     const boletaInfo = data || boletaData
 
-    if (!boletaInfo || !boletaInfo.numero_boleta || !boletaInfo.nombre_pagador || !boletaInfo.monto_total) {
+    console.log("Generando PDF con datos:", boletaInfo)
+
+    if (!boletaInfo || !boletaInfo.numero_boleta || !boletaInfo.monto_total) {
       throw new Error("Datos incompletos para generar la boleta")
     }
 
     const doc = new jsPDF()
 
+    // Encabezado
     doc.setFontSize(10)
     doc.text("UNIVERSIDAD MAYOR DE SAN SIMON", 14, 10)
     doc.text("DIRECCION ADMINISTRATIVA Y FINANCIERA", 14, 15)
@@ -328,25 +377,39 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
     doc.setTextColor(0, 0, 0)
     doc.text("RECIBO DE PAGO", 105, 30, { align: "center" })
 
+    // Información principal con datos corregidos
+    doc.setFontSize(12)
     doc.text("Área :", 14, 52)
-    doc.text(boletaInfo.area || "No especificado", 45, 52)
+    doc.text(boletaInfo.area || formData.area || "No especificado", 45, 52)
 
-    doc.text("Nombre :", 14, 59)
-    doc.text(boletaInfo.nombre_pagador || "No especificado", 45, 59)
+    doc.text("Nombre Pagador :", 14, 59)
+    const nombrePagador =
+      boletaInfo.nombre_pagador || `${tutores[0].nombres} ${tutores[0].apellidos}`.trim() || "No especificado"
+    doc.text(nombrePagador, 70, 59)
 
     doc.text("Monto Total (Bs) :", 14, 66)
-    doc.text(boletaInfo.monto_total.toString() || "0", 60, 66)
+    doc.text(boletaInfo.monto_total.toString() || "0", 70, 66)
 
-    const bodyData = boletaInfo.competidores.map((c, i) => [
-      `${i + 1}.`,
-      c.nombre,
-      c.categoria || "No especificada",
-      c.monto.toFixed(2),
-    ])
+    // Tabla de competidores
+    const bodyData = boletaInfo.competidores
+      ? boletaInfo.competidores.map((c, i) => [
+          `${i + 1}.`,
+          c.nombre || `${formData.nombres} ${formData.apellidos}`,
+          c.categoria || formData.categoria || "No especificada",
+          c.monto ? c.monto.toFixed(2) : "0.00",
+        ])
+      : [
+          [
+            "1.",
+            `${formData.nombres} ${formData.apellidos}`,
+            formData.categoria || "No especificada",
+            boletaInfo.monto_total ? boletaInfo.monto_total.toFixed(2) : "0.00",
+          ],
+        ]
 
     autoTable(doc, {
       startY: 75,
-      head: [["Nro", "Nombre Competidor", "Categoría", "Monto"]],
+      head: [["Nro", "Nombre Competidor", "Categoría", "Monto (Bs)"]],
       body: bodyData,
       styles: { fontSize: 10, cellPadding: 3 },
       headStyles: { fillColor: [255, 255, 255], textColor: 0 },
@@ -360,9 +423,11 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
       setIsUploading(true)
       setUploadProgress(0)
 
+      console.log("Iniciando generación de PDF...")
       const pdfBlob = await generarPDFBlob()
       const file = new File([pdfBlob], `recibo_${boletaData.numero_boleta}.pdf`, { type: "application/pdf" })
 
+      console.log("PDF generado, iniciando subida a Cloudinary...")
       const uploadResult = await uploadToCloudinary(file, (progress) => {
         setUploadProgress(progress)
       })
@@ -370,6 +435,7 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
       setCloudinaryUrl(uploadResult.secure_url)
       setPdfUploaded(true)
 
+      console.log("Guardando URL en base de datos...")
       await guardarURLEnBaseDeDatos(uploadResult.secure_url)
 
       // Descargar el PDF
@@ -395,9 +461,10 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "No se pudo generar la boleta",
+        text: `No se pudo generar la boleta: ${error.message}`,
       })
 
+      // Intentar guardar con URL de error como fallback
       if (boletaData) {
         try {
           await guardarURLEnBaseDeDatos("https://res.cloudinary.com/dq5zw44wg/raw/upload/error_pdf.pdf")
@@ -410,6 +477,7 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
     }
   }
 
+  // Función mejorada para guardar en base de datos con información del área
   const guardarURLEnBaseDeDatos = async (url) => {
     try {
       if (!boletaData || !boletaData.numero_boleta || !boletaData.monto_total) {
@@ -424,7 +492,15 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
         fecha_emision: new Date().toISOString().split("T")[0],
         ruta_pdf: url,
         estado: "Pendiente",
+        // Agregar información del área y competidor
+        area_nombre: formData.area,
+        area_id: formData.area_id,
+        categoria: formData.categoria,
+        competidor_nombre: `${formData.nombres} ${formData.apellidos}`,
+        tutor_principal: `${tutores[0].nombres} ${tutores[0].apellidos}`.trim(),
       }
+
+      console.log("Guardando datos en base de datos:", data)
 
       const response = await axios.post("http://localhost:8000/api/guardarDatos/recibosInscripcionManual", data, {
         headers: {
@@ -432,6 +508,7 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
         },
       })
 
+      console.log("Datos guardados exitosamente:", response.data)
       return response.data
     } catch (error) {
       console.error("Error al guardar datos:", error)
@@ -489,7 +566,9 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
 
     return (
       <div className="tutor-card-InscMan" key={index}>
-        <h3 style={{ marginBottom: "15px", color: "#333" }}>{index === 0 ? "Tutor Principal" : "Tutor Secundario"}</h3>
+        <h3 style={{ marginBottom: "15px", color: "#333" }}>
+          {index === 0 ? "Tutor Principal (Pagador)" : "Tutor Secundario"}
+        </h3>
 
         <div className="form-group-InscMan">
           <label>Nombres:</label>
@@ -621,6 +700,21 @@ function TercerPaso({ formData, competidorCI, onBack, onReset, setIsLoading }) {
       </div>
 
       <h2>{esNuevaInscripcion ? "¡Competidor registrado con éxito!" : "¡Competidor inscrito en nueva área!"}</h2>
+
+      {/* Mostrar información de la boleta */}
+      {boletaData && (
+        <div style={{ margin: "20px 0", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
+          <p>
+            <strong>Área:</strong> {boletaData.area || formData.area}
+          </p>
+          <p>
+            <strong>Pagador:</strong> {boletaData.nombre_pagador}
+          </p>
+          <p>
+            <strong>Monto:</strong> Bs. {boletaData.monto_total}
+          </p>
+        </div>
+      )}
 
       {isUploading ? (
         <div className="upload-progress-InscMan">
