@@ -1,8 +1,10 @@
 import { Eye } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import "./competidorCard.css"
 
 const CompetidorCard= ({ competitor, onReview }) => {
+  const { id_respGest } = useParams();
+  const routeTo=(subruta)=>`/respGest/${id_respGest}/Home/${subruta}`;
   const navigate = useNavigate()
   const getStatusClass = () => {
     switch (competitor.estado) {
@@ -18,7 +20,7 @@ const CompetidorCard= ({ competitor, onReview }) => {
   }
 
   const handleReviewClick = () => {
-    navigate(`/respGest/DatosCompetidor/${competitor.competidor_id}`)
+    navigate(routeTo(`DatosCompetidor/${competitor.competidor_id}`))
   }
 
   return (

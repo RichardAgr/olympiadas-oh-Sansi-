@@ -20,6 +20,7 @@ class Tutor extends Authenticatable
         'apellidos',
         'correo_electronico',
         'telefono',
+        'competencia_id',
         'estado',
         'password', 
     ];

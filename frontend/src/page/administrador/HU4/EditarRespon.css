@@ -6,7 +6,7 @@
     background: #fff;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     box-sizing: border-box;
     text-align: left;
   }
@@ -80,13 +80,14 @@
   /* Botones */
   .button-groupRespHu42 {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 20px;
     margin-top: 30px;
   }
   
   .btn-guardarRespHu42 {
     background-color: #384FD6;
+    border:none;
     color: #fff;
     padding: 10px 18px;
     border-radius: 12px;
@@ -98,8 +99,9 @@
   }
   
   .btn-cancelarRespHu42 {
-    background-color: #DEE1E6;
-    color: #565E6C;
+    background-color: #e63946;
+    border: none;
+    color: #fff;
     border-radius: 12px; /* menos redondeado */
     padding: 10px 18px; /* mismo padding */
     min-width: 160px;   /* mismo ancho mínimo */
@@ -111,7 +113,7 @@
   }
   
   .btn-cancelarRespHu42:hover {
-    background-color: #a7aaaf;
+    background-color: #661c22;
     transform: scale(1.05);
   }
   
@@ -180,4 +182,30 @@
   border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
+}
+
+.modal-mensajehu42 {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  font-family: 'Comfortaa', sans-serif;
+  animation: aparecer 0.3s ease-in-out;
+}
+
+.modal-mensajehu42.exito {
+  border-left: 6px solid #28a745;
+}
+
+.modal-mensajehu42.btn-guardarRespHu41 {
+  border-left: 6px solid #dc3545;
+}
+
+.modal-mensajehu42 h2 {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { Calendar, Settings } from "lucide-react"
+import {useParams } from "react-router-dom"
 import AreaCard from "./areaCard/AreaCard"
 import EditCronograma from "./formularioEdicion/EditCronograma"
 import Notificacion from "./notificacion/Notificacion"
@@ -7,12 +8,12 @@ import api from "../../../components/Tokens/api"
 import "./VEvento.css"
 
 const VEvento = () => {
+  const { id_competencia } = useParams();
   const [areas, setAreas] = useState([])
   const [selectedArea, setSelectedArea] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [notification, setNotification] = useState(null)
   const [loading, setLoading] = useState(false)
-
   const showNotification = (message, type = "success") => {
     setNotification({ message, type })
     setTimeout(() => setNotification(null), 5000)
@@ -25,17 +26,20 @@ const VEvento = () => {
   const loadAreas = async () => {
     try {
       setLoading(true)
-
-      const response = await api.get('http://localhost:8000/api/areasRegistradas')
+      const response = await api.get(`http://localhost:8000/api/areasRegistradas/${id_competencia}`)
       const areasData = response.data
 
       const areasWithCronogramas = await Promise.all(
          areasData.map(async (area) => {
            try {
              const cronogramasResponse = await api.get(`http://localhost:8000/api/area/${area.area_id}/cronogramas`)
+             const sortedCronogramas = cronogramasResponse.data.cronogramas.sort((a, b) => {
+            const order = { 'Inscripcion': 1, 'Competencia': 2, 'Fin': 3 };
+            return order[a.tipo_evento] - order[b.tipo_evento];
+          });
              return {
                ...area,
-               cronogramas: cronogramasResponse.data.cronogramas
+               cronogramas: sortedCronogramas
              }
            } catch (error) {
              console.error(`Error loading cronogramas for area ${area.area_id}:`, error)
@@ -70,7 +74,11 @@ const VEvento = () => {
 
       // Cargar cronogramas actualizados del área
       const cronogramas = await loadAreaCronogramas(area.area_id)
-      const areaWithCronogramas = { ...area, cronogramas }
+      const sortedCronogramas = cronogramas.sort((a, b) => {
+      const order = { 'Inscripcion': 1, 'Competencia': 2, 'Fin': 3 };
+            return order[a.tipo_evento] - order[b.tipo_evento];
+      });
+      const areaWithCronogramas = { ...area, cronogramas:sortedCronogramas }
 
       setSelectedArea(areaWithCronogramas)
       setIsModalOpen(true)
@@ -101,7 +109,6 @@ const VEvento = () => {
           anio_olimpiada: cronograma.anio_olimpiada,
         })),
       }
-      console.log(cronogramasData)
 
       const response = await api.put(`http://localhost:8000/api/editarCronograma/${selectedArea.area_id}`, cronogramasData)
     

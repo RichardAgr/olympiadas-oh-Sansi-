@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Area;
 use App\Models\Cronograma;
+use App\Models\Tutor;
+use App\Models\ResponsablesGestion;
+use App\Models\CompetidorCompetencia;
 
 class Competencia extends Model
 {
@@ -58,4 +61,20 @@ class Competencia extends Model
     {
         return $this->hasOne(Cronograma::class, 'competencia_id');
     }
+
+    public function tutores()
+    {
+        return $this->hasMany(Tutor::class, 'competencia_id', 'competencia_id');
+    }
+
+    public function responsablesGestion()
+    {
+        return $this->hasMany(ResponsableGestion::class, 'competencia_id', 'competencia_id');
+    }
+
+        public function inscripciones()
+    {
+        return $this->hasMany(CompetidorCompetencia::class, 'competencia_id', 'competencia_id');
+    }
+
 }

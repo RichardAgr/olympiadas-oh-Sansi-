@@ -21,6 +21,7 @@ class ResponsableGestion extends Authenticatable
         'correo_electronico',
         'telefono',
         'fecha_asignacion',
+        'competencia_id',
         'estado',
         'password'  
     ];
@@ -33,9 +34,6 @@ class ResponsableGestion extends Authenticatable
     public $timestamps = true;
 
     
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = \Hash::make($value);
-    }
+    
 }
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { Eye, EyeOff } from "lucide-react";
 import axios from "axios"
 import perfilDefault from "../../../assets/perfil-default.png"
 import correoIcon from "../../../assets/email.png"
@@ -36,13 +37,17 @@ function Configuracion() {
     nuevaContrasena: "",
     confirmarContrasena: ""
   })
-
+  const [mostrarContrasena, setMostrarContrasena] = useState({
+  actual: false,
+  nueva: false,
+  confirmacion: false
+})
   const [exito, setExito] = useState(false)
 
   useEffect(() => {
     const getDataTutor = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Tutor`)
+        const response = await axios.get(`http://localhost:8000/api/VerMiPerfil/${id}/Tutor`)
         setDatosTutor(response.data)
       } catch (error) {
         console.error("Error cargando datos del tutor:", error)
@@ -50,6 +55,13 @@ function Configuracion() {
     }
     getDataTutor()
   }, [id])
+
+const toggleMostrarContrasena = (campo) => {
+  setMostrarContrasena(prev => ({
+    ...prev,
+    [campo]: !prev[campo]
+  }))
+}
 
   // Función para validar los campos
 const validarCampo = (name, value) => {
@@ -172,14 +184,14 @@ const validarCampo = (name, value) => {
 
     // Actualiza perfil
     await axios.put(
-      `http://127.0.0.1:8000/api/tutor/ActualizarMiPerfil/${id}`,
+      `http://localhost:8000/api/tutor/ActualizarMiPerfil/${id}`,
       datosEnviar
     );
 
     // Actualiza contraseña si fue ingresada
     if (datosTutor.contrasenaActual && datosTutor.nuevaContrasena && datosTutor.confirmarContrasena) {
       await axios.post(
-        `http://127.0.0.1:8000/api/tutor/${id}/cambiar-password`,
+        `http://localhost:8000/api/tutor/${id}/cambiar-password`,
         {
           password_actual: datosTutor.contrasenaActual,
           password: datosTutor.nuevaContrasena,
@@ -204,7 +216,7 @@ const validarCampo = (name, value) => {
 
   const cancelarEdicion = () => {
     axios
-      .get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Tutor`)
+      .get(`http://localhost:8000/api/VerMiPerfil/${id}/Tutor`)
       .then((response) => {
         setDatosTutor(response.data)
         // Limpiar errores al cancelar
@@ -318,7 +330,7 @@ const validarCampo = (name, value) => {
     <label>Contraseña actual:</label>
     <div className="input-con-icono">
       <input
-        type="password"
+        type={mostrarContrasena.actual ? "text" : "password"}
         name="contrasenaActual"
         value={datosTutor.contrasenaActual || ""}
         onChange={(e) =>
@@ -326,6 +338,17 @@ const validarCampo = (name, value) => {
         }
         className={errores.contrasenaActual ? "input-error" : ""}
       />
+      <button 
+          type="button"
+          className="password-toggle"
+          onClick={() => toggleMostrarContrasena('actual')}
+        >
+          {mostrarContrasena.actual ? (
+            <EyeOff size={20} className="text-gray-500" />
+          ) : (
+            <Eye size={20} className="text-gray-500" />
+          )}
+    </button>
     </div>
     {errores.contrasenaActual && (
       <span className="mensaje-error">{errores.contrasenaActual}</span>
@@ -336,7 +359,7 @@ const validarCampo = (name, value) => {
     <label>Nueva contraseña:</label>
     <div className="input-con-icono">
       <input
-        type="password"
+        type={mostrarContrasena.nueva ? "text" : "password"}
         name="nuevaContrasena"
         value={datosTutor.nuevaContrasena || ""}
         onChange={(e) =>
@@ -344,6 +367,17 @@ const validarCampo = (name, value) => {
         }
         className={errores.nuevaContrasena ? "input-error" : ""}
       />
+      <button 
+                type="button"
+                className="password-toggle"
+                onClick={() => toggleMostrarContrasena('nueva')}
+              >
+                {mostrarContrasena.nueva ? (
+                  <EyeOff size={20} className="text-gray-500" />
+                ) : (
+                  <Eye size={20} className="text-gray-500" />
+                )}
+              </button>
     </div>
     {errores.nuevaContrasena && (
       <span className="mensaje-error">{errores.nuevaContrasena}</span>
@@ -354,7 +388,7 @@ const validarCampo = (name, value) => {
     <label>Confirmar nueva contraseña:</label>
     <div className="input-con-icono">
       <input
-        type="password"
+        type={mostrarContrasena.confirmacion ? "text" : "password"}
         name="confirmarContrasena"
         value={datosTutor.confirmarContrasena || ""}
         onChange={(e) =>
@@ -362,6 +396,17 @@ const validarCampo = (name, value) => {
         }
         className={errores.confirmarContrasena ? "input-error" : ""}
       />
+      <button 
+              type="button"
+              className="password-toggle"
+              onClick={() => toggleMostrarContrasena('confirmacion')}
+            >
+              {mostrarContrasena.confirmacion ? (
+                <EyeOff size={20} className="text-gray-500" />
+              ) : (
+                <Eye size={20} className="text-gray-500" />
+              )}
+      </button>
     </div>
     {errores.confirmarContrasena && (
       <span className="mensaje-error">{errores.confirmarContrasena}</span>

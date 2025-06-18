@@ -13,7 +13,7 @@ function NotificacionesTutor() {
     const fetchNotificaciones = async () => {
       try {
         setLoading(true)
-        const response = await axios.get(`http://127.0.0.1:8000/api/tutor/VerNotificaciones/${id}/Notificaciones`)
+        const response = await axios.get(`http://localhost:8000/api/tutor/VerNotificaciones/${id}/Notificaciones`)
         setNotificaciones(response.data.data || [])
       } catch (err) {
         setError(`Error al cargar las notificaciones:${err.message}`)

@@ -14,15 +14,13 @@ const TutorTopBar = () => {
   const location = useLocation();
  
   // 👉 ID temporal estático desde el backend
-  const {id} = useParams();
+  const {id, id_competencia} = useParams();
   const navigate = useNavigate(); // Para manejar la navegación programáticamente
   const [userMenuOpen, setUserMenuOpen] = useState(false); 
 
-  // Función para obtener el conteo de notificaciones
-  useEffect(() => {
-    const fetchNotificationCount = async () => {
+  const fetchNotificationCount = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/notificaciones/${id}`);
+        const response = await axios.get(`http://localhost:8000/api/notificaciones/${id}`);
         if (response.data.success && response.data.data) {
           setNotificationCount(response.data.data.total_activas);
         }
@@ -31,12 +29,22 @@ const TutorTopBar = () => {
       }
     };
 
+  // Función para obtener el conteo de notificaciones
+  useEffect(() => {
     fetchNotificationCount();
     
     // Opcional: Configurar un intervalo para actualizar las notificaciones periódicamente
-    const intervalId = setInterval(fetchNotificationCount, 60000); // Actualizar cada minuto
-    
-    return () => clearInterval(intervalId); // Limpiar el intervalo al desmontar
+    const intervalId = setInterval(fetchNotificationCount, 6000); 
+    const handleNotificationRead = () => {
+      fetchNotificationCount()
+    }
+
+    window.addEventListener("notificationRead", handleNotificationRead)
+
+    return () => {
+      clearInterval(intervalId) // Limpiar el intervalo al desmontar
+      window.removeEventListener("notificationRead", handleNotificationRead)
+    }
   }, [id]);
 
   const handleViewNotificacion = () => {
@@ -55,7 +63,7 @@ const TutorTopBar = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/logout",
+        "http://localhost:8000/api/logout",
         {},
         {
           headers: {
@@ -68,11 +76,11 @@ const TutorTopBar = () => {
       localStorage.removeItem("user");
       localStorage.removeItem("rol");
 
-      navigate("/homePrincipal");
+      navigate(`/homePrincipal`);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
       localStorage.clear();
-      navigate("/homePrincipal");
+      navigate(`/homePrincipal`);
     }
   };
 

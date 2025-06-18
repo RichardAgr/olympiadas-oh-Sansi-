@@ -35,7 +35,7 @@
     background-color: #f0f0f0;
   }
   
-  .show-receipt-button {
+  .show-receipt-buttonVerDeta {
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -124,10 +124,12 @@
     overflow: auto;
   }
   
-  .close-receipt {
+  .close-receiptVerDeta {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    border-radius: 9px;
+    padding: 3px 5px;
+    top: 0.5rem;
+    right: 0.5rem;
     background-color: rgb(203, 71, 71);
     border: none;
     cursor: pointer;

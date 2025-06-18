@@ -1,0 +1,127 @@
+/* Estilos generales */
+.container-detallesCompetidoresRespGesL {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+}
+
+.titulo-principalRespGesL {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #3498db;
+}
+
+/* Estilos del buscador */
+.buscador-containerRespGesL {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.input-buscadorRespGesL {
+  width: 100%;
+  max-width: 500px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.input-buscadorRespGesL:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* Estilos de la tabla */
+.tabla-contenedorRespGesL {
+  overflow-x: auto;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.tabla-estiloRespGesL {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tabla-cabeceraRespGesL {
+  background-color: #3498db;
+  color: white;
+}
+
+.tabla-cabeceraRespGesL th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.tabla-cuerpoRespGesL tr {
+  transition: background-color 0.2s ease;
+}
+
+.fila-datosRespGesL:hover {
+  background-color: #f8f9fa;
+}
+
+.fila-datosRespGesL td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #dee2e6;
+  color: #495057;
+}
+
+.fila-datosRespGesL:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+/* Estilos específicos de columnas */
+.celda-estadoRespGesL {
+  font-weight: 600;
+}
+
+.celda-estadoRespGesL.activo {
+  color: #28a745;
+}
+
+.celda-estadoRespGesL.inactivo {
+  color: #dc3545;
+}
+
+/* Mensaje cuando no hay resultados */
+.fila-vaciaRespGesL {
+  text-align: center;
+}
+
+.mensaje-vacioRespGesL {
+  padding: 1.5rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container-detallesCompetidoresRespGesL {
+    padding: 1rem;
+  }
+  
+  .tabla-cabeceraRespGesL th,
+  .fila-datosRespGesL td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .titulo-principalRespGesL {
+    font-size: 1.5rem;
+  }
+}

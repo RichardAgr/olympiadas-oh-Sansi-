@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Tutor;
 use App\Models\Competidor;
+use App\Models\Competencia;
 use App\Models\TutorCompetidor;
 use App\Models\Colegio;
 use App\Models\Curso;
 use App\Models\Ubicacion;
+use App\Models\Recibo;
+use App\Models\Boleta;
 use App\Models\NivelCategoria;
 use App\Models\CompetidorCompetencia;
-use App\Models\Area;;
+use App\Models\Area;
 use App\Http\Resources\CompetidoresTutorResource;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -21,7 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class TutorController extends Controller{
-    public function competidoresTutor($id){
+public function competidoresTutor($id){
     try {
         $tutor = Tutor::find($id);
         if (!$tutor) {
@@ -31,41 +34,39 @@ class TutorController extends Controller{
             ], 404);
         }
 
-        $competidores = Competidor::select([
-            'competidor.competidor_id',
-            'competidor.nombres',
-            'competidor.apellidos',
-            'colegio.nombre as colegio',
-            'curso.nombre as curso',
-            'grado.nombre as grado',
-            'competidor.estado'  // Asumiendo que tienes esta columna
+        $competidores = Competidor::with([
+            'colegio:colegio_id,nombre',
+            'curso:curso_id,nombre,grado_id',
+            'curso.grado:grado_id,nombre',
+            'competidorCompetencias.area:area_id,nombre',
+            'competidorCompetencias.nivelCategoria:nivel_categoria_id,nombre'
         ])
-        ->join('tutor_competidor', 'competidor.competidor_id', '=', 'tutor_competidor.competidor_id')
-        ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
-        ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
-        ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
-        ->where('tutor_competidor.tutor_id', $id)
+        ->whereHas('tutores', function($query) use ($id) {
+            $query->where('tutor_competidor.tutor_id', $id);
+        })
         ->get();
 
         $competidoresFormateados = $competidores->map(function ($competidor) {
-            $areas = CompetidorCompetencia::select('area.nombre')
-                ->join('area', 'competidor_competencia.area_id', '=', 'area.area_id')
-                ->where('competidor_competencia.competidor_id', $competidor->competidor_id)
+            $areas = $competidor->competidorCompetencias
                 ->pluck('area.nombre')
                 ->unique()
+                ->filter()
                 ->implode(', ');
 
-            $nombreCompleto = $competidor->nombres . ' ' . $competidor->apellidos;
-
-            // Asumo que 'categoria' viene de alguna relación o tabla; si no, deja un valor fijo o vacío.
-            $categoria = 'Categoría X'; // Cambia esto según tu lógica
+            $categorias = $competidor->competidorCompetencias
+                ->pluck('nivelCategoria.nombre')
+                ->unique()
+                ->filter()
+                ->implode(', ');
 
             return [
                 'competidor_id' => $competidor->competidor_id,
-                'nombre_completo' => $nombreCompleto,
+                'nombre_completo' => $competidor->nombres . ' ' . $competidor->apellidos,
+                'colegio' => $competidor->colegio->nombre ?? 'Sin colegio',
                 'area' => $areas ?: 'No asignada',
-                'categoria' => $categoria,
-                'curso' => $competidor->curso,
+                'categoria' => $categorias ?: 'Sin categoría',
+                'curso' => $competidor->curso->nombre ?? 'Sin curso',
+                'grado' => $competidor->curso->grado->nombre ?? 'Sin grado',
                 'estado' => $competidor->estado ?? 'Desconocido'
             ];
         });
@@ -79,18 +80,22 @@ class TutorController extends Controller{
             'message' => 'Error al obtener los competidores del tutor',
             'error' => $e->getMessage()
         ], 500);
-    }
+    }    
 }
 
 
 
-    public function obtenerInformacionTutores(Request $request){
-        try {
-                // En esta parte deberia ir la paginacion si es que se tiene mas de 100 tutores
-                //se recomiendo que sea de 15 en 15
+public function obtenerInformacionTutores($competenciaId,Request $request){
+    try {
+        // Validar que la competencia existe
+        if (!Competencia::where('competencia_id', $competenciaId)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Competencia no encontrada'
+            ], 404);
+        }
 
-
-            $tutores = Tutor::select([
+        $tutores = Tutor::select([
                 'tutor.tutor_id',
                 'tutor.nombres',
                 'tutor.apellidos',
@@ -100,6 +105,9 @@ class TutorController extends Controller{
                 'tutor.estado',
                 'tutor.created_at'
             ])
+            ->where('tutor.competencia_id', $competenciaId) // Filtrar por competencia
+            ->whereNotNull('tutor.password') // AGREGAR: Solo tutores con cuenta (que tienen contraseña)
+            ->where('tutor.password', '!=', '') // AGREGAR: Asegurar que la contraseña no esté vacía
             ->withCount(['competidores' => function ($query) {
             }])
             ->withCount(['competidores as competidores_habilitados_count' => function ($query) {
@@ -112,43 +120,46 @@ class TutorController extends Controller{
                 $query->where('competidor.estado', 'Pendiente');
             }]);
 
+        // Ordenar resultados
+        $ordenarPor = $request->input('ordenar_por', 'tutor_id');
+        $orden = $request->input('orden', 'asc');
+        $tutores->orderBy($ordenarPor, $orden);
 
-            // Ordenar resultados
-            $ordenarPor = $request->input('ordenar_por', 'tutor_id');
-            $orden = $request->input('orden', 'asc');
-            $tutores->orderBy($ordenarPor, $orden);
-
-            // Obtener todos los resultados
-            $tutoresResultados = $tutores->get();
-            $tutoresFormateados = $tutoresResultados->map(function ($tutor) {
+        // Obtener todos los resultados
+        $tutoresResultados = $tutores->get();
+        $tutoresFormateados = $tutoresResultados->map(function ($tutor) {
             $estadoFormateado = $tutor->estado ? 'activo' : 'inactivo';
             $fechaRegistro = $tutor->created_at ? Carbon::parse($tutor->created_at)->format('d/m/Y') : null;
 
-                return [
-                    'tutor_id' => $tutor->tutor_id,
-                    'nombres' => $tutor->nombres,
-                    'apellidos' => $tutor->apellidos,
-                    'ci' => $tutor->ci,
-                    'competidores' => $tutor->competidores_count,
-                    'competidores_habilitados' => $tutor->competidores_habilitados_count,
-                    'competidores_deshabilitados' => $tutor->competidores_deshabilitados_count,
-                    'competidores_pendientes' => $tutor->competidores_pendientes_count,
-                    'telefono' => $tutor->telefono,
-                    'correo' => $tutor->correo,
-                    'estado' => $estadoFormateado,
-                    'fechaRegistro' => $fechaRegistro
-                ];
-            });
+            return [
+                'tutor_id' => $tutor->tutor_id,
+                'nombres' => $tutor->nombres,
+                'apellidos' => $tutor->apellidos,
+                'ci' => $tutor->ci,
+                'competidores' => $tutor->competidores_count,
+                'competidores_habilitados' => $tutor->competidores_habilitados_count,
+                'competidores_deshabilitados' => $tutor->competidores_deshabilitados_count,
+                'competidores_pendientes' => $tutor->competidores_pendientes_count,
+                'telefono' => $tutor->telefono,
+                'correo' => $tutor->correo,
+                'estado' => $estadoFormateado,
+                'fechaRegistro' => $fechaRegistro,
+            ];
+        });
 
-            return response()->json($tutoresFormateados);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al obtener los tutores',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'data' => $tutoresFormateados,
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener los tutores',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
     
 
@@ -176,6 +187,81 @@ public function cambiarPassword(Request $request, $id)
     $tutor->save();
 
     return response()->json(['success' => true, 'message' => 'Contraseña actualizada correctamente.']);
+}
+
+public function competidoresPorBoleta($boleta_id){
+    try {
+        // Validar que la boleta existe
+        $boleta = Boleta::find($boleta_id);
+        if (!$boleta) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Boleta no encontrada'
+            ], 404);
+        }
+
+        // Obtener los competidores con sus áreas específicas (un registro por área)
+        $competidoresAreas = CompetidorCompetencia::select([
+            'competidor.competidor_id',
+            'competidor.nombres',
+            'competidor.apellidos',
+            'colegio.nombre as colegio',
+            'curso.nombre as curso',
+            'grado.nombre as grado',
+            'competidor.estado',
+            'area.nombre as area',
+            'nivel_categoria.nombre as categoria',
+            'competidor_competencia.fecha_inscripcion'
+        ])
+        ->join('competidor', 'competidor_competencia.competidor_id', '=', 'competidor.competidor_id')
+        ->join('area', 'competidor_competencia.area_id', '=', 'area.area_id')
+        ->join('nivel_categoria', 'competidor_competencia.nivel_categoria_id', '=', 'nivel_categoria.nivel_categoria_id')
+        ->join('colegio', 'competidor.colegio_id', '=', 'colegio.colegio_id')
+        ->join('curso', 'competidor.curso_id', '=', 'curso.curso_id')
+        ->join('grado', 'curso.grado_id', '=', 'grado.grado_id')
+        ->where('competidor_competencia.boleta_id', $boleta_id)
+        ->orderBy('competidor.apellidos')
+        ->orderBy('competidor.nombres')
+        ->orderBy('area.nombre')
+        ->get();
+
+        $competidoresFormateados = $competidoresAreas->map(function ($competidorArea) {
+            $nombreCompleto = $competidorArea->nombres . ' ' . $competidorArea->apellidos;
+
+            return [
+                'competidor_id' => $competidorArea->competidor_id,
+                'nombre_completo' => $nombreCompleto,
+                'colegio' => $competidorArea->colegio,
+                'area' => $competidorArea->area ?: 'No asignada',
+                'categoria' => $competidorArea->categoria ?: 'Sin categoría',
+                'curso' => $competidorArea->curso,
+                'grado' => $competidorArea->grado,
+                'estado' => $competidorArea->estado ?? 'Desconocido',
+                'fecha_inscripcion' => $competidorArea->fecha_inscripcion ? 
+                    Carbon::parse($competidorArea->fecha_inscripcion)->format('d/m/Y') : null
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $competidoresFormateados,
+            'boleta_info' => [
+                'boleta_id' => $boleta->boleta_id,
+                'numero_boleta' => $boleta->numero_boleta,
+                'nombre_pagador' => $boleta->nombre_pagador,
+                'monto_total' => $boleta->monto_total,
+                'fecha_pago' => $boleta->fecha_pago,
+                'estado' => $boleta->estado
+            ],
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener los competidores de la boleta',
+            'error' => $e->getMessage()
+        ], 500);
+    }
 }
 
 
@@ -509,100 +595,150 @@ public function verPerfilTutor($id)
         }
     }
 
- public function inscribirCompetidor(Request $request, $tutor_id)
-{
-    $validator = Validator::make($request->all(), [
-        'competidor.nombres' => 'required|string',
-        'competidor.apellidos' => 'required|string',
-        'competidor.ci' => 'required|string|unique:competidor,ci',
-        'competidor.fecha_nacimiento' => 'required|date',
-        'competidor.colegio' => 'required|string',
-        'competidor.curso' => 'required|string',
-        'competidor.area' => 'required|string',
-        'competidor.categoria' => 'required|string',
-        'competidor.departamento' => 'required|string',
-        'competidor.provincia' => 'required|string',
-        'tutores' => 'nullable|array|min:1',
-        'tutores.*.ci' => 'required|string',
-        'tutores.*.relacion' => 'required|string'
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-    }
-
-    DB::beginTransaction();
-    try {
-        // Buscar o crear ubicación
-        $ubicacion = Ubicacion::firstOrCreate(
-            [
-                'departamento' => $request->competidor['departamento'],
-                'provincia' => $request->competidor['provincia']
-            ]
-        );
-
-        // Colegio
-        $colegio = Colegio::firstOrCreate(
-            ['nombre' => $request->competidor['colegio']],
-            ['ubicacion_id' => $ubicacion->ubicacion_id, 'telefono' => '00000000']
-        );
-
-        // Curso
-        $curso = Curso::firstOrCreate(
-            ['nombre' => $request->competidor['curso']],
-            ['grado_id' => 1, 'estado' => 1]
-        );
-
-        // Crear competidor
-        $competidor = Competidor::create([
-            'nombres' => $request->competidor['nombres'],
-            'apellidos' => $request->competidor['apellidos'],
-            'ci' => $request->competidor['ci'],
-            'fecha_nacimiento' => $request->competidor['fecha_nacimiento'],
-            'colegio_id' => $colegio->colegio_id,
-            'curso_id' => $curso->curso_id,
-            'ubicacion_id' => $ubicacion->ubicacion_id,
-            'estado' => 'Pendiente'
-        ]);
-
-        // Validar área y categoría
-        $area = Area::whereRaw('LOWER(nombre) = ?', [strtolower($request->competidor['area'])])->first();
-        if (!$area) {
-            return response()->json(['success' => false, 'message' => 'Área inválida.', 'field' => 'area'], 422);
+public function inscribirCompetidor(Request $request, $tutor_id){
+        $competidorExistente = Competidor::where('ci', $request->competidor['ci'])->first();
+        
+        if ($competidorExistente) {
+            $validator = Validator::make($request->all(), [
+                'competidor.nombres' => 'required|string',
+                'competidor.apellidos' => 'required|string',
+                'competidor.ci' => 'required|string',
+                'competidor.fecha_nacimiento' => 'required|date',
+                'competidor.colegio' => 'required|string',
+                'competidor.competencia_id'=> 'required|integer',
+                'competidor.curso' => 'required|string',
+                'competidor.area' => 'required|string',
+                'competidor.categoria' => 'required|string',
+                'competidor.departamento' => 'required|string',
+                'competidor.provincia' => 'required|string',
+                'tutores' => 'nullable|array|min:1',
+                'tutores.*.ci' => 'required|string',
+                'tutores.*.relacion' => 'required|string'
+            ]);
+        } else {
+            // Si no existe, usamos la validación original con unique
+            $validator = Validator::make($request->all(), [
+                'competidor.nombres' => 'required|string',
+                'competidor.apellidos' => 'required|string',
+                'competidor.ci' => 'required|string|unique:competidor,ci',
+                'competidor.fecha_nacimiento' => 'required|date',
+                'competidor.colegio' => 'required|string',
+                'competidor.competencia_id'=> 'required|integer',
+                'competidor.curso' => 'required|string',
+                'competidor.area' => 'required|string',
+                'competidor.categoria' => 'required|string',
+                'competidor.departamento' => 'required|string',
+                'competidor.provincia' => 'required|string',
+                'tutores' => 'nullable|array|min:1',
+                'tutores.*.ci' => 'required|string',
+                'tutores.*.relacion' => 'required|string'
+            ]);
         }
 
-        $categoria = NivelCategoria::whereRaw('LOWER(nombre) = ?', [strtolower($request->competidor['categoria'])])->first();
-        if (!$categoria) {
-            return response()->json(['success' => false, 'message' => 'Categoría inválida.', 'field' => 'categoria'], 422);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        // Insertar en tabla de competencia
-        DB::table('competidor_competencia')->insert([
-            'competidor_id' => $competidor->competidor_id,
-            'area_id' => $area->area_id,
-            'nivel_categoria_id' => $categoria->nivel_categoria_id,
-            'competencia_id' => 1,
-            'fecha_inscripcion' => now()
-        ]);
+        DB::beginTransaction();
+        try {
+            // Validar área y categoría primero
+            $area = Area::whereRaw('LOWER(nombre) = ?', [strtolower($request->competidor['area'])])->first();
+            if (!$area) {
+                return response()->json(['success' => false, 'message' => 'Área inválida.', 'field' => 'area'], 422);
+            }
 
-        DB::commit();
+            $categoria = NivelCategoria::whereRaw('LOWER(nombre) = ?', [strtolower($request->competidor['categoria'])])->first();
+            if (!$categoria) {
+                return response()->json(['success' => false, 'message' => 'Categoría inválida.', 'field' => 'categoria'], 422);
+            }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Competidor registrado correctamente.',
-            'competidor_id' => $competidor->competidor_id
-        ]);
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al registrar el competidor.',
-            'error' => $e->getMessage()
-        ], 500);
-    }
+            if ($competidorExistente) {
+                $inscripcionExistente = DB::table('competidor_competencia')
+                    ->where('competidor_id', $competidorExistente->competidor_id)
+                    ->where('area_id', $area->area_id)
+                    ->where('competencia_id', $request->competidor['competencia_id'])
+                    ->exists();
+
+                if ($inscripcionExistente) {
+                    return response()->json([
+                        'success' => false, 
+                        'message' => 'El competidor ya está inscrito en esta área para esta competencia.'
+                    ], 422);
+                }
+
+                $cantidadInscripciones = DB::table('competidor_competencia')
+                    ->where('competidor_id', $competidorExistente->competidor_id)
+                    ->where('competencia_id', $request->competidor['competencia_id'])
+                    ->count();
+
+                if ($cantidadInscripciones >= 2) {
+                    return response()->json([
+                        'success' => false, 
+                        'message' => 'El competidor ya está inscrito en el máximo de 2 áreas permitidas.'
+                    ], 422);
+                }
+
+                $competidor = $competidorExistente;
+            } else {
+                $ubicacion = Ubicacion::firstOrCreate(
+                    [
+                        'departamento' => $request->competidor['departamento'],
+                        'provincia' => $request->competidor['provincia']
+                    ]
+                );
+
+                // Colegio
+                $colegio = Colegio::firstOrCreate(
+                    ['nombre' => $request->competidor['colegio']],
+                    ['ubicacion_id' => $ubicacion->ubicacion_id, 'telefono' => '00000000']
+                );
+
+                // Curso
+                $curso = Curso::firstOrCreate(
+                    ['nombre' => $request->competidor['curso']],
+                    ['grado_id' => 1, 'estado' => 1]
+                );
+
+                // Crear competidor
+                $competidor = Competidor::create([
+                    'nombres' => $request->competidor['nombres'],
+                    'apellidos' => $request->competidor['apellidos'],
+                    'ci' => $request->competidor['ci'],
+                    'fecha_nacimiento' => $request->competidor['fecha_nacimiento'],
+                    'colegio_id' => $colegio->colegio_id,
+                    'curso_id' => $curso->curso_id,
+                    'ubicacion_id' => $ubicacion->ubicacion_id,
+                    'estado' => 'Pendiente'
+                ]);
+            }
+
+            DB::table('competidor_competencia')->insert([
+                'competidor_id' => $competidor->competidor_id,
+                'area_id' => $area->area_id,
+                'nivel_categoria_id' => $categoria->nivel_categoria_id,
+                'competencia_id' => $request->competidor['competencia_id'],
+                'fecha_inscripcion' => now()
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => $competidorExistente ? 
+                    'Competidor inscrito en nueva área correctamente.' : 
+                    'Competidor registrado correctamente.',
+                'competidor_id' => $competidor->competidor_id,
+                'es_nueva_inscripcion' => !$competidorExistente
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al registrar el competidor.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
 }
-
-
 
     public function getOpcionesCompetencia()
 {
@@ -643,6 +779,44 @@ public function verPerfilTutor($id)
         ], 500);
     }
 }
+
+public function verificarAreasRegistradas($ci, $competencia_id)
+{
+    try {
+        // Buscar el competidor por CI
+        $competidor = Competidor::where('ci', $ci)->first();
+        
+        if (!$competidor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Competidor no encontrado',
+                'areas_registradas' => []
+            ], 404);
+        }
+
+        // Obtener las áreas en las que ya está registrado este competidor para esta competencia
+        $areasRegistradas = DB::table('competidor_competencia as cc')
+            ->join('area as a', 'cc.area_id', '=', 'a.area_id')
+            ->where('cc.competidor_id', $competidor->competidor_id)
+            ->where('cc.competencia_id', $competencia_id)
+            ->select('a.area_id as id', 'a.nombre')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'competidor_id' => $competidor->competidor_id,
+            'areas_registradas' => $areasRegistradas->toArray()
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al verificar áreas registradas',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 public function registrarTutores(Request $request)
 {
     $validator = Validator::make($request->all(), [
@@ -650,6 +824,7 @@ public function registrarTutores(Request $request)
         'tutores' => 'required|array|min:1',
         'tutores.*.nombres' => 'required|string',
         'tutores.*.apellidos' => 'required|string',
+        'tutores.*.competencia_id' => 'required|integer',
         'tutores.*.correo_electronico' => 'required|email',
         'tutores.*.telefono' => 'required|string',
         'tutores.*.ci' => 'required|string',
@@ -670,6 +845,7 @@ public function registrarTutores(Request $request)
                 [
                     'nombres' => $tutorData['nombres'],
                     'apellidos' => $tutorData['apellidos'],
+                    'competencia_id' => $tutorData['competencia_id'],
                     'correo_electronico' => $tutorData['correo_electronico'],
                     'telefono' => $tutorData['telefono'],
                     'relacion' => $tutorData['relacion'],

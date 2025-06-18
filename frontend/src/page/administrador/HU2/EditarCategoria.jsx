@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import axios from "axios"
 import "./EditarCategoria.css"
 import SelectorGrado from "./SelectorGrado"
 import api from '../../../components/Tokens/api';
@@ -18,6 +17,8 @@ function EditarCategoria() {
     grado_id_final: "",
     estado: true,
   })
+    const { id_competencia } = useParams();
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
   const [gradosCompletos, setGradosCompletos] = useState({
     grado_inicial: null,
@@ -35,7 +36,7 @@ function EditarCategoria() {
   // Cargar áreas
   useEffect(() => {
     api
-      .get("http://localhost:8000/api/areasRegistradas")
+      .get(`http://localhost:8000/api/areasRegistradas/${id_competencia}`)
       .then((res) => {
         setAreas(res.data)
       })
@@ -171,7 +172,7 @@ function EditarCategoria() {
   const cerrarModalCat = () => {
     setMostrarModalCat(false)
     if (modalDataCat.esExito) {
-      navigate("/admin/registro-categorias")
+      navigate(routeTo("registro-categorias"))
     }
   }
 

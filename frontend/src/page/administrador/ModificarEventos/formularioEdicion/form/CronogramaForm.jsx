@@ -110,7 +110,7 @@ const CronogramaForm = ({ cronograma, index, onChange, errors, dateWarnings, all
 
           <div className="form-groupEventA">
             <label className="form-labelEventA">
-              <Clock size={16} />
+              <Calendar size={16} />
               <span>Fecha de Fin:</span>
             </label>
             <input

@@ -257,27 +257,28 @@ public function getDocumento($type, $id){
             ], 500);
         }
     }
- public function descargarDocumentoConvocatoria($año_competencia)
-{
-    $competencia = Competencia::select('competencia_id', 'fecha_inicio')
-        ->whereYear('fecha_inicio', $año_competencia)
+ public function descargarDocumentoConvocatoria($competenciaId){
+    $competencia = Competencia::select('competencia_id', 'nombre_competencia', 'fecha_inicio', 'fecha_fin', 'estado')
+        ->where('competencia_id', $competenciaId)
         ->first();
 
     if (!$competencia) {
         return response()->json([
             'success' => false,
-            'message' => 'No se encontró competencia para el año especificado.'
-        ], 200);
+            'message' => 'No se encontró la competencia especificada.'
+        ], 404);
     }
 
-    $documento = DocumentoConvocatoria::where('competencia_id', $competencia->competencia_id)
-        ->select('url_pdf')
+    // Buscar el documento de convocatoria para esta competencia
+    $documento = DocumentoConvocatoria::where('competencia_id', $competenciaId)
+        ->select('documento_convocatoria_id', 'url_pdf', 'fecha_creacion', 'estado')
+        ->where('estado', true) // Solo documentos activos
         ->first();
 
     if (!$documento) {
         return response()->json([
             'success' => false,
-            'message' => 'No se encontró documento convocatoria para la competencia especificada.'
+            'message' => 'No se encontró documento de convocatoria para la competencia especificada.'
         ], 200);
     }
 
@@ -285,8 +286,15 @@ public function getDocumento($type, $id){
         'success' => true,
         'message' => 'Documento encontrado',
         'data' => [
+            'documento_id' => $documento->documento_convocatoria_id,
             'url_pdf' => $documento->url_pdf,
-            'año' => $año_competencia
+            'fecha_creacion' => $documento->fecha_creacion,
+            'competencia' => [
+                'competencia_id' => $competencia->competencia_id,
+                'nombre_competencia' => $competencia->nombre_competencia,
+                'fecha_inicio' => $competencia->fecha_inicio,
+                'fecha_fin' => $competencia->fecha_fin
+            ]
         ]
     ]);
 }

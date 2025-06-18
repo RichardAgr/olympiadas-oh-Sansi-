@@ -17,12 +17,14 @@ const NotificacionItem = ({ idTutor,notificacion, setNotificaciones, onOpenModal
     const handleClick = async () => {
       if (!estado) {
         try {
-          await axios.post(`http://127.0.0.1:8000/api/tutor/${idTutor}/cambiarEstadoNotificacion/${notificacion_id}`)
+          await axios.post(`http://localhost:8000/api/tutor/${idTutor}/cambiarEstadoNotificacion/${notificacion_id}`)
           setNotificaciones((prevNotificaciones) =>
             prevNotificaciones.map((item) =>
               item.notificacion_id === notificacion_id ? { ...item, estado: true } : item,
             ),
           )
+          const event = new CustomEvent("notificationRead", { detail: { idTutor } })
+          window.dispatchEvent(event)
         } catch (error) {
           console.error("Error al marcar como leída:", error)
         }

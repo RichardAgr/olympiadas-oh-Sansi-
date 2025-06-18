@@ -93,13 +93,7 @@ const EditCronograma = ({ area, onClose, onSave, loading }) => {
   }
 
   const handleClose = () => {
-    if (hasChanges) {
-      if (window.confirm("¿Estás seguro de que deseas salir sin guardar los cambios?")) {
-        onClose()
-      }
-    } else {
       onClose()
-    }
   }
 
   return (
