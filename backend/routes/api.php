@@ -87,6 +87,8 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::apiResource('nivel-categorias', NivelCategoriaController::class);
 
     // Tutor
+    Route::get('/competidor/areas-registradas/{ci}/{competencia_id}', [App\Http\Controllers\Api\TutorController::class, 'verificarAreasRegistradas']);
+    Route::get('/tutor/{boleta_id}/competidoresBoleta', [TutorController::class, 'competidoresPorBoleta']);
     Route::get('/tutores/{tutorId}/competidoresTutor', [TutorController::class, 'competidoresTutor']);
     Route::get('/tutoresInformacion/{competenciaId}', [TutorController::class, 'obtenerInformacionTutores']);
     Route::put('/tutores/{id}/estado', [TutorController::class, 'actualizarEstadoTutor']);
@@ -139,7 +141,9 @@ Route::get('/documentos-areas/{id_area}', [AreasController::class, 'obtenerDocum
     Route::get('/recibos/tutor/{tutorId}', [ReciboController::class, 'obtenerRecibosPorTutor']);
 
     // Excel
-    Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']);
+    Route::post('/guardarDatos/excel', [DatosExcel::class, 'procesarExcel']); 
+    Route::post('/validarExcelPrevio', [App\Http\Controllers\Api\DatosExcel::class, 'validarDatosExcelPrevio']);
+    Route::post('/validarExcel', [DatosExcel::class, 'validarExcel']);
     
     
     // Videos Admin

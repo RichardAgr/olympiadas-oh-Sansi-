@@ -23,6 +23,8 @@ const NotificacionItem = ({ idTutor,notificacion, setNotificaciones, onOpenModal
               item.notificacion_id === notificacion_id ? { ...item, estado: true } : item,
             ),
           )
+          const event = new CustomEvent("notificationRead", { detail: { idTutor } })
+          window.dispatchEvent(event)
         } catch (error) {
           console.error("Error al marcar como leída:", error)
         }

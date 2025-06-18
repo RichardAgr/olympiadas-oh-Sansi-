@@ -9,8 +9,8 @@
   --color-fondo-Cat: #FFFFFF;
   --color-fondo-input-Cat: #F7F7F7;
   --color-error-Cat: #E74C3C;
-  --sombra-suave-Cat: 0 2px 10px rgba(0, 0, 0, 0.08);
-  --sombra-input-Cat: 0 2px 3px rgba(0, 0, 0, 0.08);
+  --sombra-suave-Cat: 0 2px 10px rgba(0, 0, 0, 0.8);
+  --sombra-input-Cat: 0 2px 3px rgba(0, 0, 0, 0.8);
   --radio-borde-Cat: 8px;
   --radio-borde-btn-Cat: 25px;
   --transicion-rapida-Cat: all 0.25s ease;
@@ -26,6 +26,7 @@
 
 /* Títulos */
 .titulo-editar-Cat {
+  text-align: center;
   font-size: 1.75rem;
   color: var(--color-texto-oscuro-Cat);
   margin-bottom: 2rem;
@@ -63,7 +64,7 @@
 .campo-entrada-Cat,
 .campo-textarea-Cat,
 .campo-select-Cat {
-  width: 100%;
+  width: 95%;
   padding: 0.8rem 1.2rem;
   border: 1px solid #e0e0e0;
   border-radius: var(--radio-borde-Cat);

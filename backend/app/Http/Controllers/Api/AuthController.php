@@ -112,7 +112,9 @@ class AuthController extends Controller
             'telefono' => $request->telefono,
             'ci' => $request->ci,
             'estado' => 1,
-            'password' => $request->password
+            'password' => $request->password,
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
 
         return response()->json([

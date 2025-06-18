@@ -7,6 +7,7 @@ use App\Models\Competidor;
 use App\Models\CompetidorCompetencia;
 use App\Models\TutorCompetidor;
 use App\Models\Area;
+use App\Models\Tutor;
 use App\Models\Competencia;
 use App\Models\NivelCategoria;
 use Carbon\Carbon;
@@ -47,78 +48,90 @@ class CompetidorController extends Controller{
 
     public function getDetallesCompetidor($id)    {
         $competidor = Competidor::with([
-            'colegio.ubicacion',
-            'curso',
-            'tutorCompetidores.tutor',
-            'competidorCompetencias.area',
-            'competidorCompetencias.boleta.imagenes'
-        ])->find($id);
+        'colegio.ubicacion',
+        'curso',
+        'tutorCompetidores.tutor',
+        'competidorCompetencias.area',
+        'competidorCompetencias.nivelCategoria',
+        'competidorCompetencias.boleta.imagenes'
+    ])->find($id);
 
-        // Si no se encuentra el competidor, devolver error 404
-        if (!$competidor) {
-            return response()->json(['error' => 'Competidor no encontrado'], 404);
-        }
-
-        // Obtener el área del competidor (tomamos la primera si hay varias)
-        $area = $competidor->competidorCompetencias->first() ? 
-                $competidor->competidorCompetencias->first()->area->nombre : 
-                'No asignada';
-
-        $fechaNacimiento = Carbon::parse($competidor->fecha_nacimiento)->format('d/m/y');
-
-        // Obtener la ruta de la imagen de la boleta
-        $rutaImagen = null;
-        foreach ($competidor->competidorCompetencias as $competidorCompetencia) {
-            if ($competidorCompetencia->boleta && $competidorCompetencia->boleta->imagenes->isNotEmpty()) {
-                $rutaImagen = $competidorCompetencia->boleta->imagenes->first()->ruta_imagen;
-                break;
-            }
-        }
-
-        // Si no se encuentra ninguna imagen, usar un valor por defecto
-        /* if (!$rutaImagen) {
-            $rutaImagen = 'https://i.ibb.co/svnPKS1b/boleta1.jpg';
-        } */
-
-        $informacionCompetidor = [
-            'id' => $competidor->competidor_id,
-            'nombres' => $competidor->nombres,
-            'apellidos' => $competidor->apellidos,
-            'ci' => $competidor->ci,
-            'fecha_nacimiento' => $fechaNacimiento,
-            'colegio' => $competidor->colegio->nombre,
-            'curso' => $competidor->curso->nombre,
-            'departamento' => $competidor->colegio->ubicacion->departamento,
-            'provincia' => $competidor->colegio->ubicacion->provincia,
-            'area' => $area,
-            'estado' => $competidor->estado,
-            'ruta_imagen' => $rutaImagen
-        ];
-
-        // Construir la información de los tutores
-        $tutores = [];
-        foreach ($competidor->tutorCompetidores as $tutorCompetidor) {
-            $tutor = $tutorCompetidor->tutor;
-            
-            $tipo = $tutorCompetidor->nivel_respansabilidad === 'Principal' ? 'Principal' : 'Secundario';
-            
-            $tutores[] = [
-                'id_tutor' => $tutor->tutor_id,
-                'tipo' => $tipo,
-                'nombre' => $tutor->nombres . ' ' . $tutor->apellidos,
-                'relacion' => $tutorCompetidor->realcion_competidor,
-                'telefono' => $tutor->telefono,
-                'correo' => $tutor->correo_electronico,
-            ];
-        }
-
-        $response = [
-                    'informacion_competidor' => $informacionCompetidor,
-                    'tutores' => $tutores,
-        ];
-
-        return response()->json($response);
+    if (!$competidor) {
+        return response()->json(['error' => 'Competidor no encontrado'], 404);
     }
+    $areas = $competidor->competidorCompetencias
+        ->pluck('area.nombre')
+        ->unique()
+        ->filter()
+        ->implode(', ');
+
+    $categorias = $competidor->competidorCompetencias
+        ->pluck('nivelCategoria.nombre')
+        ->unique()
+        ->filter()
+        ->implode(', ');
+
+    $fechaNacimiento = Carbon::parse($competidor->fecha_nacimiento)->format('d/m/Y');
+
+    // Obtener la ruta de la imagen de la boleta
+    $rutaImagen = null;
+    foreach ($competidor->competidorCompetencias as $competidorCompetencia) {
+        if ($competidorCompetencia->boleta && $competidorCompetencia->boleta->imagenes->isNotEmpty()) {
+            $rutaImagen = $competidorCompetencia->boleta->imagenes->first()->ruta_imagen;
+            break;
+        }
+    }
+
+    $inscripciones = [];
+    foreach ($competidor->competidorCompetencias as $competidorCompetencia) {
+        $inscripciones[] = [
+            'area' => $competidorCompetencia->area->nombre ?? 'No asignada',
+            'categoria' => $competidorCompetencia->nivelCategoria->nombre ?? 'Sin categoría',
+            'fecha_inscripcion' => $competidorCompetencia->fecha_inscripcion ? 
+                Carbon::parse($competidorCompetencia->fecha_inscripcion)->format('d/m/Y') : null
+        ];
+    }
+
+    $informacionCompetidor = [
+        'id' => $competidor->competidor_id,
+        'nombres' => $competidor->nombres,
+        'apellidos' => $competidor->apellidos,
+        'ci' => $competidor->ci,
+        'fecha_nacimiento' => $fechaNacimiento,
+        'colegio' => $competidor->colegio->nombre,
+        'curso' => $competidor->curso->nombre,
+        'departamento' => $competidor->colegio->ubicacion->departamento,
+        'provincia' => $competidor->colegio->ubicacion->provincia,
+        'area' => $areas ?: 'No asignada', 
+        'categoria' => $categorias ?: 'Sin categoría', 
+        'estado' => $competidor->estado,
+        'ruta_imagen' => $rutaImagen
+    ];
+
+    // Construir la información de los tutores
+    $tutores = [];
+    foreach ($competidor->tutorCompetidores as $tutorCompetidor) {
+        $tutor = $tutorCompetidor->tutor;
+        
+        $tipo = $tutorCompetidor->nivel_respansabilidad === 'Principal' ? 'Principal' : 'Secundario';
+        
+        $tutores[] = [
+            'id_tutor' => $tutor->tutor_id,
+            'tipo' => $tipo,
+            'nombre' => $tutor->nombres . ' ' . $tutor->apellidos,
+            'relacion' => $tutorCompetidor->realcion_competidor,
+            'telefono' => $tutor->telefono,
+            'correo' => $tutor->correo_electronico,
+        ];
+    }
+
+    $response = [
+        'informacion_competidor' => $informacionCompetidor,
+        'tutores' => $tutores,
+    ];
+
+    return response()->json($response);
+}
 
     public function actualizarEstadoCompetidor(Request $request, $id)
     {
@@ -151,8 +164,7 @@ class CompetidorController extends Controller{
     }
 
 public function obtenerDetallesCompetidor($competenciaId, Request $request){
-
-    $competencia = Competencia::find($competenciaId);
+$competencia = Competencia::find($competenciaId);
     if (!$competencia) {
         return response()->json([
             'success' => false,
@@ -160,7 +172,12 @@ public function obtenerDetallesCompetidor($competenciaId, Request $request){
         ], 404);
     }
 
-    $query = Competidor::with(['colegio', 'curso', 'ubicacion'])
+    $query = Competidor::with([
+            'colegio', 
+            'curso', 
+            'ubicacion',
+            'tutores' // Cargar todos los tutores
+        ])
         ->whereHas('competencias', function ($q) use ($competenciaId) {
             $q->where('competidor_competencia.competencia_id', $competenciaId);
         })
@@ -178,6 +195,20 @@ public function obtenerDetallesCompetidor($competenciaId, Request $request){
                 $areaNombre = $area ? $area->nombre : '';
             }
 
+            $tutorPrincipal = $competidor->tutores->where('pivot.nivel_respansabilidad', 'Principal')->first();
+            $tutoresSecundarios = $competidor->tutores->where('pivot.nivel_respansabilidad', '!=', 'Principal');
+            
+            $tutorPrincipalNombre = '';
+            $tutoresSecundariosNombres = [];
+            
+            if ($tutorPrincipal) {
+                $tutorPrincipalNombre = $tutorPrincipal->nombres . ' ' . $tutorPrincipal->apellidos;
+            }
+            
+            foreach ($tutoresSecundarios as $tutorSec) {
+                $tutoresSecundariosNombres[] = $tutorSec->nombres . ' ' . $tutorSec->apellidos;
+            }
+
             return [
                 'id' => $competidor->competidor_id,
                 'nombre' => $competidor->nombres,
@@ -191,6 +222,9 @@ public function obtenerDetallesCompetidor($competenciaId, Request $request){
                 'provincia' => $competidor->ubicacion->provincia ?? '',
                 'fecha' => $competencia->pivot->fecha_inscripcion ?? '',
                 'competencia_id' => $competencia->competencia_id,
+                'tutor_principal' => $tutorPrincipalNombre, 
+                'tutores_secundarios' => implode(', ', $tutoresSecundariosNombres),
+                'tutor' => $tutorPrincipalNombre ?: (count($tutoresSecundariosNombres) > 0 ? $tutoresSecundariosNombres[0] : 'Sin tutor'),
             ];
         });
     });

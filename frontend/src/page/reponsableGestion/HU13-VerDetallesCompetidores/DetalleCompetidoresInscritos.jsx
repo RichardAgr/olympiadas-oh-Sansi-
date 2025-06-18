@@ -44,13 +44,13 @@ function DetalleCompetidoresInscritos() {
               <th className="columna-cursoRespGesL">Curso</th>
               <th className="columna-estadoRespGesL">Estado</th>
               <th className="columna-competenciaRespGesL">Competencia</th>
-              <th className="columna-fechaRespGesL">Fecha</th>
+              <th className="columna-fechaRespGesL">Fecha de Inscripcion</th>
             </tr>
           </thead>
           <tbody className="tabla-cuerpoRespGesL">
             {competidoresFiltrados.map((comp, index) => (
               <tr key={index} className="fila-datosRespGesL">
-                <td className="celda-nombreRespGesL">{comp.nombre}</td>
+                <td className="celda-nombreRespGesL">{comp.nombre} {comp.apellido}</td>
                 <td className="celda-colegioRespGesL">{comp.colegio}</td>
                 <td className="celda-ciRespGesL">{comp.ci}</td>
                 <td className="celda-cursoRespGesL">{comp.curso}</td>

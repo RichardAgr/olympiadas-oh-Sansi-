@@ -1,8 +1,10 @@
 import  { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import "../../../App.css";
-import "./hu1.css"; // Asegúrate de que este archivo CSS exista y tenga los estilos necesarios
+import "./agregarArea.css"
+/* import "../../../App.css";
+import "./hu1.css";  */
+
 
 const AgregarArea = () => {
   const [nombre, setNombre] = useState("");

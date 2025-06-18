@@ -115,11 +115,11 @@
   font-family: "Comfortaa", sans-serif;
 }
 
-.button:hover {
+.buttonVerReci:hover {
   background-color: var(--primary-dark);
 }
 
-.button:disabled {
+.buttonVerReci:disabled {
   background-color: var(--dark-gray);
   cursor: not-allowed;
 }

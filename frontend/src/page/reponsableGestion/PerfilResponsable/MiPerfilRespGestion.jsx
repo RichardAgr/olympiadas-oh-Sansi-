@@ -34,42 +34,42 @@ function MiPerfilRespGestion() {
     <div className="perfil-container">
       <h1 className="titulo-pagina">Detalles del Perfil</h1>
 
-      <div className="card-perfil">
+      <div className="card-perfilPerfilResp">
         <img src={perfilDefault} alt="Foto de perfil" className="imagen-perfil" />
 
         <div className="info-personal">
-          <div className="campo">
+          <div className="campoPerfilResp">
             <label>Nombre:</label>
-            <div className="valor">{perfil.nombres}</div>
+            <div className="valorPerfilResp">{perfil.nombres}</div>
           </div>
 
-          <div className="campo">
+          <div className="campoPerfilResp">
             <label>Apellido:</label>
-            <div className="valor">{perfil.apellidos}</div>
+            <div className="valorPerfilResp">{perfil.apellidos}</div>
           </div>
         </div>
       </div>
 
-      <div className="card-perfil vertical">
-        <div className="campo">
+      <div className="card-perfilPerfilResp vertical">
+        <div className="campoPerfilResp">
           <label>Correo:</label>
-          <div className="valor">
+          <div className="valorPerfilResp">
             <img src={correoIcon} alt="Correo" className="icono" />
             {perfil.correo_electronico}
           </div>
         </div>
 
-        <div className="campo">
+        <div className="campoPerfilResp">
           <label>Teléfono:</label>
-          <div className="valor">
+          <div className="valorPerfilResp">
             <img src={telefonoIcon} alt="Teléfono" className="icono" />
             {perfil.telefono}
           </div>
         </div>
 
-        <div className="campo">
+        <div className="campoPerfilResp">
           <label>CI:</label>
-          <div className="valor">
+          <div className="valorPerfilResp">
             <img src={ciIcon} alt="Carnet" className="icono" />
             {perfil.ci}
           </div>

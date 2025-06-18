@@ -38,13 +38,12 @@ const [formData, setFormData] = useState({
     return new Date(fechaInicio) < new Date(fechaFin)
   }
 
-  // Manejar cambios en los inputs
   const handleInputChange = (e) => {
     const { name, value, type } = e.target
 
-    // Validación en tiempo real para campos alfanuméricos
+
     if ((name === "nombre_competencia" || name === "descripcion") && !validateAlphanumeric(value)) {
-      return // No actualizar si contiene caracteres especiales
+      return 
     }
 
     const newValue = type === "select-one" ? value === "true" : value
@@ -54,7 +53,7 @@ const [formData, setFormData] = useState({
       [name]: newValue,
     }))
 
-    // Limpiar errores cuando el usuario empiece a escribir
+
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -63,7 +62,6 @@ const [formData, setFormData] = useState({
     }
   }
 
-  // Validar formulario
   const validateForm = () => {
     const newErrors = {}
 

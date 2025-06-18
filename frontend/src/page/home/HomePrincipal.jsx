@@ -11,7 +11,7 @@ import "./HomePrincipal.css"
 const HomePrincipal = () => {
   const [convocatoria, setConvocatoria] = useState(null)
   const [tutoriales, setTutoriales] = useState([
-  {
+    {
     titulo: "Inscripción Manual",
     texto: "Aprende cómo realizar tu inscripción paso a paso de forma manual",
     tipo_video: "manual",
@@ -29,7 +29,7 @@ const HomePrincipal = () => {
     tipo_video: "boleta",
     url: "",
   },
-])
+  ])
   const [loading, setLoading] = useState(true)
   const [showTransition, setShowTransition] = useState(false)
   const [showContent, setShowContent] = useState(false)
@@ -43,6 +43,7 @@ const HomePrincipal = () => {
   const observerRef = useRef(null)
   const cardsRef = useRef([])
   const heroRef = useRef(null)
+  const [anio,setAnio]= useState(0)
 
   const createWaveText = (text) => {
     return text.split("").map((char, index) => <span key={index}>{char === " " ? "\u00A0" : char}</span>)
@@ -153,7 +154,7 @@ useEffect(() => {
     // Paso 1: Obtener competencia activa
     const compResponse = await axios.get('http://localhost:8000/api/info-competencia-activa');
     const competencia = compResponse.data.data[0]; // Asegúrate de que es un array
-
+    setAnio(competencia.anio_competencia)
     if (!competencia || !competencia.competencia_id) {
       throw new Error('No se encontró una competencia activa válida.');
     }
@@ -311,10 +312,10 @@ const response = await axios.get(convocatoria, {
         <div className="hero-background-home"></div>
         <div className="hero-content-home">
           <h1 className="hero-title-home building-text-home">
-            {createBuildingText("Únete al futuro de la ciencia y la tecnología", "building")}
+            {createBuildingText("Unete al futuro de la ciencia y la tecnología", "building")}
           </h1>
           <h2 className="hero-subtitle-home building-text-home">
-            {createBuildingText("OLIMPIADA CIENTÍFICA NACIONAL SAN SIMÓN 2025", "building")}
+            {createBuildingText(`OLIMPIADA CIENTÍFICA NACIONAL SAN SIMÓN ${anio}`, "building")}
           </h2>
           <button className="download-button-home slide-in-top-home delay-2-home" onClick={handleDownload}>
             Descargar Convocatoria
@@ -335,7 +336,7 @@ const response = await axios.get(convocatoria, {
             <p>
               El Comité de la Olimpiada Científica Nacional San Simón – O! SANSI, a través de la Facultad de Ciencias y
               Tecnología de la Universidad Mayor de San Simón, invita cordialmente a todos los estudiantes del Sistema
-              de Educación Regular a participar en la edición 2025 de las Olimpiadas O! SANSI.
+              de Educación Regular a participar en la edición {anio} de las Olimpiadas O! SANSI.
             </p>
           </div>
           <img

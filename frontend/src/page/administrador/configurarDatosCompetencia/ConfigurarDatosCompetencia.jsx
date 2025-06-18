@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import {useParams } from "react-router-dom";
-import { GraduationCap, Megaphone, Video,  FileSpreadsheet } from "lucide-react"
+import { GraduationCap, Megaphone, Video} from "lucide-react"
  import PdfUploader from "../../../components/pdfConfiguracionData/pdfUploader"
 import VideoUploader from "../../../components/videoUplaodaer/VideosUpLoader"
 import axios from "axios";

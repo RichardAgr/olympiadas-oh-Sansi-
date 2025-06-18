@@ -215,3 +215,36 @@
   font-size: 1.8rem;
   color: #000;
 }
+
+.input-con-icono {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280; 
+}
+
+.password-toggle:hover {
+  color: #4b5563; 
+}
+
+.password-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.5);
+}
+
+.input-con-icono input {
+  padding-right: 40px;
+  width: 100%;
+}

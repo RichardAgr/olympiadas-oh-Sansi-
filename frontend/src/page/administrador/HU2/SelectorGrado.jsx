@@ -112,7 +112,6 @@ function SelectorGrado({
           onChange={handleGradoFinalChange}
           required
           className="select-grado"
-          disabled={!gradoInicial}
         >
           <option value="">Seleccionar grado final</option>
           {gradosParaFinal.map((g) => (

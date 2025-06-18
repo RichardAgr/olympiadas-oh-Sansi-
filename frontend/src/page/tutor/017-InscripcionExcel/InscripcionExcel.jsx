@@ -9,6 +9,7 @@ import ExcelPreview from "../../../components/excelPreview/ExcelPreview"
 import FileUpLoader from "../../../components/FileUpLoader/FileUpLoader"
 import BoletaView from "../../../components/BoletaView/BoletaView"
 import { useParams } from "react-router-dom"
+import Swal from "sweetalert2"
 import "./inscripcionExcel.css"
 import axios from "axios"
 
@@ -53,21 +54,16 @@ const InscripcionMasiva = () => {
   const [validationResults, setValidationResults] = useState(null)
   const [boletaGenerada, setBoletaGenerada] = useState(null)
   const [showBoletaViewer, setShowBoletaViewer] = useState(false)
-  const [pdfUploaded, setPdfUploaded] = useState(false)
+/*   const [pdfUploaded, setPdfUploaded] = useState(false)
+const [isUploading, setIsUploading] = useState(false) */
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [isUploading, setIsUploading] = useState(false)
+  const [boletaUploaded, setBoletaUploaded] = useState(false)
+  const [boletaUrl, setBoletaUrl] = useState(null)
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
+  const idTutor = user?.tutor_id;
 
 
-  const guardarRecibo = async (reciboData) => {
-    try {
-      const response = await axios.post("http://localhost:8000/api/guardarDatos/recibos", reciboData)
-      /*  console.log('Recibo guardado en API:', response.data); */
-      return response.data
-    } catch (error) {
-      console.error("Error al guardar el recibo en la API:", error)
-      throw error
-    }
-  }
 
   const handleDescargarPlantilla = async () => {
     try {
@@ -82,6 +78,16 @@ const InscripcionMasiva = () => {
       setError("Error al descargar la plantilla: " + error.message)
     } finally {
       setIsLoading(false)
+    }
+  }
+  const guardarRecibo = async (reciboData) => {
+    try {
+      const response = await axios.post("http://localhost:8000/api/guardarDatos/recibos", reciboData)
+      /*  console.log('Recibo guardado en API:', response.data); */
+      return response.data
+    } catch (error) {
+      console.error("Error al guardar el recibo en la API:", error)
+      throw error
     }
   }
 
@@ -214,93 +220,135 @@ const InscripcionMasiva = () => {
     setShowBoletaViewer(false)
   }
 
-  const handleContinuar = async () => {
-    try {
-      if (boletaGenerada && !pdfUploaded) {
-        setIsUploading(true)
-        setUploadProgress(0)
 
-        const boletaData = {
-          numero: boletaGenerada.numero || "7000569",
-          tutor: boletaGenerada.tutor || "TUTOR NO ESPECIFICADO",
-          fechaEmision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
-          montoTotal: typeof boletaGenerada.montoTotal !== "Sin costo" ? boletaGenerada.montoTotal : 0,
-          competidores: Array.isArray(boletaGenerada.competidores)
-            ? boletaGenerada.competidores.map((comp) => ({
-                nombre: comp.nombre || "Sin nombre",
-                area: comp.area || "Sin área",
-                nivel: comp.nivel || "Sin categoría",
-                monto: comp.monto || 0,
-              }))
-            : [],
-        }
-
-        const blob = await generarBoletaPDF(boletaData)
-        const file = new File([blob], `Recibo_${boletaData.numero}.pdf`, { type: "application/pdf" })
-
-        const uploadResult = await uploadToCloudinary(file, (progress) => {
-          setUploadProgress(progress)
-        })
-
-        // Datos completos para mostrar y registrar
-        const completeUploadData = {
-          tutor_id: id,
-          numero_recibo: boletaData.numero,
-          monto_total: boletaData.montoTotal,
-          fecha_emision: boletaData.fechaEmision,
-          ruta_pdf: uploadResult.secure_url,
-          estado: "Pendiente",
-        }
-        const respuestaAPI = await guardarRecibo(completeUploadData)
-        /*         console.log("Respuesta api:", respuestaAPI); */
-        setPdfUploaded(true)
-      }
-    } catch (error) {
-      console.error("Error al subir el recibo a Cloudinary:", error)
-      setError("Error al subir el PDF: " + error.message)
-    } finally {
-      setIsUploading(false)
-      setStep(4)
+const subirBoletaPDF = async () => {
+  try {
+    if (!boletaGenerada) {
+      throw new Error("No hay boleta generada para subir")
     }
-  }
 
-  const handleNuevaInscripcion = async () => {
-    try {
-      setIsLoading(true)
-      setError(null)
-
-      if (!file) {
-        throw new Error("No hay archivo Excel para enviar")
-      }
-
-      if (!boletaGenerada?.numero) {
-        throw new Error("No se ha generado número de recibo")
-      }
-      // Solo subir el Excel si existe archivo y número de recibo
-      if (file && boletaGenerada?.numero) {
-        const formData = new FormData()
-        formData.append("numero_recibo", boletaGenerada.numero)
-        formData.append("archivo_excel", file)
-
-        const response = await axios.post("http://localhost:8000/api/guardarDatos/excel", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-      }
-    } catch (error) {
-      console.error("Error al enviar el Excel:", error)
-      setError("Error al enviar los datos: " + error.message)
-    } finally {
-      setIsLoading(false)
-      setStep(1)
-      setFile(null)
-      setExcelData(null)
-      setValidationResults(null)
-      setBoletaGenerada(null)
-      setPdfUploaded(false)
+    const boletaData = {
+      numero: boletaGenerada.numero || "7000569",
+      tutor: boletaGenerada.tutor || "TUTOR NO ESPECIFICADO",
+      fechaEmision: boletaGenerada.fechaEmision || new Date().toLocaleDateString(),
+      montoTotal: typeof boletaGenerada.montoTotal !== "Sin costo" ? boletaGenerada.montoTotal : 0,
+      competidores: Array.isArray(boletaGenerada.competidores)
+        ? boletaGenerada.competidores.map((comp) => ({
+            nombre: comp.nombre || "Sin nombre",
+            area: comp.area || "Sin área",
+            nivel: comp.nivel || "Sin categoría",
+            monto: comp.monto || 0,
+          }))
+        : [],
     }
+
+    // 1. Generar y subir el PDF a Cloudinary
+    const blob = await generarBoletaPDF(boletaData)
+    const file = new File([blob], `Recibo_${boletaData.numero}.pdf`, { type: "application/pdf" })
+
+    const uploadResult = await uploadToCloudinary(file, (progress) => {
+      setUploadProgress(progress)
+    })
+
+    // 2. Guardar el recibo en la base de datos con la URL del PDF
+    const completeUploadData = {
+      tutor_id: id, // Asegúrate de que esta variable esté disponible
+      numero_recibo: boletaData.numero,
+      monto_total: boletaData.montoTotal,
+      fecha_emision: boletaData.fechaEmision,
+      ruta_pdf: uploadResult.secure_url,
+      estado: "Pendiente",
+    }
+    
+    const respuestaAPI = await guardarRecibo(completeUploadData)
+
+    setBoletaUrl(uploadResult.secure_url)
+    setBoletaUploaded(true)
+    
+    return uploadResult.secure_url // Retorna la URL del PDF subido
+  } catch (error) {
+    console.error("Error al subir la boleta y guardar el recibo:", error)
+    throw error
   }
+}
+
+const handleNuevaInscripcion = async () => {
+  try {
+    setIsLoading(true)
+    setError(null)
+
+    if (!file) {
+      throw new Error("No hay archivo Excel para enviar")
+    }
+
+    if (!boletaGenerada?.numero) {
+      throw new Error("No se ha generado número de recibo")
+    }
+
+    // 1. PRIMERO: Validar el Excel completamente
+    const formDataValidacion = new FormData()
+    formDataValidacion.append("numero_recibo", boletaGenerada.numero)
+    formDataValidacion.append("archivo_excel", file)
+    formDataValidacion.append("competencia_id", competenciaId)
+    formDataValidacion.append("tutor_id", idTutor)
+
+    const validationResponse = await axios.post("http://localhost:8000/api/validarExcelPrevio", formDataValidacion, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+
+    if (!validationResponse.data.esValido) {
+      throw new Error("El archivo Excel tiene errores: " + validationResponse.data.errores.join(", "))
+    }
+
+    // 2. SEGUNDO: Subir la boleta PDF y guardar el recibo (solo si el Excel es válido)
+    if (!boletaUploaded && boletaGenerada) {
+      await subirBoletaPDF()
+    }
+
+    // 3. TERCERO: Procesar el Excel definitivamente
+    const formDataFinal = new FormData()
+    formDataFinal.append("numero_recibo", boletaGenerada.numero)
+    formDataFinal.append("archivo_excel", file)
+    formDataFinal.append("competencia_id", competenciaId)
+    formDataFinal.append("tutor_id", idTutor)
+
+    const response = await axios.post("http://localhost:8000/api/guardarDatos/excel", formDataFinal, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+
+    Swal.fire({
+      icon: 'success',
+      title: `Excel y boleta subidos con éxito`,
+      showConfirmButton: false,
+      timer: 2000
+    });
+
+  } catch (error) {
+    console.log(error)
+    setError("Error al enviar los datos: " + (error.response?.data?.errores?.join(", ") || 
+                        error.response?.data?.message || 
+                        error.message ||
+                        "Error desconocido al procesar el archivo"))
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al validar o subir el excel'
+    });
+  } finally {
+    setIsLoading(false)
+    setStep(1)
+    setFile(null)
+    setExcelData(null)
+    setValidationResults(null)
+    setBoletaGenerada(null)
+    setBoletaUploaded(false)
+    setBoletaUrl(null)
+  }
+}
 
   const renderStepContent = () => {
     switch (step) {
@@ -463,18 +511,8 @@ const InscripcionMasiva = () => {
               {/* <button className="primaryButton"  onClick={handleDescargarBoleta} disabled={isLoading}>
                 {isLoading ? "Descargando..." : "Descargar Boleta PDF"}
               </button> */}
-              <button className="successButton" onClick={handleContinuar} disabled={isUploading}>
-                {isUploading ? (
-                  <>
-                    <Loader2 className="animate-spinX" style={{ marginRight: "8px" }} />
-                    Subiendo ({uploadProgress}%)
-                  </>
-                ) : (
-                  <>
-                    <UploadCloud style={{ marginRight: "8px" }} />
+              <button className="successButton" onClick={() => setStep(4)}>
                     Continuar
-                  </>
-                )}
               </button>
             </div>
           </div>
@@ -509,9 +547,16 @@ const InscripcionMasiva = () => {
               {/* <button className="secondaryButton" onClick={() => setStep(3)}>
                 Volver
               </button> */}
-              <button className="successButton" onClick={handleNuevaInscripcion}>
-                Subir Excel
-              </button>
+              <button className="successButton" onClick={handleNuevaInscripcion} disabled={isLoading}>
+                   {isLoading ? (
+                      <>
+                        <Loader2 className="animate-spinX" style={{ marginRight: "8px" }} />
+                        Subiendo Excel y Boleta...
+                      </>
+                    ) : (
+                      "Subir Excel y Boleta"
+                    )}
+                </button>
             </div>
           </div>
         )

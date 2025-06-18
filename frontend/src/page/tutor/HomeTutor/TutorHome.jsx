@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react"
 import {UserRoundPen,FileSpreadsheet,Upload} from "lucide-react"
 import axios from "axios"
+import Swal from 'sweetalert2';
 import './tutorHome.css'
 
 
@@ -28,16 +29,36 @@ function TutorHome () {
     fetchTutorData()
   }, [id])
 
+  const showDisabledAccountAlert = () => {
+  Swal.fire({
+    title: 'Cuenta desactivada',
+    text: 'Su cuenta ha sido desactivada. No puede realizar inscripciones. Vea Notificaciones',
+    icon: 'error',
+    confirmButtonText: 'Entendido'
+  });
+};
+
   const handleManualInscription = () => {
-    // Aquí iría la lógica para abrir un formulario de inscripción manual
+    if (!tutor.estado) {
+      showDisabledAccountAlert();
+      return;
+   }
     navigate(`/homeTutor/${id}/tutor/InscribirManual/`);
   }
 
   const handleExcelUpload = () => {
+    if (!tutor.estado) {
+      showDisabledAccountAlert();
+      return;
+   }
     navigate(`/homeTutor/${id}/tutor/InscripcionExcel`)
   }
 
   const handleUploadClick = () => {
+    if (!tutor.estado) {
+      showDisabledAccountAlert();
+      return;
+    }
     navigate(`/homeTutor/${id}/tutor/SubirComprobante`)
   }
 
@@ -104,7 +125,7 @@ function TutorHome () {
       <div className="buttons-container">
         <button className="inscribir-btn manual-btn" onClick={handleManualInscription}>
           <span className="icon"><UserRoundPen/></span>
-          Manualmente
+          Manual
         </button>
 
         <button className="inscribir-btn excel-btn" onClick={handleExcelUpload}>

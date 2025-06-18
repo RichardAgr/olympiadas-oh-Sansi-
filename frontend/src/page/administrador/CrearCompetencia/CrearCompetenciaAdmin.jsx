@@ -69,6 +69,19 @@ const CrearCompetenciaAdmin = () => {
   // Cambiar estado de competencia (activar/desactivar)
   const toggleEstadoCompetencia = async (competenciaId, nuevoEstado) => {
     try {
+      if(nuevoEstado===true){
+        const competenciaActiva = competencias.find(comp => 
+        comp.estado === true && comp.competencia_id !== competenciaId)
+
+        if (competenciaActiva) {
+            showNotification(
+              `No se puede activar la competencia. La competencia "${competenciaActiva.nombre_competencia}" ya está activa. Solo puede haber una competencia activa a la vez.`, 
+              "warning"
+            );
+            return; 
+        }
+      }
+
       await axios.patch(`http://localhost:8000/api/${competenciaId}/estado`, {
         estado: nuevoEstado
       });

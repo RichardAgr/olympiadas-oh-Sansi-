@@ -177,7 +177,7 @@ const PDFViewer = ({ boleta, onClose, onDescargar }) => {
           )}
         </div>
         <div className="pdfViewerFooter">
-          <button className="button" onClick={onDescargar}>Descargar PDF</button>
+          <button className="buttonVerReci" onClick={onDescargar}>Descargar PDF</button>
         </div>
       </div>
     </div>
