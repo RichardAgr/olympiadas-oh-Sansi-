@@ -1,0 +1,239 @@
+erDiagram
+    RESPONSABLE_GESTION {
+        int responsable_id PK
+        int competencia_id FK
+        varchar(20) ci
+        varchar(100) nombres
+        varchar(100) apellidos
+        varchar(100) correo_electronico
+        varchar(100) telefono
+        date fecha_asignacion
+        varchar(255) password 
+        boolean estado 
+    }
+    
+    AREA {
+        int area_id PK
+        int competencia_id FK
+        int costo
+        varchar(50) nombre
+        text descripcion
+        boolean estado
+    }
+
+        
+    DOCUMENTO_AREA {
+        int documento_area_id PK
+        int area_id FK
+        text url_pdf
+        date fecha_creacion
+        boolean estado
+    }
+    
+    NIVEL_CATEGORIA {
+        int nivel_categoria_id PK
+        int grado_id_inicial FK
+        int grado_id_final FK
+        int area_id FK
+        varchar(50) nombre
+        text descripcion
+        boolean estado
+    }
+    
+    UBICACION {
+        int ubicacion_id PK
+        varchar(50) departamento
+        varchar(50) provincia
+    }
+    
+    COLEGIO {
+        int colegio_id PK
+        int ubicacion_id FK
+        varchar(100) nombre
+        varchar(10) telefono
+    }
+
+    CURSO{
+        int curso_id PK
+        int grado_id FK
+        varchar(50) nombre
+        boolean estado
+    }
+
+    GRADO{
+        int grado_id PK
+        int nivel_educativo_id FK
+        varchar(50) nombre
+        varchar(20) abreviatura
+        int orden
+        boolean estado 
+    }
+
+    NIVEL_EDUCATIVO{
+        int nivel_educativo_id PK
+        varchar(50) nombre
+        varchar(20) abreviatura
+        int orden
+        boolean estado 
+    }
+    
+    COMPETIDOR {
+        int competidor_id PK
+        int colegio_id FK
+        int curso_id FK
+        int ubicacion_id FK
+        varchar(100) nombres
+        varchar(100) apellidos
+        varchar(20) ci
+        date fecha_nacimiento
+        varchar(50) estado
+    }
+    
+    TUTOR {
+        int tutor_id PK
+        int competencia_id FK
+        varchar(20) ci
+        varchar(100) nombres
+        varchar(100) apellidos
+        varchar(100) correo_electronico
+        varchar(100) telefono
+        varchar(255) password 
+        boolean estado
+    }
+
+    TUTOR_COMPETIDOR{
+        int competidor_tutor PK
+        int competidor_id FK
+        int tutor_id FK
+        varchar(50) nivel_respansabilidad
+        varchar(50) realcion_competidor
+    }
+    
+    COMPETENCIA {
+        int competencia_id PK
+        varchar(50) nombre_competencia
+        text descripcion
+        date fecha_inicio
+        date fecha_fin
+        boolean estado
+    }
+
+    DOCUMENTO_CONVOCATORIA {
+        int documeto_convocatoria_id PK
+        int competencia_id FK
+        text url_pdf
+        date fecha_creacion
+        boolean estado
+    }
+
+    COMPETIDOR_COMPETENCIA{
+        int competidor_competencia_id PK
+        int competidor_id FK
+        int competencia_id FK
+        int area_id FK
+        int nivel_categoria_id FK
+        int boleta_id FK
+        int recibo_detalle_id FK
+        date fecha_inscripcion
+    }
+    
+    CRONOGRAMA {
+        int cronograma_id PK
+        int competencia_id FK
+        int area_id FK
+        int descripcion
+        date fecha_inicio
+        date fecha_fin
+        varchar(50) tipo_evento
+        int anio_olimpiada
+    }
+
+    BOLETA {
+        int boleta_id PK
+        int tutor_id FK
+        int recibo_id FK
+        varchar(50) numero_boleta
+        varchar(100) nombre_pagador
+        decimal monto_total
+        date fecha_pago
+        boolean estado
+    }
+
+    IMAGEN_BOLETA {
+        int imagen_id PK
+        int boleta_id FK
+        text ruta_imagen
+        date fecha_subida
+        boolean estado
+    }
+    
+    NOTIFICACION {
+        int notificacion_id PK
+        int responsable_id FK
+        int tutor_id FK
+        int competidor_id FK
+        text asunto
+        text mensaje
+        date fecha_envio
+        boolean estado
+    }  
+
+    RECIBO {
+        int recibo_id PK
+        int tutor_id FK
+        varchar(20) numero_recibo
+        decimal monto_total
+        date fecha_emision
+        text ruta_pdf
+        varchar(20) estado
+    }   
+
+    RECIBO_DETALLE {
+        int recibo_detalle_id PK
+        int recibo_id FK
+        int competidor_id FK
+        varchar(20) estado
+    } 
+
+    VIDEO_TUTORIAL {
+        int video_id PK
+        varchar(20) tipo_video
+        text url_video
+        date fecha_creacion
+        boolean estado
+    }
+
+
+    RESPONSABLE_GESTION ||--o{ NOTIFICACION : "envia"
+    AREA ||--o{ NIVEL_CATEGORIA : "tiene"
+    AREA ||--o{ CRONOGRAMA : "tiene"
+    AREA ||--o{ DOCUMENTO_AREA : "tiene"
+    COLEGIO ||--o{ COMPETIDOR : "tiene"
+    CURSO ||--o{ COMPETIDOR: "pertenece a"
+    GRADO ||--o{ CURSO: "tiene"
+    GRADO ||--o{ NIVEL_CATEGORIA: "grado inicial"
+    GRADO ||--o{ NIVEL_CATEGORIA: "grado final"
+    NIVEL_EDUCATIVO||--o{ GRADO: "contiene"
+    UBICACION ||--o{ COLEGIO : "contiene"
+    UBICACION ||--o{ COMPETIDOR: "tiene"
+    COMPETIDOR ||--o{ TUTOR_COMPETIDOR: "tiene"
+    COMPETIDOR ||--o{  COMPETIDOR_COMPETENCIA: "inscrito en"
+    COMPETIDOR ||--o{ NOTIFICACION: "recibe"
+    COMPETIDOR ||--o{ RECIBO_DETALLE: "tiene"
+    TUTOR ||--o{ TUTOR_COMPETIDOR:"asigna a"
+    TUTOR ||--o{ BOLETA: "realiza"
+    TUTOR ||--o{ NOTIFICACION: "recibe"
+    TUTOR ||--o{ RECIBO: "genera"
+    COMPETENCIA ||--o{ COMPETIDOR_COMPETENCIA: "tiene competidores"
+    COMPETENCIA ||--o{ CRONOGRAMA:"tiene"
+    COMPETENCIA ||--o{ DOCUMENTO_CONVOCATORIA:"tiene"
+    COMPETENCIA ||--o{ TUTOR:"tiene"
+    COMPETENCIA ||--o{ AREA:"tiene"
+    COMPETENCIA ||--o{ RESPONSABLE_GESTION:"tiene"
+    COMPETIDOR_COMPETENCIA }|--o| NIVEL_CATEGORIA:"clasifica en"
+    COMPETIDOR_COMPETENCIA }|--o| AREA:"pertenece a"
+    BOLETA ||--o{ COMPETIDOR_COMPETENCIA: "cubre inscripción de"
+    BOLETA ||--o{ IMAGEN_BOLETA: "tiene"
+    RECIBO ||--o{ BOLETA: "es pagado"
+    RECIBO ||--o{ RECIBO_DETALLE: "contiene"
+    RECIBO_DETALLE ||--o{ COMPETIDOR_COMPETENCIA: "cubre inscripción"
