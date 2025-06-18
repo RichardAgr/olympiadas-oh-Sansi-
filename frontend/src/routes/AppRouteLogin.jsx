@@ -8,7 +8,7 @@ function AppRouteLogin() {
      <Routes>
       <Route index element={<Login />} />
       <Route path="admin/*" element={<AppRouter />} />
-      <Route path="respGest/*" element={<AppRouteRespGest />} />
+      <Route path="respGest/:id_respGest/Home/*" element={<AppRouteRespGest />} />
       <Route path="homeTutor/:id/tutor/*" element={<AppRouteTutor />} />
     </Routes>
   );

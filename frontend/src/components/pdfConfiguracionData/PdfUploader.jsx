@@ -29,7 +29,7 @@ export default function PdfUploader({ idArchivo, title, type }) {
         setLoading(true)
         setError(false)
 
-        const response = await axios.get(`http://127.0.0.1:8000/api/documentos/${type}/${idArchivo}`)
+        const response = await axios.get(`http://localhost:8000/api/documentos/${type}/${idArchivo}`)
 
         if (response.data.success && response.data.data) {
           setExistingDocument(response.data.data)
@@ -129,7 +129,7 @@ export default function PdfUploader({ idArchivo, title, type }) {
         uploadedAt: new Date().toISOString().split("T")[0],
       }
 
-      const res = await axios.post("http://127.0.0.1:8000/api/documentos/tipoPortal", payload)
+      const res = await axios.post("http://localhost:8000/api/documentos/tipoPortal", payload)
 
       if (res.data.success) {
         setExistingDocument(res.data.data)
@@ -160,7 +160,7 @@ export default function PdfUploader({ idArchivo, title, type }) {
   const handleDelete = async () => {
     try {
       if (existingDocument) {
-        const response = await axios.delete(`http://127.0.0.1:8000/api/documentos/${type}/${idArchivo}`)
+        const response = await axios.delete(`http://localhost:8000/api/documentos/${type}/${idArchivo}`)
 
         if (response.data.success) {
           setExistingDocument(null)

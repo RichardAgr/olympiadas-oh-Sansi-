@@ -1,13 +1,14 @@
 import { useState } from "react"
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useParams } from 'react-router-dom';
 import AlertMessage from "./alertMessage/AlertMessage"
 import "./visualizarTablaPagos.css"
 
-
 const VisualizarTablaPagos = ({payments}) => {
-    const [alertOpen, setAlertOpen] = useState(false)
-    const [alertMessage, setAlertMessage] = useState("")
-    const navigate = useNavigate();
+  const [alertOpen, setAlertOpen] = useState(false)
+  const [alertMessage, setAlertMessage] = useState("")
+  const navigate = useNavigate();
+  const {id_respGest} = useParams()
+
 
     const handleViewDetails = (payment) => {
         if (payment.estado === "Pendiente" || !payment.fecha_pago) {
@@ -15,7 +16,7 @@ const VisualizarTablaPagos = ({payments}) => {
           setAlertOpen(true)
           return
         }
-        navigate('/respGest/DetallePago', { state: { payment } });
+        navigate(`/respGest/${id_respGest}/Home/DetallePago`, { state: { payment } });
       }
 
       const closeAlert = () => {

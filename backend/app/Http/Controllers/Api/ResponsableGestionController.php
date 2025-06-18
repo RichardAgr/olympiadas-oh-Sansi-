@@ -8,50 +8,110 @@ use App\Models\ResponsableGestion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator; 
+use Carbon\Carbon;
 
 class ResponsableGestionController extends Controller{
-    public function obtenerResponsableGestion(){
-        $responsables = ResponsableGestion::all();
-        return response()->json($responsables, 200);
-    }
+public function obtenerResponsableGestion($id_competencia){
+       try {
+        validator(['id_competencia' => $id_competencia], [
+            'id_competencia' => 'required|integer|exists:competencia,competencia_id'
+        ])->validate();
 
-    public function registrarResponsableGestion(Request $request)
-    {
+        $responsables = ResponsableGestion::where('competencia_id', $id_competencia)
+            ->get()
+            ->map(function ($responsable) {
+                $fechaAsignacion = is_string($responsable->fecha_asignacion) 
+                    ? Carbon::parse($responsable->fecha_asignacion)
+                    : $responsable->fecha_asignacion;
+                return [
+                    'responsable_id' => $responsable->responsable_id,
+                    'competencia_id' => $responsable->competencia_id,
+                    'ci' => $responsable->ci,
+                    'nombres' => $responsable->nombres,
+                    'apellidos' => $responsable->apellidos,
+                    'correo_electronico' => $responsable->correo_electronico,
+                    'telefono' => $responsable->telefono,
+                    'fecha_asignacion' => $fechaAsignacion?->format('Y-m-d'),
+                    'estado' => $responsable->estado,
+                    'ya_enviado' => !empty($responsable->password),
+                    'tiene_acceso' => $responsable->estado && !empty($responsable->password)
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $responsables,
+            'message' => 'Responsables de gestión obtenidos correctamente',
+        ], 200);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'error' => 'ID de competencia inválido',
+            'details' => $e->errors()
+        ], 422);
+
+    } catch (\Exception $e) {
+        Log::error('Error al obtener responsables: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'error' => 'Error al obtener responsables de gestión',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+}
+
+public function registrarResponsableGestion(Request $request){
         try {
-            // Validar la entrada
             $request->validate([
                 'nombres' => 'required|string|max:100',
                 'apellidos' => 'required|string|max:100',
                 'ci' => 'required|string|max:20|unique:responsable_gestion,ci',
                 'correo_electronico' => 'required|email|max:100',
                 'telefono' => 'required|string|max:100',
+                'id_competencia' => 'required|integer|exists:competencia,competencia_id'
             ]);
 
-            // Asignar automáticamente la fecha de asignación
-            $fechaAsignacion = now(); // Laravel helpers proporcionan `now()` para obtener la fecha y hora actual
+            $passwordPlano = Str::random(10);
 
-            // Crear el registro
             $responsable = ResponsableGestion::create([
                 'ci' => $request->ci,
                 'nombres' => $request->nombres,
                 'apellidos' => $request->apellidos,
                 'correo_electronico' => $request->correo_electronico,
                 'telefono' => $request->telefono,
-                'fecha_asignacion' => $fechaAsignacion, // Asignamos la fecha aquí
-                'estado' => true, 
+                'competencia_id' => $request->id_competencia,
+                'fecha_asignacion' => now(),
+                'estado' => true,
+                'password' => Hash::make($passwordPlano),
             ]);
 
-            // Respuesta de éxito
+            Log::info("Contraseña enviada a {$responsable->correo_electronico}: {$passwordPlano}");
+
+            try {
+                Mail::raw(
+                    "Hola {$responsable->nombres},\n\nTus credenciales de acceso a O! SanSi son:\nUsuario: {$responsable->correo_electronico}\nContraseña: {$passwordPlano}\n\nTe recomendamos cambiarla al iniciar sesión.",
+                    function ($message) use ($responsable) {
+                        $message->to($responsable->correo_electronico)
+                                ->subject('Credenciales de acceso - O! SanSi');
+                    }
+                );
+            } catch (\Exception $e) {
+                Log::error("Error enviando correo a {$responsable->correo_electronico}: " . $e->getMessage());
+            }
+
             return response()->json([
                 'message' => 'Responsable registrado con éxito',
                 'responsable' => $responsable
             ], 201);
-            
-        }  catch (\Exception $e) {
-            \Log::error('Error registering responsable: ' . $e->getMessage()); 
-    
+
+        } catch (\Exception $e) {
+            Log::error('Error al registrar responsable: ' . $e->getMessage());
+
             return response()->json([
                 'message' => 'Hubo un error al registrar al responsable',
                 'error' => $e->getMessage(),
@@ -59,11 +119,13 @@ class ResponsableGestionController extends Controller{
         }
     }
 
-    public function obtenerDatosRespGestionId(int $responsableId): JsonResponse{
-       try {
+    public function obtenerDatosRespGestionId(int $responsableId): JsonResponse
+    {
+        try {
             $responsable = DB::table('responsable_gestion')
                 ->select([
                     'responsable_id',
+                    'competencia_id',
                     'nombres',
                     'apellidos',
                     'ci',
@@ -77,48 +139,40 @@ class ResponsableGestionController extends Controller{
                 ->first();
 
             if (!$responsable) {
-                return response()->json([
-                    'error' => 'Responsable no encontrado'
-                ], 404);
+                return response()->json(['error' => 'Responsable no encontrado'], 404);
             }
-
-            $data = $this->formatResponsable($responsable);
 
             return response()->json([
                 'message' => 'Responsable obtenido exitosamente',
-                'data' => $data
-            ], 200);
-        } catch (Exception $e) {
+                'data' => $this->formatResponsable($responsable)
+            ]);
+        } catch (\Exception $e) {
             Log::error('Error al obtener el responsable: ' . $e->getMessage());
-
-            return response()->json([
-                'error' => 'Error interno del servidor'
-            ], 500);
+            return response()->json(['error' => 'Error interno del servidor'], 500);
         }
     }
 
-        private function formatResponsable($responsable): array
+    private function formatResponsable($responsable): array
     {
         return [
-            'responsable_id' => (int)$responsable->responsable_id,
-            'nombre' => (string)$responsable->nombres,
-            'apellido' => (string)$responsable->apellidos,
-            'ci' => (string)$responsable->ci,
-            'correo' => (string)$responsable->correo_electronico,
-            'telefono' => (string)$responsable->telefono,
-            'estado' => (bool)$responsable->estado,
-            'created_at' => (string)$responsable->created_at,
-            'updated_at' => (string)$responsable->updated_at,
+            'responsable_id' => (int) $responsable->responsable_id,
+            'competencia_id'=>(int)$responsable->competencia_id,
+            'nombre' => (string) $responsable->nombres,
+            'apellido' => (string) $responsable->apellidos,
+            'ci' => (string) $responsable->ci,
+            'correo' => (string) $responsable->correo_electronico,
+            'telefono' => (string) $responsable->telefono,
+            'estado' => (bool) $responsable->estado,
+            'created_at' => (string) $responsable->created_at,
+            'updated_at' => (string) $responsable->updated_at,
         ];
     }
-
 
     public function editarResponsableGestion(Request $request, $id)
     {
         try {
             $responsable = ResponsableGestion::findOrFail($id);
 
-            // Validar cambios sin los campos no deseados
             $request->validate([
                 'ci' => 'required|string|max:20|unique:responsable_gestion,ci,' . $id . ',responsable_id',
                 'nombres' => 'required|string|max:100',
@@ -126,25 +180,22 @@ class ResponsableGestionController extends Controller{
                 'correo_electronico' => 'required|email|max:100',
             ]);
 
-            // Actualizamos el responsable
             $responsable->update($request->all());
 
             return response()->json([
                 'message' => 'Responsable actualizado correctamente',
                 'responsable' => $responsable
             ]);
-        } catch (ValidationException $e) {
-            // Manejar errores de validación
+        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'message' => 'Error en los datos enviados.',
                 'errors' => $e->errors()
-            ], 422);  // Error de validación
+            ], 422);
         } catch (\Exception $e) {
-            // Manejar cualquier otro error
             return response()->json([
                 'message' => 'Hubo un error al actualizar al responsable.',
                 'error' => $e->getMessage()
-            ], 500);  // Error interno
+            ], 500);
         }
     }
 
@@ -153,14 +204,192 @@ class ResponsableGestionController extends Controller{
             $responsable = ResponsableGestion::findOrFail($id);
             $responsable->delete();
 
-            return response()->json([
-                'message' => 'Responsable eliminado exitosamente'
-            ]);
+            return response()->json(['message' => 'Responsable eliminado exitosamente']);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Hubo un error al eliminar al responsable',
                 'error' => $e->getMessage()
-            ], 500); // Error interno
+            ], 500);
         }
     }
+
+    public function verMiPerfil($id)
+    {
+        try {
+            $responsable = ResponsableGestion::find($id);
+
+            if (!$responsable) {
+                return response()->json(['success' => false, 'message' => 'Responsable de Gestión no encontrado'], 404);
+            }
+
+            return response()->json([
+                'responsable_id' => $responsable->responsable_id,
+                'nombres' => $responsable->nombres,
+                'apellidos' => $responsable->apellidos,
+                'correo_electronico' => $responsable->correo_electronico,
+                'telefono' => $responsable->telefono,
+                'ci' => $responsable->ci,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener el perfil',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function cambiarPassword(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'password_actual' => 'required|string',
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+
+            $responsable = ResponsableGestion::find($id);
+            if (!$responsable) {
+                return response()->json(['success' => false, 'message' => 'Responsable de Gestión no encontrado.'], 404);
+            }
+
+            if (!Hash::check($request->password_actual, $responsable->password)) {
+                return response()->json(['success' => false, 'message' => 'La contraseña actual es incorrecta.'], 401);
+            }
+
+            $responsable->password = Hash::make($request->password);
+            $responsable->save();
+
+            return response()->json(['success' => true, 'message' => 'Contraseña actualizada correctamente.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar contraseña.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function reenviarCredenciales($id)
+    {
+        try {
+            $responsable = ResponsableGestion::findOrFail($id);
+            $passwordPlano = Str::random(10);
+            $responsable->password = Hash::make($passwordPlano);
+            $responsable->save();
+
+            Mail::raw(
+                "Hola {$responsable->nombres},\n\nTus nuevas credenciales de acceso a O! SanSi son:\nUsuario: {$responsable->correo_electronico}\nContraseña: {$passwordPlano}\n\nTe recomendamos cambiarla al iniciar sesión.",
+                function ($message) use ($responsable) {
+                    $message->to($responsable->correo_electronico)
+                            ->subject('Nuevas credenciales de acceso - O! SanSi');
+                }
+            );
+
+            return response()->json(['message' => 'Credenciales enviadas con éxito.']);
+        } catch (\Exception $e) {
+            Log::error('Error al reenviar credenciales: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Error al enviar las credenciales.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function cambiarEstadoResponsable($id)
+    {
+        try {
+            $responsable = ResponsableGestion::findOrFail($id);
+            $responsable->estado = !$responsable->estado;
+            $responsable->save();
+
+            if (!$responsable->estado) {
+                Mail::raw(
+                    "Hola {$responsable->nombres},\n\nTu cuenta en O! SanSi ha sido desactivada. Ya no puedes iniciar sesión en la plataforma.",
+                    function ($message) use ($responsable) {
+                        $message->to($responsable->correo_electronico)
+                                ->subject('Cuenta desactivada - O! SanSi');
+                    }
+                );
+            } else {
+                $passwordPlano = Str::random(10);
+                $responsable->password = Hash::make($passwordPlano);
+                $responsable->save();
+
+                Mail::raw(
+                    "Hola {$responsable->nombres},\n\nTu cuenta ha sido reactivada. Tus nuevas credenciales son:\nUsuario: {$responsable->correo_electronico}\nContraseña: {$passwordPlano}\n\nTe recomendamos cambiarla al iniciar sesión.",
+                    function ($message) use ($responsable) {
+                        $message->to($responsable->correo_electronico)
+                                ->subject('Cuenta reactivada - O! SanSi');
+                    }
+                );
+            }
+
+            return response()->json(['message' => 'Estado actualizado correctamente.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al cambiar el estado.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function ActualizarMiPerfil(Request $request, $id)
+    {
+        try {
+            $responsable = ResponsableGestion::find($id);
+
+            if (!$responsable) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Responsable de Gestión no encontrado'
+                ], 404);
+            }
+
+            // Validar los datos del formulario
+            $validator = Validator::make($request->all(), [
+                'nombres' => 'required|string|max:255',
+                'apellidos' => 'required|string|max:255',
+                'correo_electronico' => 'required|email|max:255',
+                'telefono' => 'required|string|min:7|max:20',
+                'ci' => 'required|string|min:7|max:20',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error de validación',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Guardar los nuevos datos
+            $responsable->nombres = $request->nombres;
+            $responsable->apellidos = $request->apellidos;
+            $responsable->correo_electronico = $request->correo_electronico;
+            $responsable->telefono = $request->telefono;
+            $responsable->ci = $request->ci;
+            $responsable->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Perfil actualizado correctamente',
+                'data' => [
+                    'responsable_id' => $responsable->responsable_id,
+                    'nombres' => $responsable->nombres,
+                    'apellidos' => $responsable->apellidos,
+                    'correo_electronico' => $responsable->correo_electronico,
+                    'telefono' => $responsable->telefono,
+                    'ci' => $responsable->ci,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el perfil',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 }

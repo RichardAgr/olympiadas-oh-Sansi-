@@ -8,8 +8,8 @@
   --color-fondo-h2: #FFFFFF;
   --color-fondo-input-h2: #F7F7F7;
   --color-error-h2: #E74C3C;
-  --sombra-suave-h2: 0 2px 10px rgba(0, 0, 0, 0.08);
-  --sombra-input-h2: 0 2px 3px rgba(0, 0, 0, 0.08);
+  --sombra-suave-h2: 0 2px 10px rgba(0, 0, 0, 0.48);
+  --sombra-input-h2: 0 2px 3px rgba(0, 0, 0, 0.8);
   --radio-borde-h2: 8px;
   --radio-borde-btn-h2: 25px;
   --transicion-rapida-h2: all 0.25s ease;
@@ -25,6 +25,7 @@
 
 /* Títulos - Clases específicas */
 .titulo-formulario-h2 {
+  text-align: center;
   font-size: 1.75rem;
   color: var(--color-texto-oscuro-h2);
   margin-bottom: 2rem;
@@ -62,7 +63,7 @@
 .campo-entrada-h2,
 .campo-textarea-h2,
 .campo-select-h2 {
-  width: 100%;
+  width: 95%;
   padding: 0.8rem 1.2rem;
   border: 1px solid #e0e0e0;
   border-radius: var(--radio-borde-h2);

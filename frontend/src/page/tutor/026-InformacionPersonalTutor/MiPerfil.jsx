@@ -15,7 +15,7 @@ function MiPerfil() {
   useEffect(() => {
     try {
       const getDataTutor = async ()=>{
-        const response = await axios.get(`http://127.0.0.1:8000/api/VerMiPerfil/${id}/Tutor`)
+        const response = await axios.get(`http://localhost:8000/api/VerMiPerfil/${id}/Tutor`)
         setDatosTutor(response.data)
       }
       getDataTutor()

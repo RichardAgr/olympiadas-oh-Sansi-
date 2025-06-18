@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
 import "./SelectorGrado.css"
 import api from '../../../components/Tokens/api';
 
@@ -113,7 +112,6 @@ function SelectorGrado({
           onChange={handleGradoFinalChange}
           required
           className="select-grado"
-          disabled={!gradoInicial}
         >
           <option value="">Seleccionar grado final</option>
           {gradosParaFinal.map((g) => (
