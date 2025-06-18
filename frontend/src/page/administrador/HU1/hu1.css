@@ -1,7 +1,8 @@
 /* Layout general */
 .areas-list-containerHu1 {
-  font-family: 'Comfortaa', sans-serif;
   padding: 20px 40px;
+  width: 60%;
+  margin: 0 auto;
   background-color: #ffffff;
   min-height: 100vh;
 }
@@ -167,7 +168,7 @@
   gap: 8px;
 }
 
-.paginationbotonHu1{
+.pagination-buttonHu1{
   border: none;
   background-color: #f0f0f0;
   padding: 6px 12px;
@@ -177,16 +178,18 @@
   font-family: 'Comfortaa', sans-serif;
 }
 
-.paginationbotonHu1.active {
+.paginationHu1 .active {
   background-color: #0A2E8C;
+  padding: 6px 12px;
+  border-radius: 20px;
   color: white;
 }
 
-.paginationbotonHu1:hover {
+.pagination-buttonHu1:hover {
   background-color: #ccc;
 }
 
-.paginationbotonHu1:disabled {
+.pagination-buttonHu1:disabled {
   background-color: #e0e0e0;
   color: #aaa;
   cursor: not-allowed;

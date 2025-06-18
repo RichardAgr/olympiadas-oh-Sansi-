@@ -35,7 +35,7 @@ function HomePrincipalRoutes() {
       />
 
       <Route
-        path="/respGest/*"
+        path="/respGest/:id_respGest/Home/*"
         element={
           <PrivateRoute allowedRoles={["responsable"]}>
             <AppRouteRespGest />

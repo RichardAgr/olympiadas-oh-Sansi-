@@ -1,8 +1,10 @@
 import axios from "axios";
 
 export const cargarAreasPermitidas = async () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const competenciaId = user?.competencia_id;
   try {
-    const response = await axios.get("http://127.0.0.1:8000/api/areasCategoriasGrados");
+    const response = await axios.get(`http://localhost:8000/api/areasCategoriasGrados/${competenciaId}`);
     if (response.data && response.data.success) {
       return response.data.data.map(area => area.nombre);
     }

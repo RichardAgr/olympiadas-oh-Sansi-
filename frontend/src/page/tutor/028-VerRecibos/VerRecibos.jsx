@@ -15,7 +15,7 @@ const VerRecibos = () => {
     const fetchBoletas = async () => {
       try {
         setIsLoading(true)
-        const response = await axios.get(`http://127.0.0.1:8000/api/recibos/tutor/${id}`)
+        const response = await axios.get(`http://localhost:8000/api/recibos/tutor/${id}`)
         
         if (response.data && response.data.success) {
           const boletasFormateadas = response.data.data.map(recibo => ({
@@ -131,7 +131,7 @@ const VerRecibos = () => {
                   </div>
 
                   <div className="boletaFooter">
-                    <button className="button button-secondary" onClick={() => handleVerBoleta(boleta)}>
+                    <button className="buttonVerReci button-secondary" onClick={() => handleVerBoleta(boleta)}>
                       Ver Recibo
                     </button>
                   </div>
@@ -177,7 +177,7 @@ const PDFViewer = ({ boleta, onClose, onDescargar }) => {
           )}
         </div>
         <div className="pdfViewerFooter">
-          <button className="button" onClick={onDescargar}>Descargar PDF</button>
+          <button className="buttonVerReci" onClick={onDescargar}>Descargar PDF</button>
         </div>
       </div>
     </div>

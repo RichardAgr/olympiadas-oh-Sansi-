@@ -27,9 +27,9 @@ export default function VerDetallesPago(){
           const getPaymentDetails = async () => {
             try {
                 setIsLoadingStudents(true)
-                const studentsData = await axios.get(`http://127.0.0.1:8000/api/tutores/${tutor_id}/competidores`)
+                const studentsData = await axios.get(`http://localhost:8000/api/tutor/${boleta_id}/competidoresBoleta`)
 
-                setStudents(studentsData.data.data.estudiantes)
+                setStudents(studentsData.data.data)
                 setIsLoadingStudents(false)
               
             } catch (err) {
@@ -51,7 +51,7 @@ export default function VerDetallesPago(){
     <div className="payment-details-container">
             <div className="payment-details-header">
               <h1>Detalle de Pago</h1>
-              <button className="show-receipt-button" onClick={handleShowReceipt}>
+              <button className="show-receipt-buttonVerDeta" onClick={handleShowReceipt}>
                 Mostrar Comprobante
               </button>
             </div>
@@ -88,7 +88,7 @@ export default function VerDetallesPago(){
             {showReceipt && ruta_imagen && (
               <div className="receipt-image-modal">
                 <div className="receipt-image-container">
-                  <button className="close-receipt" onClick={() => setShowReceipt(false)}>
+                  <button className="close-receiptVerDeta" onClick={() => setShowReceipt(false)}>
                     <X size={20} />
                   </button>
                   <h3>Comprobante de Pago</h3>

@@ -1,0 +1,111 @@
+.modalOverlayCompCrear {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.modalContentCompCrear {
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalHeaderCompCrear {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: var(--white);
+  border-radius: 16px 16px 0 0;
+}
+
+.modalTitleCompCrear {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.modalCloseCompCrear {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalCloseCompCrear:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modalCloseCompCrear:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modalFormCompCrear {
+  padding: 2rem;
+}
+
+.modalActionsCompCrear {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .modalOverlayCompCrear {
+    padding: 0.5rem;
+  }
+
+  .modalHeaderCompCrear {
+    padding: 1rem 1.5rem;
+  }
+
+  .modalFormCompCrear {
+    padding: 1.5rem;
+  }
+
+  .modalActionsCompCrear {
+    flex-direction: column;
+  }
+
+  .modalTitleCompCrear {
+    font-size: 1.25rem;
+  }
+}

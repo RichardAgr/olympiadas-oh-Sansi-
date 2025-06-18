@@ -5,7 +5,7 @@ import axios from "axios";
 import "./hu1.css";
 
 const EditArea = () => {
-  const { id } = useParams();
+  const { id, id_competencia } = useParams();
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [costo, setCosto] = useState("");
@@ -13,6 +13,7 @@ const EditArea = () => {
   const navigate = useNavigate();
   const [mensaje, setMensaje] = useState("");
   const [tipoMensaje, setTipoMensaje] = useState(""); // 'exito' o 'error'
+  const routeTo=(subruta)=>`/admin/HomeAdmin/${id_competencia}/${subruta}`;
 
 
 
@@ -47,32 +48,35 @@ useEffect(() => {
 }, [id]);
 
 
-  const validarFormulario = () => {
-    const nuevosErrores = {};
-  
-    if (!nombre.trim()) {
-      nuevosErrores.nombre = "El nombre es obligatorio.";
-    } else if (nombre.length < 3) {
-      nuevosErrores.nombre = "Debe tener al menos 3 caracteres.";
-    } else if (/\d/.test(nombre)) {
-      nuevosErrores.nombre = "El nombre no puede contener números.";
-    }
-  
-    if (!descripcion.trim()) {
-      nuevosErrores.descripcion = "La descripción es obligatoria.";
-    } else if (descripcion.length < 5) {
-      nuevosErrores.descripcion = "Debe tener al menos 5 caracteres.";
-    }
-  
-    if (!costo) {
-      nuevosErrores.costo = "El costo es obligatorio.";
-    } else if (isNaN(costo) || parseFloat(costo) <= 0) {
-      nuevosErrores.costo = "Debe ser un número mayor a 0.";
-    }
-  
-    setErrores(nuevosErrores);
-    return Object.keys(nuevosErrores).length === 0;
-  };  
+const validarFormulario = () => {
+  const nuevosErrores = {};
+
+  if (!nombre.trim()) {
+    nuevosErrores.nombre = "El nombre es obligatorio.";
+  } else if (nombre.length < 3) {
+    nuevosErrores.nombre = "Debe tener al menos 3 caracteres.";
+  } else if (/\d/.test(nombre)) {
+    nuevosErrores.nombre = "El nombre no puede contener números.";
+  }
+
+  if (!descripcion.trim()) {
+    nuevosErrores.descripcion = "La descripción es obligatoria.";
+  } else if (descripcion.length < 5) {
+    nuevosErrores.descripcion = "Debe tener al menos 5 caracteres.";
+  }
+
+  if (!costo) {
+    nuevosErrores.costo = "El costo es obligatorio.";
+  } else if (isNaN(costo) || parseFloat(costo) <= 0) {
+    nuevosErrores.costo = "Debe ser un número mayor a 0.";
+  } else if (parseFloat(costo) < 10) {     // <-- Esta validación nueva
+    nuevosErrores.costo = "El costo debe ser al menos 10.";
+  }
+
+  setErrores(nuevosErrores);
+  return Object.keys(nuevosErrores).length === 0;
+};
+
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -89,7 +93,7 @@ const handleSubmit = async (e) => {
   try {
     const authToken = localStorage.getItem("authToken");
 
-await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
+await axios.put(`http://localhost:8000/api/actualizarArea/${id}`, data, {
   headers: {
     Authorization: `Bearer ${authToken}`,
     'Content-Type': 'application/json',
@@ -104,7 +108,7 @@ await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
     setTimeout(() => {
       setMensaje("");
       setTipoMensaje("");
-      navigate("/admin/areas");
+      navigate(routeTo("areas"));
     }, 3000);
   } catch (error) {
     setMensaje("Hubo un error al actualizar el área ❌");
@@ -148,13 +152,13 @@ await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
         />
-        {errores.descripcion && <small className="error-campo-area">{errores.descripcion}</small>}
+        {errores.descripcion && <small className="error-text-area">{errores.descripcion}</small>}
+
 
         <label className="etiqueta-campo-area">Costo (Bs)</label>
         <input
           type="number"
           value={costo}
-          min="10"
           onChange={(e) => setCosto(e.target.value)}
           className="campo-entrada-area"
         />
@@ -163,7 +167,7 @@ await axios.put(`http://127.0.0.1:8000/api/actualizarArea/${id}`, data, {
         <div className="botones-form-area">
           <button
             type="button"
-            onClick={() => navigate("/admin/areas")}
+            onClick={() => navigate(routeTo('areas'))}
             className="btn-cancelar-area"
           >
             Cancelar

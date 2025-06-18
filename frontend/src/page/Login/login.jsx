@@ -34,7 +34,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/login",
+        "http://localhost:8000/api/login",
         {
           correo_electronico: email,
           password: password
@@ -54,7 +54,7 @@ const Login = () => {
           navigate("/admin");
           break;
         case "responsable":
-          navigate("/respGest");
+          navigate("/respGest/" + data.usuario.responsable_id + "/Home");
           break;
         case "tutor":
           if (data.usuario && data.usuario.tutor_id) {

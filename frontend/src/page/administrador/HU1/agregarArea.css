@@ -1,0 +1,178 @@
+/* hu1.css */
+
+/* Estilos generales del contenedor */
+.form-area-container-area {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.4);
+}
+
+/* Título principal */
+.titulo-editar-area {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* Estilos del formulario */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Etiquetas de los campos */
+.etiqueta-campo-area {
+  font-weight: 500;
+  color: #34495e;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Campos de entrada de texto */
+.campo-entrada-area {
+  padding: 0.8rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.campo-entrada-area:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Área de texto */
+.campo-textarea-area {
+  padding: 0.8rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  min-height: 120px;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.campo-textarea-area:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Mensajes de error */
+.error-text-area {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+/* Contenedor de botones */
+.botones-form-area {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  margin-top: 1.5rem;
+}
+
+/* Botones */
+.btn-cancelar-area,
+.btn-guardar-area {
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 1rem;
+}
+
+.btn-cancelar-area {
+  background-color: #e63946;
+  color: #fff;
+}
+
+.btn-cancelar-area:hover {
+  background-color: #661c22;
+
+}
+
+.btn-guardar-area {
+  background-color: #384FD6;
+  color: white;
+}
+
+.btn-guardar-area:hover {
+  background-color: #061f66;
+}
+
+/* Modal de mensaje */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-mensaje {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-mensaje.exito {
+  border-top: 4px solid #2ecc71;
+}
+
+.modal-mensaje.error {
+  border-top: 4px solid #e74c3c;
+}
+
+.modal-mensaje h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-area-container-area {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .titulo-editar-area {
+    font-size: 1.5rem;
+  }
+  
+  .botones-form-area {
+    flex-direction: column;
+  }
+  
+  .btn-cancelar-area,
+  .btn-guardar-area {
+    width: 100%;
+  }
+}

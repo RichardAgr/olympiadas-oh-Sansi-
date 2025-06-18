@@ -1,16 +1,16 @@
-
-/* CONTENEDOR PRINCIPAL */
-.inscribir-manual-container {
+/* Contenedor principal */
+.inscribir-manual-container-InscMan {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   margin: 50px auto;
   width: 90%;
   max-width: 1400px;
+  padding: 0 20px;
 }
 
 /* Título */
-.inscribir-manual-title {
+.inscribir-manual-title-InscMan {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 20px;
@@ -18,7 +18,7 @@
 }
 
 /* Pasos */
-.steps {
+.steps-InscMan {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,14 +26,14 @@
   margin-bottom: 30px;
 }
 
-.step {
+.step-InscMan {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
 }
 
-.step-number {
+.step-number-InscMan {
   background-color: #d0f0f9;
   color: #007bff;
   width: 40px;
@@ -47,7 +47,7 @@
   transition: all 0.3s ease;
 }
 
-.step-number.active {
+.step-number-InscMan.active {
   background-color: #007bff;
   color: #ffffff;
   width: 50px;
@@ -55,30 +55,30 @@
   font-size: 20px;
 }
 
-.step-line {
+.step-line-InscMan {
   height: 2px;
   width: 80px;
   background-color: #ccc;
   margin: 0 10px;
 }
 
-/* FORMULARIO CON FONDO CELESTE */
-.inscribir-manual-form {
+/* Formulario */
+.inscribir-manual-form-InscMan {
   background-color: #d0e6fd;
   padding: 40px 60px;
   border-radius: 16px;
-  width: 100% !important;            /* <-- cambia esto */
-  max-width: 800px !important;       /* <-- limita el ancho */
-  margin: 0 auto !important;         /* <-- esto centra horizontalmente */
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* GRUPOS DENTRO DEL FORMULARIO */
-.inscribir-manual-form .form-group {
+/* Grupos de formulario */
+.form-group-InscMan {
   margin-bottom: 20px;
 }
 
-.inscribir-manual-form .form-group label {
+.form-group-InscMan label {
   font-weight: 600;
   display: block;
   margin-bottom: 8px;
@@ -86,66 +86,31 @@
   color: #555;
 }
 
-/* INPUTS Y SELECTS */
-.inscribir-manual-form .form-group input,
-.inscribir-manual-form .form-group select {
+/* Inputs y selects */
+.form-group-InscMan input,
+.form-group-InscMan select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 14px;
   color: #444;
+  box-sizing: border-box;
 }
 
-/* INPUTS MÁS PEQUEÑOS PERSONALIZADOS */
-.inscribir-manual-form .form-group select[name="curso"],
-.inscribir-manual-form .form-group input[type="date"],
-.inscribir-manual-form .form-group input[type="departamento"] {
-  width: 150px;
-  padding: 8px;
-  font-size: 14px;
+.form-group-InscMan input.input-error-InscMan {
+  border-color: #dc3545;
 }
 
-/* BOTONES */
-.inscribir-manual-container .submit-button-container {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.inscribir-manual-container .submit-button {
-  background-color: #2D42C8;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  padding: 0.6rem 1.4rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.inscribir-manual-container .submit-button:hover {
-  background-color: #061A8B;
-}
-
-.inscribir-manual-container .submit-button.cancel {
-  background-color: #DEE1E6;
-  color: #565E6C;
-}
-
-.inscribir-manual-container .submit-button.cancel:hover {
-  background-color: #CFCFCF;
-}
-
-/* ESTILOS PARA RADIOS VERTICALES */
-.vertical-radio-group {
+/* Radio buttons verticales */
+.vertical-radio-group-InscMan {
   display: inline-flex;
   flex-direction: column;
   gap: 8px;
   margin-top: 8px;
 }
 
-.radio-option-vertical {
+.radio-option-vertical-InscMan {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -154,20 +119,19 @@
   color: #444;
 }
 
-.radio-option-vertical input[type="radio"] {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 16px !important;
-  height: 16px !important;
-  box-shadow: none !important;
-  appearance: auto !important;
-  transform: translateY(-5px); /* Ajusta el valor a tu gusto */
+.radio-option-vertical-InscMan input[type="radio"] {
+  margin: 0;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  box-shadow: none;
+  appearance: auto;
   cursor: pointer;
 }
 
-
-.inscribir-manual-form .errorins {
-  color: red;
+/* Mensajes de error */
+.error-message-InscMan {
+  color: #dc3545;
   font-size: 13px;
   margin-top: 5px;
   margin-bottom: 10px;
@@ -175,41 +139,278 @@
   text-align: left;
 }
 
-/* modal cancelar */
-.modalCancelarManual {
-  background-color: white;
-  padding: 30px;
-  border-radius: 15px;
-  width: 470px;
-  text-align: center;
-  position: relative;
-  border: 3px solid #0A2E8C;
-}
-.modal-overlayCancelarManual {
-  position: fixed; 
-   top: 0; 
-  left: 0; 
-  right: 0; 
-  bottom: 0; 
-  background-color: rgba(0, 0, 0, 0.7); 
-   display: flex; 
-   align-items: center; 
-  justify-content: center; 
-   z-index: 1000; 
-  animation: fadeIn 0.3s ease;
-}
-.modal-buttonsCancelarManual {
-  margin-top: 30px;
+/* Botones */
+.submit-button-container-InscMan {
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
-.btn-eliminar2CancelarManual {
-  background-color: #0A2E8C;
+.submit-button-InscMan {
+  background-color: #2d42c8;
   color: white;
   border: none;
-  padding: 8px 30px;
-  border-radius: 10px;
+  border-radius: 25px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button-InscMan:hover {
+  background-color: #061a8b;
+}
+
+.submit-button-InscMan.cancel {
+  background-color: #dee1e6;
+  color: #565e6c;
+}
+
+.submit-button-InscMan.cancel:hover {
+  background-color: #cfcfcf;
+}
+
+/* Botones de opciones en grilla */
+.grid-options-InscMan {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.option-button-InscMan {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: white;
+  color: black;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.option-button-InscMan:hover:not(:disabled) {
+  background-color: #d0eaff;
+  transform: translateY(-1px);
+}
+
+.option-button-InscMan.selected {
+  background-color: #1e40af;
+  color: white;
+}
+
+.option-button-InscMan:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+  border: 1px solid #dee2e6;
+}
+
+.option-button-InscMan.disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+  border: 1px solid #dee2e6;
+  opacity: 0.6;
+}
+
+/* Tarjeta de tutor */
+.tutor-card-InscMan {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tutor-card-InscMan .form-group-InscMan {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.tutor-card-InscMan .form-group-InscMan label {
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 160px;
+  margin-top: 10px;
+  text-align: left;
+}
+
+.form-control-wrapper-InscMan {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.form-control-wrapper-InscMan input,
+.form-control-wrapper-InscMan select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.short-select-InscMan {
+  width: 80px;
+  padding: 8px;
+}
+
+/* Radio buttons horizontales */
+.radio-group-InscMan {
+  display: flex;
+  gap: 15px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.radio-group-InscMan label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 15px;
+  padding: 0;
+}
+
+.radio-group-InscMan input[type="radio"] {
+  margin: 0;
+  box-shadow: none;
+  appearance: auto;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+}
+
+/* Contenedor de éxito */
+.exito-container-InscMan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  border: 2px solid #000;
+  border-radius: 12px;
+  background: white;
+}
+
+.exito-container-InscMan h2 {
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  color: black;
+}
+
+.descargar-button-InscMan {
+  margin-top: 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.descargar-button-InscMan:hover {
+  background-color: #2563eb;
+}
+
+.descargar-button-InscMan:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+/* Progreso de carga */
+.upload-progress-InscMan {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinner-InscMan {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin-InscMan 1s linear infinite;
+}
+
+@keyframes spin-InscMan {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.pdf-uploaded-info-InscMan {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #d1fae5;
+  color: #065f46;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Loading overlay */
+.loading-overlay-InscMan {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-content-InscMan {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Alerta de áreas registradas */
+.areas-registradas-alert-InscMan {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  color: #856404;
+}
+
+.areas-registradas-alert-InscMan h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.areas-registradas-alert-InscMan ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.areas-registradas-alert-InscMan p {
+  margin: 10px 0 0 0;
+  font-size: 14px;
+  font-style: italic;
 }
